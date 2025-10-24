@@ -1,0 +1,14 @@
+{
+  "header": {
+    "announcement": "Announcement"
+  },
+  "languages": {
+    "uz": "Uzbek",
+    "ru": "Russian",
+    "en": "English"
+  },
+  "interactiveServices": "Interactive Services",
+  "seeAllServices": "See all services",
+  "faculties": "Faculties",
+  "seeAll": "See All"
+}

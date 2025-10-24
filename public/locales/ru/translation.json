@@ -1,0 +1,14 @@
+{
+  "header": {
+    "announcement": "Объявление"
+  },
+  "languages": {
+    "uz": "Узбекский",
+    "ru": "Русский",
+    "en": "Английский"
+  },
+  "interactiveServices": "Интерактивные услуги",
+  "seeAllServices": "Посмотреть все услуги",
+  "faculties": "Факультеты",
+  "seeAll": "Посмотреть все"
+}

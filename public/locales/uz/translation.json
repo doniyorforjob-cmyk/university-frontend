@@ -1,0 +1,14 @@
+{
+  "header": {
+    "announcement": "E'lon"
+  },
+  "languages": {
+    "uz": "O'zbek",
+    "ru": "Rus",
+    "en": "Ingliz"
+  },
+  "interactiveServices": "Interaktiv Xizmatlar",
+  "seeAllServices": "Barcha xizmatlarni ko'rish",
+  "faculties": "Fakultetlar",
+  "seeAll": "Barchasini ko'rish"
+}
