@@ -11,6 +11,7 @@ import {
     ScissorsIcon,
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
+import Container from '../../components/Container';
 
 const faculties = [
     { name: 'Muhandislik-axborot texnologiyalari', icon: CpuChipIcon, color: 'from-sky-500 to-indigo-500' },
@@ -34,11 +35,11 @@ const FacultiesSection = () => {
 
     return (
         <section className="py-12 bg-white dark:bg-gray-900">
-            <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Container>
                 <div className="mb-12">
                     <div className="flex items-center">
                         <div className="w-1 bg-primary h-8 mr-4"></div>
-                        <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">{t('faculties')}</h2>
+                        <h2 className="text-fluid-h2 font-extrabold text-gray-900 dark:text-white">{t('faculties')}</h2>
                     </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
@@ -52,7 +53,7 @@ const FacultiesSection = () => {
                                 <div className={`flex items-center justify-center h-20 w-20 rounded-full bg-gradient-to-br ${faculty.color} mx-auto mb-6`}>
                                     <Icon className="h-10 w-10 text-white" />
                                 </div>
-                                <h3 className="text-lg font-semibold text-center text-gray-900 dark:text-white">{faculty.name}</h3>
+                                <h3 className="text-fluid-p font-semibold text-center text-gray-900 dark:text-white">{faculty.name}</h3>
                             </div>
                         );
                     })}
@@ -67,7 +68,7 @@ const FacultiesSection = () => {
                         </button>
                     </div>
                 )}
-            </div>
+            </Container>
         </section>
     );
 };

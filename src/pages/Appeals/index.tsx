@@ -26,7 +26,7 @@ const AppealsPage: React.FC = () => {
           ]}
         />
 
-        <div className="flex flex-col lg:flex-row lg:space-x-8">
+        <div className="flex flex-col lg:flex-row lg:space-x-8 mt-6">
           <div className="lg:w-3/4">
             <div className="bg-white shadow-md rounded-lg p-6 mb-8">
               <h2 className="text-2xl font-semibold mb-4">Murojaat yuborish</h2>

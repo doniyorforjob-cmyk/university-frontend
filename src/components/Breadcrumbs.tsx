@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { ChevronRightIcon } from '@heroicons/react/24/solid';
 
 interface BreadcrumbItem {
   label: string;
@@ -12,26 +13,26 @@ interface BreadcrumbsProps {
 
 const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
   return (
-    <nav className="text-sm mb-8" aria-label="Breadcrumb">
-      <ol className="list-none p-0 inline-flex">
+    <nav className="flex" aria-label="Breadcrumb">
+      <ol className="flex items-center space-x-2 bg-white px-4 py-2 rounded-full shadow-sm">
         {items.map((item, index) => (
-          <li key={index} className="flex items-center">
-            {item.href ? (
-              <Link to={item.href} className="text-blue-600 hover:underline">
+          <li key={item.label}>
+            <div className="flex items-center">
+              {index > 0 && (
+                <ChevronRightIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+              )}
+              <Link
+                to={item.href || '#'}
+                className={`ml-2 text-sm font-medium ${
+                  index === items.length - 1
+                    ? 'text-gray-500'
+                    : 'text-gray-700 hover:text-blue-600'
+                }`}
+                aria-current={index === items.length - 1 ? 'page' : undefined}
+              >
                 {item.label}
               </Link>
-            ) : (
-              <span className="text-gray-500">{item.label}</span>
-            )}
-            {index < items.length - 1 && (
-              <svg
-                className="fill-current w-3 h-3 mx-3 text-gray-400"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-              >
-                <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" />
-              </svg>
-            )}
+            </div>
           </li>
         ))}
       </ol>

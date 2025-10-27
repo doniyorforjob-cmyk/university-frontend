@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRightIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
+import Container from '../../components/Container';
 
 const services = [
   {
@@ -70,11 +71,11 @@ const InteractiveServicesSection = () => {
   const { t } = useTranslation();
   return (
     <div className="py-12">
-      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Container>
         <div className="mb-12 flex justify-between items-center">
           <div className="flex items-center">
             <div className="w-1 bg-primary h-8 mr-4"></div>
-            <h2 className="text-3xl font-extrabold text-gray-900">
+            <h2 className="text-fluid-h2 font-extrabold text-gray-900">
               {t('interactiveServices')}
             </h2>
           </div>
@@ -100,7 +101,7 @@ const InteractiveServicesSection = () => {
             </Link>
           ))}
         </div>
-      </div>
+      </Container>
     </div>
   );
 };

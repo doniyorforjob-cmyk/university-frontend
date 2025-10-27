@@ -1,7 +1,9 @@
+import React from 'react';
 import { useRef, useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import useClickOutside from '../../../hooks/useClickOutside';
 import { navItems } from './data';
+import Container from '../../../components/Container';
 
 interface NavbarProps {
     isSticky: boolean;
@@ -54,79 +56,81 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
     return (
         <div className="font-sans bg-primary" ref={navRef}>
             {/* Desktop Navbar */}
-            <nav className="relative hidden lg:flex">
-                <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center h-14">
-                    <div className="flex h-full shadow-md">
-                        {isSticky && (
-                            <Link
-                                to="/"
-                                className="flex items-center h-full px-4 text-primary bg-white hover:bg-gray-100 transition-colors duration-300"
-                                title="Bosh sahifa"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                                </svg>
-                            </Link>
-                        )}
-                        {navItems.map((item) => (
-                            <div
-                                key={item.title}
-                                className="relative h-full"
-                                onMouseEnter={() => item.children && setActiveDropdown(item.title)}
-                                onMouseLeave={() => item.children && setActiveDropdown(null)}
-                            >
-                                <Link 
-                                    to={item.href || '#'} 
-                                    className={`flex items-center h-full px-4 text-sm font-medium transition-colors duration-300 cursor-pointer ${
-                                        activeDropdown === item.title
-                                            ? 'bg-white text-primary'
-                                            : 'text-white hover:bg-white hover:text-primary'
-                                    }`}
+            <nav className="relative hidden lg:flex justify-center w-full">
+                <Container className="flex items-center h-14">
+                    <div className="flex h-full items-center justify-between w-full">
+                        <div className="flex h-full items-center">
+                            {isSticky && (
+                                <Link
+                                    to="/"
+                                    className="flex items-center h-full px-4 text-primary bg-white hover:bg-gray-100 transition-colors duration-300"
+                                    title="Bosh sahifa"
                                 >
-                                    <span>{item.title}</span>
-                                    {item.children && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 ml-1"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" /></svg>}
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                                    </svg>
                                 </Link>
-                                {item.children && activeDropdown === item.title && (
-                                    <div className="absolute top-full left-0 bg-white shadow-lg py-2 w-64 z-20">
-                                        {item.children.map((child) => (
-                                            <div
-                                                key={child.title}
-                                                className="relative"
-                                                onMouseEnter={() => child.children && setActiveSubDropdown(child.title)}
-                                                onMouseLeave={() => child.children && setActiveSubDropdown(null)}
-                                            >
-                                                <Link
-                                                    to={child.href || '#'}
-                                                    onClick={() => setActiveDropdown(null)}
-                                                    className={`flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors duration-200 ${
-                                                        activeSubDropdown === child.title ? 'bg-primary text-white' : ''
-                                                    }`}
+                            )}
+                            {navItems.map((item) => (
+                                <div
+                                    key={item.title}
+                                    className="relative h-full"
+                                    onMouseEnter={() => item.children && setActiveDropdown(item.title)}
+                                    onMouseLeave={() => item.children && setActiveDropdown(null)}
+                                >
+                                    <Link
+                                        to={item.href || '#'}
+                                        className={`flex items-center h-full px-4 text-sm font-medium transition-colors duration-300 cursor-pointer ${
+                                            activeDropdown === item.title
+                                                ? 'bg-white text-primary'
+                                                : 'text-white hover:bg-white hover:text-primary'
+                                        }`}
+                                    >
+                                        <span>{item.title}</span>
+                                        {item.children && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 ml-1"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" /></svg>}
+                                    </Link>
+                                    {item.children && activeDropdown === item.title && (
+                                        <div className="absolute top-full left-0 bg-white shadow-lg py-2 w-64 z-20">
+                                            {item.children.map((child) => (
+                                                <div
+                                                    key={child.title}
+                                                    className="relative"
+                                                    onMouseEnter={() => child.children && setActiveSubDropdown(child.title)}
+                                                    onMouseLeave={() => child.children && setActiveSubDropdown(null)}
                                                 >
-                                                    <span>{child.title}</span>
-                                                    {child.children && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5"><path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" /></svg>}
-                                                </Link>
-                                                {child.children && activeSubDropdown === child.title && (
-                                                    <div className="absolute top-0 left-full bg-white shadow-lg py-2 w-64 z-30">
-                                                        {child.children.map((subChild) => (
-                                                            <Link 
-                                                                key={subChild.title} 
-                                                                to={subChild.href} 
-                                                                onClick={() => setActiveDropdown(null)}
-                                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors duration-200"
-                                                            >
-                                                                {subChild.title}
-                                                            </Link>
-                                                        ))}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        ))}
+                                                    <Link
+                                                        to={child.href || '#'}
+                                                        onClick={() => setActiveDropdown(null)}
+                                                        className={`flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors duration-200 ${
+                                                            activeSubDropdown === child.title ? 'bg-primary text-white' : ''
+                                                        }`}
+                                                    >
+                                                        <span>{child.title}</span>
+                                                        {child.children && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5"><path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" /></svg>}
+                                                    </Link>
+                                                    {child.children && activeSubDropdown === child.title && (
+                                                        <div className="absolute top-0 left-full bg-white shadow-lg py-2 w-64 z-30">
+                                                            {child.children.map((subChild) => (
+                                                                <Link
+                                                                    key={subChild.title}
+                                                                    to={subChild.href}
+                                                                    onClick={() => setActiveDropdown(null)}
+                                                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white transition-colors duration-200"
+                                                                >
+                                                                    {subChild.title}
+                                                                </Link>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
                         {/* Search Icon and Dropdown */}
-                        <div className="relative h-full ml-12">
+                        <div className="relative h-full">
                             <button
                                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                                 className="flex items-center h-full px-4 text-sm font-medium text-white hover:bg-white hover:text-primary transition-colors duration-300 cursor-pointer"
@@ -146,7 +150,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                             )}
                         </div>
                     </div>
-                </div>
+                </Container>
             </nav>
 
             {/* Mobile Hamburger Button */}

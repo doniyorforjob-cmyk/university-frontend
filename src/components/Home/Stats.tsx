@@ -3,6 +3,7 @@ import CountUp from 'react-countup';
 import { useInView } from 'react-intersection-observer';
 import { FaUserGraduate, FaChalkboardTeacher, FaBuilding, FaUserCheck, FaAward } from 'react-icons/fa';
 import { type IconType } from 'react-icons';
+import Container from '../Container';
 
 interface StatItem {
     id: number;
@@ -13,12 +14,11 @@ interface StatItem {
 }
 
 interface IconWrapperProps {
-    Icon: IconType; // React.ComponentType o‘rniga IconType ishlatamiz
+    Icon: IconType;
     size?: number;
 }
 
 const IconWrapper: React.FC<IconWrapperProps> = ({ Icon, size = 32 }) => {
-    // IconType ni React.ComponentType ga aylantiramiz
     const TypedIcon = Icon as React.ComponentType<{ size?: number }>;
     return <TypedIcon size={size} />;
 };
@@ -45,7 +45,7 @@ const Stats: React.FC = () => {
 
     return (
         <div ref={ref} className="py-12 bg-gray-50">
-            <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Container>
                 <div className="mb-10">
                     <div className="flex items-center">
                         <div className="w-1 bg-primary h-8 mr-4"></div>
@@ -66,7 +66,7 @@ const Stats: React.FC = () => {
                         </div>
                     ))}
                 </div>
-            </div>
+            </Container>
         </div>
     );
 };

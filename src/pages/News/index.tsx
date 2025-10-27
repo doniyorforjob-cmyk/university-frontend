@@ -67,6 +67,7 @@ const NewsPage: React.FC = () => {
                 <Breadcrumbs
                     items={[
                         { label: 'Bosh sahifa', href: '/' },
+                        { label: 'Axborot xizmati', href: '#' },
                         { label: 'Yangiliklar' },
                     ]}
                 />
@@ -99,7 +100,7 @@ const NewsPage: React.FC = () => {
                                                 <span>{article.views}</span>
                                             </div>
                                         </div>
-                                        <h3 className="text-xl font-bold mb-4 flex-grow">
+                                        <h3 className="text-lg font-bold mb-4 flex-grow">
                                             {article.title}
                                         </h3>
                                         <div className="mt-auto">

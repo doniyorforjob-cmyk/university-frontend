@@ -1,8 +1,10 @@
+import React from 'react';
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import useClickOutside from '../../../hooks/useClickOutside';
 import { newsItems, socialLinks, quickLinks } from './data';
 import useFontSizeStore from '../../../store/fontSizeStore';
+import Container from '../../../components/Container';
 
 const languageOptions = {
     uz: { name: "O'z", flag: "https://flagcdn.com/w20/uz.png" },
@@ -36,7 +38,7 @@ const TopHeader = () => {
 
     return (
         <div className="bg-primary border-b border-secondary/50">
-            <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-col md:flex-row items-center justify-between gap-2 md:gap-4">
+            <Container className="py-2 flex flex-col md:flex-row items-center justify-between gap-2 md:gap-4">
                 <div className="flex items-center space-x-4 w-full md:w-1/3 overflow-hidden">
                     <div className="flex-shrink-0">
                         <div className="bg-accent text-white px-3 py-1 rounded-full flex items-center space-x-2 cursor-pointer hover:brightness-90 transition">
@@ -48,7 +50,7 @@ const TopHeader = () => {
                     </div>
                     <div className="relative h-6 flex-grow">
                         <div key={currentNewsIndex} className="absolute w-full h-full flex items-center animate-slide-fade">
-                            <a href="#" className="text-white hover:text-secondary text-sm truncate">
+                            <a href="/#" className="text-white hover:text-secondary text-sm truncate">
                                 {newsItems[currentNewsIndex].text}
                             </a>
                         </div>
@@ -102,7 +104,7 @@ const TopHeader = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </Container>
         </div>
     );
 };

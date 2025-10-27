@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { newsItems } from '../../components/Layout/Header/data';
 import { CalendarDaysIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import Container from '../../components/Container';
 
 const AnnouncementsSection = () => {
   const mainAnnouncements = newsItems.slice(0, 4); // First 4 for cards
@@ -9,11 +10,11 @@ const AnnouncementsSection = () => {
 
   return (
     <div className="bg-gray-50 py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Container>
         <div className="flex items-center mb-12">
           <div className="w-1 bg-primary h-8 mr-4"></div>
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-            E'lonlar
+          <h2 className="text-fluid-h2 font-bold tracking-tight text-gray-900">
+            E&apos;lonlar
           </h2>
         </div>
 
@@ -49,7 +50,7 @@ const AnnouncementsSection = () => {
           {/* Announcements List (Right) */}
           <div className="flex flex-col lg:col-span-2">
             <div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4 border-b-2 border-primary pb-2">Boshqa e'lonlar</h3>
+              <h3 className="text-fluid-h3 font-bold text-gray-900 mb-4 border-b-2 border-primary pb-2">Boshqa e&apos;lonlar</h3>
               <ul className="space-y-3 mt-4 overflow-y-auto max-h-[450px] pr-2">
                 {otherAnnouncements.map((item) => {
                   const date = new Date(item.date);
@@ -80,13 +81,13 @@ const AnnouncementsSection = () => {
             </div>
             <div className="mt-auto pt-8 text-center lg:text-right">
               <Link to="/announcements" className="inline-flex items-center text-primary font-semibold hover:underline">
-                Barcha e'lonlarni ko'rish
+                Barcha e&apos;lonlarni ko&apos;rish
                 <ChevronRightIcon className="w-5 h-5 ml-1" />
               </Link>
             </div>
           </div>
         </div>
-      </div>
+      </Container>
     </div>
   );
 };
