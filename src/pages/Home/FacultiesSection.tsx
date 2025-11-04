@@ -1,76 +1,164 @@
-import React, { useState } from 'react';
-import {
-    CpuChipIcon,
-    TruckIcon,
-    BriefcaseIcon,
-    BanknotesIcon,
-    BuildingOfficeIcon,
-    Cog6ToothIcon,
-    BoltIcon,
-    WrenchScrewdriverIcon,
-    ScissorsIcon,
-} from '@heroicons/react/24/outline';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import Container from '../../components/Container';
+import Container from '../../components/shared/Container';
+import { facultiesData, Faculty } from '../../api/facultiesApi';
+import { FaLaptop, FaCogs, FaBook } from 'react-icons/fa';
 
-const faculties = [
-    { name: 'Muhandislik-axborot texnologiyalari', icon: CpuChipIcon, color: 'from-sky-500 to-indigo-500' },
-    { name: 'Transport', icon: TruckIcon, color: 'from-slate-500 to-slate-700' },
-    { name: 'Biznesni boshqarish', icon: BriefcaseIcon, color: 'from-emerald-500 to-green-600' },
-    { name: 'Iqtisodiyot', icon: BanknotesIcon, color: 'from-lime-500 to-green-500' },
-    { name: 'Qurilish', icon: BuildingOfficeIcon, color: 'from-amber-500 to-orange-600' },
-    { name: 'Texnologiya', icon: Cog6ToothIcon, color: 'from-purple-500 to-violet-600' },
-    { name: 'Energetika', icon: BoltIcon, color: 'from-yellow-400 to-amber-500' },
-    { name: 'Mexanika', icon: WrenchScrewdriverIcon, color: 'from-gray-500 to-slate-600' },
-    { name: 'To\'qimachilik sanoati enjiniringi', icon: ScissorsIcon, color: 'from-pink-500 to-rose-500' },
-];
+const FacultiesSection: React.FC = () => {
+  const { t } = useTranslation();
+  const [visibleCount, setVisibleCount] = useState(8);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [progress, setProgress] = useState(0);
 
-const FacultiesSection = () => {
-    const { t } = useTranslation();
-    const [visibleCount, setVisibleCount] = useState(8);
+  const showMoreFaculties = () => {
+    setVisibleCount(facultiesData.length);
+  };
 
-    const showMoreFaculties = () => {
-        setVisibleCount(faculties.length);
-    };
+  useEffect(() => {
+    const progressInterval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          setCurrentImageIndex((prevIndex) =>
+            prevIndex === facultiesData.length - 1 ? 0 : prevIndex + 1
+          );
+          return 0;
+        }
+        return prev + 1; // Har 40ms da 1% oshadi (4000ms / 100 = 40ms)
+      });
+    }, 40);
 
-    return (
-        <section className="py-12 bg-white dark:bg-gray-900">
-            <Container>
-                <div className="mb-12">
-                    <div className="flex items-center">
-                        <div className="w-1 bg-primary h-8 mr-4"></div>
-                        <h2 className="text-fluid-h2 font-extrabold text-gray-900 dark:text-white">{t('faculties')}</h2>
-                    </div>
+    return () => clearInterval(progressInterval);
+  }, [facultiesData.length]);
+
+  const handleCardClick = (index: number) => {
+    setCurrentImageIndex(index);
+    setProgress(0); // Kartochka bosilganda progressni reset qilish
+  };
+
+  return (
+    <section className="py-12 transition-colors duration-500">
+      <Container>
+        {/* Sarlavha (chap tomonda) */}
+        <div className="mb-8">
+          <div className="flex items-center">
+            <div className="w-1 h-8 bg-primary mr-4 rounded"></div>
+            <h2 className="text-3xl font-bold text-gray-900">
+              {t('faculties')}
+            </h2>
+          </div>
+        </div>
+
+        {/* Fakultet kartalari - eski kod */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          {facultiesData.slice(0, visibleCount).map((faculty: Faculty, index: number) => {
+            const Icon = faculty.icon;
+            return (
+              <div
+                key={index}
+                className="group relative bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-primary shadow-sm hover:shadow-lg transition-all duration-300"
+              >
+                {/* Icon qismi */}
+                <div
+                  className={`flex items-center justify-center h-16 w-16 rounded-lg bg-gradient-to-br ${faculty.color} mx-auto mb-4 shadow-md group-hover:scale-110 transition-transform duration-300`}
+                >
+                  <Icon className="h-8 w-8 text-white" />
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                    {faculties.slice(0, visibleCount).map((faculty, index) => {
-                        const Icon = faculty.icon;
-                        return (
-                            <div
-                                key={index}
-                                className="group bg-gray-100 dark:bg-gray-900 p-6 rounded-lg shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer"
-                            >
-                                <div className={`flex items-center justify-center h-20 w-20 rounded-full bg-gradient-to-br ${faculty.color} mx-auto mb-6`}>
-                                    <Icon className="h-10 w-10 text-white" />
-                                </div>
-                                <h3 className="text-fluid-p font-semibold text-center text-gray-900 dark:text-white">{faculty.name}</h3>
-                            </div>
-                        );
-                    })}
-                </div>
-                {visibleCount < faculties.length && (
-                    <div className="text-center mt-12">
-                        <button
-                            onClick={showMoreFaculties}
-                            className="bg-primary text-white font-bold py-3 px-8 rounded-lg hover:bg-primary-dark transition-colors duration-300"
-                        >
-                            {t('seeAll')}
-                        </button>
+
+                {/* Nom qismi */}
+                <h3 className="text-lg font-semibold text-center text-gray-900 group-hover:text-[#0E104B] transition-colors duration-300">
+                  {faculty.name}
+                </h3>
+
+                {/* Hoverda chiqadigan pastki chiziq */}
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 group-hover:w-1/2 h-1 bg-primary rounded-full transition-all duration-300"></div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* HeroSection dan nusxa olingan content */}
+        <div className="grid max-w-screen-xl py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-12 lg:grid-cols-12">
+          {/* Chap tomonda 40% kenglik - fakultet kartalari ikki qator */}
+          <div className="lg:col-span-5 grid grid-cols-2 gap-4 h-[500px]">
+            {facultiesData.slice(0, visibleCount).map((faculty: Faculty, index: number) => {
+              return (
+                <div
+                  key={index}
+                  onClick={() => handleCardClick(index)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      handleCardClick(index);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  className={`w-full h-full ${index === currentImageIndex ? 'bg-gradient-to-br from-blue-100 to-indigo-200' : 'bg-gradient-to-br from-blue-50 to-indigo-100'} hover:from-blue-100 hover:to-indigo-200 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-blue-200 flex flex-col p-6 relative overflow-hidden cursor-pointer`}
+                >
+                  <div className="flex flex-row items-center h-full text-left">
+                    <img
+                      src={faculty.iconImage}
+                      alt={faculty.name}
+                      className="w-12 h-12 rounded-lg object-cover mr-4 flex-shrink-0"
+                      onError={(e) => {
+                        // Agar rasm yuklanmasa, fallback icon ko'rsatish
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const fallback = document.createElement('div');
+                        fallback.className = 'w-12 h-12 rounded-lg bg-gray-300 flex items-center justify-center mr-4 flex-shrink-0';
+                        fallback.innerHTML = '📚';
+                        target.parentNode?.insertBefore(fallback, target);
+                      }}
+                    />
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-gray-800 break-words">{faculty.name}</h3>
+                      {/* <p className="text-sm text-gray-600 leading-relaxed break-words mt-2">{faculty.description}</p> */}
                     </div>
-                )}
-            </Container>
-        </section>
-    );
+                  </div>
+                  {/* Progress bar - faqat active holatda ko'rinadi */}
+                  {index === currentImageIndex && (
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 rounded-b-xl overflow-hidden">
+                      <div
+                        className="h-full bg-blue-500 transition-all duration-75 ease-linear"
+                        style={{ width: `${progress}%` }}
+                      ></div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* O'ng tomonda to'liq kenglik - rasm carousel */}
+          <div className="lg:col-span-7 lg:flex relative ml-8">
+            <div className="relative w-full h-[500px] overflow-hidden rounded-3xl shadow-lg">
+              {facultiesData.slice(0, visibleCount).map((faculty: Faculty, index: number) => (
+                <img
+                  key={index}
+                  src={faculty.image || 'https://picsum.photos/600/400'}
+                  alt={faculty.name}
+                  className={`absolute inset-0 w-full h-full object-cover rounded-2xl transition-opacity duration-1000 ease-in-out ${
+                    index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* "Ko‘proq ko‘rish" tugmasi */}
+        {visibleCount < facultiesData.length && (
+          <div className="text-center mt-12">
+            <button
+              onClick={showMoreFaculties}
+              className="bg-primary text-white font-semibold py-3 px-10 rounded-full shadow-md hover:bg-primary/90 transition-all duration-300 transform hover:-translate-y-1"
+            >
+              {t('seeAll')}
+            </button>
+          </div>
+        )}
+      </Container>
+    </section>
+  );
 };
 
 export default FacultiesSection;
