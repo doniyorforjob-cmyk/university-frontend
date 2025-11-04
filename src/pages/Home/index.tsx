@@ -1,22 +1,20 @@
 import React from 'react';
 import HeroSection from './HeroSection';
+import Stats from './Stats';
 import FacultiesSection from './FacultiesSection';
-import Stats from '../../components/Home/Stats';
-import AnnouncementsSection from './AnnouncementsSection';
-import InteractiveServicesSection from './InteractiveServicesSection';
 import NewsSection from './NewsSection';
+import InteractiveServicesSection from './InteractiveServicesSection';
 
 const HomePage = () => {
-  return (
-    <>
-      <HeroSection />
-      <Stats />
-      <InteractiveServicesSection />
-      <NewsSection />
-      <FacultiesSection />
-      <AnnouncementsSection />
-    </>
-  );
+    return (
+        <>
+            <HeroSection />
+            <InteractiveServicesSection />
+            <NewsSection />
+            <FacultiesSection />
+            <Stats />
+        </>
+    );
 };
 
 export default HomePage;

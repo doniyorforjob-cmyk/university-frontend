@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { navItems } from './Layout/Header/data';
+import { fetchNavItems, NavItem } from '../../api/navbarApi';
 
 const Sidebar = () => {
+  const [navItems, setNavItems] = useState<NavItem[]>([]);
   const location = useLocation();
   const activeClasses = 'bg-blue-100 text-blue-600 font-semibold';
+
+  useEffect(() => {
+    const loadNavItems = async () => {
+        const items = await fetchNavItems();
+        setNavItems(items);
+    };
+    loadNavItems();
+  }, []);
 
   const informationService = navItems.find(item => item.title === 'Axborot xizmati');
 
@@ -31,15 +40,15 @@ const Sidebar = () => {
         <div className="bg-white shadow-md">
           <h3 className="text-lg font-bold text-white bg-blue-800 p-3">Axborot xizmati</h3>
           <ul className="space-y-1 p-4">
-            {informationService?.children?.map((child, index) => {
-              const isActive = location.pathname.startsWith(child.href);
+            {informationService?.children?.map((child: NavItem, index: number) => {
+              const isActive = location.pathname.startsWith(child.href!);
               // OAV biz haqimizda linkini to'g'ri marshrutga o'zgartirish
               const href = child.href === '/media' ? '/media-about-us' : child.href;
               
               return (
                 <li key={index}>
                   <Link
-                    to={href}
+                    to={href!}
                     className={`block py-2 px-4 rounded-md transition-colors ${isActive ? activeClasses : 'hover:bg-gray-100'}`}
                   >
                     {child.title === "E'lonlar" ? "E'lonlar" : child.title}

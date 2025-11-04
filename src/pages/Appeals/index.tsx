@@ -1,6 +1,6 @@
 import React from 'react';
-import Breadcrumbs from '../../components/Breadcrumbs';
-import Sidebar from '../../components/Sidebar';
+import Breadcrumbs from '../../components/shared/Breadcrumbs';
+import Sidebar from '../../components/shared/Sidebar';
 
 const AppealsPage: React.FC = () => {
   const bannerImageUrl = 'https://picsum.photos/seed/picsum-appeals/1200/300';

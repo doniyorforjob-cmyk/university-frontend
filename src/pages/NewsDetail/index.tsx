@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getNewsBySlug } from '../../services/newsService';
-import { NewsArticleDetail as NewsType } from '../../types/news';
-import Breadcrumbs from '../../components/Breadcrumbs';
+import { getPostBySlug } from '../../services/postService';
+import { PostDetail as NewsType } from '../../types/post';
+import Breadcrumbs from '../../components/shared/Breadcrumbs';
 
 const NewsDetailPage: React.FC = () => {
     const { slug } = useParams<{ slug: string }>();
@@ -18,7 +18,7 @@ const NewsDetailPage: React.FC = () => {
                 return;
             }
             try {
-                const data = await getNewsBySlug(slug);
+                const data = await getPostBySlug(slug);
                 if (data) {
                     setNewsItem(data);
                 } else {
@@ -62,7 +62,7 @@ const NewsDetailPage: React.FC = () => {
             <h1 className="text-4xl font-bold mb-4">{newsItem.title}</h1>
             <div className="flex items-center text-gray-600 text-sm mb-6">
                 <span className="mr-4">{new Date(newsItem.published_at).toLocaleDateString()}</span>
-                <span className="mr-4">Kategoriya: {newsItem.category.name}</span>
+                <span className="mr-4">Kategoriya: {newsItem.category}</span>
                 <span>Ko&apos;rishlar soni: {newsItem.views}</span>
             </div>
             <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: newsItem.content }} />

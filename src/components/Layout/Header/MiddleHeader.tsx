@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Container from '../../../components/Container';
+import Container from '../../shared/Container';
 
 const MiddleHeader: React.FC = () => {
     return (
@@ -16,8 +16,8 @@ const MiddleHeader: React.FC = () => {
                             className="h-20 w-20 rounded-full mr-4"
                         />
                         <div>
-                            <h1 className="text-4xl font-bold text-primary">NamDTU</h1>
-                            <p className="text-sm text-gray-500">Rasmiy web sahifasi</p>
+                            <h1 className="text-4xl font-bold text-[#0E104B]">NamDTU</h1>
+                            <p className="text-base text-gray-500">Rasmiy web sahifasi</p>
                         </div>
                     </Link>
 
@@ -27,7 +27,7 @@ const MiddleHeader: React.FC = () => {
                         <div className="flex items-center">
                             <div className="bg-primary/10 p-3 rounded-full mr-3">
                                 <svg
-                                    className="h-6 w-6 text-primary"
+                                    className="h-6 w-6 text-[#0E104B]"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -45,7 +45,7 @@ const MiddleHeader: React.FC = () => {
                                 <p className="text-sm font-semibold text-gray-600">Ishonch telefoni</p>
                                 <a
                                     href="tel:+998692288433"
-                                    className="text-primary font-bold hover:underline"
+                                    className="text-[#0E104B] font-bold hover:underline text-lg"
                                 >
                                     +998 (69) 228-84-33
                                 </a>
@@ -56,7 +56,7 @@ const MiddleHeader: React.FC = () => {
                         <div className="flex items-center">
                             <div className="bg-primary/10 p-3 rounded-full mr-3">
                                 <svg
-                                    className="h-6 w-6 text-primary"
+                                    className="h-6 w-6 text-[#0E104B]"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -77,8 +77,8 @@ const MiddleHeader: React.FC = () => {
                                 </svg>
                             </div>
                             <div>
-                                <p className="text-sm font-semibold text-gray-600">Manzil</p>
-                                <p className="text-primary font-bold">Namangan sh, Boburshox k, 1-uy</p>
+                                <p className="text-base font-semibold text-gray-600">Manzil</p>
+                                <p className="text-[#0E104B] font-bold text-lg">Namangan sh, Boburshox k, 1-uy</p>
                             </div>
                         </div>
                     </div>
@@ -93,16 +93,16 @@ const MiddleHeader: React.FC = () => {
                             className="h-16 w-16 rounded-full mr-3"
                         />
                         <div>
-                            <h1 className="text-3xl font-bold text-primary text-center">NamDTU</h1>
-                            <p className="text-xs text-gray-500 text-center">Rasmiy web sahifasi</p>
+                            <h1 className="text-3xl font-bold text-[#0E104B] text-center">NamDTU</h1>
+                            <p className="text-sm text-gray-500 text-center">Rasmiy web sahifasi</p>
                         </div>
                     </Link>
                     <div className="flex items-center justify-center space-x-4">
                         {/* Telefon raqami */}
-                        <div className="flex items-center text-sm">
+                        <div className="flex items-center text-base">
                             <div className="bg-primary/10 p-3 rounded-full mr-3">
                                 <svg
-                                    className="h-6 w-6 text-primary"
+                                    className="h-6 w-6 text-[#0E104B]"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -120,7 +120,7 @@ const MiddleHeader: React.FC = () => {
                                 <p className="text-sm font-semibold text-gray-600">Ishonch telefoni</p>
                                 <a
                                     href="tel:+998692288433"
-                                    className="text-primary font-bold hover:underline"
+                                    className="text-[#0E104B] font-bold hover:underline"
                                 >
                                     +998 (69) 228-84-33
                                 </a>

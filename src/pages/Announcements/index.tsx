@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getAnnouncements } from '../../api/announcementApi';
 import { Announcement } from '../../types/announcement';
-import Sidebar from '../../components/Sidebar';
+import Sidebar from '../../components/shared/Sidebar';
 import { CalendarDaysIcon } from '@heroicons/react/24/outline';
-import Breadcrumbs from '../../components/Breadcrumbs';
+import Breadcrumbs from '../../components/shared/Breadcrumbs';
 
 const AnnouncementsPage: React.FC = () => {
     const [announcements, setAnnouncements] = useState<Announcement[]>([]);

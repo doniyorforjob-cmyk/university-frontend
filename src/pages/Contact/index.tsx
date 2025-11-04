@@ -1,6 +1,6 @@
 import React from 'react';
-import Breadcrumbs from '../../components/Breadcrumbs';
-import Banner from '../../components/Banner';
+import Breadcrumbs from '../../components/shared/Breadcrumbs';
+import Banner from '../../components/shared/Banner';
 import DepartmentList from './components/DepartmentList';
 import ContactForm from './components/ContactForm';
 

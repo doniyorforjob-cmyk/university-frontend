@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getNews } from '../../services/newsService';
-import { NewsArticle } from '../../types/news';
-import Sidebar from '../../components/Sidebar';
-import Breadcrumbs from '../../components/Breadcrumbs';
+import { getPosts } from '../../services/postService';
+import { Post } from '../../types/post';
+import Sidebar from '../../components/shared/Sidebar';
+import Breadcrumbs from '../../components/shared/Breadcrumbs';
 
 const NewsPage: React.FC = () => {
-    const [articles, setArticles] = useState<NewsArticle[]>([]);
+    const [articles, setArticles] = useState<Post[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
@@ -17,7 +17,7 @@ const NewsPage: React.FC = () => {
     useEffect(() => {
         const fetchNews = async () => {
             try {
-                const data = await getNews();
+                const data = await getPosts('news');
                 setArticles(data);
             } catch (err) {
                 setError('Yangiliklarni yuklashda xatolik yuz berdi.');
@@ -76,7 +76,7 @@ const NewsPage: React.FC = () => {
                     {/* Chap ustun: Yangiliklar ro'yxati */}
                     <div className="lg:w-3/4">
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                            {currentArticles.map((article: NewsArticle) => (
+                            {currentArticles.map((article) => (
                                 <Link
                                     to={`/news/${article.slug}`}
                                     key={article.id}

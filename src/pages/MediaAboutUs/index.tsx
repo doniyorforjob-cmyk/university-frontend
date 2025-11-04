@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getMediaArticles } from '../../api/mediaApi';
 import { MediaArticle } from '../../types/media';
-import Sidebar from '../../components/Sidebar';
+import Sidebar from '../../components/shared/Sidebar';
 import { CalendarDaysIcon, LinkIcon } from '@heroicons/react/24/outline';
-import Breadcrumbs from '../../components/Breadcrumbs';
+import Breadcrumbs from '../../components/shared/Breadcrumbs';
 
 const MediaAboutUsPage: React.FC = () => {
     const [articles, setArticles] = useState<MediaArticle[]>([]);
