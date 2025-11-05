@@ -5,6 +5,7 @@ import Container from '../../components/shared/Container';
 import { useNewsData } from '../../hooks/useNewsData';
 import { PostCategory } from '../../types/post';
 import { newsItems } from '../../api/navbarApi';
+import { AspectRatio } from '../../components/ui';
 
 const tabs: { id: PostCategory; label: string }[] = [
   { id: 'news', label: 'Yangiliklar' },
@@ -102,14 +103,16 @@ const NewsSection = () => {
                   {!loading && !error && (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                       {currentData.slice(0, 6).map(item => (
-                        <div key={item.id} className="group relative rounded-lg overflow-hidden shadow-lg h-80 transform hover:-translate-y-2 transition-transform duration-300">
+                        <div key={item.id} className="group relative rounded-lg overflow-hidden shadow-lg transform hover:-translate-y-2 transition-transform duration-300">
                           <Link to={`/news/${item.slug}`} className="block h-full">
-                            <img
-                              className="w-full h-full object-cover"
-                              src={item.image_url}
-                              alt={item.title}
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
+                            <AspectRatio ratio={1 / 1}>
+                              <img
+                                className="w-full h-full object-cover rounded-lg"
+                                src={item.image_url}
+                                alt={item.title}
+                              />
+                            </AspectRatio>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent rounded-lg"></div>
                             <div className="absolute bottom-0 left-0 p-4">
                               <div className="flex items-center text-sm text-gray-300 mb-2">
                                 <CalendarDaysIcon className="w-5 h-5 mr-2" />

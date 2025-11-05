@@ -3,7 +3,6 @@
 module.exports = {
   darkMode: ["class"],
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
-
   theme: {
     container: {
       center: true,
@@ -89,32 +88,32 @@ module.exports = {
         'fluid-p': 'clamp(1rem, 2.5vw, 1.125rem)',
         'fluid-sm': 'clamp(0.875rem, 2vw, 1rem)',
         'fluid-xs': 'clamp(0.75rem, 1.8vw, 0.875rem)',
-        'h1': ['2.5rem', { lineHeight: '3rem' }],
-        'h2': ['2rem', { lineHeight: '2.5rem' }],
-        'h3': ['1.75rem', { lineHeight: '2.25rem' }],
-        'h4': ['1.5rem', { lineHeight: '2rem' }],
-        'h5': ['1.25rem', { lineHeight: '1.75rem' }],
-        'h6': ['1.125rem', { lineHeight: '1.5rem' }],
-        'body': ['1rem', { lineHeight: '1.6' }],
-        'caption': ['0.875rem', { lineHeight: '1.4' }],
+        h1: ['2.5rem', { lineHeight: '3rem' }],
+        h2: ['2rem', { lineHeight: '2.5rem' }],
+        h3: ['1.75rem', { lineHeight: '2.25rem' }],
+        h4: ['1.5rem', { lineHeight: '2rem' }],
+        h5: ['1.25rem', { lineHeight: '1.75rem' }],
+        h6: ['1.125rem', { lineHeight: '1.5rem' }],
+        body: ['1rem', { lineHeight: '1.6' }],
+        caption: ['0.875rem', { lineHeight: '1.4' }],
       },
 
       // === RAZMERLAR ===
       spacing: {
-        'xs': '0.5rem',
-        'sm': '1rem',
-        'md': '1.5rem',
-        'lg': '2rem',
-        'xl': '3rem',
+        xs: '0.5rem',
+        sm: '1rem',
+        md: '1.5rem',
+        lg: '2rem',
+        xl: '3rem',
         '2xl': '4rem',
         '3xl': '6rem',
       },
 
       // === BO‘SHLIQ ===
       padding: {
-        'btn': '0.75rem 1.5rem',
-        'card': '1.5rem',
-        'input': '0.75rem 1rem',
+        btn: '0.75rem 1.5rem',
+        card: '1.5rem',
+        input: '0.75rem 1rem',
       },
 
       // === RADIUS ===
@@ -122,31 +121,36 @@ module.exports = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
-        'none': '0',
-        'DEFAULT': '0.5rem',
-        'xl': '1.5rem',
-        'full': '9999px',
+        none: '0',
+        DEFAULT: '0.5rem',
+        xl: '1.5rem',
+        full: '9999px',
       },
 
       // === SHADOW ===
       boxShadow: {
-        'sm': '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-        'DEFAULT': '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-        'md': '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-        'lg': '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
-        'xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+        sm: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+        DEFAULT: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+        md: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+        lg: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+        xl: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
       },
 
-      // === ANIMATSIYALAR ===
+      // === ANIMATSIYALAR – YANGI: slide-in-bottom ===
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out',
         'slide-up': 'slideUp 0.4s ease-out',
         'pulse-slow': 'pulse 3s infinite',
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        // Navbar dropdown uchun – pastdan ko‘tarilib chiqadi
+        "slide-in-bottom": "slideInFromBottom 0.25s ease-out forwards",
       },
       keyframes: {
-        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' }
+        },
         slideUp: {
           '0%': { opacity: '0', transform: 'translateY(10px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
@@ -159,10 +163,20 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        // YANGI: Dropdown oynasi pastdan ko‘tarilib chiqadi
+        slideInFromBottom: {
+          '0%': {
+            opacity: '0',
+            transform: 'translateY(12px)',
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateY(0)',
+          },
+        },
       },
     },
   },
-
   plugins: [
     require('@tailwindcss/aspect-ratio'),
     require('@tailwindcss/line-clamp'),

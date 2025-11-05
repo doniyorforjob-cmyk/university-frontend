@@ -11,3 +11,4 @@ export type { TextareaProps } from './textarea';
 export { Label } from './label';
 export { Alert, AlertTitle, AlertDescription } from './alert';
 export { Skeleton } from './skeleton';
+export { AspectRatio } from './aspect-ratio';

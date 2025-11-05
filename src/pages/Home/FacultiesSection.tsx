@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Container from '../../components/shared/Container';
 import { facultiesData, Faculty } from '../../api/facultiesApi';
-import { FaLaptop, FaCogs, FaBook } from 'react-icons/fa';
+import { Button } from '@/components/ui/button'; // Button import
 
 const FacultiesSection: React.FC = () => {
   const { t } = useTranslation();
@@ -15,149 +15,157 @@ const FacultiesSection: React.FC = () => {
   };
 
   useEffect(() => {
-    const progressInterval = setInterval(() => {
+    setProgress(0);
+  }, [currentImageIndex]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
-          setCurrentImageIndex((prevIndex) =>
-            prevIndex === facultiesData.length - 1 ? 0 : prevIndex + 1
-          );
+          setCurrentImageIndex((i) => (i + 1) % visibleCount);
           return 0;
         }
-        return prev + 1; // Har 40ms da 1% oshadi (4000ms / 100 = 40ms)
+        return prev + 1;
       });
     }, 40);
+    return () => clearInterval(interval);
+  }, [currentImageIndex, visibleCount]);
 
-    return () => clearInterval(progressInterval);
-  }, [facultiesData.length]);
-
-  const handleCardClick = (index: number) => {
+  const handleCardInteraction = (index: number) => {
+    if (index >= visibleCount) return;
     setCurrentImageIndex(index);
-    setProgress(0); // Kartochka bosilganda progressni reset qilish
   };
 
   return (
-    <section className="py-12 transition-colors duration-500">
-      <Container>
-        {/* Sarlavha (chap tomonda) */}
-        <div className="mb-8">
-          <div className="flex items-center">
+    <>
+      {/* SARLAVHA */}
+      <div className="bg-white py-6">
+        <Container>
+          <div className="flex items-center max-w-screen-xl mx-auto">
             <div className="w-1 h-8 bg-primary mr-4 rounded"></div>
-            <h2 className="text-3xl font-bold text-gray-900">
-              {t('faculties')}
-            </h2>
+            <h2 className="text-3xl font-bold text-gray-900">{t('faculties')}</h2>
           </div>
-        </div>
+        </Container>
+      </div>
 
-        {/* Fakultet kartalari - eski kod */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {facultiesData.slice(0, visibleCount).map((faculty: Faculty, index: number) => {
-            const Icon = faculty.icon;
-            return (
-              <div
-                key={index}
-                className="group relative bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-primary shadow-sm hover:shadow-lg transition-all duration-300"
-              >
-                {/* Icon qismi */}
-                <div
-                  className={`flex items-center justify-center h-16 w-16 rounded-lg bg-gradient-to-br ${faculty.color} mx-auto mb-4 shadow-md group-hover:scale-110 transition-transform duration-300`}
-                >
-                  <Icon className="h-8 w-8 text-white" />
-                </div>
+      {/* KONTENT */}
+      <section className="py-16 bg-gradient-to-br from-teal-900 via-cyan-800 to-teal-900">
+        <Container>
+          <div className="grid max-w-screen-xl py-8 mx-auto lg:gap-10 xl:gap-0 lg:py-12 lg:grid-cols-12">
+            {/* KARTOCHKALAR */}
+            <div className="lg:col-span-5 grid grid-cols-2 gap-4 min-h-[500px]">
+              {facultiesData.slice(0, visibleCount).map((faculty: Faculty, index: number) => {
+                const isActive = index === currentImageIndex;
+                return (
+                  <div
+                    key={index}
+                    onClick={() => handleCardInteraction(index)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleCardInteraction(index);
+                      }
+                    }}
+                    role="button"
+                    tabIndex={0}
+                    className={`
+                      group relative bg-white
+                      cursor-pointer transition-all duration-300 transform
+                      hover:scale-105 focus:outline-none
+                      ${isActive ? 'shadow-2xl z-20 scale-105' : 'shadow-lg hover:shadow-xl z-10'}
+                      rounded-none flex flex-col
+                    `}
+                    style={{
+                      pointerEvents: 'auto',
+                      zIndex: isActive ? 20 : 10,
+                    }}
+                  >
+                    <div className="flex-1 flex flex-col justify-between p-5 min-h-0">
+                      <div className="flex justify-between items-start">
+                        <div
+                          className={`w-11 h-11 rounded-xl bg-gradient-to-br ${faculty.color} flex items-center justify-center shadow-md`}
+                        >
+                          <img
+                            src={faculty.iconImage}
+                            alt={faculty.name}
+                            className="w-7 h-7 object-contain"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                              const fallback = document.createElement('div');
+                              fallback.className = 'w-7 h-7 flex items-center justify-center text-white text-lg font-bold';
+                              fallback.innerHTML = 'F';
+                              target.parentNode?.insertBefore(fallback, target);
+                            }}
+                          />
+                        </div>
+                        {isActive && (
+                          <div className="w-3 h-3 bg-cyan-400 rounded-full animate-pulse shadow-lg" />
+                        )}
+                      </div>
 
-                {/* Nom qismi */}
-                <h3 className="text-lg font-semibold text-center text-gray-900 group-hover:text-[#0E104B] transition-colors duration-300">
-                  {faculty.name}
-                </h3>
+                      <div className="mt-4">
+                        <h3 className="text-lg font-bold text-gray-900 group-hover:text-gray-950 transition-colors duration-300 leading-tight">
+                          {faculty.name}
+                        </h3>
+                      </div>
 
-                {/* Hoverda chiqadigan pastki chiziq */}
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 group-hover:w-1/2 h-1 bg-primary rounded-full transition-all duration-300"></div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* HeroSection dan nusxa olingan content */}
-        <div className="grid max-w-screen-xl py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-12 lg:grid-cols-12">
-          {/* Chap tomonda 40% kenglik - fakultet kartalari ikki qator */}
-          <div className="lg:col-span-5 grid grid-cols-2 gap-4 h-[500px]">
-            {facultiesData.slice(0, visibleCount).map((faculty: Faculty, index: number) => {
-              return (
-                <div
-                  key={index}
-                  onClick={() => handleCardClick(index)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      handleCardClick(index);
-                    }
-                  }}
-                  role="button"
-                  tabIndex={0}
-                  className={`w-full h-full ${index === currentImageIndex ? 'bg-gradient-to-br from-blue-100 to-indigo-200' : 'bg-gradient-to-br from-blue-50 to-indigo-100'} hover:from-blue-100 hover:to-indigo-200 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-blue-200 flex flex-col p-6 relative overflow-hidden cursor-pointer`}
-                >
-                  <div className="flex flex-row items-center h-full text-left">
-                    <img
-                      src={faculty.iconImage}
-                      alt={faculty.name}
-                      className="w-12 h-12 rounded-lg object-cover mr-4 flex-shrink-0"
-                      onError={(e) => {
-                        // Agar rasm yuklanmasa, fallback icon ko'rsatish
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        const fallback = document.createElement('div');
-                        fallback.className = 'w-12 h-12 rounded-lg bg-gray-300 flex items-center justify-center mr-4 flex-shrink-0';
-                        fallback.innerHTML = '📚';
-                        target.parentNode?.insertBefore(fallback, target);
-                      }}
-                    />
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold text-gray-800 break-words">{faculty.name}</h3>
-                      {/* <p className="text-sm text-gray-600 leading-relaxed break-words mt-2">{faculty.description}</p> */}
+                      <div className="mt-3">
+                        <div
+                          className={`bg-gray-200 rounded-full overflow-hidden transition-all duration-300 ${
+                            isActive ? 'h-2 shadow-md' : 'h-1'
+                          }`}
+                        >
+                          <div
+                            className={`h-full bg-gradient-to-r ${faculty.color} transition-all duration-[4000ms] ease-linear`}
+                            style={{
+                              width: isActive ? `${progress}%` : '0%',
+                            }}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  {/* Progress bar - faqat active holatda ko'rinadi */}
-                  {index === currentImageIndex && (
-                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 rounded-b-xl overflow-hidden">
-                      <div
-                        className="h-full bg-blue-500 transition-all duration-75 ease-linear"
-                        style={{ width: `${progress}%` }}
-                      ></div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
 
-          {/* O'ng tomonda to'liq kenglik - rasm carousel */}
-          <div className="lg:col-span-7 lg:flex relative ml-8">
-            <div className="relative w-full h-[500px] overflow-hidden rounded-3xl shadow-lg">
-              {facultiesData.slice(0, visibleCount).map((faculty: Faculty, index: number) => (
-                <img
-                  key={index}
-                  src={faculty.image || 'https://picsum.photos/600/400'}
-                  alt={faculty.name}
-                  className={`absolute inset-0 w-full h-full object-cover rounded-2xl transition-opacity duration-1000 ease-in-out ${
-                    index === currentImageIndex ? 'opacity-100' : 'opacity-0'
-                  }`}
-                />
-              ))}
+            {/* CAROUSEL */}
+            <div className="lg:col-span-7 lg:flex relative ml-0 lg:ml-10 mt-8 lg:mt-0">
+              <div className="relative w-full h-full min-h-[500px] overflow-hidden rounded-3xl shadow-2xl bg-white/15 backdrop-blur-lg border border-cyan-200/30">
+                {facultiesData.slice(0, visibleCount).map((faculty: Faculty, index: number) => (
+                  <img
+                    key={index}
+                    src={faculty.image || 'https://picsum.photos/600/400'}
+                    alt={faculty.name}
+                    className={`
+                      absolute inset-0 w-full h-full object-cover rounded-3xl
+                      transition-opacity duration-1000 ease-in-out
+                      ${index === currentImageIndex ? 'opacity-100' : 'opacity-0'}
+                    `}
+                    loading="lazy"
+                  />
+                ))}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* "Ko‘proq ko‘rish" tugmasi */}
-        {visibleCount < facultiesData.length && (
-          <div className="text-center mt-12">
-            <button
-              onClick={showMoreFaculties}
-              className="bg-primary text-white font-semibold py-3 px-10 rounded-full shadow-md hover:bg-primary/90 transition-all duration-300 transform hover:-translate-y-1"
-            >
-              {t('seeAll')}
-            </button>
-          </div>
-        )}
-      </Container>
-    </section>
+          {/* BARCHASINI KO'RISH — KATTAROQ TUGMA */}
+          {visibleCount < facultiesData.length && (
+            <div className="text-center mt-16">
+              <Button
+                onClick={showMoreFaculties}
+                variant="default"
+                size="xxl"
+                className="bg-gradient-to-r from-cyan-500 to-teal-600 text-white shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
+              >
+                {t('seeAll')}
+              </Button>
+            </div>
+          )}
+        </Container>
+      </section>
+    </>
   );
 };
 
