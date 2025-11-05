@@ -4,6 +4,8 @@ import Stats from './Stats';
 import FacultiesSection from './FacultiesSection';
 import NewsSection from './NewsSection';
 import InteractiveServicesSection from './InteractiveServicesSection';
+import VideoGallerySection from './VideoGallerySection';
+
 
 const HomePage = () => {
     return (
@@ -13,6 +15,7 @@ const HomePage = () => {
             <NewsSection />
             <FacultiesSection />
             <Stats />
+            <VideoGallerySection />
         </>
     );
 };

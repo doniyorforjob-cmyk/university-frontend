@@ -10,6 +10,7 @@ import MediaAboutUsPage from './pages/MediaAboutUs';
 import AppealsPage from './pages/Appeals';
 import ContactPage from './pages/Contact';
 import OrganizationalStructurePage from './pages/OrganizationalStructure';
+import VideoGallery from "./pages/Home/VideoGallerySection";
 
 // Vaqtinchalik sahifa
 const AnnouncementDetailPage = () => (
