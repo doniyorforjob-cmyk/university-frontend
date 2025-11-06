@@ -71,7 +71,7 @@ const InteractiveServicesSection = () => {
   };
 
   return (
-    <div className="py-12 bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="pt-24">
       <Container>
         <div className="mb-8 flex justify-between items-center">
           <div className="flex items-center">
