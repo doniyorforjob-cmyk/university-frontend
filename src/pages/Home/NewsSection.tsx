@@ -32,7 +32,7 @@ const AnnouncementsPreview = () => {
 
                         return (
                             <li key={item.id}>
-                                <Link to={`/announcements/${item.id}`} className="group flex items-center p-3 bg-white hover:bg-gray-50 transition-all duration-300 border border-gray-200 rounded-lg">
+                                <Link to={`/announcements/${item.id}`} className="group flex items-center p-3 bg-white hover:bg-gray-50 transition-all duration-300 border border-gray-200">
                                     <div className="flex flex-col items-center justify-center w-16 text-center flex-shrink-0">
                                         <span className="text-xs font-bold text-[#0E104B] uppercase tracking-wider">{month}</span>
                                         <span className="text-2xl font-extrabold text-gray-800">{day}</span>

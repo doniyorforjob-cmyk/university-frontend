@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Container from '../../components/shared/Container';
 import { slides, cards } from '../../data/heroData';
 
@@ -6,15 +6,21 @@ export default function HeroSection() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [slideDirection, setSlideDirection] = useState<"left" | "right">("left");
   const [progress, setProgress] = useState(0);
+  const slideIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Avtomatik slayd o'zgarishi
   useEffect(() => {
-    const interval = setInterval(() => {
-      setSlideDirection("left");
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-      setProgress(0);
-    }, 7000);
-    return () => clearInterval(interval);
+    const startInterval = () => {
+      slideIntervalRef.current = setInterval(() => {
+        setSlideDirection("left");
+        setCurrentSlide((prev) => (prev + 1) % slides.length);
+        setProgress(0);
+      }, 7000);
+    };
+    startInterval();
+    return () => {
+      if (slideIntervalRef.current) clearInterval(slideIntervalRef.current);
+    };
   }, []);
 
   // Progress bar
@@ -29,6 +35,16 @@ export default function HeroSection() {
   const goToSlide = (index: number) => {
     setSlideDirection("left");
     setCurrentSlide(index);
+    setProgress(0);
+    // Reset the slide interval
+    if (slideIntervalRef.current) {
+      clearInterval(slideIntervalRef.current);
+      slideIntervalRef.current = setInterval(() => {
+        setSlideDirection("left");
+        setCurrentSlide((prev) => (prev + 1) % slides.length);
+        setProgress(0);
+      }, 7000);
+    }
   };
 
   return (
@@ -49,12 +65,13 @@ export default function HeroSection() {
               >
                 <div className="flex flex-col md:flex-row items-start justify-between h-full">
                   {/* Chap tomonda matn */}
-                  <div className="flex-1 pt-8">
+                  <div className="flex-1 pt-8 pr-12">
                     <p className="text-sm text-blue-600 mb-2 uppercase tracking-wide">Universitet</p>
                     <h1 className="text-4xl md:text-6xl font-bold mb-4">{slide.title}</h1>
                     <p className="text-xl md:text-2xl mb-6">{slide.description}</p>
-                    <button className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-3 rounded-lg shadow-lg hover:shadow-xl transition flex items-center gap-2">
-                      <span>→</span> {slide.button}
+                    <button className="bg-yellow-400 text-gray-800 border-2 border-yellow-400 px-8 py-3 shadow-lg hover:bg-yellow-500 hover:shadow-xl transition-all duration-500 flex items-center gap-2 relative overflow-hidden group">
+                      <span className="bg-yellow-500 absolute inset-0 scale-x-0 origin-left transition-transform duration-500 group-hover:scale-x-100 -z-10"></span>
+                      <span className="transition-transform duration-500 group-hover:translate-x-1 relative z-10">→</span> <span className="relative z-10">{slide.button}</span>
                     </button>
                   </div>
                   {/* O'ng tomonda rasm */}
@@ -78,7 +95,7 @@ export default function HeroSection() {
           <button
             key={index}
             type="button"
-            className="relative backdrop-blur-md bg-white/30 rounded-xl shadow-lg p-6 min-w-0 flex-1 min-h-[140px] flex items-center justify-start gap-4 cursor-pointer transition hover:scale-105 focus:outline-none"
+            className="relative backdrop-blur-md bg-white/30 shadow-lg p-6 min-w-0 flex-1 min-h-[140px] flex items-center justify-start gap-4 cursor-pointer transition hover:scale-105 focus:outline-none"
             onClick={() => goToSlide(index)}
           >
             <img

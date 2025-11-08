@@ -52,9 +52,9 @@ const InteractiveServicesSection = () => {
           const Icon = iconMap[service.icon] || ExclamationTriangleIcon;
           return (
             <Link to={service.href} key={service.id} className="group">
-              <div className="h-full p-6 bg-white rounded-lg transform hover:-translate-y-2 transition-all duration-300 flex flex-row items-start shadow-lg hover:shadow-2xl border border-gray-200 hover:border-blue-500">
+              <div className="h-full p-6 bg-white transition-all duration-300 flex flex-row items-start border border-gray-200 hover:border-blue-500">
                 <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center h-12 w-12 rounded-md bg-gradient-to-br from-blue-600 to-blue-800 text-white transform transition-transform duration-300 group-hover:scale-110">
+                  <div className="flex items-center justify-center h-12 w-12 rounded-md bg-gradient-to-br from-blue-600 to-blue-800 text-white">
                     <Icon className="w-8 h-8" />
                   </div>
                 </div>

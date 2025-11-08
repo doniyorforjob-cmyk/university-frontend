@@ -4,6 +4,14 @@ import { getPosts } from '../../services/postService';
 import { Post } from '../../types/post';
 import Sidebar from '../../components/shared/Sidebar';
 import Breadcrumbs from '../../components/shared/Breadcrumbs';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '../../components/ui/pagination';
 
 const NewsPage: React.FC = () => {
     const [articles, setArticles] = useState<Post[]>([]);
@@ -42,7 +50,55 @@ const NewsPage: React.FC = () => {
     };
 
     if (loading) {
-        return <div className="text-center py-20">Yuklanmoqda...</div>;
+        return (
+            <div className="bg-gray-50">
+                {/* Banner skeleton */}
+                <div className="h-48 bg-gray-300 animate-pulse"></div>
+
+                {/* Content skeleton */}
+                <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-12">
+                    {/* Breadcrumbs skeleton */}
+                    <div className="h-6 bg-gray-300 rounded animate-pulse mb-6 w-64"></div>
+
+                    <div className="flex flex-col lg:flex-row gap-10 mt-6">
+                        {/* News grid skeleton */}
+                        <div className="lg:w-3/4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                                {Array.from({ length: 6 }).map((_, index) => (
+                                    <div key={index} className="bg-white overflow-hidden shadow-sm animate-pulse">
+                                        {/* Image skeleton */}
+                                        <div className="h-48 bg-gray-300"></div>
+                                        {/* Content skeleton */}
+                                        <div className="p-6">
+                                            <div className="flex justify-between items-center mb-2">
+                                                <div className="h-4 bg-gray-300 rounded w-20"></div>
+                                                <div className="h-4 bg-gray-300 rounded w-16"></div>
+                                            </div>
+                                            <div className="h-6 bg-gray-300 rounded mb-4"></div>
+                                            <div className="h-4 bg-gray-300 rounded w-24 ml-auto"></div>
+                                        </div>
+                                        {/* Progress bar skeleton */}
+                                        <div className="h-1 bg-gray-300"></div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Sidebar skeleton */}
+                        <div className="lg:w-1/4 space-y-4">
+                            <div className="bg-white shadow-sm animate-pulse p-6">
+                                <div className="h-6 bg-gray-300 rounded mb-4"></div>
+                                <div className="space-y-3">
+                                    {Array.from({ length: 5 }).map((_, index) => (
+                                        <div key={index} className="h-4 bg-gray-300 rounded"></div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     if (error) {
@@ -50,7 +106,7 @@ const NewsPage: React.FC = () => {
     }
 
     return (
-        <div className="bg-gray-50">
+        <div>
             {/* Banner */}
             <div
                 className="relative h-48 bg-cover bg-center"
@@ -77,18 +133,25 @@ const NewsPage: React.FC = () => {
                     <div className="lg:w-3/4">
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                             {currentArticles.map((article) => (
-                                <Link
-                                    to={`/news/${article.slug}`}
+                                <div
                                     key={article.id}
-                                    className="flex flex-col bg-white shadow-lg overflow-hidden transition-transform duration-300 hover:translate-y-2 hover:shadow-xl border-b-4 border-secondary"
+                                    className="flex flex-col bg-white overflow-hidden transition-all duration-300 relative group shadow-sm"
+                                    onClick={(e) => e.preventDefault()}
+                                    onKeyDown={(e) => e.preventDefault()}
+                                    role="presentation"
                                 >
-                                    <div className="h-48 overflow-hidden">
+                                    <div className="absolute bottom-0 left-0 h-1 bg-secondary w-[10%] group-hover:w-full transition-all duration-700 ease-out"></div>
+                                    <Link
+                                        to={`/news/${article.slug}`}
+                                        className="h-48 overflow-hidden relative block"
+                                    >
                                         <img
                                             src={article.image_url || 'https://via.placeholder.com/400x400?text=Rasm+Mavjud+Emas'}
                                             alt={article.title}
                                             className="w-full h-full object-cover"
                                         />
-                                    </div>
+                                        <div className="absolute -bottom-3 left-4 w-0 h-0 border-l-[30px] border-l-transparent border-r-[30px] border-r-transparent border-b-[30px] border-b-white"></div>
+                                    </Link>
                                     <div className="p-6 flex flex-col flex-grow">
                                         <div className="flex justify-between items-center text-sm text-gray-500 mb-2">
                                             <span>{new Date(article.published_at).toLocaleDateString()}</span>
@@ -100,28 +163,57 @@ const NewsPage: React.FC = () => {
                                                 <span>{article.views}</span>
                                             </div>
                                         </div>
-                                        <h3 className="text-lg font-bold mb-4 flex-grow">
+                                        <Link
+                                            to={`/news/${article.slug}`}
+                                            className="text-lg font-bold mb-4 flex-grow hover:text-blue-600 transition-colors"
+                                        >
                                             {article.title}
-                                        </h3>
-                                        <div className="mt-auto">
-                                            {/* This div can be used later for tags or other info */}
+                                        </Link>
+                                        <div className="mt-auto flex justify-end">
+                                            <Link
+                                                to={`/news/${article.slug}`}
+                                                className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium text-sm"
+                                            >
+                                                Batafsil
+                                                <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                                </svg>
+                                            </Link>
                                         </div>
                                     </div>
-                                </Link>
+                                </div>
                             ))}
                         </div>
 
                         {/* Pagination */}
-                        <div className="mt-12 flex justify-center">
-                            {Array.from({ length: totalPages }, (_, index) => (
-                                <button
-                                    key={index + 1}
-                                    onClick={() => handlePageChange(index + 1)}
-                                    className={`px-4 py-2 rounded-md text-sm font-medium ${currentPage === index + 1 ? 'bg-blue-600 text-white shadow' : 'bg-white text-gray-700 border hover:bg-gray-50'}`}
-                                >
-                                    {index + 1}
-                                </button>
-                            ))}
+                        <div className="mt-12">
+                            <Pagination>
+                                <PaginationContent>
+                                    <PaginationItem>
+                                        <PaginationPrevious
+                                            onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
+                                            className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                                        />
+                                    </PaginationItem>
+                                    {Array.from({ length: totalPages }, (_, index) => (
+                                        <PaginationItem key={index + 1}>
+                                            <PaginationLink
+                                                onClick={() => handlePageChange(index + 1)}
+                                                isActive={currentPage === index + 1}
+                                                className="cursor-pointer"
+                                            >
+                                                {index + 1}
+                                            </PaginationLink>
+                                        </PaginationItem>
+                                    ))}
+                                    <PaginationItem>
+                                        <PaginationNext
+                                            onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
+                                            className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                                        />
+                                    </PaginationItem>
+                                </PaginationContent>
+                            </Pagination>
                         </div>
                     </div>
 

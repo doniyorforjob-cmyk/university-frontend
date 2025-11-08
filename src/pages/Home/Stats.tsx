@@ -47,7 +47,7 @@ const IconStats: React.FC = () => {
   };
 
   return (
-    <section ref={ref} className="py-12 bg-gradient-to-br from-blue-50 to-indigo-100">
+    <section ref={ref} className="py-12">
       <Container>
         <div className="mb-8 flex items-center">
           <div className="w-1 bg-primary h-8 mr-4"></div>

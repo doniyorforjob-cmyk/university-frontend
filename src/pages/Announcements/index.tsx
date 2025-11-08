@@ -77,7 +77,7 @@ const AnnouncementsPage: React.FC = () => {
                     <div className="lg:w-3/4">
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
                             {currentAnnouncements.map((announcement: Announcement) => (
-                                <div key={announcement.id} className="group relative rounded-lg overflow-hidden shadow-lg h-64 transform hover:-translate-y-2 transition-transform duration-300">
+                                <div key={announcement.id} className="group relative overflow-hidden h-64 transform hover:-translate-y-2 transition-transform duration-300">
                                     <Link to={`/announcements/${announcement.slug}`} className="block h-full">
                                         <img
                                             className="w-full h-full object-cover"

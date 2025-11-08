@@ -39,7 +39,7 @@ const FacultiesSection: React.FC = () => {
   return (
     <>
       {/* SARLAVHA */}
-      <div className="bg-white py-6">
+      <div className="py-6">
         <Container>
           <div className="flex items-center max-w-screen-xl mx-auto">
             <div className="w-1 h-8 bg-primary mr-4 rounded"></div>
@@ -49,7 +49,7 @@ const FacultiesSection: React.FC = () => {
       </div>
 
       {/* KONTENT */}
-      <section className="py-16 bg-gradient-to-br from-teal-900 via-cyan-800 to-teal-900">
+      <section className="pt-0 pb-16">
         <Container>
           <div className="grid max-w-screen-xl py-8 mx-auto lg:gap-10 xl:gap-0 lg:py-12 lg:grid-cols-12">
             {/* KARTOCHKALAR */}
@@ -69,10 +69,10 @@ const FacultiesSection: React.FC = () => {
                     role="button"
                     tabIndex={0}
                     className={`
-                      group relative bg-white
+                      group relative bg-white border border-gray-200
                       cursor-pointer transition-all duration-300 transform
                       hover:scale-105 focus:outline-none
-                      ${isActive ? 'shadow-2xl z-20 scale-105' : 'shadow-lg hover:shadow-xl z-10'}
+                      ${isActive ? 'z-20 scale-105 border-blue-500' : 'z-10 hover:border-blue-300'}
                       rounded-none flex flex-col
                     `}
                     style={{

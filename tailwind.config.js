@@ -19,8 +19,8 @@ module.exports = {
       sm: '640px',
       md: '768px',
       lg: '1024px',
-      xl: '1500px',
-      '2xl': '1600px',
+      xl: '1350px',
+      '2xl': '1536px',
     },
     extend: {
       // === RANG PALITRASI ===
