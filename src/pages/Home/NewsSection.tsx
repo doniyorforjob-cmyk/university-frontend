@@ -6,6 +6,7 @@ import { useNewsData } from '../../hooks/useNewsData';
 import { PostCategory } from '../../types/post';
 import { newsItems } from '../../api/navbarApi';
 import { AspectRatio } from '../../components/ui';
+import { OptimizedImage } from '../../components/shared';
 
 const tabs: { id: PostCategory; label: string }[] = [
   { id: 'news', label: 'Yangiliklar' },
@@ -106,10 +107,13 @@ const NewsSection = () => {
                         <div key={item.id} className="group relative rounded-lg overflow-hidden shadow-lg transform hover:-translate-y-2 transition-transform duration-300">
                           <Link to={`/news/${item.slug}`} className="block h-full">
                             <AspectRatio ratio={1 / 1}>
-                              <img
+                              <OptimizedImage
                                 className="w-full h-full object-cover rounded-lg"
                                 src={item.image_url}
                                 alt={item.title}
+                                width={400}
+                                height={400}
+                                lazy={true}
                               />
                             </AspectRatio>
                             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent rounded-lg"></div>

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import Container from '../../components/shared/Container';
 import { facultiesData, Faculty } from '../../api/facultiesApi';
 import { Button } from '@/components/ui/button'; // Button import
+import { OptimizedImage } from '../../components/shared';
 
 const FacultiesSection: React.FC = () => {
   const { t } = useTranslation();
@@ -134,7 +135,7 @@ const FacultiesSection: React.FC = () => {
             <div className="lg:col-span-7 lg:flex relative ml-0 lg:ml-10 mt-8 lg:mt-0">
               <div className="relative w-full h-full min-h-[500px] overflow-hidden rounded-3xl shadow-2xl bg-white/15 backdrop-blur-lg border border-cyan-200/30">
                 {facultiesData.slice(0, visibleCount).map((faculty: Faculty, index: number) => (
-                  <img
+                  <OptimizedImage
                     key={index}
                     src={faculty.image || 'https://picsum.photos/600/400'}
                     alt={faculty.name}
@@ -143,7 +144,9 @@ const FacultiesSection: React.FC = () => {
                       transition-opacity duration-1000 ease-in-out
                       ${index === currentImageIndex ? 'opacity-100' : 'opacity-0'}
                     `}
-                    loading="lazy"
+                    width={600}
+                    height={400}
+                    lazy={true}
                   />
                 ))}
               </div>

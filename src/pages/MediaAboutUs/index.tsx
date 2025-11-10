@@ -28,9 +28,7 @@ const MediaAboutUsPage: React.FC = () => {
         fetchMedia();
     }, []);
 
-    if (loading) {
-        return <div className="text-center py-20">Yuklanmoqda...</div>;
-    }
+    // Loading holatini olib tashladik - endi Suspense skeleton ishlatamiz
 
     if (error) {
         return <div className="text-center py-20 text-red-500">{error}</div>;

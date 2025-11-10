@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import useClickOutside from '../../../hooks/useClickOutside';
 import { fetchNavItems, NavItem } from '../../../api/navbarApi';
 import Container from '../../shared/Container';
+import { PrefetchLink } from '../../shared';
 import {
   ChevronDownIcon,
   ChevronRightIcon,
@@ -123,8 +124,10 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                     onMouseEnter={() => item.children && setActiveDropdown(item.title)}
                     onMouseLeave={() => item.children && setActiveDropdown(null)}
                   >
-                    <Link
+                    <PrefetchLink
                       to={item.href || '#'}
+                      prefetch={true}
+                      prefetchDelay={150}
                       className={`flex items-center h-full px-4 text-base font-bold transition-colors duration-300 cursor-pointer ${
                         activeDropdown === item.title
                           ? 'bg-white text-[#0E104B]'
@@ -133,7 +136,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                     >
                       <span>{item.title}</span>
                       {item.children && <ChevronDownIcon className="w-5 h-5 ml-1" />}
-                    </Link>
+                    </PrefetchLink>
 
                     {/* ==== DROPDOWN – BO‘SHLIQ YO‘Q, BORDER-BOTTOM DOIM KO‘RINADI ==== */}
                     {item.children && (

@@ -19,7 +19,7 @@ const fetchNavItemsOnce = async (): Promise<NavItem[]> => {
   return fetchPromise;
 };
 
-// Sidebar – memoized
+// Sidebar – memoized, animatsiyasiz
 const Sidebar = memo(() => {
   const [navItems, setNavItems] = useState<NavItem[]>([]);
   const location = useLocation();

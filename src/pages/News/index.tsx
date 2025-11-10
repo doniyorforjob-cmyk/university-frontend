@@ -4,6 +4,7 @@ import { getPosts } from '../../services/postService';
 import { Post } from '../../types/post';
 import Sidebar from '../../components/shared/Sidebar';
 import Breadcrumbs from '../../components/shared/Breadcrumbs';
+import { OptimizedImage } from '../../components/shared';
 import {
   Pagination,
   PaginationContent,
@@ -49,57 +50,7 @@ const NewsPage: React.FC = () => {
         window.scrollTo(0, 0); // Sahifa almashganda yuqoriga o'tish
     };
 
-    if (loading) {
-        return (
-            <div className="bg-gray-50">
-                {/* Banner skeleton */}
-                <div className="h-48 bg-gray-300 animate-pulse"></div>
-
-                {/* Content skeleton */}
-                <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-12">
-                    {/* Breadcrumbs skeleton */}
-                    <div className="h-6 bg-gray-300 rounded animate-pulse mb-6 w-64"></div>
-
-                    <div className="flex flex-col lg:flex-row gap-10 mt-6">
-                        {/* News grid skeleton */}
-                        <div className="lg:w-3/4">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                                {Array.from({ length: 6 }).map((_, index) => (
-                                    <div key={index} className="bg-white overflow-hidden shadow-sm animate-pulse">
-                                        {/* Image skeleton */}
-                                        <div className="h-48 bg-gray-300"></div>
-                                        {/* Content skeleton */}
-                                        <div className="p-6">
-                                            <div className="flex justify-between items-center mb-2">
-                                                <div className="h-4 bg-gray-300 rounded w-20"></div>
-                                                <div className="h-4 bg-gray-300 rounded w-16"></div>
-                                            </div>
-                                            <div className="h-6 bg-gray-300 rounded mb-4"></div>
-                                            <div className="h-4 bg-gray-300 rounded w-24 ml-auto"></div>
-                                        </div>
-                                        {/* Progress bar skeleton */}
-                                        <div className="h-1 bg-gray-300"></div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Sidebar skeleton */}
-                        <div className="lg:w-1/4 space-y-4">
-                            <div className="bg-white shadow-sm animate-pulse p-6">
-                                <div className="h-6 bg-gray-300 rounded mb-4"></div>
-                                <div className="space-y-3">
-                                    {Array.from({ length: 5 }).map((_, index) => (
-                                        <div key={index} className="h-4 bg-gray-300 rounded"></div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+    // Loading holatini olib tashladik - endi Suspense skeleton ishlatamiz
 
     if (error) {
         return <div className="text-center py-20 text-red-500">{error}</div>;
@@ -145,10 +96,13 @@ const NewsPage: React.FC = () => {
                                         to={`/news/${article.slug}`}
                                         className="h-48 overflow-hidden relative block"
                                     >
-                                        <img
+                                        <OptimizedImage
                                             src={article.image_url || 'https://via.placeholder.com/400x400?text=Rasm+Mavjud+Emas'}
                                             alt={article.title}
                                             className="w-full h-full object-cover"
+                                            width={400}
+                                            height={192}
+                                            lazy={true}
                                         />
                                         <div className="absolute -bottom-3 left-4 w-0 h-0 border-l-[30px] border-l-transparent border-r-[30px] border-r-transparent border-b-[30px] border-b-white"></div>
                                     </Link>
