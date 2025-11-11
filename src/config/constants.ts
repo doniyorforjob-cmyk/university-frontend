@@ -4,7 +4,7 @@
  */
 
 // ===== LOYIHA MA'LUMOTLARI =====
-export const APP_NAME = 'NAMDTU';
+export const APP_NAME = 'Namangan davlat texnika universiteti';
 export const APP_FULL_NAME = 'Namangan Davlat Texnika Universiteti';
 export const APP_DESCRIPTION = "Zamonaviy ta'lim standartlari asosida yuqori malakali mutaxassislarni tayyorlaymiz";
 

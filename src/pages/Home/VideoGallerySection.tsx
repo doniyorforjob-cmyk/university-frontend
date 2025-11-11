@@ -82,7 +82,7 @@ const VideoGallery: React.FC = () => {
                   <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center mr-2">
                     <span className="text-white text-sm font-bold">U</span>
                   </div>
-                  <span className="text-sm font-semibold text-gray-800">NamDTU</span>
+                  <span className="text-sm font-semibold text-gray-800">Namangan Davlat Texnika Universiteti</span>
                 </div>
                 <span className="text-sm text-gray-600">{calculateTimeAgo(video.uploadDate)}</span>
               </div>
@@ -158,7 +158,7 @@ const VideoGallery: React.FC = () => {
                       <div className="w-10 h-10 bg-blue-600 rounded flex items-center justify-center mr-3">
                         <span className="text-white text-lg font-bold">U</span>
                       </div>
-                      <span className="text-lg font-semibold text-gray-800">NamDTU</span>
+                      <span className="text-lg font-semibold text-gray-800">Namangan Davlat Texnika Universiteti</span>
                     </div>
                     <span className="text-sm text-gray-600">{calculateTimeAgo(videos[activeVideo].uploadDate)}</span>
                   </div>

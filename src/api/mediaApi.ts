@@ -10,14 +10,14 @@ const mockMediaArticles: MediaArticle[] = [
     },
     {
         id: 2,
-        title: "NamDTU talabalari respublika tanlovida g'olib bo'lishdi",
+        title: "Namangan Davlat Texnika Universiteti talabalari respublika tanlovida g'olib bo'lishdi",
         source: "Daryo.uz",
         url: "https://daryo.uz/2023/11/05/namdtu-talabalari-respublika-tanlovida-golib-bolishdi",
         published_at: "2023-11-05T14:30:00Z",
     },
     {
         id: 3,
-        title: "Yangi texnopark: NamDTUda innovatsiyalarga keng yo'l",
+        title: "Yangi texnopark: Namangan Davlat Texnika Universitetida innovatsiyalarga keng yo'l",
         source: "O'zbekiston 24",
         url: "https://www.uzbekistan24.uz/uz/news/view/yangi-texnopark-namdtuda-innovatsiyalarga-keng-yol",
         published_at: "2023-09-20T18:00:00Z",

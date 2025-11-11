@@ -16,7 +16,7 @@ const MiddleHeader: React.FC = () => {
                             className="h-20 w-20 rounded-full mr-4"
                         />
                         <div>
-                            <h1 className="text-4xl font-bold text-[#0E104B]">NamDTU</h1>
+                            <h1 className="text-4xl font-bold text-[#0E104B]">Namangan Davlat Texnika Universiteti</h1>
                             <p className="text-base text-gray-500">Rasmiy web sahifasi</p>
                         </div>
                     </Link>
@@ -93,7 +93,7 @@ const MiddleHeader: React.FC = () => {
                             className="h-16 w-16 rounded-full mr-3"
                         />
                         <div>
-                            <h1 className="text-3xl font-bold text-[#0E104B] text-center">NamDTU</h1>
+                            <h1 className="text-3xl font-bold text-[#0E104B] text-center">Namangan Davlat Texnika Universiteti</h1>
                             <p className="text-sm text-gray-500 text-center">Rasmiy web sahifasi</p>
                         </div>
                     </Link>

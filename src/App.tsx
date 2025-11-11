@@ -12,6 +12,7 @@ const MediaAboutUsPage = React.lazy(() => import('./pages/MediaAboutUs'));
 const AppealsPage = React.lazy(() => import('./pages/Appeals'));
 const ContactPage = React.lazy(() => import('./pages/Contact'));
 const OrganizationalStructurePage = React.lazy(() => import('./pages/OrganizationalStructure'));
+const UniversityPage = React.lazy(() => import('./pages/University'));
 
 // Loading komponenti - har bir sahifa uchun skeleton
 const PageLoader = ({ route }: { route?: string }) => {
@@ -22,6 +23,7 @@ const PageLoader = ({ route }: { route?: string }) => {
     if (path === '/appeals') return 'appeals';
     if (path === '/media-about-us') return 'media';
     if (path === '/organizational-structure') return 'default';
+    if (path === '/university') return 'university';
     return 'default';
   };
 
@@ -53,6 +55,7 @@ function App() {
               path="/organizational-structure"
               element={<OrganizationalStructurePage />}
             />
+            <Route path="/university" element={<UniversityPage />} />
           </Routes>
         </Suspense>
       </Layout>

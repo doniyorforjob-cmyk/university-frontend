@@ -8,7 +8,7 @@ export const mockPosts: Post[] = [
     {
         id: 1,
         slug: 'namdtuda-yangi-oquv-yili-boshlandi',
-        title: 'NamDTUda yangi o\'quv yili boshlandi',
+        title: 'Namangan Davlat Texnika Universitetida yangi o\'quv yili boshlandi',
         image_url: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop',
         description: 'Namangan davlat texnika universitetida yangi o\'quv yili tantanali ravishda boshlandi. Talabalar va o\'qituvchilar ishtirokida yig\'ilish bo\'lib o\'tdi.',
         published_at: '2023-09-05T10:00:00Z',

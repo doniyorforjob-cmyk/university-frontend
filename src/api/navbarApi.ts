@@ -12,6 +12,7 @@ export const navItems = [
   {
     title: 'Universitet',
     children: [
+      { title: 'Ustav', href: '/university-ustavi'},
       { title: 'Tashkiliy tuzilma', href: '/organizational-structure' },
       { title: 'Universitet kengashi', href: '/university-council' },
       { title: 'Jamoatchilik kengashi', href: '/public-council' },

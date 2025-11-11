@@ -125,13 +125,13 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                     onMouseLeave={() => item.children && setActiveDropdown(null)}
                   >
                     <PrefetchLink
-                      to={item.href || '#'}
+                      to={item.title === 'Universitet' ? '/university' : (item.href || '#')}
                       prefetch={true}
                       prefetchDelay={150}
                       className={`flex items-center h-full px-4 text-base font-bold transition-colors duration-300 cursor-pointer ${
                         activeDropdown === item.title
-                          ? 'bg-white text-[#0E104B]'
-                          : 'text-white hover:bg-white hover:text-[#0E104B]'
+                          ? 'bg-secondary text-secondary-foreground'
+                          : 'text-white hover:bg-secondary hover:text-secondary-foreground'
                       }`}
                     >
                       <span>{item.title}</span>
@@ -145,7 +145,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                         style={{ left: '0', right: '0' }}
                       >
                         <div className="pointer-events-auto mx-auto w-full max-w-7xl">
-                          <div className="bg-card border shadow-lg overflow-hidden animate-slide-in-bottom">
+                          <div className="bg-secondary border shadow-lg overflow-hidden animate-slide-in-bottom">
                             <Container className="p-6">
                               <div className="grid grid-cols-3 gap-8">
                                 {/* LEFT PANEL */}
@@ -154,9 +154,9 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                     <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-primary/10 text-primary ring-1 ring-primary/20">
                                       {getSectionIcon()}
                                     </div>
-                                    <h3 className="text-xl font-bold text-black">{item.title}</h3>
+                                    <h3 className="text-xl font-bold text-secondary-foreground">{item.title}</h3>
                                   </div>
-                                  <p className="text-base text-gray-600 leading-relaxed max-w-xs">
+                                  <p className="text-base text-secondary-foreground leading-relaxed max-w-xs">
                                     {getSectionDescription(item.title)}
                                   </p>
                                 </div>
@@ -167,7 +167,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                     <div className="grid grid-cols-2 gap-x-8 gap-y-6">
                                       {/* RAHBARIYAT */}
                                       <div>
-                                        <h4 className="text-base font-bold text-black mb-3 pb-1 border-b border-primary/20 inline-block">
+                                        <h4 className="text-base font-bold text-secondary-foreground mb-3 pb-1 border-b border-primary/20 inline-block">
                                           Rahbariyat
                                         </h4>
                                         <ul className="space-y-2">
@@ -196,7 +196,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
 
                                       {/* FAKULTETLAR */}
                                       <div>
-                                        <h4 className="text-base font-bold text-black mb-3 pb-1 border-b border-primary/20 inline-block">
+                                        <h4 className="text-base font-bold text-secondary-foreground mb-3 pb-1 border-b border-primary/20 inline-block">
                                           Fakultetlar
                                         </h4>
                                         <ul className="space-y-2">
@@ -209,9 +209,9 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                                 to={link.to}
                                                 onClick={() => setActiveDropdown(null)}
                                                 className="
-                                                  flex items-center gap-2 text-base font-medium text-black
+                                                  flex items-center gap-2 text-base font-medium text-secondary-foreground
                                                   border-b border-gray-300
-                                                  hover:bg-gray-100
+                                                  hover:bg-white/10
                                                   px-3 py-2 transition-all duration-150
                                                 "
                                               >
@@ -225,7 +225,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
 
                                       {/* KAFEDRALAR */}
                                       <div>
-                                        <h4 className="text-base font-bold text-black mb-3 pb-1 border-b border-primary/20 inline-block">
+                                        <h4 className="text-base font-bold text-secondary-foreground mb-3 pb-1 border-b border-primary/20 inline-block">
                                           Kafedralar
                                         </h4>
                                         <ul className="space-y-2">
@@ -238,9 +238,9 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                                 to={link.to}
                                                 onClick={() => setActiveDropdown(null)}
                                                 className="
-                                                  flex items-center gap-2 text-base font-medium text-black
+                                                  flex items-center gap-2 text-base font-medium text-secondary-foreground
                                                   border-b border-gray-300
-                                                  hover:bg-gray-100
+                                                  hover:bg-white/10
                                                   px-3 py-2 transition-all duration-150
                                                 "
                                               >
@@ -267,9 +267,9 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                                 to={link.to}
                                                 onClick={() => setActiveDropdown(null)}
                                                 className="
-                                                  flex items-center gap-2 text-base font-medium text-black
+                                                  flex items-center gap-2 text-base font-medium text-secondary-foreground
                                                   border-b border-gray-300
-                                                  hover:bg-gray-100
+                                                  hover:bg-white/10
                                                   px-3 py-2 transition-all duration-150
                                                 "
                                               >
@@ -289,7 +289,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                             to={category.href || '#'}
                                             onClick={() => setActiveDropdown(null)}
                                             className="
-                                              block text-lg font-bold text-black
+                                              block text-lg font-bold text-secondary-foreground
                                               border-b-2 border-primary
                                               hover:bg-primary/5
                                               pb-1 transition-all duration-150
@@ -358,7 +358,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
             <div className="relative h-full ml-16 group">
               <button
                 onClick={toggleSearch}
-                className="flex items-center h-full px-4 text-base font-medium text-white hover:bg-white hover:text-[#0E104B] transition-colors duration-300 cursor-pointer"
+                className="flex items-center h-full px-4 text-base font-medium text-white hover:bg-secondary hover:text-secondary-foreground transition-colors duration-300 cursor-pointer"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
                   <path
