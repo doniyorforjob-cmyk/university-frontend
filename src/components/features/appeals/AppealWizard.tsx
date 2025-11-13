@@ -108,7 +108,7 @@ export const AppealWizard: React.FC<AppealWizardProps> = ({
   const canGoBack = currentStep > 1;
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div>
       {/* Progress Bar */}
       <ProgressBar steps={steps} currentStep={currentStep} />
 
@@ -122,7 +122,7 @@ export const AppealWizard: React.FC<AppealWizardProps> = ({
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
-              className="bg-white rounded-lg shadow-lg p-8"
+              className="bg-white shadow-lg p-8"
             >
               {/* Step Header */}
               <div className="mb-8">
@@ -135,7 +135,7 @@ export const AppealWizard: React.FC<AppealWizardProps> = ({
               </div>
 
               {/* Step Content */}
-              <div className="min-h-[400px]">
+              <div className="min-h-[400px] flex items-center">
                 {renderStep()}
               </div>
 

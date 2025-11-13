@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { toast, Toaster } from 'react-hot-toast';
 import Breadcrumbs from '../../components/shared/Breadcrumbs';
 import Sidebar from '../../components/shared/Sidebar';
@@ -8,6 +7,8 @@ import { AppealFormData } from '../../utils/validationSchemas';
 import { AppealTracking } from './AppealTracking';
 import { FAQSection } from './FAQSection';
 import { ContactSection } from './ContactSection';
+import Banner from '@/components/shared/Banner';
+import Container from '@/components/shared/Container';
 
 const AppealsPage: React.FC = () => {
   const [showTracking, setShowTracking] = useState(false);
@@ -74,26 +75,17 @@ const AppealsPage: React.FC = () => {
       />
 
       {/* Hero Section */}
-      <div
-        className="relative h-48 bg-gradient-to-r from-blue-600 to-purple-700"
-      >
-        <div className="absolute inset-0 bg-black opacity-60"></div>
-        <div className="relative max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-center text-white z-10">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Arizalar, takliflar va shikoyatlar
-          </h1>
-          <p className="text-xl text-gray-200 max-w-2xl">
-            Oz murojaatingizni yuborish uchun quyidagi oddiy jarayondan oting
-          </p>
-        </div>
-      </div>
+      <Banner
+        title="Arizalar, takliflar va shikoyatlar"
+        subtitle="O'z murojaatingizni yuborish uchun quyidagi oddiy jarayondan o'ting"
+        backgroundImage={bannerImageUrl}
+      />
 
       {/* Asosiy kontent */}
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-12">
+      <Container className="py-6 pb-12">
         <Breadcrumbs
           items={[
             { label: 'Bosh sahifa', href: '/' },
-            { label: 'Axborot xizmati', href: '#' },
             { label: 'Arizalar, takliflar va shikoyatlar' },
           ]}
         />
@@ -127,7 +119,7 @@ const AppealsPage: React.FC = () => {
           {/* Sidebar */}
           <Sidebar />
         </div>
-      </div>
+      </Container>
     </div>
   );
 };

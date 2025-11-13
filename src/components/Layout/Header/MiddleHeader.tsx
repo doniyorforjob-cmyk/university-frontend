@@ -10,11 +10,12 @@ const MiddleHeader: React.FC = () => {
                 <div className="hidden md:flex items-center justify-between">
                     {/* Chap tomon: Logotip va Universitet nomi */}
                     <Link to="/" className="flex items-center">
-                        <img
-                            src="https://placehold.co/150x150/EFEFEF/333?text=LOGO"
-                            alt="Universitet Logosi"
-                            className="h-20 w-20 rounded-full mr-4"
-                        />
+                        <div className="h-20 w-20 mr-4 bg-gradient-to-br from-blue-500 to-green-500 rounded-full flex items-center justify-center border-4 border-yellow-400">
+                            <div className="text-white font-bold text-xs text-center">
+                                <div>🏛️</div>
+                                <div>NamDTU</div>
+                            </div>
+                        </div>
                         <div>
                             <h1 className="text-4xl font-bold text-[#0E104B]">Namangan Davlat Texnika Universiteti</h1>
                             <p className="text-base text-gray-500">Rasmiy web sahifasi</p>
@@ -87,11 +88,12 @@ const MiddleHeader: React.FC = () => {
                 {/* Kichik ekranlar uchun layout */}
                 <div className="md:hidden">
                     <Link to="/" className="flex items-center justify-center mb-4">
-                        <img
-                            src="https://placehold.co/100x100/EFEFEF/333?text=LOGO"
-                            alt="Universitet Logosi"
-                            className="h-16 w-16 rounded-full mr-3"
-                        />
+                        <div className="h-16 w-16 mr-3 bg-gradient-to-br from-blue-500 to-green-500 rounded-full flex items-center justify-center border-2 border-yellow-400">
+                            <div className="text-white font-bold text-xs text-center">
+                                <div>🏛️</div>
+                                <div>UZ</div>
+                            </div>
+                        </div>
                         <div>
                             <h1 className="text-3xl font-bold text-[#0E104B] text-center">Namangan Davlat Texnika Universiteti</h1>
                             <p className="text-sm text-gray-500 text-center">Rasmiy web sahifasi</p>

@@ -12,7 +12,7 @@ export const ContactSection: React.FC = () => {
   const contactInfo = {
     phone: '+998 69 227 00 00',
     email: 'info@namdtu.uz',
-    address: 'Namangan shahri, Kosonsoy ko\'chasi, 12',
+    address: 'Namangan shahri, Kosonsoy ko&apos;chasi, 12',
     workingHours: {
       weekdays: 'Dushanba - Juma: 08:00 - 17:00',
       weekend: 'Shanba: 08:00 - 13:00',
@@ -28,22 +28,22 @@ export const ContactSection: React.FC = () => {
       responsibility: 'Universitet rahbariyati, strategik qarorlar'
     },
     {
-      name: 'O\'quv bo\'limi',
+      name: 'O&apos;quv bo&apos;limi',
       phone: '+998 69 227 00 02',
       email: 'oquv@namdtu.uz',
       responsibility: 'Talabalar, dars jadvali, baholash'
     },
     {
-      name: 'Ilmiy bo\'lim',
+      name: 'Ilmiy bo&apos;lim',
       phone: '+998 69 227 00 03',
       email: 'ilmiy@namdtu.uz',
       responsibility: 'Ilmiy tadqiqotlar, grantlar, konferensiyalar'
     },
     {
-      name: 'Moliya bo\'limi',
+      name: 'Moliya bo&apos;limi',
       phone: '+998 69 227 00 04',
       email: 'moliya@namdtu.uz',
-      responsibility: 'To\'lovlar, stipendiya, grantlar'
+      responsibility: 'To&apos;lovlar, stipendiya, grantlar'
     },
     {
       name: 'Axborot xizmati',
@@ -54,13 +54,13 @@ export const ContactSection: React.FC = () => {
   ];
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
+    <div className="bg-white shadow-lg p-6">
       <div className="text-center mb-8">
         <h3 className="text-2xl font-bold text-gray-900 mb-2">
-          Aloqa ma'lumotlari
+          Aloqa malumotlari
         </h3>
         <p className="text-gray-600">
-          Qo'shimcha savollar uchun murojaat qilishingiz mumkin
+          Qo&apos;himcha savollar uchun murojaat qilishingiz mumkin
         </p>
       </div>
 
@@ -140,9 +140,9 @@ export const ContactSection: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
       >
-        <div className="flex items-center mb-6">
+          <div className="flex items-center mb-6 text-gray-900">
           <UserGroupIcon className="w-6 h-6 text-gray-600 mr-3" />
-          <h4 className="text-xl font-semibold text-gray-900">Bo'limlar bo'yicha kontaktlar</h4>
+            <h4 className="text-xl font-semibold">Bo&apos;limlar bo&apos;yicha kontaktlar</h4>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -178,36 +178,6 @@ export const ContactSection: React.FC = () => {
               <p className="text-xs text-gray-500">{dept.responsibility}</p>
             </motion.div>
           ))}
-        </div>
-      </motion.div>
-
-      {/* Emergency Contact */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8 }}
-        className="mt-8 p-6 bg-red-50 rounded-lg border border-red-200"
-      >
-        <div className="flex items-start space-x-3">
-          <div className="flex-shrink-0">
-            <svg className="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-            </svg>
-          </div>
-          <div>
-            <h4 className="text-lg font-semibold text-red-900 mb-2">
-              Favqulodda holatlar
-            </h4>
-            <p className="text-red-700 mb-3">
-              Favqulodda holatlar yuz berganda darhol quyidagi raqamga qo'ng'iroq qiling:
-            </p>
-            <a
-              href="tel:103"
-              className="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold"
-            >
-              🚨 103 - Tez yordam
-            </a>
-          </div>
         </div>
       </motion.div>
     </div>

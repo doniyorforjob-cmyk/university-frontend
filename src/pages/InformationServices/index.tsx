@@ -1,25 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PageTemplate from '@/components/shared/PageTemplate';
 import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
 import usePage from '@/hooks/usePage';
-import { fetchOrganizationalStructureData } from '@/api/organizationalStructureApi';
+import { fetchInformationServicesData } from '@/api/informationServicesApi';
+import { ContentBlock } from '@/components/shared/ContentBuilder';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 
-interface OrganizationalStructureData {
-  blocks: any[];
+interface InformationServicesData {
+  blocks: ContentBlock[];
 }
 
-const OrganizationalStructurePage: React.FC = () => {
+const InformationServicesPage: React.FC = () => {
   const { setBreadcrumbsData } = useGlobalLayout();
   const { data, loading, error, refetch } = usePage({
-    fetchData: fetchOrganizationalStructureData
+    fetchData: fetchInformationServicesData
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     setBreadcrumbsData([
       { label: 'Bosh sahifa', href: '/' },
-      { label: 'Universitet', href: '/university' },
-      { label: 'Tashkiliy tuzilma' }
+      { label: 'Axborot Xizmatlari' }
     ]);
 
     return () => {
@@ -28,15 +28,17 @@ const OrganizationalStructurePage: React.FC = () => {
   }, [setBreadcrumbsData]);
 
   if (loading) {
-    return <GenericPageSkeleton showSidebar={false} showHeroImage={false} contentBlocks={5} />;
+    return <GenericPageSkeleton showSidebar={true} showHeroImage={false} contentBlocks={8} showBanner={false} />;
   }
 
   if (error || !data) {
     return (
-      <PageTemplate title="Tashkiliy tuzilma">
+      <PageTemplate
+        title="Axborot Xizmatlari"
+      > {/* PageTemplate no longer takes showSidebar */}
         <div className="text-center py-8">
           <p className="text-red-600 mb-4">{error || 'Ma\'lumot topilmadi'}</p>
-          <button
+          <button 
             onClick={refetch}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
           >
@@ -49,10 +51,11 @@ const OrganizationalStructurePage: React.FC = () => {
 
   return (
     <PageTemplate
-      title="Tashkiliy tuzilma"
+      title="Axborot Xizmatlari"
+      // showSidebar is no longer a prop for PageTemplate
       contentBlocks={data.blocks}
     />
   );
 };
 
-export default OrganizationalStructurePage;
+export default InformationServicesPage;

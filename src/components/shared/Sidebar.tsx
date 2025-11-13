@@ -1,35 +1,37 @@
 import React, { useState, useEffect, useMemo, memo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { fetchNavItems, NavItem } from '../../api/navbarApi';
+import OptimizedImage from './OptimizedImage';
 
-// Kesh – faqat bir marta fetch
+// Kesh – faqat bir marta fetch qilish uchun
 let cachedNavItems: NavItem[] | null = null;
 let fetchPromise: Promise<NavItem[]> | null = null;
 
-const fetchNavItemsOnce = async (): Promise<NavItem[]> => {
-  if (cachedNavItems) return cachedNavItems;
-  if (fetchPromise) return fetchPromise;
-
-  fetchPromise = fetchNavItems().then(items => {
-    cachedNavItems = items;
-    fetchPromise = null;
-    return items;
-  });
-
+const fetchNavItemsOnce = (): Promise<NavItem[]> => {
+  if (cachedNavItems) {
+    return Promise.resolve(cachedNavItems);
+  }
+  if (!fetchPromise) {
+    fetchPromise = fetchNavItems().then(items => {
+      cachedNavItems = items;
+      return items;
+    });
+  }
   return fetchPromise;
 };
 
-// Sidebar – memoized, animatsiyasiz
 const Sidebar = memo(() => {
   const [navItems, setNavItems] = useState<NavItem[]>([]);
   const location = useLocation();
 
   useEffect(() => {
-    let mounted = true;
+    let isMounted = true;
     fetchNavItemsOnce().then(items => {
-      if (mounted) setNavItems(items);
+      if (isMounted) {
+        setNavItems(items);
+      }
     });
-    return () => { mounted = false; };
+    return () => { isMounted = false; };
   }, []);
 
   const informationService = useMemo(() => {
@@ -56,7 +58,7 @@ const Sidebar = memo(() => {
               : 'hover:bg-gray-50 border-l-4 border-l-transparent pl-[31px]'
           } ${!isLast ? 'border-b border-gray-300' : ''}`}
         >
-          {child.title === "E'lonlar" ? "E'lonlar" : child.title}
+          {child.title === "E'lonlar" ? "E&apos;lonlar" : child.title}
         </Link>
       );
     });
@@ -65,7 +67,7 @@ const Sidebar = memo(() => {
   if (!informationService) return null;
 
   return (
-    <div className="w-full md:w-96 mb-4 space-y-4">
+    <div className="w-full mb-4 space-y-4">
       {/* 1-BOX: Axborot xizmati */}
       <div className="overflow-hidden shadow-lg bg-white border border-gray-300">
         <div className="bg-primary px-8 py-3 flex items-center gap-2 border-b border-gray-300">
@@ -91,31 +93,36 @@ const Sidebar = memo(() => {
       </div>
 
       {/* 2-BOX: Rektorga murojaat */}
-      <div className="overflow-hidden shadow-lg bg-white border border-gray-300">
-        <div className="bg-gray-50 px-8 py-3 flex flex-col justify-between h-full">
-          {/* Sarlavha va kichik tugma – CHAPGA */}
-          <div className="mb-4">
-            <h4 className="text-md font-bold text-gray-800 mb-2">
-              Rektorga murojaat
-            </h4>
-            <Link
-              to="/appeal-to-rector"
-              className="inline-block px-5 py-1.5 text-sm bg-primary text-white font-semibold rounded-md hover:bg-primary-dark transition-colors"
-            >
-              Murojaat qilish
-            </Link>
-          </div>
-
-          {/* Rektor rasmi – eng pastki chegaragacha, bo‘shliq bor */}
-          <div className="-mx-8 -mb-3">
-            <img
-              src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-              alt="Rektor rasmi"
-              className="w-full h-auto object-cover block"
-            />
+      {location.pathname !== '/appeals' && (
+        <div className="overflow-hidden shadow-lg bg-white border border-gray-300">
+          <div className="bg-gray-50 px-8 py-3 flex flex-col justify-between h-full">
+            {/* Sarlavha va kichik tugma – CHAPGA */}
+            <div className="mb-4">
+              <h4 className="text-md font-bold text-gray-800 mb-2">
+                Rektorga murojaat
+              </h4>
+              <Link
+                to="/appeals"
+                className="inline-block px-5 py-1.5 text-sm bg-primary text-white font-semibold rounded-md hover:bg-primary-dark transition-colors"
+              >
+                Murojaat qilish
+              </Link>
+            </div>
+  
+            {/* Rektor rasmi – eng pastki chegaragacha, bo‘shliq bor */}
+            <div className="-mx-8 -mb-3">
+              <OptimizedImage
+                src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                alt="Rektor rasmi"
+                className="w-full h-auto object-cover block"
+                lazy={true}
+                width={384}
+                height={256}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 });

@@ -8,6 +8,7 @@ interface PrefetchLinkProps {
   prefetchDelay?: number;
   children: React.ReactNode;
   className?: string;
+  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
   onMouseEnter?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
   onFocus?: (e: React.FocusEvent<HTMLAnchorElement>) => void;
 }
@@ -21,6 +22,7 @@ const PrefetchLink: React.FC<PrefetchLinkProps> = ({
   prefetch = true,
   prefetchDelay = 100,
   children,
+  onClick,
   onMouseEnter,
   onFocus,
   ...props
@@ -47,6 +49,7 @@ const PrefetchLink: React.FC<PrefetchLinkProps> = ({
   return (
     <Link
       to={to}
+      onClick={onClick}
       onMouseEnter={handleMouseEnter}
       onFocus={handleFocus}
       {...props}

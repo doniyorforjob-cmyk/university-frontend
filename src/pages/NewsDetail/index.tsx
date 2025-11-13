@@ -1,76 +1,98 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { getPostBySlug } from '../../services/postService';
 import { PostDetail as NewsType } from '../../types/post';
-import Breadcrumbs from '../../components/shared/Breadcrumbs';
+import DetailTemplate, { DetailMeta } from '@/components/templates/DetailTemplate';
+import { PageSkeleton } from '@/components/shared';
 
 const NewsDetailPage: React.FC = () => {
-    const { slug } = useParams<{ slug: string }>();
-    const [newsItem, setNewsItem] = useState<NewsType | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+  const { slug } = useParams<{ slug: string }>();
+  const [newsItem, setNewsItem] = useState<NewsType | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchNewsItem = async () => {
-            if (!slug) {
-                setError("Yangilik topilmadi.");
-                setLoading(false);
-                return;
-            }
-            try {
-                const data = await getPostBySlug(slug);
-                if (data) {
-                    setNewsItem(data);
-                } else {
-                    setError("Yangilik topilmadi.");
-                }
-            } catch (err) {
-                setError("Yangilikni yuklashda xatolik yuz berdi.");
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
+  useEffect(() => {
+    const fetchNewsItem = async () => {
+      if (!slug) {
+        setError('Yangilik topilmadi.');
+        setLoading(false);
+        return;
+      }
+      try {
+        setLoading(true);
+        const data = await getPostBySlug(slug);
+        if (data) {
+          setNewsItem(data);
+        } else {
+          setError('Yangilik topilmadi.');
+        }
+      } catch (err) {
+        setError('Yangilikni yuklashda xatolik yuz berdi.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-        fetchNewsItem();
-    }, [slug]);
+    fetchNewsItem();
+  }, [slug]);
 
-    if (loading) {
-        return <div className="text-center py-8">Yuklanmoqda...</div>;
-    }
+  if (loading) {
+    return <PageSkeleton type="news" />;
+  }
 
-    if (error) {
-        return <div className="text-center py-8 text-red-500">{error}</div>;
-    }
-
-    if (!newsItem) {
-        return <div className="text-center py-8">Yangilik topilmadi.</div>;
-    }
-
+  if (error || !newsItem) {
     return (
-        <div className="container mx-auto px-4 py-8">
-            <div className="py-6">
-                <Breadcrumbs
-                    items={[
-                        { label: 'Bosh sahifa', href: '/' },
-                        { label: 'Yangiliklar', href: '/news' },
-                        { label: newsItem.title },
-                    ]}
-                />
+      <div className="bg-gray-50 min-h-screen">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex justify-center items-center min-h-[400px]">
+            <div className="text-center">
+              <p className="text-red-600 mb-4">{error || 'Yangilik topilmadi'}</p>
+              <button
+                onClick={() => window.location.href = '/news'}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              >
+                Yangiliklarga qaytish
+              </button>
             </div>
-            <img src={newsItem.image_url} alt={newsItem.title} className="w-full h-64 object-cover rounded-lg mb-6" />
-            <h1 className="text-4xl font-bold mb-4">{newsItem.title}</h1>
-            <div className="flex items-center text-gray-600 text-sm mb-6">
-                <span className="mr-4">{new Date(newsItem.published_at).toLocaleDateString()}</span>
-                <span className="mr-4">Kategoriya: {newsItem.category}</span>
-                <span>Ko&apos;rishlar soni: {newsItem.views}</span>
-            </div>
-            <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: newsItem.content }} />
-            <Link to="/news" className="mt-8 inline-block text-blue-600 hover:underline">
-                &larr; Barcha yangiliklarga qaytish
-            </Link>
+          </div>
         </div>
+      </div>
     );
+  }
+
+  const meta: DetailMeta = {
+    publishDate: newsItem.published_at,
+    author: newsItem.author?.name,
+    category: newsItem.category,
+    views: newsItem.views
+  };
+
+  return (
+    <DetailTemplate
+      title={newsItem.title}
+      contentType="news"
+      heroImage={newsItem.image_url}
+      heroImageAlt={newsItem.title}
+      content={newsItem.content}
+      meta={meta}
+      breadcrumbs={[
+        { label: 'Bosh sahifa', href: '/' },
+        { label: 'Yangiliklar', href: '/news' },
+        { label: newsItem.title }
+      ]}
+      showMeta={true}
+      showSocialShare={true}
+      showPrintButton={true}
+      showComments={false}
+      showSidebar={true}
+      socialShare={{
+        facebook: true,
+        telegram: true,
+        copy: true
+      }}
+    />
+  );
 };
 
 export default NewsDetailPage;

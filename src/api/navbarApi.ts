@@ -1,6 +1,7 @@
 export const navItems = [
     {
     title: 'Axborot xizmati',
+    href: '/information-services',
     children: [
       { title: 'Yangiliklar', href: '/news' },
       { title: "E'lonlar", href: '/announcements' },
@@ -13,7 +14,6 @@ export const navItems = [
     title: 'Universitet',
     children: [
       { title: 'Ustav', href: '/university-ustavi'},
-      { title: 'Tashkiliy tuzilma', href: '/organizational-structure' },
       { title: 'Universitet kengashi', href: '/university-council' },
       { title: 'Jamoatchilik kengashi', href: '/public-council' },
       { title: 'Markazlar', href: '/centers' },
@@ -21,9 +21,22 @@ export const navItems = [
   },
   {
     title: 'Tuzilma',
+    href: '/organizational-structure',
     children: [
-      { 
-        title: 'Fakultetlar', 
+      { title: 'Tashkiliy tuzilma', href: '/organizational-structure' },
+      {
+        title: 'Rahbariyat',
+        href: '/leadership',
+        children: [
+          { title: 'Universitet rektori', href: '/leadership/rector' },
+          { title: 'Yoshlar masalalari va manaviy marifiy ishlar bo\'yicha birinchi prorektor', href: '/leadership/youth-spiritual-vice-rector' },
+          { title: 'Moliya-iqtisod bo\'yicha prorektor', href: '/leadership/finance-vice-rector' },
+          { title: 'O\'quv ishlari bo\'yicha prorektor', href: '/leadership/academic-vice-rector' },
+          { title: 'Xalqaro hamkorlik bo\'yicha prorektor', href: '/leadership/international-vice-rector' },
+        ]
+      },
+      {
+        title: 'Fakultetlar',
         href: '/faculties',
         children: [
           { title: 'Muhandislik-texnologiya', href: '/faculties/engineering' },
@@ -33,7 +46,14 @@ export const navItems = [
       },
       { title: 'Kafedralar', href: '/departments' },
       { title: "Bo'limlar", href: '/sections' },
-      { title: 'Markazlar', href: '/centers' },
+      {
+        title: 'Markazlar',
+        href: '/centers',
+        children: [
+          { title: 'Raqamli ta\'lim texnologiyalari markazi', href: '/centers/digital-education' },
+          { title: 'Axborot resurs markazi', href: '/centers/information-resource' },
+        ]
+      },
     ],
   },
   {
@@ -161,6 +181,7 @@ export const fetchNavItems = async (): Promise<NavItem[]> => {
   // Bu yerda kelajakda haqiqiy API ga so'rov yuborilishi mumkin
   return new Promise((resolve) => {
     setTimeout(() => {
+      console.log('NavItems loaded:', navItems); // Debug uchun
       resolve(navItems);
     }, 300); // Tarmoq kechikishini simulyatsiya qilish uchun
   });

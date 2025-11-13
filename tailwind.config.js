@@ -48,6 +48,9 @@ module.exports = {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
         },
+        'navbar-dropdown': {
+          DEFAULT: "hsl(var(--navbar-dropdown-bg))",
+        },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",

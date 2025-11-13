@@ -12,14 +12,14 @@ interface FAQItem {
 const faqData: FAQItem[] = [
   {
     id: '1',
-    question: 'Murojaat yuborish uchun qanday ma\'lumotlar kerak?',
-    answer: 'Murojaat yuborish uchun F.I.Sh., telefon raqami, email manzili va murojaat matni talab qilinadi. Ixtiyoriy ravishda manzil va qo\'shimcha fayllarni ham biriktirishingiz mumkin.',
+    question: 'Murojaat yuborish uchun qanday ma&apos;lumotlar kerak?',
+    answer: 'Murojaat yuborish uchun F.I.Sh., telefon raqami, email manzili va murojaat matni talab qilinadi. Ixtiyoriy ravishda manzil va qo&apos;shimcha fayllarni ham biriktirishingiz mumkin.',
     category: 'general'
   },
   {
     id: '2',
     question: 'Murojaatga javob qachon keladi?',
-    answer: 'Murojaatga javob berish vaqti murojaatning muhimlik darajasiga qarab farq qiladi: Past - 5-7 kun, O\'rtacha - 3-5 kun, Yuqori - 1-2 kun, Shoshilinch - 24 soat ichida.',
+    answer: 'Murojaatga javob berish vaqti murojaatning muhimlik darajasiga qarab farq qiladi: Past - 5-7 kun, O&apos;rtacha - 3-5 kun, Yuqori - 1-2 kun, Shoshilinch - 24 soat ichida.',
     category: 'timing'
   },
   {
@@ -31,31 +31,31 @@ const faqData: FAQItem[] = [
   {
     id: '4',
     question: 'Murojaat holatini qanday tekshirish mumkin?',
-    answer: 'Murojaat yuborilgandan keyin sizga berilgan Tracking ID orqali murojaat holatini tekshirishingiz mumkin. Shuningdek, email orqali status o\'zgarishlari haqida xabar beriladi.',
+    answer: 'Murojaat yuborilgandan keyin sizga berilgan Tracking ID orqali murojaat holatini tekshirishingiz mumkin. Shuningdek, email orqali status o&apos;zgarishlari haqida xabar beriladi.',
     category: 'tracking'
   },
   {
     id: '5',
-    question: 'Murojaatni qaytarib olish yoki o\'zgartirish mumkinmi?',
-    answer: 'Murojaat yuborilgandan keyin uni qaytarib olish yoki o\'zgartirish imkoni yo\'q. Agar murojaatda xatolik bo\'lsa, yangi murojaat yuborishingiz mumkin.',
+    question: 'Murojaatni qaytarib olish yoki o&apos;zgartirish mumkinmi?',
+    answer: 'Murojaat yuborilgandan keyin uni qaytarib olish yoki o&apos;zgartirish imkoni yo&apos;q. Agar murojaatda xatolik bo&apos;lsa, yangi murojaat yuborishingiz mumkin.',
     category: 'general'
   },
   {
     id: '6',
-    question: 'Shikoyat va taklif o\'rtasidagi farq nima?',
-    answer: 'Shikoyat - mavjud muammolar va kamchiliklar haqida, taklif esa o\'qitish sifatini yaxshilash, infratuzilma va xizmatlar bo\'yicha yangi g\'oyalar haqida bo\'ladi.',
+    question: 'Shikoyat va taklif o&apos;rtasidagi farq nima?',
+    answer: 'Shikoyat - mavjud muammolar va kamchiliklar haqida, taklif esa o&apos;qitish sifatini yaxshilash, infratuzilma va xizmatlar bo&apos;yicha yangi g&apos;oyalar haqida bo&apos;ladi.',
     category: 'types'
   },
   {
     id: '7',
     question: 'Anonim murojaat yuborish mumkinmi?',
-    answer: 'Hozirda barcha murojaatlar identifikatsiya qilinishi shart. Kelajakda anonim murojaat imkoni ham qo\'shilishi mumkin.',
+    answer: 'Hozirda barcha murojaatlar identifikatsiya qilinishi shart. Kelajakda anonim murojaat imkoni ham qo&apos;shilishi mumkin.',
     category: 'privacy'
   },
   {
     id: '8',
     question: 'Murojaat qayerda ko\'rib chiqiladi?',
-    answer: 'Barcha murojaatlar tegishli bo\'lim va fakultet rahbariyati tomonidan ko\'rib chiqiladi. Murakkab masala bo\'lsa, rektoratga yo\'naltiriladi.',
+    answer: 'Barcha murojaatlar tegishli bo&apos;lim va fakultet rahbariyati tomonidan ko&apos;rib chiqiladi. Murakkab masala bo&apos;lsa, rektoratga yo&apos;naltiriladi.',
     category: 'process'
   }
 ];
@@ -94,16 +94,16 @@ export const FAQSection: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
+    <div className="bg-white shadow-lg p-6">
       <div className="text-center mb-8">
         <h3 className="text-2xl font-bold text-gray-900 mb-2">
           Tez-tez beriladigan savollar
         </h3>
         <p className="text-gray-600">
-          Murojaat jarayoni haqida eng ko'p beriladigan savollar
+          Murojaat jarayoni haqida eng kop beriladigan savollar
         </p>
       </div>
-
+      
       {/* Search */}
       <div className="mb-6">
         <input
@@ -136,7 +136,7 @@ export const FAQSection: React.FC = () => {
       <div className="space-y-4">
         {filteredFAQs.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            Hech narsa topilmadi. Boshqa so'z bilan qidiring.
+            Hech narsa topilmadi. Boshqa so&apos;z bilan qidiring.
           </div>
         ) : (
           filteredFAQs.map((faq, index) => (
@@ -183,10 +183,10 @@ export const FAQSection: React.FC = () => {
       {/* Contact CTA */}
       <div className="mt-8 p-6 bg-blue-50 rounded-lg text-center">
         <h4 className="text-lg font-semibold text-blue-900 mb-2">
-          Savolingiz javob topmadi?
+          Savolingizga javob topmadimi?
         </h4>
         <p className="text-blue-700 mb-4">
-          Qo'shimcha savollar uchun quyidagi kontaktlar orqali bog'laning
+          Qo&apos;shimcha savollar uchun quyidagi kontaktlar orqali bog&apos;laning
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <a

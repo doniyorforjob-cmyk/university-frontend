@@ -88,11 +88,12 @@ const Footer: React.FC = () => {
               to="/"
               className="flex flex-col sm:flex-row sm:items-center mb-4 group transition-transform duration-300 hover:scale-105"
             >
-              <img
-                src="/logo192.png"
-                alt="Namangan Davlat Texnika Universiteti Logo"
-                className="h-12 sm:h-16 mb-2 sm:mb-0 sm:mr-4 transition-transform duration-300 group-hover:rotate-12"
-              />
+              <div className="h-20 w-20 sm:h-24 sm:w-24 mb-2 sm:mb-0 sm:mr-4 bg-gradient-to-br from-blue-500 to-green-500 rounded-full flex items-center justify-center border-4 sm:border-4 border-yellow-400 transition-transform duration-300 group-hover:rotate-12 flex-shrink-0">
+                <div className="text-white font-bold text-base sm:text-lg text-center leading-none">
+                  <div className="text-2xl sm:text-3xl">🏛️</div>
+                  <div className="text-sm sm:text-base">NamDTU</div>
+                </div>
+              </div>
               <span className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white text-center sm:text-left">
                 Namangan Davlat Texnika Universiteti
               </span>

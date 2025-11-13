@@ -32,6 +32,7 @@ export const ROUTES = {
   
   // Xizmatlar
   INTERACTIVE_SERVICES: '/interactive-services',
+  INFORMATION_SERVICES: '/information-services',
 } as const;
 
 /**
@@ -61,5 +62,6 @@ export const ROUTE_LABELS: Record<string, string> = {
   [ROUTES.TEACHERS]: "O'qituvchilar",
   [ROUTES.APPEALS]: 'Murojaatlar',
   [ROUTES.INTERACTIVE_SERVICES]: 'Interaktiv xizmatlar',
+  [ROUTES.INFORMATION_SERVICES]: 'Axborot xizmatlari',
 };
 
