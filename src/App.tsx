@@ -17,6 +17,7 @@ const MediaAboutUsPage = React.lazy(() => import('./pages/MediaAboutUs'));
 const AppealsPage = React.lazy(() => import('./pages/Appeals'));
 const ContactPage = React.lazy(() => import('./pages/Contact'));
 const OrganizationalStructurePage = React.lazy(() => import('./pages/OrganizationalStructure'));
+const ActivitiesPage = React.lazy(() => import('./pages/Activities'));
 const UniversityPage = React.lazy(() => import('./pages/University'));
 const InformationServicesPage = React.lazy(() => import('./pages/InformationServices'));
 
@@ -47,6 +48,7 @@ function App() {
                   path="/organizational-structure"
                   element={<OrganizationalStructurePage />}
                 />
+                <Route path="/activities" element={<ActivitiesPage />} />
                 {/* Boshqa sahifalarni shu yerga qo'shish mumkin */}
               </Route>
             </Route> {/* End of GlobalLayout route */}

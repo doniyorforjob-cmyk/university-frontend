@@ -22,76 +22,52 @@ import { UniversityContent } from '@/types/university';
 export const transformUniversityContentToBlocks = (
   content: UniversityContent
 ): ContentBlock[] => {
-  return [
-    // 1. Hero Section - Asosiy sarlavha va tavsif
+  const blocks: ContentBlock[] = [
+    // 0. University Image
     {
-      id: 'hero-highlight',
-      type: 'highlight',
+      id: 'university-image',
+      type: 'image',
       data: {
-        title: content.title,
-        content: content.description,
+        src: content.heroImage || 'https://images.unsplash.com/photo-1564981797816-1043664bf78d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+        alt: 'Universitet'
       },
-      className: 'mb-8',
-    },
-
-    // 2. Subtitle - Nega bu universitetni tanlash kerak
-    {
-      id: 'subtitle-heading',
-      type: 'heading',
-      data: {
-        level: 2,
-        content: content.subtitle,
-      },
-      className: 'mt-12 mb-8',
-    },
-
-    // 3. Reasons Grid - 7 ta sabab
-    {
-      id: 'reasons-grid',
-      type: 'grid',
-      data: {
-        title: '',
-        columns: 1,
-        items: content.reasons.map((reason) => ({
-          title: `${reason.id}. ${reason.title}`,
-          description: reason.description,
-          details: reason.items
-            ? {
-                'Fakultetlar': reason.items.join(', '),
-              }
-            : undefined,
-        })),
-      },
-      className: 'space-y-6',
-    },
-
-    // 4. Welcome Section - Xush kelibsiz bo'limi
-    {
-      id: 'welcome-section',
-      type: 'section',
-      data: {
-        title: content.welcomeTitle,
-        content: content.welcomeDescription,
-        background: 'bg-gradient-to-r from-blue-600 to-purple-600 text-white p-8 rounded-lg',
-      },
-      className: 'mt-12',
-    },
-
-    // 5. Call to Action - Chaqiruv
-    {
-      id: 'cta-button',
-      type: 'button',
-      data: {
-        text: content.welcomeCallToAction,
-        variant: 'primary',
-        onClick: () => {
-          // Admission sahifasiga o'tish
-          window.location.href = '/appeals';
-        },
-      },
-      className: 'mt-6 text-center',
-    },
+      className: 'rounded-none' // Remove border radius
+    }
   ];
+
+  // Add each reason as heading + paragraph + optional faculties list
+  content.reasons.forEach((reason, index) => {
+    blocks.push(
+      {
+        id: `reason-heading-${reason.id}`,
+        type: 'heading',
+        data: { level: 4, content: `• ${reason.title}` },
+        className: 'text-blue-600' // Primary color for headings
+      },
+      {
+        id: `reason-text-${reason.id}`,
+        type: 'paragraph',
+        data: {
+          content: reason.description
+        }
+      }
+    );
+
+    // Add faculties list if available
+    if (reason.items && reason.items.length > 0) {
+      blocks.push({
+        id: `reason-faculties-${reason.id}`,
+        type: 'list',
+        data: {
+          title: '',
+          items: reason.items
+        },
+        className: 'ml-4'
+      });
+    }
+  });
+
+  return blocks;
 };
 
 /**

@@ -2,24 +2,20 @@ import React from 'react';
 import PageTemplate from '@/components/shared/PageTemplate';
 import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
 import usePage from '@/hooks/usePage';
-import { fetchOrganizationalStructureData } from '@/api/organizationalStructureApi';
+import { fetchAdmissionData } from '@/api/admissionApi';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 
-interface OrganizationalStructureData {
-  blocks: any[];
-}
-
-const OrganizationalStructurePage: React.FC = () => {
+const AdmissionPage: React.FC = () => {
   const { setBreadcrumbsData } = useGlobalLayout();
   const { data, loading, error, refetch } = usePage({
-    fetchData: fetchOrganizationalStructureData
+    fetchData: fetchAdmissionData
   });
 
   React.useEffect(() => {
+    const admissionYear = new Date().getFullYear() + 1;
     setBreadcrumbsData([
       { label: 'Bosh sahifa', href: '/' },
-      { label: 'Universitet', href: '/university' },
-      { label: 'Tuzilma' }
+      { label: `Qabul ${admissionYear}` }
     ]);
 
     return () => {
@@ -33,7 +29,7 @@ const OrganizationalStructurePage: React.FC = () => {
 
   if (error || !data) {
     return (
-      <PageTemplate title="Tuzilma">
+      <PageTemplate title="Qabul">
         <div className="text-center py-8">
           <p className="text-red-600 mb-4">{error || 'Ma\'lumot topilmadi'}</p>
           <button
@@ -47,12 +43,13 @@ const OrganizationalStructurePage: React.FC = () => {
     );
   }
 
+  const admissionYear = new Date().getFullYear() + 1;
   return (
     <PageTemplate
-      title="Tuzilma"
-      contentBlocks={data.blocks}
+      title={`Qabul ${admissionYear}`}
+      contentBlocks={data}
     />
   );
 };
 
-export default OrganizationalStructurePage;
+export default AdmissionPage;

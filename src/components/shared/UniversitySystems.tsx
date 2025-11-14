@@ -88,7 +88,7 @@ const UniversitySystems = React.memo(() => {
             → Stipendiya dasturlari
           </button>
           <button className="block text-sm text-blue-600 hover:text-blue-800 transition-colors duration-200 text-left">
-            → Aloqa ma&apos;lumotlari
+            → Ijtimoiy faollik indeksi
           </button>
         </div>
       </div>

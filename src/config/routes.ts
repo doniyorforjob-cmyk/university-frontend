@@ -18,6 +18,7 @@ export const ROUTES = {
   
   // Tuzilma
   ORGANIZATIONAL_STRUCTURE: '/organizational-structure',
+  ACTIVITIES: '/activities',
   DEPARTMENTS: '/departments',
   DEPARTMENT_DETAIL: '/departments/:id',
   FACULTIES: '/faculties',
@@ -56,6 +57,7 @@ export const ROUTE_LABELS: Record<string, string> = {
   [ROUTES.ANNOUNCEMENTS]: "E'lonlar",
   [ROUTES.MEDIA_ABOUT_US]: 'OAV biz haqimizda',
   [ROUTES.ORGANIZATIONAL_STRUCTURE]: 'Tashkiliy tuzilma',
+  [ROUTES.ACTIVITIES]: 'Faoliyat',
   [ROUTES.DEPARTMENTS]: "Bo'limlar",
   [ROUTES.FACULTIES]: 'Fakultetlar',
   [ROUTES.STUDENTS]: 'Talabalar',

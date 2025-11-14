@@ -1,13 +1,56 @@
 /**
  * Organizational Structure API
  * Tashkiliy tuzilma sahifasi uchun ma'lumotlarni taqdim etadi
+ * universityContentApi.ts ga o'xshab API ga tayyorlangan
  */
 
 import { ContentBlock } from '@/components/shared/ContentBuilder';
 
-interface OrganizationalStructureData {
-  blocks: ContentBlock[];
+/**
+ * Tashkiliy tuzilma a'zosining ma'lumotlari
+ */
+interface OrganizationalMember {
+  id: string;
+  name: string;
+  position: string;
+  type: 'rector' | 'prorector' | 'dekan' | 'kafedra_head' | 'department_head';
+  faculty?: string; // fakultet nomi (dekanlar uchun)
+  imageUrl?: string; // rasm URL
 }
+
+/**
+ * Butun tashkiliy tuzilma ma'lumotlari
+ */
+interface OrganizationalStructure {
+  rector: OrganizationalMember;
+  prorektors: OrganizationalMember[];
+  dekans: OrganizationalMember[];
+  kafedras: OrganizationalMember[];
+  departments: OrganizationalMember[];
+}
+
+
+/**
+ * OrganizationalStructure ma'lumotlarini ContentBlock[] ga o'zgartiradi
+ * Custom component uchun tayyor ma'lumotlarni qaytaradi
+ *
+ * @param {OrganizationalStructure} structure - API dan kelgan tashkiliy tuzilma ma'lumotlari
+ * @returns {ContentBlock[]} ContentBuilder uchun tayyor bloklar
+ */
+export const transformOrganizationalStructureToBlocks = (
+  structure: OrganizationalStructure
+): ContentBlock[] => {
+  return [
+    {
+      id: 'structure-tree',
+      type: 'dynamic-data',
+      data: {
+        component: 'OrganizationalStructureTree',
+        props: { structure }
+      },
+    },
+  ];
+};
 
 /**
  * Mock API - Tashkiliy tuzilma ma'lumotlarini olish
@@ -21,236 +64,132 @@ const simulateApiCall = <T>(data: T, delay = 500): Promise<T> => {
 };
 
 /**
- * Tashkiliy tuzilma ma'lumotlarini olish
+ * ContentBuilder bloklar bilan tashkiliy tuzilma ma'lumotlarini olish
  */
-export const fetchOrganizationalStructureData = async (): Promise<OrganizationalStructureData> => {
-  const data: OrganizationalStructureData = {
-    blocks: [
-      {
-        id: 'structure-tree',
-        type: 'rich-text',
-        data: {
-          content: `
-            <div class="space-y-8">
-              <!-- Rektorat -->
-              <div class="text-center relative">
-                <div class="inline-block bg-blue-600 text-white px-8 py-4 rounded-lg font-bold text-xl shadow-lg relative">
-                  <div class="w-16 h-16 rounded-full mx-auto mb-2 border-4 border-white bg-gray-300 flex items-center justify-center text-black font-bold">R</div>
-                  Rektor
-                </div>
-                <div class="mt-2 text-base text-gray-700 font-medium">Universitet rahbari</div>
-                <div class="mt-1 text-sm text-gray-500">Prof. Dr. [Ism Familiya]</div>
-                <!-- Vertical line down -->
-                <div class="absolute left-1/2 transform -translate-x-1/2 top-full w-1 h-8 bg-blue-400 mt-4"></div>
-              </div>
+export const fetchOrganizationalStructureData = async (): Promise<{ blocks: ContentBlock[] }> => {
+  try {
+    // Haqiqiy API chaqiruvi (Backend tayyor bo'lganda)
+    // const response = await apiClient.get('/organizational-structure');
+    // const structure = response.data;
 
-              <!-- Prorektorlar -->
-              <div class="relative">
-                <!-- Horizontal line above -->
-                <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-full max-w-4xl h-1 bg-green-400"></div>
-                <!-- Vertical line down from center -->
-                <div class="absolute left-1/2 transform -translate-x-1/2 top-full w-1 h-8 bg-green-400 mt-4"></div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-8">
-                  <div class="text-center min-h-[120px] flex flex-col justify-center">
-                    <div class="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md text-sm relative">
-                      <div class="w-12 h-12 rounded-full mx-auto mb-1 border-2 border-white bg-gray-300 flex items-center justify-center text-black font-bold">P1</div>
-                      O'quv ishlari bo'yicha prorektor
-                    </div>
-                    <div class="mt-2 text-sm text-gray-600">Prof. Dr. [Ism Familiya]</div>
-                  </div>
-                  <div class="text-center min-h-[120px] flex flex-col justify-center">
-                    <div class="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md text-sm relative">
-                      <div class="w-12 h-12 rounded-full mx-auto mb-1 border-2 border-white bg-gray-300 flex items-center justify-center text-black font-bold">P2</div>
-                      Ilmiy ishlar bo'yicha prorektor
-                    </div>
-                    <div class="mt-2 text-sm text-gray-600">Prof. Dr. [Ism Familiya]</div>
-                  </div>
-                  <div class="text-center min-h-[120px] flex flex-col justify-center">
-                    <div class="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md text-sm relative">
-                      <div class="w-12 h-12 rounded-full mx-auto mb-1 border-2 border-white bg-gray-300 flex items-center justify-center text-black font-bold">P3</div>
-                      Ma'naviy-ma'rifiy ishlar bo'yicha prorektor
-                    </div>
-                    <div class="mt-2 text-sm text-gray-600">Prof. Dr. [Ism Familiya]</div>
-                  </div>
-                </div>
-              </div>
+    // Mock data
+    const mockStructure: OrganizationalStructure = {
+      rector: {
+        id: 'rector-1',
+        name: 'Tursunov Muxriddin Madaminovich',
+        position: 'Rektor',
+        type: 'rector',
+        imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
+      },
+      prorektors: [
+        {
+          id: 'prorector-1',
+          name: 'Ismoilov Zafar Zokirovich',
+          position: "O'quv ishlari bo'yicha prorektor",
+          type: 'prorector',
+          imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
+        },
+        {
+          id: 'prorector-2',
+          name: 'Baratov Ravshanbek Rustamovich',
+          position: "Ilmiy ishlar va innovatsiyalar bo'yicha prorektor",
+          type: 'prorector',
+          imageUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
+        },
+        {
+          id: 'prorector-3',
+          name: 'Karimov Shuxrat Shavkatovich',
+          position: "Ma'naviy-ma'rifiy ishlar bo'yicha prorektor",
+          type: 'prorector',
+          imageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
+        },
+      ],
+      dekans: [
+        {
+          id: 'dekan-1',
+          name: 'Akbarov Dilshod',
+          position: 'Dekan',
+          type: 'dekan',
+          faculty: 'Muhandislik va texnologiya fakulteti',
+          imageUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
+        },
+        {
+          id: 'dekan-2',
+          name: 'Rustamova Gulnora',
+          position: 'Dekan',
+          type: 'dekan',
+          faculty: 'Axborot texnologiyalari fakulteti',
+          imageUrl: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
+        },
+        {
+          id: 'dekan-3',
+          name: 'Karimov Asilbek',
+          position: 'Dekan',
+          type: 'dekan',
+          faculty: 'Iqtisodiyot va menejment fakulteti',
+          imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
+        },
+        {
+          id: 'dekan-4',
+          name: 'Toshmatova Dilnoza',
+          position: 'Dekan',
+          type: 'dekan',
+          faculty: 'Qurilish va arxitektura fakulteti',
+          imageUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
+        },
+        {
+          id: 'dekan-5',
+          name: 'Sultonov Farrux',
+          position: 'Dekan',
+          type: 'dekan',
+          faculty: 'Elektrotexnika va energetika fakulteti',
+          imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
+        },
+        {
+          id: 'dekan-6',
+          name: 'Mahmudova Nilufar',
+          position: 'Dekan',
+          type: 'dekan',
+          faculty: "Tayyorgarlik va malaka oshirish fakulteti",
+          imageUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
+        },
+      ],
+      kafedras: [
+        { id: 'kafedra-1', name: 'Prof. Dr. Olimov O.', position: 'Mudir', type: 'kafedra_head', faculty: 'Matematika va fizika', imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80' },
+        { id: 'kafedra-2', name: 'Prof. Dr. Saidova S.', position: 'Mudir', type: 'kafedra_head', faculty: "Dasturiy ta'minot muhandisligi", imageUrl: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80' },
+        { id: 'kafedra-3', name: 'Dots. Karimov K.', position: 'Mudir', type: 'kafedra_head', faculty: 'Kompyuter tizimlari', imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80' },
+        { id: 'kafedra-4', name: 'Prof. Dr. Tursunov T.', position: 'Mudir', type: 'kafedra_head', faculty: 'Muhandislik grafikasi', imageUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80' },
+        { id: 'kafedra-5', name: 'Dots. Rahimova R.', position: 'Mudir', type: 'kafedra_head', faculty: 'Elektronika va avtomatika', imageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80' },
+        { id: 'kafedra-6', name: 'Prof. Dr. Xasanov X.', position: 'Mudir', type: 'kafedra_head', faculty: 'Iqtisodiyot', imageUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80' },
+        { id: 'kafedra-7', name: 'Dots. Yusupova Y.', position: 'Mudir', type: 'kafedra_head', faculty: 'Xorijiy tillar', imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80' },
+        { id: 'kafedra-8', name: 'Prof. Dr. Mahmudov M.', position: 'Mudir', type: 'kafedra_head', faculty: 'Tarix va falsafa', imageUrl: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80' },
+        { id: 'kafedra-9', name: 'Dots. Ismoilova I.', position: 'Mudir', type: 'kafedra_head', faculty: 'Kimyo va biologiya', imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80' },
+        { id: 'kafedra-10', name: 'Prof. Dr. Qodirov Q.', position: 'Mudir', type: 'kafedra_head', faculty: 'Mexanika', imageUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80' },
+        { id: 'kafedra-11', name: 'Prof. Dr. Sobirov S.', position: 'Mudir', type: 'kafedra_head', faculty: 'Energetika', imageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80' },
+        { id: 'kafedra-12', name: 'Dots. Hakimova H.', position: 'Mudir', type: 'kafedra_head', faculty: 'Qurilish materiallari', imageUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80' },
+      ],
+      departments: [
+        { id: 'dept-1', name: 'Azizova A.', position: 'Direktor', type: 'department_head', faculty: 'Axborot xizmatlari markazi', imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80' },
+        { id: 'dept-2', name: 'Boltayev B.', position: 'Mudir', type: 'department_head', faculty: 'Kutubxona', imageUrl: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80' },
+        { id: 'dept-3', name: 'Gulomova G.', position: 'Mudir', type: 'department_head', faculty: 'Sport majmualari', imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80' },
+        { id: 'dept-4', name: 'Davlatov D.', position: 'Mudir', type: 'department_head', faculty: 'Yotoqxonalar', imageUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80' },
+        { id: 'dept-5', name: 'Ergasheva E.', position: 'Direktor', type: 'department_head', faculty: "Raqamli ta'lim texnologiyalari markazi", imageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80' },
+        { id: 'dept-6', name: 'Fayziyev F.', position: 'Mudir', type: 'department_head', faculty: 'Axborot resurs markazi', imageUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80' },
+        { id: 'dept-7', name: 'Hasanova H.', position: 'Direktor', type: 'department_head', faculty: 'Innovatsiya markazi', imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80' },
+        { id: 'dept-8', name: 'Ibrohimov I.', position: 'Mudir', type: 'department_head', faculty: 'Xalqaro hamkorlik bo\'limi', imageUrl: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80' },
+        { id: 'dept-9', name: 'Jumayev J.', position: 'Mudir', type: 'department_head', faculty: 'Talabalar turar joylari', imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80' },
+        { id: 'dept-10', name: 'Komilova K.', position: 'Mudir', type: 'department_head', faculty: "O'quv-uslubiy bo'lim", imageUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80' },
+        { id: 'dept-11', name: 'Latipov L.', position: "Boshlig'", type: 'department_head', faculty: 'Xavfsizlik xizmati', imageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80' },
+        { id: 'dept-12', name: 'Mirzayev M.', position: 'Bosh buxgalter', type: 'department_head', faculty: 'Buxgalteriya', imageUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80' },
+      ],
+    };
 
-              <!-- Dekanlar -->
-              <div class="relative">
-                <!-- Horizontal line above -->
-                <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-full max-w-6xl h-1 bg-yellow-400"></div>
-                <!-- Vertical line down from center -->
-                <div class="absolute left-1/2 transform -translate-x-1/2 top-full w-1 h-8 bg-yellow-400 mt-4"></div>
-                <h3 class="text-2xl font-bold text-center mb-8 text-gray-800 pt-8">Fakultetlar</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  <div class="bg-yellow-50 border border-yellow-300 p-4 rounded-lg text-center shadow-md hover:shadow-lg transition-shadow">
-                    <div class="w-10 h-10 rounded-full mx-auto mb-2 border-2 border-yellow-600 bg-gray-300 flex items-center justify-center text-black font-bold text-xs">F1</div>
-                    <div class="bg-yellow-600 text-white px-3 py-2 rounded font-bold mb-2 text-sm">
-                      Muhandislik va texnologiya fakulteti
-                    </div>
-                    <div class="text-sm text-gray-700 font-medium">Dekan</div>
-                    <div class="text-sm text-gray-600">Prof. Dr. [Ism]</div>
-                  </div>
-                  <div class="bg-yellow-50 border border-yellow-300 p-4 rounded-lg text-center shadow-md hover:shadow-lg transition-shadow">
-                    <div class="w-10 h-10 rounded-full mx-auto mb-2 border-2 border-yellow-600 bg-gray-300 flex items-center justify-center text-black font-bold text-xs">F2</div>
-                    <div class="bg-yellow-600 text-white px-3 py-2 rounded font-bold mb-2 text-sm">
-                      Axborot texnologiyalari fakulteti
-                    </div>
-                    <div class="text-sm text-gray-700 font-medium">Dekan</div>
-                    <div class="text-sm text-gray-600">Prof. Dr. [Ism]</div>
-                  </div>
-                  <div class="bg-yellow-50 border border-yellow-300 p-4 rounded-lg text-center shadow-md hover:shadow-lg transition-shadow">
-                    <div class="w-10 h-10 rounded-full mx-auto mb-2 border-2 border-yellow-600 bg-gray-300 flex items-center justify-center text-black font-bold text-xs">F3</div>
-                    <div class="bg-yellow-600 text-white px-3 py-2 rounded font-bold mb-2 text-sm">
-                      Iqtisodiyot va menejment fakulteti
-                    </div>
-                    <div class="text-sm text-gray-700 font-medium">Dekan</div>
-                    <div class="text-sm text-gray-600">Prof. Dr. [Ism]</div>
-                  </div>
-                  <div class="bg-yellow-50 border border-yellow-300 p-4 rounded-lg text-center shadow-md hover:shadow-lg transition-shadow">
-                    <div class="w-10 h-10 rounded-full mx-auto mb-2 border-2 border-yellow-600 bg-gray-300 flex items-center justify-center text-black font-bold text-xs">F4</div>
-                    <div class="bg-yellow-600 text-white px-3 py-2 rounded font-bold mb-2 text-sm">
-                      Qurilish va arxitektura fakulteti
-                    </div>
-                    <div class="text-sm text-gray-700 font-medium">Dekan</div>
-                    <div class="text-sm text-gray-600">Prof. Dr. [Ism]</div>
-                  </div>
-                  <div class="bg-yellow-50 border border-yellow-300 p-4 rounded-lg text-center shadow-md hover:shadow-lg transition-shadow">
-                    <div class="w-10 h-10 rounded-full mx-auto mb-2 border-2 border-yellow-600 bg-gray-300 flex items-center justify-center text-black font-bold text-xs">F5</div>
-                    <div class="bg-yellow-600 text-white px-3 py-2 rounded font-bold mb-2 text-sm">
-                      Elektrotexnika va energetika fakulteti
-                    </div>
-                    <div class="text-sm text-gray-700 font-medium">Dekan</div>
-                    <div class="text-sm text-gray-600">Prof. Dr. [Ism]</div>
-                  </div>
-                  <div class="bg-yellow-50 border border-yellow-300 p-4 rounded-lg text-center shadow-md hover:shadow-lg transition-shadow">
-                    <div class="w-10 h-10 rounded-full mx-auto mb-2 border-2 border-yellow-600 bg-gray-300 flex items-center justify-center text-black font-bold text-xs">F6</div>
-                    <div class="bg-yellow-600 text-white px-3 py-2 rounded font-bold mb-2 text-sm">
-                      Tayyorgarlik va malaka oshirish fakulteti
-                    </div>
-                    <div class="text-sm text-gray-700 font-medium">Dekan</div>
-                    <div class="text-sm text-gray-600">Prof. Dr. [Ism]</div>
-                  </div>
-                </div>
-              </div>
+    // Ma'lumotlarni ContentBlock[] ga o'zgartirish
+    const blocks = transformOrganizationalStructureToBlocks(mockStructure);
 
-              <!-- Kafedralar -->
-              <div class="relative">
-                <!-- Horizontal line above -->
-                <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-full max-w-6xl h-1 bg-gray-400"></div>
-                <h3 class="text-2xl font-bold text-center mb-8 text-gray-800 pt-8">Kafedralar</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                  <div class="bg-gray-50 border border-gray-300 p-3 rounded-lg text-center hover:shadow-md transition-shadow">
-                    <div class="font-semibold text-gray-800 text-sm">Matematika va fizika</div>
-                    <div class="text-xs text-gray-600 mt-1">Mudir: Prof. Dr. [Ism]</div>
-                  </div>
-                  <div class="bg-gray-50 border border-gray-300 p-3 rounded-lg text-center hover:shadow-md transition-shadow">
-                    <div class="font-semibold text-gray-800 text-sm">Dasturiy ta'minot muhandisligi</div>
-                    <div class="text-xs text-gray-600 mt-1">Mudir: Prof. Dr. [Ism]</div>
-                  </div>
-                  <div class="bg-gray-50 border border-gray-300 p-3 rounded-lg text-center hover:shadow-md transition-shadow">
-                    <div class="font-semibold text-gray-800 text-sm">Kompyuter tizimlari</div>
-                    <div class="text-xs text-gray-600 mt-1">Mudir: Prof. Dr. [Ism]</div>
-                  </div>
-                  <div class="bg-gray-50 border border-gray-300 p-3 rounded-lg text-center hover:shadow-md transition-shadow">
-                    <div class="font-semibold text-gray-800 text-sm">Muhandislik grafikasi</div>
-                    <div class="text-xs text-gray-600 mt-1">Mudir: Dots. [Ism]</div>
-                  </div>
-                  <div class="bg-gray-50 border border-gray-300 p-3 rounded-lg text-center hover:shadow-md transition-shadow">
-                    <div class="font-semibold text-gray-800 text-sm">Elektronika va avtomatika</div>
-                    <div class="text-xs text-gray-600 mt-1">Mudir: Prof. Dr. [Ism]</div>
-                  </div>
-                  <div class="bg-gray-50 border border-gray-300 p-3 rounded-lg text-center hover:shadow-md transition-shadow">
-                    <div class="font-semibold text-gray-800 text-sm">Iqtisodiyot</div>
-                    <div class="text-xs text-gray-600 mt-1">Mudir: Dots. [Ism]</div>
-                  </div>
-                  <div class="bg-gray-50 border border-gray-300 p-3 rounded-lg text-center hover:shadow-md transition-shadow">
-                    <div class="font-semibold text-gray-800 text-sm">Xorijiy tillar</div>
-                    <div class="text-xs text-gray-600 mt-1">Mudir: Dots. [Ism]</div>
-                  </div>
-                  <div class="bg-gray-50 border border-gray-300 p-3 rounded-lg text-center hover:shadow-md transition-shadow">
-                    <div class="font-semibold text-gray-800 text-sm">Tarix va falsafa</div>
-                    <div class="text-xs text-gray-600 mt-1">Mudir: Prof. Dr. [Ism]</div>
-                  </div>
-                  <div class="bg-gray-50 border border-gray-300 p-3 rounded-lg text-center hover:shadow-md transition-shadow">
-                    <div class="font-semibold text-gray-800 text-sm">Kimyo va biologiya</div>
-                    <div class="text-xs text-gray-600 mt-1">Mudir: Dots. [Ism]</div>
-                  </div>
-                  <div class="bg-gray-50 border border-gray-300 p-3 rounded-lg text-center hover:shadow-md transition-shadow">
-                    <div class="font-semibold text-gray-800 text-sm">Mexanika</div>
-                    <div class="text-xs text-gray-600 mt-1">Mudir: Prof. Dr. [Ism]</div>
-                  </div>
-                  <div class="bg-gray-50 border border-gray-300 p-3 rounded-lg text-center hover:shadow-md transition-shadow">
-                    <div class="font-semibold text-gray-800 text-sm">Energetika</div>
-                    <div class="text-xs text-gray-600 mt-1">Mudir: Prof. Dr. [Ism]</div>
-                  </div>
-                  <div class="bg-gray-50 border border-gray-300 p-3 rounded-lg text-center hover:shadow-md transition-shadow">
-                    <div class="font-semibold text-gray-800 text-sm">Qurilish materiallari</div>
-                    <div class="text-xs text-gray-600 mt-1">Mudir: Dots. [Ism]</div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Yordamchi bo'limlar -->
-              <div class="mt-12">
-                <h3 class="text-2xl font-bold text-center mb-8 text-gray-800">Yordamchi bo'limlar va markazlar</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                  <div class="bg-purple-50 border border-purple-300 p-3 rounded-lg text-center hover:shadow-md transition-shadow">
-                    <div class="font-semibold text-gray-800 text-sm">Axborot xizmatlari markazi</div>
-                    <div class="text-xs text-gray-600 mt-1">Direktor: [Ism]</div>
-                  </div>
-                  <div class="bg-purple-50 border border-purple-300 p-3 rounded-lg text-center hover:shadow-md transition-shadow">
-                    <div class="font-semibold text-gray-800 text-sm">Kutubxona</div>
-                    <div class="text-xs text-gray-600 mt-1">Mudir: [Ism]</div>
-                  </div>
-                  <div class="bg-purple-50 border border-purple-300 p-3 rounded-lg text-center hover:shadow-md transition-shadow">
-                    <div class="font-semibold text-gray-800 text-sm">Sport majmualari</div>
-                    <div class="text-xs text-gray-600 mt-1">Mudir: [Ism]</div>
-                  </div>
-                  <div class="bg-purple-50 border border-purple-300 p-3 rounded-lg text-center hover:shadow-md transition-shadow">
-                    <div class="font-semibold text-gray-800 text-sm">Yotoqxonalar</div>
-                    <div class="text-xs text-gray-600 mt-1">Mudir: [Ism]</div>
-                  </div>
-                  <div class="bg-purple-50 border border-purple-300 p-3 rounded-lg text-center hover:shadow-md transition-shadow">
-                    <div class="font-semibold text-gray-800 text-sm">Raqamli ta'lim texnologiyalari markazi</div>
-                    <div class="text-xs text-gray-600 mt-1">Direktor: [Ism]</div>
-                  </div>
-                  <div class="bg-purple-50 border border-purple-300 p-3 rounded-lg text-center hover:shadow-md transition-shadow">
-                    <div class="font-semibold text-gray-800 text-sm">Axborot resurs markazi</div>
-                    <div class="text-xs text-gray-600 mt-1">Mudir: [Ism]</div>
-                  </div>
-                  <div class="bg-purple-50 border border-purple-300 p-3 rounded-lg text-center hover:shadow-md transition-shadow">
-                    <div class="font-semibold text-gray-800 text-sm">Innovatsiya markazi</div>
-                    <div class="text-xs text-gray-600 mt-1">Direktor: [Ism]</div>
-                  </div>
-                  <div class="bg-purple-50 border border-purple-300 p-3 rounded-lg text-center hover:shadow-md transition-shadow">
-                    <div class="font-semibold text-gray-800 text-sm">Xalqaro hamkorlik bo'limi</div>
-                    <div class="text-xs text-gray-600 mt-1">Mudir: [Ism]</div>
-                  </div>
-                  <div class="bg-purple-50 border border-purple-300 p-3 rounded-lg text-center hover:shadow-md transition-shadow">
-                    <div class="font-semibold text-gray-800 text-sm">Talabalar turar joylari</div>
-                    <div class="text-xs text-gray-600 mt-1">Mudir: [Ism]</div>
-                  </div>
-                  <div class="bg-purple-50 border border-purple-300 p-3 rounded-lg text-center hover:shadow-md transition-shadow">
-                    <div class="font-semibold text-gray-800 text-sm">O'quv-uslubiy bo'lim</div>
-                    <div class="text-xs text-gray-600 mt-1">Mudir: [Ism]</div>
-                  </div>
-                  <div class="bg-purple-50 border border-purple-300 p-3 rounded-lg text-center hover:shadow-md transition-shadow">
-                    <div class="font-semibold text-gray-800 text-sm">Xavfsizlik xizmati</div>
-                    <div class="text-xs text-gray-600 mt-1">Boshlig': [Ism]</div>
-                  </div>
-                  <div class="bg-purple-50 border border-purple-300 p-3 rounded-lg text-center hover:shadow-md transition-shadow">
-                    <div class="font-semibold text-gray-800 text-sm">Buxgalteriya</div>
-                    <div class="text-xs text-gray-600 mt-1">Bosh buxgalter: [Ism]</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          `
-        }
-      }
-    ]
-  };
-
-  return simulateApiCall(data, 300);
+    return simulateApiCall({ blocks }, 300);
+  } catch (error) {
+    console.error('Tashkiliy tuzilma ma\'lumotlarini yuklashda xatolik:', error);
+    throw error;
+  }
 };

@@ -58,11 +58,14 @@ export const navItems = [
   },
   {
     title: 'Faoliyat',
+    href: '/activities',
     children: [
-      { title: 'Ilmiy faoliyat', href: '/scientific-activity' },
-      { title: 'Xalqaro faoliyat', href: '/international-activity' },
-      { title: 'Moliyaviy faoliyat', href: '/financial-activity' },
-      { title: 'Yoshlar bilan ishlash', href: '/youth-work' },
+      { title: 'Ilmiy tadqiqotlar', href: '/activities?category=scientific' },
+      { title: 'Ta\'lim dasturlari', href: '/activities?category=educational' },
+      { title: 'Xalqaro hamkorlik', href: '/activities?category=international' },
+      { title: 'Ijtimoiy loyihalar', href: '/activities?category=social' },
+      { title: 'Madaniy-sport tadbirlar', href: '/activities?category=cultural' },
+      { title: 'Hamkorlik dasturlari', href: '/activities?category=partnership' },
     ],
   },
   {

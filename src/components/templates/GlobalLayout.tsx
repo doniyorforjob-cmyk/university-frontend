@@ -3,6 +3,8 @@ import { Outlet } from 'react-router-dom';
 import Container from '@/components/shared/Container';
 import Banner from '@/components/shared/Banner';
 import Breadcrumbs from '@/components/shared/Breadcrumbs';
+import { CachedApiProvider } from '@/components/providers/CachedApiProvider';
+import { PerformanceProvider } from '@/components/providers/PerformanceProvider';
 
 interface BreadcrumbItem {
   label: string;
@@ -44,28 +46,38 @@ const GlobalLayout: React.FC = () => {
   }, []);
 
   return (
-    <GlobalLayoutContext.Provider value={{ setBannerData, setBreadcrumbsData }}>
-      <div className="bg-gray-50 min-h-screen pb-20">
-        {/* Render Banner outside the 70/30 split */}
-        {banner && (
-          <Banner
-            title={banner.title}
-            subtitle={banner.subtitle}
-            backgroundImage={banner.backgroundImage}
-          />
-        )}
+    <CachedApiProvider config={{
+      defaultTtl: 15,
+      maxCacheSize: 50 * 1024 * 1024,
+      enableOfflineMode: true,
+      enableBackgroundSync: true,
+      enableAutoCleanup: true
+    }}>
+      <PerformanceProvider>
+        <GlobalLayoutContext.Provider value={{ setBannerData, setBreadcrumbsData }}>
+          <div className="bg-gray-50 min-h-screen pb-20">
+            {/* Render Banner outside the 70/30 split */}
+            {banner && (
+              <Banner
+                title={banner.title}
+                subtitle={banner.subtitle}
+                backgroundImage={banner.backgroundImage}
+              />
+            )}
 
-        {/* Render Breadcrumbs outside the 70/30 split */}
-        {breadcrumbs && breadcrumbs.length > 0 && (
-          <Container className="pt-8 pb-0">
-            <Breadcrumbs items={breadcrumbs} />
-          </Container>
-        )}
+            {/* Render Breadcrumbs outside the 70/30 split */}
+            {breadcrumbs && breadcrumbs.length > 0 && (
+              <Container className="pt-8 pb-0">
+                <Breadcrumbs items={breadcrumbs} />
+              </Container>
+            )}
 
-        {/* This Outlet will render MainLayout or other page components */}
-        <Outlet />
-      </div>
-    </GlobalLayoutContext.Provider>
+            {/* This Outlet will render MainLayout or other page components */}
+            <Outlet />
+          </div>
+        </GlobalLayoutContext.Provider>
+      </PerformanceProvider>
+    </CachedApiProvider>
   );
 };
 
