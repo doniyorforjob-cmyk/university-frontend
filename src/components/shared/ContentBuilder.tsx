@@ -295,7 +295,7 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
       case 'text':
         return (
           <motion.div key={block.id} {...baseAnimation} className={`space-y-4 ${block.className || ''}`}>
-            <h3 className="text-xl font-semibold text-black">{block.data.title}</h3>
+            <h3 className="text-lg font-semibold text-black">{block.data.title}</h3>
             <p className="text-black">{block.data.content}</p>
           </motion.div>
         );
@@ -303,7 +303,7 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
       case 'highlight':
         return (
           <motion.div key={block.id} {...baseAnimation} className={`bg-blue-50 p-6 rounded-lg border-l-4 border-blue-500 ${block.className || ''}`}>
-            <h3 className="text-2xl font-bold text-blue-800 mb-4">{block.data.title}</h3>
+            <h3 className="text-xl font-bold text-blue-800 mb-4">{block.data.title}</h3>
             <p className="text-blue-700">{block.data.content}</p>
           </motion.div>
         );
@@ -311,7 +311,7 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
       case 'grid':
         return (
           <motion.div key={block.id} {...baseAnimation} className={`space-y-6 ${block.className || ''}`}>
-            <h3 className="text-xl font-semibold text-black">{block.data.title}</h3>
+            <h3 className="text-lg font-semibold text-black">{block.data.title}</h3>
             <div className={`grid gap-6 ${block.data.columns === 2 ? 'grid-cols-1 md:grid-cols-2' : block.data.columns === 3 ? 'grid-cols-1 md:grid-cols-3' : 'grid-cols-1'}`}>
               {block.data.items.map((item: any, itemIndex: number) => (
                 <div key={itemIndex} className={`bg-white border border-gray-200 ${block.className === 'no-rounded' ? 'rounded-none' : 'rounded-lg'} p-6 hover:shadow-lg transition-shadow duration-200`}>
@@ -336,7 +336,7 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
       case 'list':
         return (
           <motion.div key={block.id} {...baseAnimation} className={`space-y-4 ${block.className || ''}`}>
-            <h3 className="text-xl font-semibold text-black">{block.data.title}</h3>
+            <h3 className="text-lg font-semibold text-black">{block.data.title}</h3>
             <ul className="list-disc list-inside space-y-2">
               {block.data.items.map((item: string, itemIndex: number) => (
                 <li key={itemIndex} className="text-black">{item}</li>
@@ -357,7 +357,7 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
 
         return (
           <motion.div key={block.id} {...baseAnimation} className={containerClassName}>
-            {block.data.title && <h3 className="text-xl font-semibold text-black">{block.data.title}</h3>}
+            {block.data.title && <h3 className="text-lg font-semibold text-black">{block.data.title}</h3>}
             <img
               src={block.data.src}
               alt={block.data.alt || block.data.title}
@@ -371,7 +371,7 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
       case 'stats':
         return (
           <motion.div key={block.id} {...baseAnimation} className={`space-y-6 ${block.className || ''}`}>
-            <h3 className="text-xl font-semibold text-black text-center">{block.data.title}</h3>
+            <h3 className="text-lg font-semibold text-black text-center">{block.data.title}</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {block.data.stats.map((stat: any, statIndex: number) => (
                 <div key={statIndex} className="text-center">
@@ -386,7 +386,7 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
       case 'timeline':
         return (
           <motion.div key={block.id} {...baseAnimation} className={`space-y-6 ${block.className || ''}`}>
-            <h3 className="text-xl font-semibold text-black">{block.data.title}</h3>
+            <h3 className="text-lg font-semibold text-black">{block.data.title}</h3>
             <div className="space-y-6">
               {block.data.events.map((event: any, eventIndex: number) => (
                 <div key={eventIndex} className="flex items-start space-x-4">
@@ -404,7 +404,7 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
       case 'cards':
         return (
           <motion.div key={block.id} {...baseAnimation} className={`space-y-6 ${block.className || ''}`}>
-            <h3 className="text-xl font-semibold text-black">{block.data.title}</h3>
+            <h3 className="text-lg font-semibold text-black">{block.data.title}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {block.data.cards.map((card: any, cardIndex: number) => (
                 <div key={cardIndex} className="bg-gradient-to-br from-gray-600 to-gray-800 text-white p-6 hover:from-gray-700 hover:to-gray-900 transition-all duration-300">
@@ -428,13 +428,13 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
       case 'table':
         return (
           <motion.div key={block.id} {...baseAnimation} className={`space-y-4 ${block.className || ''}`}>
-            <h3 className="text-xl font-semibold text-black">{block.data.title}</h3>
-            <div className="overflow-x-auto">
-              <table className="min-w-full bg-white border border-gray-200">
+            <h3 className="text-lg font-semibold text-black">{block.data.title}</h3>
+            <div className="w-full">
+              <table className="w-full bg-white border border-gray-200 table-fixed">
                 <thead className="bg-gray-50">
                   <tr>
                     {block.data.headers.map((header: string, headerIndex: number) => (
-                      <th key={headerIndex} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th key={headerIndex} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider break-words">
                         {header}
                       </th>
                     ))}
@@ -444,8 +444,18 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
                   {block.data.rows.map((row: any[], rowIndex: number) => (
                     <tr key={rowIndex}>
                       {row.map((cell, cellIndex) => (
-                        <td key={cellIndex} className="px-6 py-4 whitespace-nowrap text-sm text-black">
-                          {cell}
+                        <td key={cellIndex} className="px-4 py-4 text-sm text-black break-words align-top">
+                          {typeof cell === 'string' && cell.includes('\n') ? (
+                            <div className="space-y-1">
+                              {cell.split('\n').map((line: string, lineIndex: number) => (
+                                <div key={lineIndex} className="leading-tight">
+                                  {line.trim()}
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            cell
+                          )}
                         </td>
                       ))}
                     </tr>
@@ -504,7 +514,7 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
       case 'gallery':
         return (
           <motion.div key={block.id} {...baseAnimation} className={`space-y-4 ${block.className || ''}`}>
-            <h3 className="text-xl font-semibold text-black">{block.data.title}</h3>
+            <h3 className="text-lg font-semibold text-black">{block.data.title}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {block.data.images.map((img: any, imgIndex: number) => (
                 <div key={imgIndex} className="overflow-hidden">
@@ -524,7 +534,7 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
       case 'video':
         return (
           <motion.div key={block.id} {...baseAnimation} className={`space-y-4 ${block.className || ''}`}>
-            {block.data.title && <h3 className="text-xl font-semibold text-black">{block.data.title}</h3>}
+            {block.data.title && <h3 className="text-lg font-semibold text-black">{block.data.title}</h3>}
             <div className="aspect-video">
               {block.data.type === 'youtube' ? (
                 <iframe
@@ -552,7 +562,7 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
       case 'audio':
         return (
           <motion.div key={block.id} {...baseAnimation} className={`space-y-4 ${block.className || ''}`}>
-            {block.data.title && <h3 className="text-xl font-semibold text-black">{block.data.title}</h3>}
+            {block.data.title && <h3 className="text-lg font-semibold text-black">{block.data.title}</h3>}
             <audio controls className="w-full">
               <source src={block.data.src} type="audio/mpeg" />
               <track kind="captions" srcLang="uz" label="O'zbek" />
@@ -566,7 +576,7 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
       case 'section':
         return (
           <motion.section key={block.id} {...baseAnimation} className={`py-8 ${block.data.background || ''} ${block.className || ''}`}>
-            {block.data.title && <h2 className="text-2xl font-bold text-black mb-6">{block.data.title}</h2>}
+            {block.data.title && <h2 className="text-xl font-bold text-black mb-6">{block.data.title}</h2>}
             <div className="space-y-6">
               {block.data.content && <p className="text-black">{block.data.content}</p>}
               {block.data.children && (
@@ -583,7 +593,7 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
       case 'columns':
         return (
           <motion.div key={block.id} {...baseAnimation} className={`${block.className || ''}`}>
-            {block.data.title && <h3 className="text-xl font-semibold text-black mb-6">{block.data.title}</h3>}
+            {block.data.title && <h3 className="text-lg font-semibold text-black mb-6">{block.data.title}</h3>}
             <div className={`grid gap-6 ${
               block.data.columns === 2 ? 'grid-cols-1 md:grid-cols-2' :
               block.data.columns === 3 ? 'grid-cols-1 md:grid-cols-3' :
@@ -616,7 +626,7 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
       case 'masonry':
         return (
           <motion.div key={block.id} {...baseAnimation} className={`space-y-6 ${block.className || ''}`}>
-            <h3 className="text-xl font-semibold text-black">{block.data.title}</h3>
+            <h3 className="text-lg font-semibold text-black">{block.data.title}</h3>
             <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
               {block.data.items.map((item: any, itemIndex: number) => (
                 <div key={itemIndex} className="break-inside-avoid bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow duration-200">
@@ -632,7 +642,7 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
       case 'timeline-vertical':
         return (
           <motion.div key={block.id} {...baseAnimation} className={`space-y-6 ${block.className || ''}`}>
-            <h3 className="text-xl font-semibold text-black">{block.data.title}</h3>
+            <h3 className="text-lg font-semibold text-black">{block.data.title}</h3>
             <div className="relative">
               <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-blue-500"></div>
               <div className="space-y-8">
@@ -658,7 +668,7 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
       case 'pricing':
         return (
           <motion.div key={block.id} {...baseAnimation} className={`space-y-6 ${block.className || ''}`}>
-            <h3 className="text-xl font-semibold text-black text-center">{block.data.title}</h3>
+            <h3 className="text-lg font-semibold text-black text-center">{block.data.title}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {block.data.plans.map((plan: any, planIndex: number) => (
                 <div key={planIndex} className={`bg-white border border-gray-200 rounded-lg p-6 ${plan.featured ? 'ring-2 ring-blue-500' : ''}`}>
@@ -708,7 +718,7 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
       case 'testimonials':
         return (
           <motion.div key={block.id} {...baseAnimation} className={`space-y-6 ${block.className || ''}`}>
-            <h3 className="text-xl font-semibold text-black">{block.data.title}</h3>
+            <h3 className="text-lg font-semibold text-black">{block.data.title}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {block.data.testimonials.map((testimonial: any, testIndex: number) => (
                 <div key={testIndex} className="bg-white p-6 border border-gray-200 shadow-sm">
@@ -731,7 +741,7 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
       case 'team-member':
         return (
           <motion.div key={block.id} {...baseAnimation} className={`space-y-6 ${block.className || ''}`}>
-            <h3 className="text-xl font-semibold text-black">{block.data.title}</h3>
+            <h3 className="text-lg font-semibold text-black">{block.data.title}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {block.data.members.map((member: any, memberIndex: number) => (
                 <div key={memberIndex} className="text-center bg-white p-6 border border-gray-200">
@@ -756,7 +766,7 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
       case 'faq':
         return (
           <motion.div key={block.id} {...baseAnimation} className={`space-y-4 ${block.className || ''}`}>
-            <h3 className="text-xl font-semibold text-black">{block.data.title}</h3>
+            <h3 className="text-lg font-semibold text-black">{block.data.title}</h3>
             <AccordionBlock block={{...block, type: 'accordion'}} index={index} />
           </motion.div>
         );
@@ -854,7 +864,7 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
           <motion.div key={block.id} {...baseAnimation} className={`py-8 ${block.className || ''}`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-left mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 flex items-center mb-4">
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900 flex items-center mb-4">
                   <span className="w-3 h-3 rounded-full mr-4" style={{ backgroundColor: '#BEA587' }}></span>
                   {block.data.title}
                 </h2>
@@ -881,7 +891,7 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
           <motion.div key={block.id} {...baseAnimation} className={`py-8 ${block.className || ''}`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="mb-8">
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 flex items-center">
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900 flex items-center">
                   <span className="w-3 h-3 rounded-full mr-4" style={{ backgroundColor: '#BEA587' }}></span>
                   {block.data.title}
                 </h2>
@@ -913,7 +923,7 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
           <motion.div key={block.id} {...baseAnimation} className={`py-8 ${block.className || ''}`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="mb-8">
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 flex items-center">
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900 flex items-center">
                   <span className="w-3 h-3 rounded-full mr-4" style={{ backgroundColor: '#BEA587' }}></span>
                   {block.data.title}
                 </h2>
@@ -968,7 +978,7 @@ const ContentBuilderComponent: React.FC<ContentBuilderProps> & { displayName?: s
           <motion.div key={block.id} {...baseAnimation} className={`py-8 ${block.className || ''}`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="mb-8">
-                <h2 className="text-3xl md:text-4xl font-bold text-black flex items-center">
+                <h2 className="text-xl md:text-2xl font-bold text-black flex items-center">
                   <span className="w-3 h-3 rounded-full mr-4" style={{ backgroundColor: '#BEA587' }}></span>
                   {block.data.title}
                 </h2>

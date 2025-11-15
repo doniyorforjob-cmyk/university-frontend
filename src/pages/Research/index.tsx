@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import PageTemplate from '@/components/shared/PageTemplate';
 import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
-import usePage from '@/hooks/usePage';
+import { useStandardPage } from '@/hooks/useStandardPage';
 import { ContentBlock } from '@/components/shared/ContentBuilder';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 
@@ -158,9 +158,10 @@ const fetchResearchData = async (): Promise<ResearchData> => {
 
 const ResearchPage: React.FC = () => {
   const { setBannerData, setBreadcrumbsData } = useGlobalLayout();
-  const { data, loading, error, refetch } = usePage({
-    fetchData: fetchResearchData
-  });
+  const { data, loading, error, refetch } = useStandardPage(
+    'research',
+    fetchResearchData
+  );
 
   useEffect(() => {
     setBannerData({
@@ -189,7 +190,7 @@ const ResearchPage: React.FC = () => {
         title="Ilmiy Faoliyat"
       > {/* PageTemplate no longer takes showSidebar */}
         <div className="text-center py-8">
-          <p className="text-red-600 mb-4">{error || 'Ma\'lumot topilmadi'}</p>
+          <p className="text-red-600 mb-4">{error?.message || 'Ma\'lumot topilmadi'}</p>
           <button 
             onClick={refetch}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"

@@ -70,6 +70,7 @@ export const navItems = [
   },
   {
     title: 'Qabul-2025',
+    href: '/admission',
     children: [
       { title: 'Bakalavriat', href: '/admission/bachelor' },
       { title: 'Magistratura', href: '/admission/master' },
@@ -77,7 +78,7 @@ export const navItems = [
       { title: 'Xorijiy fuqarolar uchun', href: '/admission/foreign' },
     ],
   },
-  { title: 'Yashil universitet', href: '/green-university' },
+  { title: 'Yashil universitet', href: '/yashil-universitet' },
   { title: 'Ekafaol talabalar', href: '/eco-active-students' },
 ];
 

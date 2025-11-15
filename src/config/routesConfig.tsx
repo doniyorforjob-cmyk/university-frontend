@@ -18,6 +18,7 @@ const ContactPage = React.lazy(() => import('../pages/Contact'));
 const OrganizationalStructurePage = React.lazy(() => import('../pages/OrganizationalStructure'));
 const ActivitiesPage = React.lazy(() => import('../pages/Activities'));
 const AdmissionPage = React.lazy(() => import('../pages/Admission'));
+const YashilUniversitetPage = React.lazy(() => import('../pages/YashilUniversitet'));
 
 // Route configuration with lazy loading
 export const routeConfig: any[] = [
@@ -61,6 +62,10 @@ export const routeConfig: any[] = [
     path: '/admission',
     element: <AdmissionPage />,
   },
+  {
+    path: '/yashil-universitet',
+    element: <YashilUniversitetPage />,
+  },
 ];
 
 // Wrapper for Suspense
@@ -83,6 +88,7 @@ export const prefetchRoute = (routePath: string) => {
     '/organizational-structure': () => import('../pages/OrganizationalStructure'),
     '/activities': () => import('../pages/Activities'),
     '/admission': () => import('../pages/Admission'),
+    '/yashil-universitet': () => import('../pages/YashilUniversitet'),
   };
 
   const importFn = routeMap[routePath];
@@ -106,6 +112,7 @@ export const getRouteComponent = (path: string): React.ComponentType | null => {
     '/organizational-structure': OrganizationalStructurePage,
     '/activities': ActivitiesPage,
     '/admission': AdmissionPage,
+    '/yashil-universitet': YashilUniversitetPage,
   };
 
   return componentMap[path] || null;
@@ -155,6 +162,11 @@ export const routeMetadata = {
   },
   '/admission': {
     title: 'Qabul',
+    prefetch: false,
+    priority: 'medium',
+  },
+  '/yashil-universitet': {
+    title: 'Yashil Universitet',
     prefetch: false,
     priority: 'medium',
   },

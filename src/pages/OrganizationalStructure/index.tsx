@@ -1,7 +1,7 @@
 import React from 'react';
 import PageTemplate from '@/components/shared/PageTemplate';
 import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
-import usePage from '@/hooks/usePage';
+import { useStandardPage } from '@/hooks/useStandardPage';
 import { fetchOrganizationalStructureData } from '@/api/organizationalStructureApi';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 
@@ -11,9 +11,10 @@ interface OrganizationalStructureData {
 
 const OrganizationalStructurePage: React.FC = () => {
   const { setBreadcrumbsData } = useGlobalLayout();
-  const { data, loading, error, refetch } = usePage({
-    fetchData: fetchOrganizationalStructureData
-  });
+  const { data, loading, error, refetch } = useStandardPage(
+    'organizational-structure',
+    fetchOrganizationalStructureData
+  );
 
   React.useEffect(() => {
     setBreadcrumbsData([
@@ -35,7 +36,7 @@ const OrganizationalStructurePage: React.FC = () => {
     return (
       <PageTemplate title="Tuzilma">
         <div className="text-center py-8">
-          <p className="text-red-600 mb-4">{error || 'Ma\'lumot topilmadi'}</p>
+          <p className="text-red-600 mb-4">{error?.message || 'Ma\'lumot topilmadi'}</p>
           <button
             onClick={refetch}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"

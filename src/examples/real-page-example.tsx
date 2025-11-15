@@ -1,7 +1,7 @@
 import React from 'react';
 import PageTemplate from '../components/shared/PageTemplate';
 import GenericPageSkeleton from '../components/shared/GenericPageSkeleton';
-import usePage from '../hooks/usePage';
+import { useStandardPage } from '../hooks/useStandardPage';
 import { ContentBlock } from '../components/shared/ContentBuilder';
 
 // API'dan kelgan raw ma'lumotlar interfeysi
@@ -196,13 +196,10 @@ const fetchPageData = async (): Promise<{ blocks: ContentBlock[] }> => {
 
 // Sahifa komponenti
 const DepartmentsPage: React.FC = () => {
-  const { data, loading, error, refetch } = usePage<{
-    blocks: ContentBlock[];
-  }>({
-    // The `as any` cast is a workaround for this example file.
-    // In a real application, ensure fetchData's type matches what usePage expects.
-    fetchData: fetchPageData as any
-  });
+  const { data, loading, error, refetch } = useStandardPage(
+    'departments-example',
+    fetchPageData
+  );
 
   if (loading) {
     return <GenericPageSkeleton showSidebar={true} showHeroImage={false} contentBlocks={6} />;
@@ -214,7 +211,7 @@ const DepartmentsPage: React.FC = () => {
         title="Bo'limlar"
       > {/* PageTemplate no longer takes showSidebar */}
         <div className="text-center py-8">
-          <p className="text-red-600 mb-4">{error || 'Ma\'lumot topilmadi'}</p>
+          <p className="text-red-600 mb-4">{error?.message || 'Ma\'lumot topilmadi'}</p>
           <button 
             onClick={refetch}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"

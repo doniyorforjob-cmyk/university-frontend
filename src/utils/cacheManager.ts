@@ -214,6 +214,27 @@ class CacheManager {
 
     return () => clearInterval(interval);
   }
+
+  // API call with caching
+  async cachedApiCall<T>(
+    key: string,
+    apiCall: () => Promise<T>,
+    ttlMinutes: number = 15
+  ): Promise<T> {
+    // Check cache first
+    const cached = this.get(key);
+    if (cached !== null) {
+      return cached;
+    }
+
+    // Make API call
+    const data = await apiCall();
+
+    // Cache the result
+    this.set(key, data, ttlMinutes);
+
+    return data;
+  }
 }
 
 export const cacheManager = CacheManager.getInstance();

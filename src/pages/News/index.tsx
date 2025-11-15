@@ -1,16 +1,36 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getPosts } from '../../services/postService';
 import { Post } from '../../types/post';
 import SectionTemplate, { SectionItem } from '@/components/templates/SectionTemplate';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
+import { useStandardPage } from '@/hooks/useStandardPage';
+
+// News ma'lumotlarini olish funksiyasi
+const fetchNewsData = async (): Promise<SectionItem[]> => {
+  const data = await getPosts('news');
+
+  // Post[] ni SectionItem[] ga o'zgartirish
+  const sectionItems: SectionItem[] = data.map((post: Post) => ({
+    id: post.id.toString(),
+    title: post.title,
+    description: post.description || '',
+    date: post.published_at,
+    image: post.image_url,
+    href: `/news/${post.slug}`,
+    category: 'Yangilik'
+  }));
+
+  return sectionItems;
+};
 
 const NewsPage: React.FC = () => {
   const navigate = useNavigate();
   const { setBannerData, setBreadcrumbsData } = useGlobalLayout();
-  const [items, setItems] = useState<SectionItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: items, loading, error, refetch } = useStandardPage(
+    'news',
+    fetchNewsData
+  );
 
   useEffect(() => {
     setBannerData({
@@ -30,34 +50,6 @@ const NewsPage: React.FC = () => {
     };
   }, [setBannerData, setBreadcrumbsData]);
 
-  useEffect(() => {
-    const fetchNews = async () => {
-      try {
-        setLoading(true);
-        const data = await getPosts('news');
-
-        // Post[] ni SectionItem[] ga o'zgartirish
-        const sectionItems: SectionItem[] = data.map((post: Post) => ({
-          id: post.id.toString(),
-          title: post.title,
-          description: post.description || '',
-          date: post.published_at,
-          image: post.image_url,
-          href: `/news/${post.slug}`,
-          category: 'Yangilik'
-        }));
-
-        setItems(sectionItems);
-      } catch (err) {
-        setError('Yangiliklarni yuklashda xatolik yuz berdi.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchNews();
-  }, []);
 
   const handleItemClick = useCallback((item: SectionItem) => {
     navigate(item.href);
@@ -66,7 +58,7 @@ const NewsPage: React.FC = () => {
   if (error) {
     return (
       <div className="text-center py-20 text-red-500">
-        <p>{error}</p>
+        <p>{error?.message || 'Ma\'lumot topilmadi'}</p>
       </div>
     );
   }
@@ -77,8 +69,8 @@ const NewsPage: React.FC = () => {
       parentTitle="Axborot xizmati"
       sectionTitle="Yangiliklar"
       sectionType="news"
-      items={items}
-      totalItems={items.length}
+      items={items || []}
+      totalItems={(items || []).length}
       layoutType="grid"
       itemsPerPage={12}
       showSearch={false}

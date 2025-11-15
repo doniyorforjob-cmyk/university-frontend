@@ -1,16 +1,36 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAnnouncements } from '@/services/announcementService';
 import { Announcement } from '@/types/announcement';
 import SectionTemplate, { SectionItem } from '@/components/templates/SectionTemplate';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
+import { useStandardPage } from '@/hooks/useStandardPage';
+
+// E'lonlar ma'lumotlarini olish funksiyasi
+const fetchAnnouncementsData = async (): Promise<SectionItem[]> => {
+  const data = await getAnnouncements();
+
+  const sectionItems: SectionItem[] = data.map((announcement: Announcement) => ({
+    id: announcement.id.toString(),
+    title: announcement.title,
+    description: announcement.excerpt || '',
+    date: announcement.published_at,
+    image: announcement.image_url,
+    href: `/announcements/${announcement.slug}`,
+    category: 'E\'lon',
+    views: announcement.views,
+  }));
+
+  return sectionItems;
+};
 
 const AnnouncementsPage: React.FC = () => {
   const navigate = useNavigate();
   const { setBannerData, setBreadcrumbsData } = useGlobalLayout();
-  const [items, setItems] = useState<SectionItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: items, loading, error, refetch } = useStandardPage(
+    'announcements',
+    fetchAnnouncementsData
+  );
 
   useEffect(() => {
     setBannerData({
@@ -30,34 +50,6 @@ const AnnouncementsPage: React.FC = () => {
     };
   }, [setBannerData, setBreadcrumbsData]);
 
-  useEffect(() => {
-    const fetchAnnouncements = async () => {
-      try {
-        setLoading(true);
-        const data = await getAnnouncements();
-
-        const sectionItems: SectionItem[] = data.map((announcement: Announcement) => ({
-          id: announcement.id.toString(),
-          title: announcement.title,
-          description: announcement.excerpt || '',
-          date: announcement.published_at,
-          image: announcement.image_url,
-          href: `/announcements/${announcement.slug}`,
-          category: 'E\'lon',
-          views: announcement.views,
-        }));
-
-        setItems(sectionItems);
-      } catch (err) {
-        setError('E\'lonlarni yuklashda xatolik yuz berdi.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAnnouncements();
-  }, []);
 
   const handleItemClick = useCallback((item: SectionItem) => {
     navigate(item.href);
@@ -66,7 +58,7 @@ const AnnouncementsPage: React.FC = () => {
   if (error) {
     return (
       <div className="text-center py-20 text-red-500">
-        <p>{error}</p>
+        <p>{error?.message || 'Ma\'lumot topilmadi'}</p>
       </div>
     );
   }
@@ -77,8 +69,8 @@ const AnnouncementsPage: React.FC = () => {
       parentTitle="Axborot xizmati"
       sectionTitle="E'lonlar"
       sectionType="announcements"
-      items={items}
-      totalItems={items.length}
+      items={items || []}
+      totalItems={(items || []).length}
       layoutType="grid"
       itemsPerPage={12}
       showSearch={false}

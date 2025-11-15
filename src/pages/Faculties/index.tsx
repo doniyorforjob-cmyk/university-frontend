@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import PageTemplate from '@/components/shared/PageTemplate';
 import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
-import usePage from '@/hooks/usePage';
+import { useStandardPage } from '@/hooks/useStandardPage';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 
 interface Faculty {
@@ -62,9 +62,10 @@ const fetchFaculties = async (): Promise<Faculty[]> => {
 
 const FacultiesPage: React.FC = () => {
   const { setBannerData, setBreadcrumbsData } = useGlobalLayout();
-  const { data: faculties, loading, error, refetch } = usePage({
-    fetchData: fetchFaculties
-  });
+  const { data: faculties, loading, error, refetch } = useStandardPage(
+    'faculties',
+    fetchFaculties
+  );
 
   useEffect(() => {
     setBannerData({
@@ -92,7 +93,7 @@ const FacultiesPage: React.FC = () => {
         title="Fakultetlar"
       > {/* PageTemplate no longer takes showSidebar */}
         <div className="text-center py-8">
-          <p className="text-red-600 mb-4">{error || 'Ma\'lumot topilmadi'}</p>
+          <p className="text-red-600 mb-4">{error?.message || 'Ma\'lumot topilmadi'}</p>
           <button 
             onClick={refetch}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
@@ -118,7 +119,7 @@ const FacultiesPage: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {faculties.map((faculty, index) => (
+          {faculties.map((faculty: Faculty, index: number) => (
             <div 
               key={faculty.id}
               className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow duration-200"

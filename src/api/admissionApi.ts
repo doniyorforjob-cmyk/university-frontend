@@ -52,6 +52,49 @@ export const transformAdmissionToBlocks = (admissionData: any[], year: number): 
         ],
       },
     },
+
+    // Call Center Section
+    {
+      id: 'admission-call-center',
+      type: 'table',
+      data: {
+        title: 'CALL-CENTER',
+        headers: ['Xizmat turi', 'Telefon raqami'],
+        rows: [
+          ['Bakalvriatning kunduzgi shakli uchun', '+99871 245-42-43'],
+          ['Sirtqi ta\'lim shakli uchun', '+99871 239-28-79'],
+          ['Magistratura mutaxassisliklari va xorijiy oliy ta\'lim muassasalari bilan hamkorlikdagi qo\'shma ta\'lim shakli uchun', '+99871 239-01-59\n+99871 239-28-77'],
+          ['Talabalar o\'qishini ko\'chirish va tiklash uchun', '+99871 239-28-78'],
+          ['Ishonch telefoni', '+99871 232-6446'],
+          ['Xalqaro talabalarga', '+99871 239-28-19'],
+        ],
+      },
+    },
+
+    // Admission Process Section
+    {
+      id: 'admission-process',
+      type: 'rich-text',
+      data: {
+        content: `<h3>2025/2026 O'quv Yili Qabul Jarayoni</h3>
+<p>2025/2026 o'quv yilidan boshlab davlat oliy ta'lim muassasalarida bakalavriatiga qabul jarayoni quyidagi ikki bosqichda amalga oshiriladi:</p>
+
+<h4>1-bosqich:</h4>
+<p>Abituriyentlar <strong>5-iyundan 25-iyunga</strong> qadar test sinovi topshirish uchun ro'yxatdan o'tadi hamda <strong>iyul, avgust</strong> oylarida o'qishga qabul qilish bo'yicha kirish imtixonlaridan o'tkaziladi.</p>
+
+<h4>2-bosqich:</h4>
+<p>Abituriyentlar test sinovlari to'liq yakunlanganidan so'ng <strong>15 kun</strong> davomida oliy ta'lim muassasasi, bakalavriat ta'lim yo'nalishi va ta'lim shaklini tanlaydi.</p>
+
+<h4>Onlayn ro'yhatdan o'tish:</h4>
+<ul>
+<li>Bilim va malakalarni baholash agentligining rasmiy veb-sayti (<a href="https://my.uzbmb.uz" target="_blank">my.uzbmb.uz</a>)</li>
+<li>Yagona interaktiv davlat xizmatlari portali (<a href="https://my.gov.uz" target="_blank">my.gov.uz</a>) orqali amalga oshiriladi.</li>
+</ul>
+
+<p><strong>Izoh:</strong> ish vaqti soat <strong>09:00 dan 18:00 ga</strong> qadar, tushlik <strong>13:00 dan 14:00 ga</strong> qadar.<br>
+<strong>Dam olish kuni:</strong> Yakshanba kuni</p>`
+      },
+    },
   ];
 };
 
