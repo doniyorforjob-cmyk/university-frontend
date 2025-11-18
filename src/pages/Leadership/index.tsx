@@ -147,10 +147,6 @@ const LeadershipPage: React.FC = () => {
   );
 
   useEffect(() => {
-    setBannerData({
-      title: "Rahbariyat",
-      backgroundImage: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-    });
     setBreadcrumbsData([
       { label: 'Bosh sahifa', href: '/' },
       { label: 'Tuzilma', href: '/structure' },
@@ -158,10 +154,9 @@ const LeadershipPage: React.FC = () => {
     ]);
 
     return () => {
-      setBannerData(undefined);
       setBreadcrumbsData(undefined);
     };
-  }, [setBannerData, setBreadcrumbsData]);
+  }, [setBreadcrumbsData]);
 
   if (loading) {
     return <GenericPageSkeleton showSidebar={true} showHeroImage={true} contentBlocks={6} showBanner={true} />;

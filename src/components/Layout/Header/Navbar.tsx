@@ -145,8 +145,8 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                       }}
                       className={`flex items-center h-full px-4 text-base font-bold transition-colors duration-300 cursor-pointer ${
                         activeDropdown === item.title
-                          ? 'bg-navbar-dropdown text-black'
-                          : 'text-white hover:bg-navbar-dropdown hover:text-black'
+                          ? 'bg-white text-black'
+                          : 'text-white hover:bg-white hover:text-black'
                       }`}
                     >
                       <span>{item.title}</span>
@@ -156,10 +156,10 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                     {/* ==== DROPDOWN ==== */}
                     {item.children && activeDropdown === item.title && (
                       <div
-                        className="absolute top-full left-0 right-0 z-50 pointer-events-none"
+                        className="absolute top-full left-0 right-0 z-50 pointer-events-none bg-white"
                       >
                         <div className="pointer-events-auto">
-                          <div className="bg-navbar-dropdown border shadow-lg overflow-hidden animate-slide-in-bottom">
+                          <div className="bg-white border shadow-lg overflow-hidden animate-slide-in-bottom">
                             <div className="p-6">
                               <div className="grid grid-cols-3 gap-8">
                                 {/* LEFT PANEL */}

@@ -33,11 +33,6 @@ const NewsPage: React.FC = () => {
   );
 
   useEffect(() => {
-    setBannerData({
-      title: "Yangiliklar",
-      subtitle: "Universitet hayotidagi eng so'nggi voqealar va yangiliklar",
-      backgroundImage: "https://images.unsplash.com/photo-1495020689067-958852a7765e?q=80&w=2069&auto=format&fit=crop"
-    });
     setBreadcrumbsData([
       { label: 'Bosh sahifa', href: '/' },
       { label: 'Axborot xizmati', href: '#' },
@@ -45,10 +40,9 @@ const NewsPage: React.FC = () => {
     ]);
 
     return () => {
-      setBannerData(undefined);
       setBreadcrumbsData(undefined);
     };
-  }, [setBannerData, setBreadcrumbsData]);
+  }, [setBreadcrumbsData]);
 
 
   const handleItemClick = useCallback((item: SectionItem) => {

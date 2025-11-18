@@ -41,33 +41,6 @@ export const transformActivitiesToBlocks = (activities: Activity[]): ContentBloc
   const ongoingActivities = activities.filter(a => a.status === 'ongoing').length;
 
   return [
-    // Hero Section with original design
-    {
-      id: 'activities-hero',
-      type: 'activities-hero',
-      data: {
-        title: 'Universitet Faoliyati',
-        subtitle: 'NAMDTU - talim, ilmiy-tadqiqot va ijtimoiy faoliyatlar markazi sifatida jamiyat rivojiga hissa qoshishda davom etmoqda',
-      },
-    },
-
-    // Statistics Section with original design
-    {
-      id: 'activities-stats',
-      type: 'activities-stats-grid',
-      data: {
-        title: 'Asosiy Korsatkichlar',
-        subtitle: 'Universitet faoliyatining muhim natijalari va yutuqlari',
-        stats: [
-          { value: `${totalActivities}+`, label: 'Jami faoliyatlar' },
-          { value: `${completedActivities}+`, label: 'Yakunlangan loyihalar' },
-          { value: `${ongoingActivities}+`, label: 'Joriy loyihalar' },
-          { value: '15+', label: 'Hamkor tashkilotlar' },
-        ],
-      },
-    },
-
-    // Activity Categories with original design
     {
       id: 'activities-categories',
       type: 'activities-categories',

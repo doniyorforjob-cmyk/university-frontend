@@ -69,10 +69,10 @@ export const transformYashilUniversitetToBlocks = (data?: any): ContentBlock[] =
       data: {
         title: 'Yashil Universitet Galereyasi',
         images: [
-          { src: '/images/green-1.jpg', alt: 'Daraxt ekish marosimi' },
-          { src: '/images/green-2.jpg', alt: 'LED chiroqlar o\'rnatish' },
-          { src: '/images/green-3.jpg', alt: 'Qayta ishlash punktlari' },
-          { src: '/images/green-4.jpg', alt: 'Yashil maydonlar' }
+          { src: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iIzIyYzU1ZSIvPjx0ZXh0IHg9IjIwMCIgeT0iMTUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9ImJvbGQiPkRhcmF4dCBlZ2lzaCBtYXJvc2ltaTwvdGV4dD48L3N2Zz4=', alt: 'Daraxt ekish marosimi' },
+          { src: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iIzE2YTM0YSIvPjx0ZXh0IHg9IjIwMCIgeT0iMTUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9ImJvbGQiPkxFRCBjaGlyb3FsYXIgb8Kcm5hdGlzaDwvdGV4dD48L3N2Zz4=', alt: 'LED chiroqlar o\'rnatish' },
+          { src: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iIzE1ODAzZCIvPjx0ZXh0IHg9IjIwMCIgeT0iMTUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9ImJvbGQiPlFheXRhIGlzaGxhc2ggcHVua3RsYXJpPC90ZXh0Pjwvc3ZnPg==', alt: 'Qayta ishlash punktlari' },
+          { src: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iIzE2NjUzNCIvPjx0ZXh0IHg9IjIwMCIgeT0iMTUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9ImJvbGQiPllBU2lsIG1heWRvbmxhcg==', alt: 'Yashil maydonlar' }
         ]
       },
       className: 'border-green-300'

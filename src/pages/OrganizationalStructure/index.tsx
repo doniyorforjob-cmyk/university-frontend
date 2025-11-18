@@ -4,6 +4,7 @@ import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
 import { useStandardPage } from '@/hooks/useStandardPage';
 import { fetchOrganizationalStructureData } from '@/api/organizationalStructureApi';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
+import ContentBuilder from '@/components/shared/ContentBuilder';
 
 interface OrganizationalStructureData {
   blocks: any[];

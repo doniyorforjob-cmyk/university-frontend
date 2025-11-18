@@ -125,7 +125,10 @@ const Footer: React.FC = () => {
           <div className="grid grid-cols-1 gap-8 lg:col-span-2 sm:grid-cols-2 lg:grid-cols-4">
             {/* 1 – Aloqa */}
             <div>
-              <p className="font-medium text-lg text-white mb-4">Aloqa uchun</p>
+              <div className="flex items-center mb-4">
+                <span className="w-1 h-5 bg-secondary-500 mr-3"></span>
+                <p className="font-medium text-lg text-white">Aloqa uchun</p>
+              </div>
               <ul className="flex flex-col space-y-3 text-base text-gray-300">
                 <li className="flex items-start group">
                   <MapPinIcon className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0 text-gray-400 transition-colors duration-300 group-hover:text-white" />
@@ -162,7 +165,10 @@ const Footer: React.FC = () => {
             {/* 2, 3, 4 – Havolalar guruhlari */}
             {linkGroups.map((group) => (
               <div key={group.id}>
-                <p className="font-medium text-lg text-white mb-4">{group.title}</p>
+                <div className="flex items-center mb-4">
+                  <span className="w-1 h-5 bg-secondary-500 mr-3"></span>
+                  <p className="font-medium text-lg text-white">{group.title}</p>
+                </div>
                 <nav className="flex flex-col space-y-2 text-base text-gray-300">
                   {group.links.map((link) => (
                     <Link

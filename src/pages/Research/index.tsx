@@ -4,6 +4,7 @@ import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
 import { useStandardPage } from '@/hooks/useStandardPage';
 import { ContentBlock } from '@/components/shared/ContentBuilder';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
+import ContentBuilder from '@/components/shared/ContentBuilder';
 
 interface ResearchData {
   blocks: ContentBlock[];
@@ -164,10 +165,6 @@ const ResearchPage: React.FC = () => {
   );
 
   useEffect(() => {
-    setBannerData({
-      title: "Ilmiy Faoliyat",
-      backgroundImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-    });
     setBreadcrumbsData([
       { label: 'Bosh sahifa', href: '/' },
       { label: 'Faoliyat', href: '/activities' },
@@ -175,10 +172,9 @@ const ResearchPage: React.FC = () => {
     ]);
 
     return () => {
-      setBannerData(undefined);
       setBreadcrumbsData(undefined);
     };
-  }, [setBannerData, setBreadcrumbsData]);
+  }, [setBreadcrumbsData]);
 
   if (loading) {
     return <GenericPageSkeleton showSidebar={true} showHeroImage={true} contentBlocks={7} showBanner={true} />;

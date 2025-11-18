@@ -11,10 +11,10 @@ const MainLayout: React.FC<{ sidebar: React.ReactNode }> = ({ sidebar }) => {
     <div className="bg-gray-50 min-h-screen">
       <Container className="pt-2 pb-2">
         <div className="flex flex-col lg:flex-row gap-8">
-          <main className="w-full lg:w-[70%] pt-8">
+          <main className="w-full lg:w-[75%] pt-8">
             <Outlet />
           </main>
-          <aside className="w-full lg:w-[30%] pt-8">
+          <aside className="w-full lg:w-[25%] pt-8">
             {sidebar}
           </aside>
         </div>

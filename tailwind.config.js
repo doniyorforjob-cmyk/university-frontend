@@ -47,6 +47,16 @@ module.exports = {
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
+          50: '#f8f6f4',
+          100: '#f0ede9',
+          200: '#e1dad3',
+          300: '#d2c7bd',
+          400: '#c3b4a7',
+          500: '#BEA587',
+          600: '#ab926f',
+          700: '#988057',
+          800: '#856d3f',
+          900: '#725a27',
         },
         'navbar-dropdown': {
           DEFAULT: "hsl(var(--navbar-dropdown-bg))",

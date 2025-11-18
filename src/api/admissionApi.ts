@@ -13,7 +13,7 @@ export const transformAdmissionToBlocks = (admissionData: any[], year: number): 
     // Hero Section
     {
       id: 'admission-hero',
-      type: 'activities-hero',
+      type: 'heading',
       data: {
         title: `Qabul ${year}`,
         subtitle: `NAMDTU ga ${year}-yil qabul jarayoni va talablar`,

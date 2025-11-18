@@ -5,6 +5,7 @@ import { useStandardPage } from '@/hooks/useStandardPage';
 import { fetchInformationServicesData } from '@/api/informationServicesApi';
 import { ContentBlock } from '@/components/shared/ContentBuilder';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
+import ContentBuilder from '@/components/shared/ContentBuilder';
 
 interface InformationServicesData {
   blocks: ContentBlock[];
@@ -53,7 +54,6 @@ const InformationServicesPage: React.FC = () => {
   return (
     <PageTemplate
       title="Axborot Xizmatlari"
-      // showSidebar is no longer a prop for PageTemplate
       contentBlocks={data.blocks}
     />
   );

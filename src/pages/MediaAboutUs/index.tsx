@@ -29,11 +29,6 @@ const MediaAboutUsPage: React.FC = () => {
   );
 
   useEffect(() => {
-    setBannerData({
-      title: "OAV biz haqimizda",
-      subtitle: "Universitetimiz faoliyati haqida ommaviy axborot vositalarida chop etilgan maqolalar, reportajlar va intervyular to'plami",
-      backgroundImage: "https://images.unsplash.com/photo-1457369804613-52c1a468e7d?q=80&w=2070&auto=format&fit=crop"
-    });
     setBreadcrumbsData([
       { label: 'Bosh sahifa', href: '/' },
       { label: 'Axborot xizmati', href: '#' },
@@ -41,10 +36,9 @@ const MediaAboutUsPage: React.FC = () => {
     ]);
 
     return () => {
-      setBannerData(undefined);
       setBreadcrumbsData(undefined);
     };
-  }, [setBannerData, setBreadcrumbsData]);
+  }, [setBreadcrumbsData]);
 
   const handleItemClick = useCallback((item: SectionItem) => {
     window.open(item.href, '_blank', 'noopener,noreferrer');

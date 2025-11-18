@@ -33,11 +33,6 @@ const AnnouncementsPage: React.FC = () => {
   );
 
   useEffect(() => {
-    setBannerData({
-      title: "E'lonlar",
-      subtitle: "Universitetimizdagi eng so'nggi e'lonlar va bildirishnomalar",
-      backgroundImage: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
-    });
     setBreadcrumbsData([
       { label: 'Bosh sahifa', href: '/' },
       { label: 'Axborot xizmati', href: '#' },
@@ -45,10 +40,9 @@ const AnnouncementsPage: React.FC = () => {
     ]);
 
     return () => {
-      setBannerData(undefined);
       setBreadcrumbsData(undefined);
     };
-  }, [setBannerData, setBreadcrumbsData]);
+  }, [setBreadcrumbsData]);
 
 
   const handleItemClick = useCallback((item: SectionItem) => {

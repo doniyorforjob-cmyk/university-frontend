@@ -68,20 +68,15 @@ const FacultiesPage: React.FC = () => {
   );
 
   useEffect(() => {
-    setBannerData({
-      title: "Fakultetlar",
-      backgroundImage: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-    });
     setBreadcrumbsData([
       { label: 'Bosh sahifa', href: '/' },
       { label: 'Fakultetlar' }
     ]);
 
     return () => {
-      setBannerData(undefined);
       setBreadcrumbsData(undefined);
     };
-  }, [setBannerData, setBreadcrumbsData]);
+  }, [setBreadcrumbsData]);
 
   if (loading) {
     return <GenericPageSkeleton showSidebar={true} showHeroImage={false} contentBlocks={4} showBanner={true} />;

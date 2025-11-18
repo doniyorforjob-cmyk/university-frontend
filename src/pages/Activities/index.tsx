@@ -1,4 +1,5 @@
 import React from 'react';
+import PageTemplate from '@/components/shared/PageTemplate';
 import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
 import { useStandardPage } from '@/hooks/useStandardPage';
 import { fetchActivitiesData } from '@/api/activitiesApi';
@@ -29,7 +30,7 @@ const ActivitiesPage: React.FC = () => {
 
   if (error || !data) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-secondary-100">
         <div className="max-w-4xl mx-auto px-4 py-16">
           <div className="text-center">
             <div className="mb-8">
@@ -45,7 +46,7 @@ const ActivitiesPage: React.FC = () => {
             </p>
             <button
               onClick={refetch}
-              className="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-105 shadow-lg"
+              className="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-lg text-white bg-gradient-to-r from-secondary-600 to-secondary-600 hover:from-secondary-700 hover:to-secondary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary-500 transition-all duration-200 transform hover:scale-105 shadow-lg"
             >
               <svg className="-ml-1 mr-3 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -59,9 +60,10 @@ const ActivitiesPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-      <ContentBuilder blocks={data} />
-    </div>
+    <PageTemplate
+      title="Faoliyat"
+      contentBlocks={data}
+    />
   );
 };
 

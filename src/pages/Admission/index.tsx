@@ -4,6 +4,7 @@ import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
 import { useStandardPage } from '@/hooks/useStandardPage';
 import { fetchAdmissionData } from '@/api/admissionApi';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
+import ContentBuilder from '@/components/shared/ContentBuilder';
 
 const AdmissionPage: React.FC = () => {
   const { setBreadcrumbsData } = useGlobalLayout();
@@ -44,10 +45,12 @@ const AdmissionPage: React.FC = () => {
     );
   }
 
-  const admissionYear = new Date().getFullYear() + 1;
+  const heroBlock = data.length > 0 ? [data[0]] : [];
+  const otherBlocks = data.length > 1 ? data.slice(1) : [];
+
   return (
     <PageTemplate
-      title={`Qabul ${admissionYear}`}
+      title="Qabul"
       contentBlocks={data}
     />
   );

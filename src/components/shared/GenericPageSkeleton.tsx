@@ -26,7 +26,7 @@ const GenericPageSkeleton: React.FC<GenericPageSkeletonProps> = ({
         {/* Main flex container */}
         <div className="flex flex-col lg:flex-row gap-8 mt-6">
           {/* Main Content */}
-          <div className={`w-full ${showSidebar ? 'lg:w-[70%]' : 'lg:w-full'}`}>
+          <div className={`w-full ${showSidebar ? 'lg:w-[75%]' : 'lg:w-full'}`}>
             {layoutType === 'grid' ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {Array.from({ length: gridItems }).map((_, i) => (
@@ -78,7 +78,7 @@ const GenericPageSkeleton: React.FC<GenericPageSkeletonProps> = ({
 
           {/* Sidebar */}
           {showSidebar && (
-            <aside className="w-full lg:w-[30%]">
+            <aside className="w-full lg:w-[25%]">
               <div className="bg-white p-6 rounded-lg">
                 <div className="h-6 bg-gray-200 rounded w-2/3 mb-6 animate-pulse"></div>
 
