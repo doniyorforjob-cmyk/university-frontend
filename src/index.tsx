@@ -1,6 +1,7 @@
 import './i18n';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { CachedApiProvider } from './components/providers/CachedApiProvider';
 import './index.css';
 import App from './App';
 import React from 'react';
@@ -30,9 +31,11 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <CachedApiProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </CachedApiProvider>
     </QueryClientProvider>
   </React.StrictMode>
 );
