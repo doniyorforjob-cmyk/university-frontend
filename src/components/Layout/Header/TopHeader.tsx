@@ -31,8 +31,8 @@ const TopHeader = () => {
     const currentLangDetails = languageOptions[currentLanguage] || languageOptions.uz;
 
     return (
-        <div className="bg-primary border-b border-secondary/50">
-            <Container className="py-3 flex flex-col md:flex-row items-center justify-between gap-2 md:gap-4">
+        <div className="bg-primary border-b border-secondary/50 h-16">
+            <Container className="h-full flex flex-col md:flex-row items-center justify-between gap-2 md:gap-4">
                 {/* Ijtimoiy tarmoqlar havolalari chap tomonga o'tkazildi */}
                 <div className="flex-1 flex justify-center md:justify-start items-center pb-1">
                     <div className="flex items-center space-x-4">

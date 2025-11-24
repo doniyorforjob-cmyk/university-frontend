@@ -11,7 +11,7 @@ interface CardData {
 
 const featureCards: CardData[] = [
   { title: 'Hemis', href: '#', icon: Monitor, users: 25000 },
-  { title: 'Moodle', href: '#', icon: BookOpen, users: 15000 },
+  { title: 'Moodle', href: '#', icon: BookOpen, users: 150000 },
   { title: 'Kutubxona', href: '#', icon: BookOpen, users: 10000 },
   { title: 'Kadrlar', href: '#', icon: Users, users: 5000 },
 ];
@@ -23,6 +23,19 @@ interface HeroFeatureCardsProps {
 
 const HeroFeatureCards: React.FC<HeroFeatureCardsProps> = ({ startAnimation, onAnimationComplete }) => {
   const [isAnimated, setIsAnimated] = useState(false);
+
+  // Sonlarni format qilish funksiyasi
+  const formatNumber = (num: number): string => {
+    const numStr = num.toString();
+    if (numStr.length === 5) {
+      // 5 xona: 2 + 3
+      return `${numStr.slice(0, 2)} ${numStr.slice(2)}`;
+    } else if (numStr.length === 6) {
+      // 6 xona: 3 + 3
+      return `${numStr.slice(0, 3)} ${numStr.slice(3)}`;
+    }
+    return numStr; // Boshqa uzunliklar uchun o'z holicha
+  };
 
   useEffect(() => {
     if (startAnimation) {
@@ -153,7 +166,7 @@ const HeroFeatureCards: React.FC<HeroFeatureCardsProps> = ({ startAnimation, onA
         >
           <div className="flex flex-col items-center gap-2">
             <card.icon className="w-10 h-10 flex-shrink-0 text-white/80" />
-            <span className="text-3xl font-bold text-secondary-500">{card.users}</span>
+            <span className="text-3xl font-bold text-secondary-500">{formatNumber(card.users)}</span>
             <span className="font-semibold text-base text-center">{card.title}</span>
           </div>
         </Link>

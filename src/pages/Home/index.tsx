@@ -1,7 +1,8 @@
 import React from 'react';
 import HomeContentBuilder from './HomeContentBuilder';
 import { useHomeSections } from './hooks';
-import { generateDefaultSections } from './HomeSectionTemplate';
+import { generateDefaultSections, homeSectionTemplates } from './HomeSectionTemplate';
+import { SectionSkeleton } from './components/SectionSkeleton';
 
 const HomePage = () => {
     // Home sections management hook
@@ -16,9 +17,12 @@ const HomePage = () => {
     const displaySections = sections.length > 0 ? sections : generateDefaultSections();
 
     if (loading) {
+        // Ma'lumotlar yuklanayotganda spinner o'rniga skelet ko'rsatish
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <div className="home-page-skeleton">
+                <SectionSkeleton sectionType="hero" className="min-h-[80vh]" />
+                <SectionSkeleton sectionType="stats" />
+                <SectionSkeleton sectionType="news" />
             </div>
         );
     }

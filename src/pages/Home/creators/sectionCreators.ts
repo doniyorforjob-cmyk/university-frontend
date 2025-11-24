@@ -32,7 +32,7 @@ export const createStatsSectionBlock = (data: any): HomeSectionBlock => ({
     animation: { enabled: true, type: 'fade', delay: 200 }
   },
   data,
-  order: 2,
+  order: 6,
   enabled: true
 });
 
@@ -104,6 +104,6 @@ export const createInteractiveServicesSectionBlock = (data: any): HomeSectionBlo
     animation: { enabled: true, type: 'fade', delay: 1000 }
   },
   data,
-  order: 6,
+  order: 2,
   enabled: true
 });

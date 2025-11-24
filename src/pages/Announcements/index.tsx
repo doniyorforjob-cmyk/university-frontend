@@ -65,7 +65,7 @@ const AnnouncementsPage: React.FC = () => {
       sectionType="announcements"
       items={items || []}
       totalItems={(items || []).length}
-      layoutType="grid"
+      layoutType="horizontal"
       itemsPerPage={12}
       showSearch={false}
       showPagination={true}

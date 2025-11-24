@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef, JSX } from 'react';
+import React, { useState, useRef, useEffect, JSX } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import useClickOutside from '../../../hooks/useClickOutside';
 import { fetchNavItems, NavItem } from '../../../api/navbarApi';
+import { useCachedApi } from '../../../hooks/useCachedApi';
 import Container from '../../shared/Container';
 import { PrefetchLink } from '../../shared';
 import {
@@ -16,22 +17,20 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
-  const [navItems, setNavItems] = useState<NavItem[]>([]);
+  const { data: navItems, loading } = useCachedApi({
+    key: 'navbar-items',
+    fetcher: fetchNavItems,
+    ttlMinutes: 60, // Cache for 1 hour
+  });
+
+  // Layout shift oldini olish uchun har doim array qaytarish
+  const displayNavItems = navItems || [];
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openMobileSubmenu, setOpenMobileSubmenu] = useState<string | null>(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
-
-  useEffect(() => {
-    const loadNavItems = async () => {
-      const items = await fetchNavItems();
-      console.log('Navbar received items:', items);
-      setNavItems(items);
-    };
-    loadNavItems();
-  }, []);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -95,7 +94,9 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
       {/* ==== DESKTOP NAVBAR ==== */}
       <Container>
         <nav className="relative hidden lg:flex items-center justify-between w-full h-16">
-            <div className="flex h-full items-center">
+            <div
+              className={`flex h-full items-center transition-opacity duration-300 ${loading ? 'opacity-0' : 'opacity-100'}`}
+            >
               {isSticky && (
                 <Link
                   to="/"
@@ -120,7 +121,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                 </Link>
               )}
 
-              {navItems.map((item) => {
+              {displayNavItems.map((item: NavItem) => {
                 const hasCategories =
                   item.children && item.children.some((child) => child.children && child.children.length > 0);
 
@@ -427,7 +428,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
       {isMobileMenuOpen && (
         <div className="lg:hidden bg-white shadow-lg">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            {navItems.map((item: NavItem) => (
+            {displayNavItems.map((item: NavItem) => (
               <div key={item.title}>
                 {item.children ? (
                   <>
