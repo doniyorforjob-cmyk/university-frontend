@@ -38,19 +38,21 @@ export const SectionSkeleton: React.FC<SectionSkeletonProps> = ({
 
 // Hero Section Skeleton
 const HeroSkeleton: React.FC = () => (
-  <section className="relative min-h-[60vh] xl:min-h-[80vh] overflow-hidden">
-    {/* Carousel Image Skeleton */}
-    <div className="w-full h-[60vh] xl:h-[80vh] bg-gradient-to-r from-gray-200 to-gray-300"></div>
+  <section className="relative min-h-[60vh] xl:min-h-[80vh] overflow-hidden bg-gray-100">
+    {/* Carousel Image Skeleton - Solid background to prevent text bleed-through */}
+    <div className="w-full h-[60vh] xl:h-[80vh] bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200"></div>
 
-    {/* Carousel Buttons Skeleton */}
-    <div className="absolute bottom-0 h-fit bg-white/40 backdrop-blur-md overflow-hidden grid grid-cols-2 md:grid-cols-4 rounded-md w-full">
-      {[...Array(4)].map((_, i) => (
-        <div key={i} className="text-left p-3 border-r">
-          <div className="h-4 bg-gray-400 rounded-full w-16 mb-2"></div>
-          <div className="h-3 bg-gray-400 rounded w-full mb-1"></div>
-          <div className="h-3 bg-gray-400 rounded w-3/4"></div>
-        </div>
-      ))}
+    {/* Carousel Buttons Skeleton - Opaque background */}
+    <div className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm border-t border-gray-200">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-0">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="text-left p-3 border-r border-gray-300 last:border-r-0">
+            <div className="h-4 bg-gray-400 rounded-full w-16 mb-2"></div>
+            <div className="h-3 bg-gray-400 rounded w-full mb-1"></div>
+            <div className="h-3 bg-gray-400 rounded w-3/4"></div>
+          </div>
+        ))}
+      </div>
     </div>
   </section>
 );

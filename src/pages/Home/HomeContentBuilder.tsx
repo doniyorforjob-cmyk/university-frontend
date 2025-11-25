@@ -37,16 +37,14 @@ const DynamicSection: React.FC<{
 }> = ({ block, enableErrorBoundaries = true }) => {
   const Component = sectionRenderers[block.type as keyof typeof sectionRenderers];
 
-  if (!Component) {
-    console.warn(`Section component not found for type: ${block.type}`);
+  // Agar component yo'q bo'lsa yoki data hali kelmagan bo'lsa, skeleton chiqsin
+  if (!Component || !block.data) {
     return <SectionSkeleton sectionType={block.type as HomeSectionType} />;
   }
 
-  const content = block.type === 'hero' ? (
-    <Component {...block.data} data={block.data} />
-  ) : (
-    <Component {...block.data} />
-  );
+  const content = block.type === 'hero'
+    ? <Component {...block.data} data={block.data} />
+    : <Component {...block.data} />;
 
   if (enableErrorBoundaries) {
     return (
