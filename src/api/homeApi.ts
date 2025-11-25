@@ -6,6 +6,16 @@
 import { HomeSectionBlock, HomeSectionType } from '../pages/Home/types';
 
 // Section data interfaces
+export interface CarouselItem {
+  id: string;
+  img: string;
+  title: string;
+  desc: string;
+  sliderName: string;
+  order?: number;
+  enabled?: boolean;
+}
+
 export interface HomeHeroData {
   title: string;
   subtitle: string;
@@ -20,6 +30,7 @@ export interface HomeHeroData {
     opacity: number;
     color: string;
   };
+  carouselItems?: CarouselItem[];
 }
 
 export interface HomeStatsData {
@@ -111,7 +122,45 @@ const homeHeroData: HomeHeroData = {
   overlay: {
     opacity: 0.3, // Lighter overlay so video is more visible
     color: "#000000"
-  }
+  },
+  carouselItems: [
+    {
+      id: 'bridge-1',
+      img: "https://images.unsplash.com/photo-1709949908058-a08659bfa922?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      title: 'Bridge',
+      desc: 'A breathtaking view of a city illuminated by countless lights, showcasing the vibrant and bustling nightlife.',
+      sliderName: 'bridge',
+      order: 1,
+      enabled: true,
+    },
+    {
+      id: 'mountains-2',
+      img: "https://images.unsplash.com/photo-1518972734183-c5b490a7c637?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      title: 'Mountains View',
+      desc: 'A serene lake reflecting the surrounding mountains and trees, creating a mirror-like surface.',
+      sliderName: 'mountains',
+      order: 2,
+      enabled: true,
+    },
+    {
+      id: 'autumn-3',
+      img: "https://images.unsplash.com/photo-1548192746-dd526f154ed9?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      title: 'Autumn',
+      desc: 'A picturesque path winding through a dense forest adorned with vibrant autumn foliage.',
+      sliderName: 'autumn',
+      order: 3,
+      enabled: true,
+    },
+    {
+      id: 'foggy-4',
+      img: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=1000&auto=format&fit=crop",
+      title: 'Foggy',
+      desc: 'A stunning foggy view over the forest, with the sun casting a golden glow across the trees.',
+      sliderName: 'foggy',
+      order: 4,
+      enabled: true,
+    },
+  ]
 };
 
 const homeStatsData: HomeStatsData = {

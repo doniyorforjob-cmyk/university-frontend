@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import MainLayout from '@/components/shared/MainLayout';
 import GlobalLayout from '@/components/templates/GlobalLayout'; // Corrected import path
@@ -25,10 +25,15 @@ const UniversityPage = React.lazy(() => import('./pages/University'));
 const InformationServicesPage = React.lazy(() => import('./pages/InformationServices'));
 
 function App() {
+  const location = useLocation();
+
+  // Home sahifa uchun fallbackni boshqacha qiling
+  const isHome = location.pathname === '/';
+
   return (
     <div className="min-h-screen text-gray-900">
       <Layout>
-        <Suspense fallback={<GenericPageSkeleton showSidebar={true} showBanner={true} />}> {/* This fallback is for the initial load of the entire app */}
+        <Suspense fallback={isHome ? null : <GenericPageSkeleton showSidebar={true} showBanner={true} />}> {/* This fallback is for the initial load of the entire app */}
           <Routes> {/* Routes should be wrapped by GlobalLayout */}
             <Route element={<GlobalLayout />}> {/* GlobalLayout will handle Banner and Breadcrumbs */}
               <Route index element={<HomePage />} />

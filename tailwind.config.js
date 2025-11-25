@@ -94,13 +94,23 @@ module.exports = {
         display: ['Montserrat', 'Inter', 'sans-serif'],
       },
       fontSize: {
+        // Fluid typography scale
+        'fluid-xs': 'clamp(0.75rem, 2vw, 0.875rem)',
+        'fluid-sm': 'clamp(0.875rem, 2.5vw, 1rem)',
+        'fluid-base': 'clamp(1rem, 3vw, 1.125rem)',
+        'fluid-lg': 'clamp(1.125rem, 3.5vw, 1.25rem)',
+        'fluid-xl': 'clamp(1.25rem, 4vw, 1.5rem)',
+        'fluid-2xl': 'clamp(1.5rem, 5vw, 2rem)',
+        'fluid-3xl': 'clamp(2rem, 6vw, 3rem)',
+
+        // Legacy fluid classes (keeping for compatibility)
         'fluid-h1': 'clamp(2rem, 5vw, 3rem)',
         'fluid-h2': 'clamp(1.5rem, 4vw, 2.25rem)',
         'fluid-h3': 'clamp(1.25rem, 3vw, 1.75rem)',
         'fluid-h4': 'clamp(1.125rem, 2.5vw, 1.5rem)',
         'fluid-p': 'clamp(1rem, 2.5vw, 1.125rem)',
-        'fluid-sm': 'clamp(0.875rem, 2vw, 1rem)',
-        'fluid-xs': 'clamp(0.75rem, 1.8vw, 0.875rem)',
+
+        // Fixed sizes with line heights
         h1: ['2.5rem', { lineHeight: '3rem' }],
         h2: ['2rem', { lineHeight: '2.5rem' }],
         h3: ['1.75rem', { lineHeight: '2.25rem' }],
@@ -113,6 +123,15 @@ module.exports = {
 
       // === RAZMERLAR ===
       spacing: {
+        // Fluid spacing scale
+        'fluid-xs': 'clamp(0.5rem, 1vw, 0.75rem)',
+        'fluid-sm': 'clamp(0.75rem, 2vw, 1rem)',
+        'fluid-md': 'clamp(1rem, 2.5vw, 1.5rem)',
+        'fluid-lg': 'clamp(1.5rem, 3vw, 2rem)',
+        'fluid-xl': 'clamp(2rem, 4vw, 3rem)',
+        'fluid-2xl': 'clamp(3rem, 5vw, 4rem)',
+
+        // Fixed spacing (keeping for compatibility)
         xs: '0.5rem',
         sm: '1rem',
         md: '1.5rem',

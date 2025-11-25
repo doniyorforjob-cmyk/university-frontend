@@ -17,7 +17,7 @@ const HomePage = () => {
     const displaySections = sections.length > 0 ? sections : generateDefaultSections();
 
     if (loading) {
-        // Ma'lumotlar yuklanayotganda spinner o'rniga skelet ko'rsatish
+        // Ma'lumotlar yuklanayotganda skelet ko'rsatish
         return (
             <div className="home-page-skeleton">
                 <SectionSkeleton sectionType="hero" className="min-h-[80vh]" />

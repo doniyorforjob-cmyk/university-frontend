@@ -1,17 +1,25 @@
-import React, { Suspense, lazy, useCallback } from 'react';
+import React from 'react';
 import { HomeSectionBlock, HomeSectionType } from './types';
 import { SectionSkeleton } from './components/SectionSkeleton';
 import { SectionErrorBoundary } from './components/SectionErrorBoundary';
 
 // Dynamic section renderers - API data ga qarab component tanlanadi
+// Home sahifasi uchun lazy loading o'rniga to'g'ridan-to'g'ri import
+import HeroSection from './HeroSection';
+import Stats from './Stats';
+import NewsSection from './NewsSection';
+import FacultiesSection from './FacultiesSection';
+import VideoGallerySection from './VideoGallerySection';
+import InteractiveServicesSection from './InteractiveServicesSection';
+
 const sectionRenderers = {
-  // Section types (Home sahifasi uchun maxsus)
-  hero: lazy(() => import('./HeroSection')),
-  stats: lazy(() => import('./Stats')),
-  news: lazy(() => import('./NewsSection')),
-  faculties: lazy(() => import('./FacultiesSection')),
-  'video-gallery': lazy(() => import('./VideoGallerySection')),
-  'interactive-services': lazy(() => import('./InteractiveServicesSection')),
+  // Section types (Home sahifasi uchun maxsus) - lazy loading olib tashlandi
+  hero: HeroSection,
+  stats: Stats,
+  news: NewsSection,
+  faculties: FacultiesSection,
+  'video-gallery': VideoGallerySection,
+  'interactive-services': InteractiveServicesSection,
 } as const;
 
 // Future: Content block renderers for API-driven content
@@ -27,21 +35,17 @@ const DynamicSection: React.FC<{
   block: HomeSectionBlock;
   enableErrorBoundaries?: boolean;
 }> = ({ block, enableErrorBoundaries = true }) => {
-  const LazyComponent = sectionRenderers[block.type as keyof typeof sectionRenderers];
+  const Component = sectionRenderers[block.type as keyof typeof sectionRenderers];
 
-  if (!LazyComponent) {
+  if (!Component) {
     console.warn(`Section component not found for type: ${block.type}`);
     return <SectionSkeleton sectionType={block.type as HomeSectionType} />;
   }
 
-  const content = (
-    <Suspense fallback={<SectionSkeleton sectionType={block.type as HomeSectionType} />}>
-      {block.type === 'hero' ? (
-        <LazyComponent {...block.data} data={block.data} />
-      ) : (
-        <LazyComponent {...block.data} />
-      )}
-    </Suspense>
+  const content = block.type === 'hero' ? (
+    <Component {...block.data} data={block.data} />
+  ) : (
+    <Component {...block.data} />
   );
 
   if (enableErrorBoundaries) {

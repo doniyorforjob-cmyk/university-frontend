@@ -38,14 +38,21 @@ export const SectionSkeleton: React.FC<SectionSkeletonProps> = ({
 
 // Hero Section Skeleton
 const HeroSkeleton: React.FC = () => (
-  <div className="min-h-[60vh] sm:min-h-[70vh] md:min-h-[80vh] bg-gradient-to-r from-gray-200 to-gray-300 flex items-center justify-center">
-    <div className="text-center space-y-4 max-w-md mx-auto px-4">
-      <div className="h-12 bg-gray-400 rounded-lg w-3/4 mx-auto"></div>
-      <div className="h-6 bg-gray-400 rounded w-full"></div>
-      <div className="h-6 bg-gray-400 rounded w-2/3 mx-auto"></div>
-      <div className="h-12 bg-gray-400 rounded-lg w-48 mx-auto mt-8"></div>
+  <section className="relative min-h-[60vh] xl:min-h-[80vh] overflow-hidden">
+    {/* Carousel Image Skeleton */}
+    <div className="w-full h-[60vh] xl:h-[80vh] bg-gradient-to-r from-gray-200 to-gray-300"></div>
+
+    {/* Carousel Buttons Skeleton */}
+    <div className="absolute bottom-0 h-fit bg-white/40 backdrop-blur-md overflow-hidden grid grid-cols-2 md:grid-cols-4 rounded-md w-full">
+      {[...Array(4)].map((_, i) => (
+        <div key={i} className="text-left p-3 border-r">
+          <div className="h-4 bg-gray-400 rounded-full w-16 mb-2"></div>
+          <div className="h-3 bg-gray-400 rounded w-full mb-1"></div>
+          <div className="h-3 bg-gray-400 rounded w-3/4"></div>
+        </div>
+      ))}
     </div>
-  </div>
+  </section>
 );
 
 // Stats Section Skeleton

@@ -17,6 +17,7 @@ export const transformHeroData = (apiData: any): HomeHeroData => {
     } : {
       opacity: 0.3,
       color: "#000000"
-    }
+    },
+    carouselItems: apiData.carouselItems || apiData.carousel_items || []
   };
 };

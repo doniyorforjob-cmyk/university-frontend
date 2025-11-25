@@ -18,7 +18,7 @@ const featureCards: CardData[] = [
 
 interface HeroFeatureCardsProps {
   startAnimation: boolean;
-  onAnimationComplete: () => void;
+  onAnimationComplete?: () => void;
 }
 
 const HeroFeatureCards: React.FC<HeroFeatureCardsProps> = ({ startAnimation, onAnimationComplete }) => {
@@ -46,7 +46,7 @@ const HeroFeatureCards: React.FC<HeroFeatureCardsProps> = ({ startAnimation, onA
 
       // Notify parent component that animation is finished
       const completeTimer = setTimeout(() => {
-        onAnimationComplete();
+        onAnimationComplete?.();
       }, 1100); // Animation duration (1000ms) + start delay (100ms)
 
       return () => {
