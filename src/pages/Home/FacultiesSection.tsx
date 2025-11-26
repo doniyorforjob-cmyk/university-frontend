@@ -42,7 +42,7 @@ const FacultiesSection: React.FC = () => {
       {/* SARLAVHA */}
       <div className="py-6">
         <Container>
-          <div className="flex items-center max-w-screen-xl mx-auto">
+          <div className="flex items-center">
             <div className="w-1 h-8 bg-primary mr-4 rounded"></div>
             <h2 className="text-3xl font-bold text-gray-900">{t('faculties')}</h2>
           </div>
@@ -52,7 +52,7 @@ const FacultiesSection: React.FC = () => {
       {/* KONTENT */}
       <section className="pt-0 pb-16">
         <Container>
-          <div className="grid max-w-screen-xl py-8 mx-auto lg:gap-10 xl:gap-0 lg:py-12 lg:grid-cols-12">
+          <div className="grid py-8 lg:gap-10 xl:gap-0 lg:py-12 lg:grid-cols-12">
             {/* KARTOCHKALAR */}
             <div className="lg:col-span-5 grid grid-cols-2 gap-4 min-h-[500px]">
               {facultiesData.slice(0, visibleCount).map((faculty: Faculty, index: number) => {

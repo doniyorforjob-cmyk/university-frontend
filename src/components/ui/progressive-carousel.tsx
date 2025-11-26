@@ -7,7 +7,7 @@ import React, {
   ReactNode,
   FC,
 } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 // Define the type for the context value

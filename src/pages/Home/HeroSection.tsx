@@ -61,12 +61,15 @@ export default function HeroSection() {
 
   return (
     <section className="relative min-h-[60vh] overflow-hidden">
-      <ProgressSlider vertical={false} activeSlider='bridge'>
+      <ProgressSlider
+        vertical={false}
+        activeSlider={enabledItems.length > 0 ? enabledItems[0].sliderName : ''}
+      >
         <SliderContent>
           {enabledItems.map((item: CarouselItem, index: number) => (
             <SliderWrapper key={item.id} value={item.sliderName}>
               <img
-                className='w-full h-[60vh] xl:h-[80vh] object-cover'
+                className='w-full h-[55vh] md:h-[65vh] lg:h-[75vh] xl:h-[70vh] object-cover'
                 src={item.img}
                 alt={item.title}
               />
