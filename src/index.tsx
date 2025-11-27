@@ -6,6 +6,8 @@ import './index.css';
 import App from './App';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 import { registerServiceWorker } from './utils/serviceWorker';
 import { observeWebVitals, reportPerformance } from './utils/performance';
 import { setupResourceHints } from './utils/preload';
@@ -19,6 +21,14 @@ observeWebVitals((metrics) => {
 
 // Resource hints for performance
 setupResourceHints();
+
+// Initialize AOS
+AOS.init({
+  duration: 800,
+  easing: 'ease-out',
+  once: true,
+  offset: 100,
+});
 
 // Service Worker registration
 if (process.env.NODE_ENV === 'production') {
