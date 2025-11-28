@@ -50,7 +50,7 @@ const InteractiveServicesSection = (props: any) => {
             return (
               <Link to={service.href} key={service.id} className="group">
                 <div
-                  className="g-card _service _n1 relative p-6 h-32 flex items-center overflow-hidden rounded-2xl transition-all duration-300 hover:shadow-md"
+                  className="g-card _service _n1 relative p-6 h-32 flex items-center overflow-hidden transition-all duration-300 hover:shadow-md"
                   data-aos="fade-up"
                   data-aos-delay={index * 100}
                   data-aos-duration="600"
@@ -73,7 +73,7 @@ const InteractiveServicesSection = (props: any) => {
                   {/* KATTA IKONKA — TEPADAN PASTGA CHIROYL HIRALASHUV, QORA SOYA YOʻQ */}
                   <div className="g-card-alpha absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none">
                     <div
-                      className="w-32 h-32 opacity-35"
+                      className="w-32 h-32 opacity-15"
                       style={{
                         // Juda yumshoq, tabiiy soya — qora emas, kartaga mos
                         filter: 'drop-shadow(0 8px 20px rgba(0,0,0,0.18))',

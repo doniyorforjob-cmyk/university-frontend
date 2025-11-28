@@ -58,7 +58,7 @@ const Sidebar = memo(() => {
               : 'hover:bg-gray-50 border-l-4 border-l-transparent pl-[31px]'
           } ${!isLast ? 'border-b border-gray-300' : ''}`}
         >
-          {child.title === "E'lonlar" ? "E&apos;lonlar" : child.title}
+          {child.title === "E'lonlar" ? "Elonlar" : child.title}
         </Link>
       );
     });

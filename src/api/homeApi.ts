@@ -176,41 +176,83 @@ const homeNewsData: HomeNewsData = {
   news: [
     {
       id: 1,
-      title: "Yangi o'quv yili boshlandi",
-      description: "Universitetda yangi o'quv yili tantanali ravishda boshlandi...",
-      image_url: "https://picsum.photos/400/300?random=1",
-      published_at: "2024-09-01T00:00:00Z",
-      slug: "new-academic-year"
+      title: "Qishki qabul-2024 jarayonlari boshlandi!",
+      description: "Barcha abituriyentlar diqqatiga! 2024-2025 o'quv yili uchun qishki qabul jarayonlari boshlandi.",
+      image_url: "https://picsum.photos/seed/picsum1/800/600",
+      published_at: "2024-07-20T00:00:00Z",
+      slug: "winter-admission-2024"
     },
     {
       id: 2,
-      title: "Ilmiy konferensiya muvaffaqiyatli o'tdi",
-      description: "Xalqaro ilmiy konferensiyada 200 dan ortiq olim ishtirok etdi...",
-      image_url: "https://picsum.photos/400/300?random=2",
-      published_at: "2024-10-15T00:00:00Z",
-      slug: "international-conference"
+      title: "Universitetda yangi sport majmuasi ochildi",
+      description: "Talabalarimiz uchun zamonaviy sport majmuasi foydalanishga topshirildi.",
+      image_url: "https://picsum.photos/seed/picsum2/800/600",
+      published_at: "2024-07-19T00:00:00Z",
+      slug: "new-sports-complex"
     },
     {
       id: 3,
-      title: "Yangi laboratoriya ochildi",
-      description: "Zamonaviy texnologiyalar bilan jihozlangan yangi laboratoriya...",
-      image_url: "https://picsum.photos/400/300?random=3",
-      published_at: "2024-11-01T00:00:00Z",
-      slug: "new-laboratory"
+      title: "Xalqaro anjuman o'tkazilishi rejalashtirilmoqda",
+      description: "Anjumanda dunyoning yetakchi olimlari ishtirok etishi kutilmoqda.",
+      image_url: "https://picsum.photos/seed/picsum3/800/600",
+      published_at: "2024-07-18T00:00:00Z",
+      slug: "international-conference-planned"
+    },
+    {
+      id: 4,
+      title: "Talabalar uchun grant tanlovi e'lon qilindi",
+      description: "Iqtidorli talabalar uchun maxsus grant tanlovi e'lon qilindi. Shoshiling!",
+      image_url: "https://picsum.photos/seed/picsum4/800/600",
+      published_at: "2024-07-17T00:00:00Z",
+      slug: "student-grant-announcement"
+    },
+    {
+      id: 5,
+      title: "Yangi o'quv yili uchun dars jadvallari tasdiqlandi",
+      description: "Barcha yo'nalishlar uchun dars jadvallari bilan tanishishingiz mumkin.",
+      image_url: "https://picsum.photos/seed/picsum5/800/600",
+      published_at: "2024-07-16T00:00:00Z",
+      slug: "academic-schedule-approved"
+    },
+    {
+      id: 6,
+      title: "Kutubxonaga yangi kitoblar keltirildi",
+      description: "Kutubxona fondi eng so'nggi ilmiy va badiiy adabiyotlar bilan boyitildi.",
+      image_url: "https://picsum.photos/seed/picsum6/800/600",
+      published_at: "2024-07-15T00:00:00Z",
+      slug: "new-books-library"
     }
   ],
   announcements: [
     {
       id: 1,
-      text: "Qabul 2025",
-      description: "Bakalavriat va magistratura bosqichiga qabul e'lon qilindi",
-      date: "2024-12-01"
+      text: "Qishki qabul-2024 jarayonlari boshlandi!",
+      description: "Barcha abituriyentlar diqqatiga! 2024-2025 o'quv yili uchun qishki qabul jarayonlari boshlandi.",
+      date: "2024-07-20"
     },
     {
       id: 2,
-      text: "Stipendiya dasturi",
-      description: "A'lochi talabalar uchun yangi stipendiya dasturi",
-      date: "2024-11-15"
+      text: "Universitetda yangi sport majmuasi ochildi",
+      description: "Talabalarimiz uchun zamonaviy sport majmuasi foydalanishga topshirildi.",
+      date: "2024-07-19"
+    },
+    {
+      id: 3,
+      text: "Xalqaro anjuman o'tkazilishi rejalashtirilmoqda",
+      description: "Anjumanda dunyoning yetakchi olimlari ishtirok etishi kutilmoqda.",
+      date: "2024-07-18"
+    },
+    {
+      id: 4,
+      text: "Talabalar uchun grant tanlovi e'lon qilindi",
+      description: "Iqtidorli talabalar uchun maxsus grant tanlovi e'lon qilindi. Shoshiling!",
+      date: "2024-07-17"
+    },
+    {
+      id: 5,
+      text: "Yangi o'quv yili uchun dars jadvallari tasdiqlandi",
+      description: "Barcha yo'nalishlar uchun dars jadvallari bilan tanishishingiz mumkin.",
+      date: "2024-07-16"
     }
   ],
   events: [

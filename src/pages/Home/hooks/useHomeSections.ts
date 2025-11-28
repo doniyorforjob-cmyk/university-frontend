@@ -39,8 +39,7 @@ export const useHomeSections = () => {
   const newsSection = useStandardSection('news',
     () => homeApi.getNewsData(),
     {
-      ttlMinutes: 10, // News updates more frequently
-      transformData: transformNewsData
+      ttlMinutes: 10 // News updates more frequently
     }
   );
 
