@@ -69,7 +69,7 @@ export default function HeroSection() {
           {enabledItems.map((item: CarouselItem, index: number) => (
             <SliderWrapper key={item.id} value={item.sliderName}>
               <img
-                className='w-full h-[55vh] md:h-[65vh] lg:h-[75vh] xl:h-[70vh] object-cover'
+                className='w-full h-[55vh] md:h-[50vh] lg:h-[60vh] xl:h-[70vh] object-cover'
                 src={item.img}
                 alt={item.title}
               />
