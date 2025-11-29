@@ -27,28 +27,28 @@ const AnimatedNewsTabs = ({
 
   return (
     <div className={cn("w-full flex flex-col gap-y-6", className)}>
-      <div className="flex gap-2 flex-wrap bg-[#11111198] bg-opacity-50 backdrop-blur-sm p-3 rounded-xl">
+      <div className="flex gap-2 flex-wrap bg-gray-200 p-3">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={cn(
-              "relative px-4 py-2 text-base font-medium rounded-lg text-white outline-none transition-colors"
+              "relative px-4 py-2 text-base font-medium rounded-lg text-gray-900 outline-none transition-colors"
             )}
           >
             {activeTab === tab.id && (
               <motion.div
                 layoutId="active-tab"
-                className="absolute inset-0 bg-[#111111d1] bg-opacity-50 shadow-[0_0_20px_rgba(0,0,0,0.2)] backdrop-blur-sm !rounded-lg"
+                className="absolute inset-0 bg-primary shadow-[0_0_20px_rgba(0,0,0,0.2)] backdrop-blur-sm !rounded-lg"
                 transition={{ type: "spring", duration: 0.6 }}
               />
             )}
-            <span className="relative z-10">{tab.label}</span>
+            <span className={cn("relative z-10", activeTab === tab.id ? "text-white" : "text-gray-900")}>{tab.label}</span>
           </button>
         ))}
       </div>
 
-      <div className="min-h-60 h-full">
+      <div className="min-h-60 h-full bg-white">
         {tabs.map(
           (tab) =>
             activeTab === tab.id && (
@@ -67,6 +67,7 @@ const AnimatedNewsTabs = ({
                   ease: "circInOut",
                   type: "spring",
                 }}
+                className="bg-white"
               >
                 {tab.content}
               </motion.div>

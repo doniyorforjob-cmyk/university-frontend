@@ -99,3 +99,12 @@ export const CACHE_TIME = {
   long: 60 * 60 * 1000, // 1 soat
 } as const;
 
+// ===== AOS ANIMATSIYASI =====
+export const AOS_CONFIG = {
+  enabled: true,
+  defaultAnimation: 'fade-up',
+  defaultDuration: 800,
+  defaultDelay: 0,
+  staggerDelay: 100,
+} as const;
+

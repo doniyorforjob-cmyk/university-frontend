@@ -10,6 +10,7 @@ import { PostCategory } from '../../types/post';
 import { AspectRatio } from '../../components/ui';
 import { OptimizedImage } from '../../components/shared';
 import { useTranslation } from 'react-i18next';
+import { AOS_CONFIG } from '../../config/constants';
 
 const tabs: { id: PostCategory; label: string }[] = [
   { id: 'news', label: 'Yangiliklar' },
@@ -83,12 +84,20 @@ const NewsSection = () => {
   // Render grid for each category
   const renderGrid = (items: any[]) => (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-      {items.slice(0, 6).map((item: any) => (
-        <div key={item.id} className="group relative rounded-lg overflow-hidden shadow-lg transform hover:-translate-y-2 transition-transform duration-300">
+      {items.slice(0, 6).map((item: any, index: number) => (
+        <div
+          key={item.id}
+          className="group relative overflow-hidden shadow-lg transform hover:-translate-y-2 transition-transform duration-300"
+          {...(AOS_CONFIG.enabled && {
+            'data-aos': AOS_CONFIG.defaultAnimation,
+            'data-aos-delay': `${index * AOS_CONFIG.staggerDelay}`,
+            'data-aos-duration': AOS_CONFIG.defaultDuration,
+          })}
+        >
           <Link to={`/news/${item.slug}`} className="block h-full">
             <AspectRatio ratio={1 / 1}>
               <OptimizedImage
-                className="w-full h-full object-cover rounded-lg"
+                className="w-full h-full object-cover"
                 src={item.image_url}
                 alt={item.title}
                 width={400}
@@ -96,7 +105,7 @@ const NewsSection = () => {
                 lazy={true}
               />
             </AspectRatio>
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent rounded-lg"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
             <div className="absolute bottom-0 left-0 p-4">
               <div className="flex items-center text-sm text-gray-300 mb-2">
                 <CalendarDaysIcon className="w-5 h-5 mr-2" />

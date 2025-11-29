@@ -40,6 +40,11 @@ export interface HomeStatsData {
     end: number;
     plus?: boolean;
   }>;
+  universityArea?: {
+    area: number;
+    unit: string;
+    image: string;
+  };
 }
 
 export interface HomeNewsData {
@@ -165,11 +170,18 @@ const homeHeroData: HomeHeroData = {
 
 const homeStatsData: HomeStatsData = {
   stats: [
-    { id: 1, text: "O'qituvchilar", end: 150, plus: true },
-    { id: 2, text: "Talabalar", end: 5000, plus: true },
-    { id: 3, text: "Fakultetlar", end: 8, plus: false },
-    { id: 4, text: "Bitiruvchilar", end: 12000, plus: true },
-  ]
+    { id: 1, text: "Fakultetlar soni", end: 18, plus: false },
+    { id: 2, text: "Bo'limlar soni", end: 25, plus: false },
+    { id: 3, text: "Professor-o'qituvchilar soni", end: 850, plus: false },
+    { id: 4, text: "Ilmiy unvonlilar", end: 320, plus: false },
+    { id: 5, text: "Bakalavr talabalar soni", end: 28500, plus: false },
+    { id: 6, text: "Magistr talabalar soni", end: 1450, plus: false },
+  ],
+  universityArea: {
+    area: 3200,
+    unit: "m²",
+    image: "/static/auzcoder/logo/namdu.jpg"
+  }
 };
 
 const homeNewsData: HomeNewsData = {

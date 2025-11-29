@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Container from '../../components/shared/Container';
 import SectionHeader from './components/SectionHeader';
+import { AOS_CONFIG } from '../../config/constants';
 
 interface ServiceItem {
   id: number;
@@ -51,10 +52,11 @@ const InteractiveServicesSection = (props: any) => {
               <Link to={service.href} key={service.id} className="group">
                 <div
                   className="g-card _service _n1 relative p-6 h-32 flex items-center overflow-hidden transition-all duration-300 hover:shadow-md"
-                  data-aos="fade-up"
-                  data-aos-delay={index * 100}
-                  data-aos-duration="600"
-                  data-aos-easing="ease-out"
+                  {...(AOS_CONFIG.enabled && {
+                    'data-aos': AOS_CONFIG.defaultAnimation,
+                    'data-aos-delay': `${index * AOS_CONFIG.staggerDelay}`,
+                    'data-aos-duration': AOS_CONFIG.defaultDuration,
+                  })}
                   style={{ backgroundColor: cardColors[index % cardColors.length] }}
                 >
                   {/* Asosiy kontent */}
