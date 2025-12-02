@@ -57,7 +57,7 @@ const VideoGallery: React.FC = () => {
   };
 
   return (
-    <div className="py-12">
+    <div className="py-16">
       <Container>
         <div className="flex items-center mb-8">
           <span className="inline-block w-1 h-8 bg-primary mr-4"></span>

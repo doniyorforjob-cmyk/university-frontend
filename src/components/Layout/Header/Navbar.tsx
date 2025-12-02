@@ -144,13 +144,16 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                           element?.blur();
                         }
                       }}
-                      className={`flex items-center h-full px-4 text-base font-bold transition-colors duration-300 cursor-pointer ${
+                      className={`flex items-center h-full px-4 text-base font-bold transition-colors duration-300 cursor-pointer relative ${
                         activeDropdown === item.title
                           ? 'bg-white text-black'
-                          : 'text-white hover:bg-white hover:text-black'
+                          : 'text-white hover:text-white'
                       }`}
                     >
-                      <span>{item.title}</span>
+                      <span className="relative">
+                        {item.title}
+                        <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-secondary transition-all duration-300 hover:w-full"></span>
+                      </span>
                       {item.children && <ChevronDownIcon className="w-5 h-5 ml-1" />}
                     </PrefetchLink>
 

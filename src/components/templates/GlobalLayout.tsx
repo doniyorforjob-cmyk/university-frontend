@@ -55,7 +55,7 @@ const GlobalLayout: React.FC = () => {
     }}>
       <PerformanceProvider>
         <GlobalLayoutContext.Provider value={{ setBannerData, setBreadcrumbsData }}>
-          <div className="bg-gray-50 min-h-screen pb-20">
+          <div className="bg-gray-50 min-h-screen">
             {/* Render Banner outside the 70/30 split */}
             {banner && (
               <Banner

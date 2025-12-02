@@ -16,9 +16,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     }, [fontSize]);
 
     return (
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col">
             <Header />
-            <main className="flex-grow">
+            <main>
                 {children}
             </main>
             <Footer />

@@ -15,6 +15,7 @@ import {
 import { useFooterData } from '../../hooks/useFooterData';
 import { SocialLink } from '../../types/footer';
 import FooterSkeleton from './FooterSkeleton';
+import Container from '../shared/Container';
 
 // Ijtimoiy tarmoq ikonkalarini nomiga qarab qaytaruvchi komponent
 const SocialIcon: React.FC<{ name: SocialLink['name'] }> = ({ name }) => {
@@ -80,7 +81,7 @@ const Footer: React.FC = () => {
 
   return (
     <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-t border-gray-700">
-      <div className="max-w-screen-xl px-4 py-16 mx-auto sm:px-6 lg:px-8">
+      <Container className="py-16">
         {/* ==== 1-qator – logo + qisqacha ma'lumot + ijtimoiy tarmoqlar ==== */}
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div>
@@ -186,7 +187,7 @@ const Footer: React.FC = () => {
             © {currentYear} <span className="font-semibold text-white">Namangan Davlat Texnika Universiteti</span>. Barcha huquqlar himoyalangan.
           </p>
         </div>
-      </div>
+      </Container>
     </footer>
   );
 };

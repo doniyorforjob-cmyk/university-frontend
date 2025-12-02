@@ -134,7 +134,7 @@ const NewsSection = () => {
   ];
 
   return (
-    <div className="py-12">
+    <div className="pt-16">
       <Container>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             {/* Left Column: News with Tabs */}
