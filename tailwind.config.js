@@ -175,6 +175,7 @@ module.exports = {
         // Navbar dropdown uchun – pastdan ko‘tarilib chiqadi
         "slide-in-bottom": "slideInFromBottom 0.25s ease-out forwards",
       },
+
       keyframes: {
         fadeIn: {
           '0%': { opacity: '0' },

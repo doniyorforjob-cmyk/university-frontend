@@ -4,6 +4,7 @@ export type HomeSectionType =
   | 'news'
   | 'faculties'
   | 'video-gallery'
+  | 'media-gallery'
   | 'interactive-services';
 
 export type LayoutVariant =

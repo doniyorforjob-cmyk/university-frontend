@@ -15,10 +15,7 @@ const Stats = () => {
   // Yangi arxitektura: useStandardSection hook
   const { data, loading, isCached } = useStandardSection(
     'stats',
-    homeApi.getStatsData,
-    {
-      ttlMinutes: 60 // 1 soat cache
-    }
+    homeApi.getStatsData
   );
 
   const { ref, inView } = useInView({ threshold: 0.3, triggerOnce: true });

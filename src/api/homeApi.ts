@@ -92,7 +92,14 @@ export interface HomeFacultiesData {
   }>;
 }
 
-export interface HomeVideoGalleryData {
+export interface HomeMediaData {
+  photos: Array<{
+    id: string;
+    title: string;
+    image: string;
+    category: string;
+    uploadDate: string;
+  }>;
   videos: Array<{
     id: string;
     title: string;
@@ -102,6 +109,9 @@ export interface HomeVideoGalleryData {
     uploadDate: string;
   }>;
 }
+
+// Keep backward compatibility
+export interface HomeVideoGalleryData extends HomeMediaData {}
 
 export interface HomeInteractiveServicesData {
   services: Array<{
@@ -361,7 +371,37 @@ const homeFacultiesData: HomeFacultiesData = {
   ]
 };
 
-const homeVideoGalleryData: HomeVideoGalleryData = {
+const homeMediaData: HomeMediaData = {
+  photos: [
+    {
+      id: "photo-1",
+      title: "Universitet binosi",
+      image: "https://images.unsplash.com/photo-1564981797816-1043664bf78d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
+      category: "Binolar",
+      uploadDate: "2023-10-15T10:00:00Z"
+    },
+    {
+      id: "photo-2",
+      title: "Talabalar kutubxonada",
+      image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
+      category: "Talabalar",
+      uploadDate: "2023-09-20T14:30:00Z"
+    },
+    {
+      id: "photo-3",
+      title: "Laboratoriya",
+      image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
+      category: "Laboratoriya",
+      uploadDate: "2023-08-12T09:15:00Z"
+    },
+    {
+      id: "photo-4",
+      title: "Sport majmuasi",
+      image: "https://images.unsplash.com/photo-1574623452334-1e0ac2b3ccb4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
+      category: "Sport",
+      uploadDate: "2023-11-05T16:45:00Z"
+    }
+  ],
   videos: [
     {
       id: "dQw4w9WgXcQ",
@@ -397,6 +437,9 @@ const homeVideoGalleryData: HomeVideoGalleryData = {
     }
   ]
 };
+
+// Backward compatibility
+const homeVideoGalleryData: HomeVideoGalleryData = homeMediaData;
 
 const homeInteractiveServicesData: HomeInteractiveServicesData = {
   services: [
@@ -581,7 +624,12 @@ export const homeApi = {
 
   getVideoGalleryData: async (): Promise<HomeVideoGalleryData> => {
     await new Promise(resolve => setTimeout(resolve, 200));
-    return homeVideoGalleryData;
+    return homeMediaData;
+  },
+
+  getMediaData: async (): Promise<HomeMediaData> => {
+    await new Promise(resolve => setTimeout(resolve, 200));
+    return homeMediaData;
   },
 
   getInteractiveServicesData: async (): Promise<HomeInteractiveServicesData> => {

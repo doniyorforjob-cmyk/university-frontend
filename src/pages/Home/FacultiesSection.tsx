@@ -10,9 +10,7 @@ type Faculty = HomeFacultiesData['faculties'][0];
 
 const FacultiesSection: React.FC = () => {
   const { t } = useTranslation();
-  const { data, loading } = useStandardSection('faculties', homeApi.getFacultiesData, {
-    ttlMinutes: 0
-  });
+  const { data, loading } = useStandardSection('faculties', homeApi.getFacultiesData);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [progress, setProgress] = useState(0);
 

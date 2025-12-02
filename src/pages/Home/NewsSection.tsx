@@ -70,10 +70,7 @@ const NewsSection = () => {
   // Yangi arxitektura: useStandardSection hook
   const { data, loading, isCached } = useStandardSection(
     'news',
-    homeApi.getNewsData,
-    {
-      ttlMinutes: 60 // 1 soat cache
-    }
+    homeApi.getNewsData
   );
 
   // Clean loading - arxitektura prinsipiga muvofiq

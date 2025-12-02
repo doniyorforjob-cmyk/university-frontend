@@ -29,7 +29,6 @@ export default function HeroSection() {
     'hero',
     homeApi.getHeroData,
     {
-      ttlMinutes: 60, // 1 soat cache
       transformData: transformHeroData
     }
   );

@@ -307,6 +307,7 @@ export const homeSectionTemplates = {
   news: newsTemplates,
   faculties: facultiesTemplates,
   'video-gallery': videoGalleryTemplates,
+  'media-gallery': videoGalleryTemplates, // Use same templates for now
   'interactive-services': interactiveServicesTemplates,
 };
 

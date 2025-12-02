@@ -1,8 +1,9 @@
 import { useCachedApi } from '../../../hooks/useCachedApi';
 import { HomeSectionType } from '../types';
+import { SECTION_CACHE_CONFIG } from '../../../config/constants';
 
 interface UseStandardSectionOptions {
-  ttlMinutes?: number;
+  ttlMinutes?: number; // Override default TTL
   enabled?: boolean;
   transformData?: (rawData: any) => any;
   refetchOnWindowFocus?: boolean;
@@ -15,7 +16,7 @@ export const useStandardSection = <T = any>(
   options: UseStandardSectionOptions = {}
 ) => {
   const {
-    ttlMinutes = 15,
+    ttlMinutes = SECTION_CACHE_CONFIG[sectionType]?.ttlMinutes ?? 15, // Default from config
     enabled = true,
     transformData,
     refetchOnWindowFocus = false,

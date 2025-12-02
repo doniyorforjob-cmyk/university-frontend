@@ -99,6 +99,17 @@ export const CACHE_TIME = {
   long: 60 * 60 * 1000, // 1 soat
 } as const;
 
+// ===== SECTION CACHE CONFIG =====
+export const SECTION_CACHE_CONFIG = {
+  'hero': { ttlMinutes: 60 }, // 1 soat - kam o'zgaradi
+  'stats': { ttlMinutes: 30 }, // 30 daqiqa - o'rtacha o'zgaradi
+  'news': { ttlMinutes: 15 }, // 15 daqiqa - tez o'zgaradi
+  'faculties': { ttlMinutes: 120 }, // 2 soat - kam o'zgaradi
+  'video-gallery': { ttlMinutes: 45 }, // 45 daqiqa - o'rtacha o'zgaradi
+  'media-gallery': { ttlMinutes: 45 }, // 45 daqiqa - o'rtacha o'zgaradi
+  'interactive-services': { ttlMinutes: 90 }, // 1.5 soat - kam o'zgaradi
+} as const;
+
 // ===== AOS ANIMATSIYASI =====
 export const AOS_CONFIG = {
   enabled: true,

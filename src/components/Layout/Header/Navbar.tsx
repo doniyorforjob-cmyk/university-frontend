@@ -144,17 +144,15 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                           element?.blur();
                         }
                       }}
-                      className={`flex items-center h-full px-4 text-base font-bold transition-colors duration-300 cursor-pointer relative ${
+                      className={`group flex items-center h-full px-4 text-base font-bold transition-colors duration-300 cursor-pointer relative ${
                         activeDropdown === item.title
-                          ? 'bg-white text-black'
-                          : 'text-white hover:text-white'
+                          ? 'text-white'
+                          : 'text-white'
                       }`}
                     >
-                      <span className="relative">
-                        {item.title}
-                        <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-secondary transition-all duration-300 hover:w-full"></span>
-                      </span>
+                      {item.title}
                       {item.children && <ChevronDownIcon className="w-5 h-5 ml-1" />}
+                      <span className="absolute bottom-0 left-0 w-0 h-1.5 bg-secondary transition-all duration-300 group-hover:w-full"></span>
                     </PrefetchLink>
 
                     {/* ==== DROPDOWN ==== */}
@@ -183,121 +181,49 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                 <div className="col-span-2">
                                   {item.title === 'Tuzilma' ? (
                                     <div className="grid grid-cols-2 gap-x-8 gap-y-6">
-                                      {/* RAHBARIYAT */}
-                                      <div>
-                                        <h4 className="text-base font-bold text-black mb-3 pb-1 border-b border-primary/20 inline-block">
-                                          Rahbariyat
-                                        </h4>
-                                        <ul className="space-y-2">
-                                          {[
+                                      {[
+                                        { title: 'Rahbariyat', links: [
                                             { to: "/rahbariyat/rektor", label: "Rektor" },
                                             { to: "/rahbariyat/prorektorlar", label: "Prorektorlar" },
-                                          ].map((link) => (
-                                            <li key={link.to}>
-                                              <Link
-                                                to={link.to}
-                                                onClick={closeDropdown}
-                                                className="
-                                                  flex items-center gap-2 text-base font-medium text-black
-                                                  border-b border-gray-300
-                                                  hover:bg-gray-100
-                                                  px-3 py-2 transition-all duration-150
-                                                "
-                                              >
-                                                <ChevronRightIcon className="h-5 w-5 opacity-60" />
-                                                {link.label}
-                                              </Link>
-                                            </li>
-                                          ))}
-                                        </ul>
-                                      </div>
-
-                                      {/* FAKULTETLAR */}
-                                      <div>
-                                        <h4 className="text-base font-bold text-black mb-3 pb-1 border-b border-primary/20 inline-block">
-                                          Fakultetlar
-                                        </h4>
-                                        <ul className="space-y-2">
-                                          {[
+                                        ]},
+                                        { title: 'Fakultetlar', links: [
                                             { to: "/fakultetlar/informatika", label: "Informatika fakulteti" },
                                             { to: "/fakultetlar/multimedia", label: "Multimedia texnologiyalari fakulteti" },
-                                          ].map((link) => (
-                                            <li key={link.to}>
-                                              <Link
-                                                to={link.to}
-                                                onClick={closeDropdown}
-                                                className="
-                                                  flex items-center gap-2 text-base font-medium text-black
-                                                  border-b border-gray-300
-                                                  hover:bg-gray-100
-                                                  px-3 py-2 transition-all duration-150
-                                                "
-                                              >
-                                                <ChevronRightIcon className="h-5 w-5 opacity-60" />
-                                                {link.label}
-                                              </Link>
-                                            </li>
-                                          ))}
-                                        </ul>
-                                      </div>
-
-                                      {/* KAFEDRALAR */}
-                                      <div>
-                                        <h4 className="text-base font-bold text-black mb-3 pb-1 border-b border-primary/20 inline-block">
-                                          Kafedralar
-                                        </h4>
-                                        <ul className="space-y-2">
-                                          {[
+                                        ]},
+                                        { title: 'Kafedralar', links: [
                                             { to: "/kafedralar/matematika", label: "Matematika kafedrasi" },
                                             { to: "/kafedralar/programmalash", label: "Dasturlash kafedrasi" },
-                                          ].map((link) => (
-                                            <li key={link.to}>
-                                              <Link
-                                                to={link.to}
-                                                onClick={closeDropdown}
-                                                className="
-                                                  flex items-center gap-2 text-base font-medium text-black
-                                                  border-b border-gray-300
-                                                  hover:bg-gray-100
-                                                  px-3 py-2 transition-all duration-150
-                                                "
-                                              >
-                                                <ChevronRightIcon className="h-5 w-5 opacity-60" />
-                                                {link.label}
-                                              </Link>
-                                            </li>
-                                          ))}
-                                        </ul>
-                                      </div>
-
-                                      {/* BO'LIMLAR */}
-                                      <div>
-                                        <h4 className="text-base font-bold text-black mb-3 pb-1 border-b border-primary/20 inline-block">
-                                          Bo&apos;limlar
-                                        </h4>
-                                        <ul className="space-y-2">
-                                          {[
-                                            { to: "/tuzilma/bolimlar/marketing", label: "Marketing bo&apos;limi" },
+                                        ]},
+                                        { title: "Bo'limlar", links: [
+                                            { to: "/tuzilma/bolimlar/marketing", label: "Marketing bo'limi" },
                                             { to: "/tuzilma/bolimlar/raqamli-texnologiyalar", label: "Raqamli texnologiyalarni rivojlantirish" },
-                                          ].map((link) => (
-                                            <li key={link.to}>
-                                              <Link
-                                                to={link.to}
-                                                onClick={closeDropdown}
-                                                className="
-                                                  flex items-center gap-2 text-base font-medium text-black
-                                                  border-b border-gray-300
-                                                  hover:bg-gray-100
-                                                  px-3 py-2 transition-all duration-150
-                                                "
-                                              >
-                                                <ChevronRightIcon className="h-5 w-5 opacity-60" />
-                                                {link.label}
-                                              </Link>
-                                            </li>
-                                          ))}
-                                        </ul>
-                                      </div>
+                                        ]},
+                                      ].map((section) => (
+                                        <div key={section.title}>
+                                          <h4 className="text-base font-bold text-black mb-3 pb-1 border-b border-primary/20 inline-block">
+                                            {section.title}
+                                          </h4>
+                                          <ul className="space-y-2">
+                                            {section.links.map((link) => (
+                                              <li key={link.to}>
+                                                <Link
+                                                  to={link.to}
+                                                  onClick={closeDropdown}
+                                                  className="
+                                                    flex items-center gap-2 text-base font-medium text-black
+                                                    border-b border-gray-300
+                                                    hover:bg-gray-100
+                                                    px-3 py-2 transition-all duration-150
+                                                  "
+                                                >
+                                                  <ChevronRightIcon className="h-5 w-5 opacity-60" />
+                                                  {link.label}
+                                                </Link>
+                                              </li>
+                                            ))}
+                                          </ul>
+                                        </div>
+                                      ))}
                                     </div>
                                   ) : hasCategories ? (
                                     <div className="grid grid-cols-2 gap-6">
