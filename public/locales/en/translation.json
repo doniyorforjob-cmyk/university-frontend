@@ -8,10 +8,10 @@
     "en": "English"
   },
   "interactiveServices": "Interactive Services",
-  "seeAllServices": "See all services",
+  "seeAllServices": "All",
   "news": "News",
-  "seeAllNews": "See all news",
+  "seeAllNews": "All",
   "faculties": "Faculties",
-  "seeAll": "See All",
-  "seeAllFaculties": "See all faculties"
+  "seeAll": "All",
+  "seeAllFaculties": "All"
 }

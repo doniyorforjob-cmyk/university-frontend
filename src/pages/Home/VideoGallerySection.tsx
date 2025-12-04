@@ -139,6 +139,10 @@ const MediaGallery: React.FC = () => {
         <MediaGalleryHeader
           onTabChange={setActiveTab}
           activeTab={activeTab}
+          title="Media resurslar"
+          photoTabText="Fotogalareya"
+          videoTabText="Videogalareya"
+          seeAllText="Barchasi"
         />
 
         {/* Tab Content */}

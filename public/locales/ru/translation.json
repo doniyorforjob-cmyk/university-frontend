@@ -8,10 +8,10 @@
     "en": "Английский"
   },
   "interactiveServices": "Интерактивные услуги",
-  "seeAllServices": "Посмотреть все услуги",
+  "seeAllServices": "Все",
   "news": "Новости",
-  "seeAllNews": "Посмотреть все новости",
+  "seeAllNews": "Все",
   "faculties": "Факультеты",
-  "seeAll": "Посмотреть все",
-  "seeAllFaculties": "Посмотреть все факультеты"
+  "seeAll": "Все",
+  "seeAllFaculties": "Все"
 }

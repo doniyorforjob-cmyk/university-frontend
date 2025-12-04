@@ -77,7 +77,7 @@ export default function HeroSection() {
         </SliderContent>
 
         {firstImageLoaded && (
-          <SliderBtnGroup className='absolute bottom-0 h-fit dark:text-white text-black dark:bg-black/40 bg-white/40 backdrop-blur-md overflow-hidden grid grid-cols-2 md:grid-cols-4 rounded-md'>
+          <SliderBtnGroup className='absolute bottom-0 h-fit dark:text-white text-black dark:bg-black/40 bg-white/40 backdrop-blur-md overflow-hidden grid grid-cols-2 md:grid-cols-4'>
             {enabledItems.map((item: CarouselItem, index: number) => (
               <SliderBtn
                 key={item.id}
@@ -85,10 +85,10 @@ export default function HeroSection() {
                 className='text-left cursor-pointer p-3 border-r'
                 progressBarClass='dark:bg-black bg-white h-full'
               >
-                <h2 className='relative px-4 rounded-full w-fit dark:bg-white dark:text-black text-white bg-gray-900 mb-2'>
+                <h2 className='relative px-4 rounded-full w-fit dark:bg-secondary dark:text-white text-white bg-secondary mb-2 text-2xl'>
                   {item.title}
                 </h2>
-                <p className='text-sm font-medium line-clamp-2'>{item.desc}</p>
+                <p className='text-lg font-medium line-clamp-2'>{item.desc}</p>
               </SliderBtn>
             ))}
           </SliderBtnGroup>
