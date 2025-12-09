@@ -378,21 +378,21 @@ const homeMediaData: HomeMediaData = {
       title: "Universitet binosi",
       image: "https://images.unsplash.com/photo-1564981797816-1043664bf78d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
       category: "Binolar",
-      uploadDate: "2023-10-15T10:00:00Z"
+      uploadDate: "2023-12-27T10:00:00Z"
     },
     {
       id: "photo-2",
       title: "Talabalar kutubxonada",
       image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
       category: "Talabalar",
-      uploadDate: "2023-09-20T14:30:00Z"
+      uploadDate: "2023-02-12T14:30:00Z"
     },
     {
       id: "photo-3",
       title: "Laboratoriya",
       image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
       category: "Laboratoriya",
-      uploadDate: "2023-08-12T09:15:00Z"
+      uploadDate: "2023-03-12T09:15:00Z"
     },
     {
       id: "photo-4",
@@ -484,6 +484,73 @@ const homeInteractiveServicesData: HomeInteractiveServicesData = {
       description: "Shikoyat va takliflar uchun",
       href: "/complaints",
       icon: "ExclamationTriangleIcon"
+    }
+  ]
+};
+
+const homeUniversitySystemsData: HomeUniversitySystemsData = {
+  systems: [
+    {
+      id: 1,
+      title: 'Talabalar portali',
+      description: 'Onlayn darslar, baholar va jadvallar',
+      href: '#',
+      icon: 'BookOpen',
+      color: 'bg-blue-500'
+    },
+    {
+      id: 2,
+      title: 'Kutubxona tizimi',
+      description: 'Elektron kitoblar va maqolalar',
+      href: '#',
+      icon: 'BookOpen',
+      color: 'bg-green-500'
+    },
+    {
+      id: 3,
+      title: 'Kadrlar bo\'limi',
+      description: 'Xodimlar va ish o\'rinlari',
+      href: '#',
+      icon: 'Users',
+      color: 'bg-purple-500'
+    },
+    {
+      id: 4,
+      title: 'Ilmiy tadqiqotlar',
+      description: 'Loyihalar va nashrlar',
+      href: '#',
+      icon: 'Award',
+      color: 'bg-orange-500'
+    },
+    {
+      id: 5,
+      title: 'Xalqaro aloqalar',
+      description: 'Hamkorlik va almashinuv',
+      href: '#',
+      icon: 'Globe',
+      color: 'bg-red-500'
+    }
+  ],
+  quickLinks: [
+    {
+      id: 1,
+      title: 'Qabul komissiyasi',
+      href: '#'
+    },
+    {
+      id: 2,
+      title: 'Onlayn ariza berish',
+      href: '#'
+    },
+    {
+      id: 3,
+      title: 'Stipendiya dasturlari',
+      href: '#'
+    },
+    {
+      id: 4,
+      title: 'Ijtimoiy faollik indeksi',
+      href: '#'
     }
   ]
 };
@@ -635,6 +702,11 @@ export const homeApi = {
   getInteractiveServicesData: async (): Promise<HomeInteractiveServicesData> => {
     await new Promise(resolve => setTimeout(resolve, 200));
     return homeInteractiveServicesData;
+  },
+
+  getUniversitySystemsData: async (): Promise<HomeUniversitySystemsData> => {
+    await new Promise(resolve => setTimeout(resolve, 200));
+    return homeUniversitySystemsData;
   },
 
   // Update section data (for future admin panel)

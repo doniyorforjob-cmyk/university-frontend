@@ -43,7 +43,15 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
           className="bg-secondary text-white px-4 py-2 inline-flex items-center text-lg font-semibold hover:bg-secondary-dark transition-colors group"
         >
           <span className="mr-2">{seeAllText}</span>
-          <div className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center transition-colors duration-300 group-hover:bg-primary">
+          <div
+            className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center transition-colors duration-300 group-hover:bg-primary"
+            style={{
+              backfaceVisibility: 'hidden',
+              transform: 'translateZ(0)',
+              willChange: 'background-color, transform',
+              contain: 'layout style paint'
+            }}
+          >
             <ChevronRightIcon className="w-6 h-6" />
           </div>
         </Link>
@@ -166,9 +174,9 @@ export const MediaGalleryHeader: React.FC<MediaGalleryHeaderProps> = ({
         className="self-start bg-secondary text-white px-4 py-2 inline-flex items-center text-lg font-semibold hover:bg-secondary-dark transition-colors group"
       >
         <span className="mr-2">{seeAllText}</span>
-        <div className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center transition-colors duration-300 group-hover:bg-primary">
-          <ChevronRightIcon className="w-6 h-6" />
-        </div>
+          <div className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center transition-colors duration-300 group-hover:bg-primary">
+            <ChevronRightIcon className="w-6 h-6 group-hover:text-white" />
+          </div>
       </Link>
     </div>
   );

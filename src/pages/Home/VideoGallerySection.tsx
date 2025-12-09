@@ -3,6 +3,26 @@ import Container from "../../components/shared/Container";
 import { useStandardSection } from './hooks/useStandardSection';
 import { homeApi, HomeMediaData } from '../../api/homeApi';
 import { MediaGalleryHeader } from './components/SectionHeader';
+import MediaCard from './components/MediaCard';
+
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+
+  const time = date.toLocaleTimeString('uz-UZ', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+  const day = date.getDate();
+
+  // Uzbekcha oy nomlari bosh harfi katta
+  const uzMonths = [
+    'Yan', 'Fev', 'Mar', 'Apr', 'May', 'Iyn',
+    'Iyl', 'Avg', 'Sen', 'Okt', 'Noy', 'Dek'
+  ];
+  const month = uzMonths[date.getMonth()];
+  return `${time} ${day}-${month}`;
+};
+
 
 const MediaGallery: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'photos' | 'videos'>('videos');
@@ -20,54 +40,20 @@ const MediaGallery: React.FC = () => {
 
   if (loading || !data) return null;
 
-  const calculateTimeAgo = (uploadDate: string) => {
-    const now = new Date();
-    const upload = new Date(uploadDate);
-    const diffInMs = now.getTime() - upload.getTime();
-    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-    const diffInDays = Math.floor(diffInHours / 24);
-    const diffInMonths = Math.floor(diffInDays / 30);
-    const diffInYears = Math.floor(diffInMonths / 12);
-
-    if (diffInYears > 0) return `${diffInYears} yil oldin`;
-    if (diffInMonths > 0) return `${diffInMonths} oy oldin`;
-    if (diffInDays > 0) return `${diffInDays} kun oldin`;
-    if (diffInHours > 0) return `${diffInHours} soat oldin`;
-    return "Hozir";
-  };
 
   const renderPhotoGallery = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {(data.photos || []).map((photo: HomeMediaData['photos'][0], index: number) => (
-        <div
+        <MediaCard
           key={photo.id}
-          className="bg-white overflow-hidden shadow-md border-2 border-gray-200 transition-all duration-300 w-full text-left aspect-square group hover:shadow-lg"
-        >
-          {/* Photo Image */}
-          <div className="h-[75%] relative cursor-pointer overflow-hidden">
-            <img
-              src={photo.image}
-              alt={photo.title}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
-              <div className="w-12 h-12 bg-white bg-opacity-90 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom Info */}
-          <div className="h-[25%] bg-white px-3 py-2 flex flex-col justify-between">
-            <h4 className="text-base font-semibold text-gray-800 line-clamp-2 mb-1">{photo.title}</h4>
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-blue-600">{photo.category}</span>
-              <span className="text-xs text-gray-500">{calculateTimeAgo(photo.uploadDate)}</span>
-            </div>
-          </div>
-        </div>
+          type="photo"
+          title={photo.title}
+          thumbnail={photo.image}
+          date={formatDate(photo.uploadDate || new Date().toISOString())}
+          views={736}
+          photos={6}
+          imageUrl={photo.image}
+        />
       ))}
     </div>
   );
@@ -75,58 +61,16 @@ const MediaGallery: React.FC = () => {
   const renderVideoGallery = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {(data.videos || []).map((video: HomeMediaData['videos'][0], index: number) => (
-        <div
-          key={video.id}
-          className={`bg-white overflow-hidden shadow-md border-2 transition-all duration-300 w-full text-left aspect-square ${
-            activeVideo === index
-              ? "border-blue-500 shadow-lg"
-              : "border-gray-200"
-          }`}
-        >
-          {/* Top 15% - Logo and Time */}
-          <div className="h-[15%] bg-white flex items-center justify-between px-3 py-1 border-b border-gray-100">
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center mr-2">
-                <span className="text-white text-sm font-bold">U</span>
-              </div>
-              <span className="text-sm font-semibold text-gray-800">Namangan Davlat Texnika Universiteti</span>
-            </div>
-            <span className="text-sm text-gray-600">{calculateTimeAgo(video.uploadDate)}</span>
-          </div>
-
-          {/* Middle 60% - Video Thumbnail */}
-          <div className="h-[60%] relative cursor-pointer" onClick={() => setActiveVideo(index)} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setActiveVideo(index); }}>
-            <img
-              src={video.thumbnail}
-              alt={video.title}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
-              <div className="w-16 h-16 bg-white bg-opacity-90 flex items-center justify-center rounded-full">
-                <svg className="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M8 5v10l8-5-8-5z"/>
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom 25% - Title, Category and YouTube */}
-          <div className="h-[25%] bg-white px-3 py-2 flex flex-col justify-between">
-            <h4 className="text-base font-semibold text-gray-800 line-clamp-2 mb-1">{video.title}</h4>
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-blue-600">{video.category}</span>
-              <a
-                href={`https://www.youtube.com/watch?v=${video.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center text-red-600 hover:text-red-700 transition-colors"
-              >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                </svg>
-              </a>
-            </div>
-          </div>
+        <div key={video.id} onClick={() => setActiveVideo(index)} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setActiveVideo(index); }}>
+          <MediaCard
+            type="video"
+            title={video.title}
+            thumbnail={video.thumbnail}
+            date={formatDate(video.uploadDate)}
+            views={123}
+            videoId={video.id}
+            embedUrl={`https://www.youtube.com/embed/${video.id}`}
+          />
         </div>
       ))}
     </div>
@@ -190,12 +134,12 @@ const MediaGallery: React.FC = () => {
                   {/* Header with logo and time */}
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center">
-                      <div className="w-10 h-10 bg-blue-600 rounded flex items-center justify-center mr-3">
-                        <span className="text-white text-lg font-bold">U</span>
+                      <div className="w-10 h-10 rounded flex items-center justify-center mr-3">
+                        <img src="/images/logo.png" alt="University Logo" className="w-full h-full object-contain p-1" />
                       </div>
                       <span className="text-lg font-semibold text-gray-800">Namangan Davlat Texnika Universiteti</span>
                     </div>
-                    <span className="text-sm text-gray-600">{calculateTimeAgo(data.videos[activeVideo].uploadDate)}</span>
+                    <span className="text-sm text-gray-600">{formatDate(data.videos[activeVideo].uploadDate)}</span>
                   </div>
 
                   {/* Video title */}

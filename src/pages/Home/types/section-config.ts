@@ -5,7 +5,8 @@ export type HomeSectionType =
   | 'faculties'
   | 'video-gallery'
   | 'media-gallery'
-  | 'interactive-services';
+  | 'interactive-services'
+  | 'university-systems';
 
 export type LayoutVariant =
   | 'centered-hero'
