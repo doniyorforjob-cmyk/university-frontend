@@ -32,7 +32,7 @@ export const createStatsSectionBlock = (data: any): HomeSectionBlock => ({
     animation: { enabled: true, type: 'fade', delay: 200 }
   },
   data,
-  order: 6,
+  order: 7,
   enabled: true
 });
 
@@ -68,7 +68,7 @@ export const createFacultiesSectionBlock = (data: any): HomeSectionBlock => ({
     animation: { enabled: true, type: 'fade', delay: 600 }
   },
   data,
-  order: 4,
+  order: 5,
   enabled: true
 });
 
@@ -86,7 +86,7 @@ export const createVideoGallerySectionBlock = (data: any): HomeSectionBlock => (
     animation: { enabled: true, type: 'fade', delay: 800 }
   },
   data,
-  order: 5,
+  order: 6,
   enabled: true
 });
 
@@ -105,5 +105,23 @@ export const createInteractiveServicesSectionBlock = (data: any): HomeSectionBlo
   },
   data,
   order: 2,
+  enabled: true
+});
+
+export const createUniversitySystemsSectionBlock = (data: any): HomeSectionBlock => ({
+  id: 'university-systems-section',
+  type: 'university-systems',
+  config: {
+    id: 'university-systems-section',
+    type: 'university-systems',
+    layout: 'centered-cards',
+    background: { type: 'gradient', value: 'from-yellow-50 to-orange-50' },
+    styling: { padding: 'py-16', margin: 'mb-0', maxWidth: 'max-w-6xl', textAlign: 'center', fontSize: 'base' },
+    showTitle: true,
+    showSubtitle: true,
+    animation: { enabled: true, type: 'fade', delay: 1200 }
+  },
+  data,
+  order: 4,
   enabled: true
 });

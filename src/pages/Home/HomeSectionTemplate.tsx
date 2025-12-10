@@ -126,6 +126,20 @@ const InteractiveServicesPreview: React.FC<{ config: HomeSectionConfig }> = ({ c
   </div>
 );
 
+const UniversitySystemsPreview: React.FC<{ config: HomeSectionConfig }> = ({ config }) => (
+  <div className="border rounded-lg p-4 bg-gradient-to-r from-emerald-50 to-teal-50">
+    <div className="text-center">
+      <div className="grid grid-cols-3 gap-1 mb-3">
+        <div className="w-6 h-6 bg-emerald-500 rounded"></div>
+        <div className="w-6 h-6 bg-teal-500 rounded"></div>
+        <div className="w-6 h-6 bg-emerald-500 rounded"></div>
+      </div>
+      <h3 className="font-semibold text-gray-800">University Systems</h3>
+      <p className="text-sm text-gray-600">University system access cards</p>
+    </div>
+  </div>
+);
+
 // Template definitions
 export const heroTemplates: HomeSectionTemplate[] = [
   {
@@ -300,6 +314,34 @@ export const interactiveServicesTemplates: HomeSectionTemplate[] = [
   },
 ];
 
+export const universitySystemsTemplates: HomeSectionTemplate[] = [
+  {
+    id: 'university-systems-centered',
+    name: 'Markazlashtirilgan Universitet Tizimlari',
+    type: 'university-systems',
+    category: 'interactive',
+    defaultConfig: createBaseConfig('university-systems', 'centered-cards', {
+      type: 'gradient',
+      value: 'from-emerald-50 to-teal-50',
+    }, {
+      padding: 'py-16',
+    }),
+    preview: UniversitySystemsPreview,
+    generate: (data) => ({
+      id: `university-systems-${Date.now()}`,
+      type: 'university-systems',
+      config: createBaseConfig('university-systems', 'centered-cards', {
+        type: 'gradient',
+        value: 'from-emerald-50 to-teal-50',
+      }, {}),
+      data: data || {},
+      order: 7,
+      enabled: true,
+    }),
+    validate: (config) => config.type === 'university-systems',
+  },
+];
+
 // Template registry
 export const homeSectionTemplates = {
   hero: heroTemplates,
@@ -309,6 +351,7 @@ export const homeSectionTemplates = {
   'video-gallery': videoGalleryTemplates,
   'media-gallery': videoGalleryTemplates, // Use same templates for now
   'interactive-services': interactiveServicesTemplates,
+  'university-systems': universitySystemsTemplates,
 };
 
 // Utility functions

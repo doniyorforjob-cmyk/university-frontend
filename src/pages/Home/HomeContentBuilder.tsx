@@ -11,6 +11,7 @@ import NewsSection from './NewsSection';
 import FacultiesSection from './FacultiesSection';
 import VideoGallerySection from './VideoGallerySection';
 import InteractiveServicesSection from './InteractiveServicesSection';
+import UniversitySystemsSection from './UniversitySystemsSection';
 
 const sectionRenderers = {
   // Section types (Home sahifasi uchun maxsus) - lazy loading olib tashlandi
@@ -20,6 +21,7 @@ const sectionRenderers = {
   faculties: FacultiesSection,
   'video-gallery': VideoGallerySection,
   'interactive-services': InteractiveServicesSection,
+  'university-systems': UniversitySystemsSection,
 } as const;
 
 // Future: Content block renderers for API-driven content

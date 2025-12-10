@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRightIcon } from '@heroicons/react/24/outline';
+import { useTranslation } from 'react-i18next';
 import Container from '../../../components/shared/Container';
 
 interface SectionHeaderProps {
@@ -71,15 +72,21 @@ export const MediaGalleryHeader: React.FC<MediaGalleryHeaderProps> = ({
   onTabChange,
   activeTab,
   className = '',
-  title = 'Media resurslar',
-  photoTabText = 'Fotogalareya',
-  videoTabText = 'Videogalareya',
-  seeAllText = 'Barchasi'
+  title,
+  photoTabText,
+  videoTabText,
+  seeAllText
 }) => {
+  const { t } = useTranslation();
   const [activePosition, setActivePosition] = useState({ left: 0, width: 0 });
   const photoRef = useRef<HTMLButtonElement>(null);
   const videoRef = useRef<HTMLButtonElement>(null);
   const tabContainerRef = useRef<HTMLDivElement>(null);
+
+  const finalTitle = title || t('mediaResources');
+  const finalPhotoTabText = photoTabText || t('photoGallery');
+  const finalVideoTabText = videoTabText || t('videoGallery');
+  const finalSeeAllText = seeAllText || t('seeAllMedia');
 
   const handleTabChange = (tab: 'photos' | 'videos') => {
     onTabChange(tab);
@@ -111,7 +118,7 @@ export const MediaGalleryHeader: React.FC<MediaGalleryHeaderProps> = ({
       {/* Title */}
       <div className="flex items-center mb-4 md:mb-0">
         <div className="w-1 bg-primary h-8 mr-4"></div>
-        <h2 className="text-3xl font-bold text-gray-900">{title}</h2>
+        <h2 className="text-3xl font-bold text-gray-900">{finalTitle}</h2>
       </div>
       {/* Line for desktop between title and tabs */}
       <div className="hidden md:flex flex-1 mx-8 h-px bg-gray-400"></div>
@@ -148,7 +155,7 @@ export const MediaGalleryHeader: React.FC<MediaGalleryHeaderProps> = ({
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <span>{photoTabText}</span>
+            <span>{finalPhotoTabText}</span>
           </button>
           <button
             ref={videoRef}
@@ -160,7 +167,7 @@ export const MediaGalleryHeader: React.FC<MediaGalleryHeaderProps> = ({
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
             </svg>
-            <span>{videoTabText}</span>
+            <span>{finalVideoTabText}</span>
           </button>
         </div>
       </div>

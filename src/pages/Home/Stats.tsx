@@ -34,7 +34,7 @@ const Stats = () => {
     <section ref={ref} className="py-16 bg-accent">
       <Container>
         <SectionHeader
-          title="Biz Raqamlarda"
+          title={t('Biz Raqamlarda')}
           noContainer={true}
         />
 

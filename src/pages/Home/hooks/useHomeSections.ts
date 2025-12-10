@@ -9,13 +9,15 @@ import { transformNewsData } from '../transformers/newsTransformer';
 import { transformFacultiesData } from '../transformers/facultiesTransformer';
 import { transformVideoGalleryData } from '../transformers/videoGalleryTransformer';
 import { transformInteractiveServicesData } from '../transformers/interactiveServicesTransformer';
+import { transformUniversitySystemsData } from '../transformers/universitySystemsTransformer';
 import {
   createHeroSectionBlock,
   createStatsSectionBlock,
   createNewsSectionBlock,
   createFacultiesSectionBlock,
   createVideoGallerySectionBlock,
-  createInteractiveServicesSectionBlock
+  createInteractiveServicesSectionBlock,
+  createUniversitySystemsSectionBlock
 } from '../creators/sectionCreators';
 
 export const useHomeSections = () => {
@@ -67,6 +69,14 @@ export const useHomeSections = () => {
     }
   );
 
+  const universitySystemsSection = useStandardSection('university-systems',
+    () => homeApi.getUniversitySystemsData(),
+    {
+      ttlMinutes: 60, // Systems rarely change
+      transformData: transformUniversitySystemsData
+    }
+  );
+
   // Combined sections data
   const sections = useMemo(() => {
     const sectionBlocks: HomeSectionBlock[] = [];
@@ -89,6 +99,9 @@ export const useHomeSections = () => {
     if (interactiveServicesSection.data) {
       sectionBlocks.push(createInteractiveServicesSectionBlock(interactiveServicesSection.data));
     }
+    if (universitySystemsSection.data) {
+      sectionBlocks.push(createUniversitySystemsSectionBlock(universitySystemsSection.data));
+    }
 
     return sectionBlocks.sort((a, b) => a.order - b.order);
   }, [
@@ -97,16 +110,19 @@ export const useHomeSections = () => {
     newsSection.data,
     facultiesSection.data,
     videoGallerySection.data,
-    interactiveServicesSection.data
+    interactiveServicesSection.data,
+    universitySystemsSection.data
   ]);
 
   // Combined loading state
   const loading = heroSection.loading || statsSection.loading || newsSection.loading ||
-                  facultiesSection.loading || videoGallerySection.loading || interactiveServicesSection.loading;
+                  facultiesSection.loading || videoGallerySection.loading || interactiveServicesSection.loading ||
+                  universitySystemsSection.loading;
 
   // Combined error state (first error encountered)
   const error = heroSection.error || statsSection.error || newsSection.error ||
-                facultiesSection.error || videoGallerySection.error || interactiveServicesSection.error;
+                facultiesSection.error || videoGallerySection.error || interactiveServicesSection.error ||
+                universitySystemsSection.error;
 
   // Refetch all sections
   const refetch = () => {
@@ -116,6 +132,7 @@ export const useHomeSections = () => {
     facultiesSection.refetch();
     videoGallerySection.refetch();
     interactiveServicesSection.refetch();
+    universitySystemsSection.refetch();
   };
 
   return {

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from 'react-i18next';
 import Container from "../../components/shared/Container";
 import { useStandardSection } from './hooks/useStandardSection';
 import { homeApi, HomeMediaData } from '../../api/homeApi';
@@ -25,6 +26,7 @@ const formatDate = (dateString: string) => {
 
 
 const MediaGallery: React.FC = () => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'photos' | 'videos'>('videos');
   const [activeVideo, setActiveVideo] = useState<number | null>(null);
 
@@ -83,10 +85,7 @@ const MediaGallery: React.FC = () => {
         <MediaGalleryHeader
           onTabChange={setActiveTab}
           activeTab={activeTab}
-          title="Media resurslar"
-          photoTabText="Fotogalareya"
-          videoTabText="Videogalareya"
-          seeAllText="Barchasi"
+          seeAllText={t('seeAllMedia') as string}
         />
 
         {/* Tab Content */}

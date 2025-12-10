@@ -1,61 +1,69 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ExternalLink } from 'lucide-react';
-import { TransformedUniversitySystemsData } from './transformers/universitySystemsTransformer';
+import { BookOpenIcon, UsersIcon, TrophyIcon, GlobeAltIcon, LinkIcon } from '@heroicons/react/24/outline';
+import { TransformedUniversitySystemsData, transformUniversitySystemsData } from './transformers/universitySystemsTransformer';
 import Container from '../../components/shared/Container';
+import { useStandardSection } from './hooks/useStandardSection';
+import { homeApi } from '../../api/homeApi';
+import SectionHeader from './components/SectionHeader';
+import { useTranslation } from 'react-i18next';
 
-interface UniversitySystemsSectionProps {
-  data: TransformedUniversitySystemsData;
-}
+const UniversitySystemsSection: React.FC = () => {
+  const { t } = useTranslation();
+  const { data, loading } = useStandardSection<TransformedUniversitySystemsData>(
+    'university-systems',
+    homeApi.getUniversitySystemsData,
 
-const UniversitySystemsSection: React.FC<UniversitySystemsSectionProps> = ({ data }) => {
+  );
+
+  if (loading || !data) {
+    return null; // Or a skeleton loader
+  }
+
   const getIconComponent = (iconName: string) => {
-    // Simple icon mapping - you can expand this
+    // Icon mapping using Heroicons
     switch (iconName) {
       case 'BookOpen':
-        return '📚';
+        return BookOpenIcon;
       case 'Users':
-        return '👥';
+        return UsersIcon;
       case 'Award':
-        return '🏆';
+        return TrophyIcon;
       case 'Globe':
-        return '🌍';
+        return GlobeAltIcon;
       default:
-        return '🔗';
+        return LinkIcon;
     }
   };
 
   return (
-    <section className="py-16 bg-gradient-to-br from-slate-50 to-blue-50">
+    <section className="py-16 border bg-accent">
       <Container>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            {data.title}
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            {data.subtitle}
-          </p>
-        </motion.div>
+        <div className="lg:col-span-2">
+                <SectionHeader
+                  title={t('Universitet tizimlari')}
+                  seeAllLink="/university-systems"
+                  seeAllText={t('seeAllUniversitySystems')}
+                  noContainer={true}
+                />
+            </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {data.systems.map((system, index) => (
+          {data.systems.map((system: typeof data.systems[0], index: number) => (
             <motion.a
               key={system.id}
               href={system.href}
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
               className="group bg-white p-6 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-200 hover:border-blue-300"
             >
               <div className="flex items-start space-x-4">
                 <div className={`${system.color} text-white p-3 group-hover:scale-110 transition-transform duration-300`}>
-                  <span className="text-xl">{getIconComponent(system.icon)}</span>
-                </div>
+                   {React.createElement(getIconComponent(system.icon), { className: "w-6 h-6" })}
+                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-200 mb-2">
                     {system.title}
@@ -73,13 +81,14 @@ const UniversitySystemsSection: React.FC<UniversitySystemsSectionProps> = ({ dat
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
           className="bg-white p-6 shadow-sm border border-gray-200"
         >
           <h3 className="font-semibold text-gray-900 mb-4 text-lg">Tezkor havolalar</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {data.quickLinks.map((link) => (
+            {data.quickLinks.map((link: typeof data.quickLinks[0]) => (
               <a
                 key={link.id}
                 href={link.href}
@@ -90,8 +99,8 @@ const UniversitySystemsSection: React.FC<UniversitySystemsSectionProps> = ({ dat
             ))}
           </div>
         </motion.div>
-      </Container>
-    </section>
+       </Container>
+   </section>
   );
 };
 

@@ -108,6 +108,7 @@ export const SECTION_CACHE_CONFIG = {
   'video-gallery': { ttlMinutes: 45 }, // 45 daqiqa - o'rtacha o'zgaradi
   'media-gallery': { ttlMinutes: 45 }, // 45 daqiqa - o'rtacha o'zgaradi
   'interactive-services': { ttlMinutes: 90 }, // 1.5 soat - kam o'zgaradi
+  'university-systems': { ttlMinutes: 60 }, // 1 soat - kam o'zgaradi
 } as const;
 
 // ===== AOS ANIMATSIYASI =====

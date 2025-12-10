@@ -83,6 +83,7 @@ module.exports = {
         'text-main': '#1f2937',
         'text-light': '#6b7280',
         danger: '#dc2626',
+        surface: "#F1F4F6",
       },
 
       // === TIPOGRAFIYA ===

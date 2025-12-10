@@ -488,7 +488,27 @@ const homeInteractiveServicesData: HomeInteractiveServicesData = {
   ]
 };
 
+export interface HomeUniversitySystemsData {
+  title: string;
+  subtitle: string;
+  systems: Array<{
+    id: number;
+    title: string;
+    description: string;
+    href: string;
+    icon: string;
+    color: string;
+  }>;
+  quickLinks: Array<{
+    id: number;
+    title: string;
+    href: string;
+  }>;
+}
+
 const homeUniversitySystemsData: HomeUniversitySystemsData = {
+  title: "Universitet Raqamli Tizimlari",
+  subtitle: "Ta'lim jarayonini osonlashtirish va samaradorligini oshirish uchun ishlab chiqilgan zamonaviy platformalar.",
   systems: [
     {
       id: 1,
@@ -663,6 +683,23 @@ export const homeApi = {
         },
         data: homeInteractiveServicesData,
         order: 6,
+        enabled: true
+      },
+      {
+        id: 'university-systems-section',
+        type: 'university-systems',
+        config: {
+          id: 'university-systems-section',
+          type: 'university-systems',
+          layout: 'centered-cards',
+          background: { type: 'gradient', value: 'from-slate-50 to-blue-50' },
+          styling: { padding: 'py-16', margin: 'mb-0', maxWidth: 'max-w-7xl', textAlign: 'center', fontSize: 'base' },
+          showTitle: true,
+          showSubtitle: true,
+          animation: { enabled: true, type: 'fade', delay: 1200 }
+        },
+        data: homeUniversitySystemsData,
+        order: 7,
         enabled: true
       }
     ];
