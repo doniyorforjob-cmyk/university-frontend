@@ -2,7 +2,7 @@ import React from 'react';
 import PageTemplate from '@/components/shared/PageTemplate';
 import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
 import { useStandardPage } from '@/hooks/useStandardPage';
-import { fetchEcoActiveStudentsData } from '@/api/ecoActiveStudentsApi';
+import { fetchEcoActiveStudentsData } from '@/services/ecoActiveStudentsService';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 import ContentBuilder from '@/components/shared/ContentBuilder';
 import Container from '@/components/shared/Container';

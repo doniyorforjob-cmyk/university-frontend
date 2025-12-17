@@ -1,4 +1,4 @@
-import { HomeFacultiesData } from '../../../api/homeApi';
+import { HomeFacultiesData } from '../../../services/homeService';
 
 export const transformFacultiesData = (apiData: any): HomeFacultiesData => {
   const faculties = apiData.faculties || apiData.data || apiData.departments || [];

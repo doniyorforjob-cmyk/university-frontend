@@ -9,7 +9,7 @@ import { AppealDetailsForm } from './AppealDetailsForm';
 import { FileUploadForm } from './FileUploadForm';
 import { PreviewForm } from './PreviewForm';
 import { ProgressBar } from './ProgressBar';
-import { APPEAL_CATEGORIES } from '../../../types/appeal';
+import { APPEAL_CATEGORIES } from '../../../types/appeal.types';
 
 const steps = [
   { id: 1, title: 'Murojaat turi', description: 'Ariza, taklif yoki shikoyat' },

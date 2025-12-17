@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getPosts } from '../../services/postService';
-import { Post } from '../../types/post';
+import { Post } from '../../types/post.types';
 import SectionTemplate, { SectionItem } from '@/components/templates/SectionTemplate';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 import { useStandardPage } from '@/hooks/useStandardPage';

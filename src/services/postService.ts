@@ -1,12 +1,9 @@
-import { getPosts as apiGetPosts, getPostBySlug as apiGetPostBySlug } from '../api/postsApi';
-import { Post, PostDetail, PostCategory } from '../types/post';
+import { getPosts as mockGetPosts, getPostBySlug as mockGetPostBySlug } from '../api/mock/posts.mock';
+import { getPosts as httpGetPosts, getPostBySlug as httpGetPostBySlug } from '../api/http/posts.http';
+import { Post, PostDetail, PostCategory } from '../types/post.types';
 
-// Postlarni olish (kategoriya bo'yicha filtr bilan)
-export const getPosts = (category?: PostCategory): Promise<Post[]> => {
-  return apiGetPosts(category);
-};
+const useMock = process.env.REACT_APP_USE_MOCK_API === 'true';
 
-// Bitta postni 'slug' orqali olish
-export const getPostBySlug = (slug: string): Promise<PostDetail | undefined> => {
-  return apiGetPostBySlug(slug);
-};
+// Aqlli switcher: env'ga qarab mock yoki http API'ni tanlash
+export const getPosts = useMock ? mockGetPosts : httpGetPosts;
+export const getPostBySlug = useMock ? mockGetPostBySlug : httpGetPostBySlug;

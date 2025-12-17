@@ -1,4 +1,4 @@
-import { PostDetail } from '../types/post';
+import { PostDetail } from '../types/post.types';
 
 // Eslatma: Bu fayl endi asosiy mantiqda ishlatilmaydi.
 // U faqat kompilyatsiya xatoligini to'xtatish uchun tuzatildi.

@@ -1,6 +1,7 @@
 import { useCachedApi } from '../../../hooks/useCachedApi';
 import { HomeSectionType } from '../types';
 import { SECTION_CACHE_CONFIG } from '../../../config/constants';
+import { isUsingMock } from '../../../services/homeService';
 
 interface UseStandardSectionOptions {
   ttlMinutes?: number; // Override default TTL
@@ -24,7 +25,7 @@ export const useStandardSection = <T = any>(
   } = options;
 
   return useCachedApi({
-    key: `home-section-${sectionType}`,
+    key: `home-section-${sectionType}-${isUsingMock ? 'mock' : 'http'}`,
     fetcher: async () => {
       const rawData = await fetcher();
       return transformData ? transformData(rawData) : rawData;

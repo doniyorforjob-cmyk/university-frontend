@@ -13,7 +13,7 @@ import {
   EnvelopeIcon,
 } from '@heroicons/react/24/outline';
 import { useFooterData } from '../../hooks/useFooterData';
-import { SocialLink } from '../../types/footer';
+import { SocialLink } from '../../types/footer.types';
 import FooterSkeleton from './FooterSkeleton';
 import Container from '../shared/Container';
 

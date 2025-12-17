@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import Container from "../../components/shared/Container";
 import { useStandardSection } from './hooks/useStandardSection';
-import { homeApi, HomeMediaData } from '../../api/homeApi';
+import { homeApi, HomeMediaData } from '../../services/homeService';
 import { MediaGalleryHeader } from './components/SectionHeader';
 import MediaCard from './components/MediaCard';
 

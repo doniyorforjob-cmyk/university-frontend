@@ -1,4 +1,4 @@
-import { HomeHeroData } from '../../../api/homeApi';
+import { HomeHeroData } from '../../../services/homeService';
 
 export const transformHeroData = (apiData: any): HomeHeroData => {
   return {

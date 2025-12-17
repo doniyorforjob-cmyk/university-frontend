@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getInteractiveServices } from '../api/interactiveServicesApi';
-import { Service } from '../types/service';
+import { getInteractiveServices } from '../services/interactiveServicesService';
+import { Service } from '../types/service.types';
 
 export const useInteractiveServicesData = () => {
   const [services, setServices] = useState<Service[]>([]);

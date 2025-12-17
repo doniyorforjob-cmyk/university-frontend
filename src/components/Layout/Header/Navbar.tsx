@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, JSX } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import useClickOutside from '../../../hooks/useClickOutside';
-import { fetchNavItems, NavItem } from '../../../api/navbarApi';
+import { fetchNavItems, NavItem } from '../../../services/navbarService';
 import { useCachedApi } from '../../../hooks/useCachedApi';
 import Container from '../../shared/Container';
 import { PrefetchLink } from '../../shared';
@@ -9,7 +9,7 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
   BuildingLibraryIcon,
-} from '@heroicons/react/24/solid';
+} from '@heroicons/react/24/solid'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 
 interface NavbarProps {
@@ -18,13 +18,15 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
   const { data: navItems, loading } = useCachedApi({
-    key: 'navbar-items',
+    key: 'navbar-items-v2',
     fetcher: fetchNavItems,
     ttlMinutes: 60, // Cache for 1 hour
   });
 
   // Layout shift oldini olish uchun har doim array qaytarish
   const displayNavItems = navItems || [];
+  console.log('Navbar navItems:', navItems);
+  console.log('Navbar displayNavItems:', displayNavItems);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openMobileSubmenu, setOpenMobileSubmenu] = useState<string | null>(null);
@@ -123,7 +125,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
 
               {displayNavItems.map((item: NavItem) => {
                 const hasCategories =
-                  item.children && item.children.some((child) => child.children && child.children.length > 0);
+                  item.children && item.children.some((child: NavItem) => child.children && child.children.length > 0);
 
                 return (
                   <div

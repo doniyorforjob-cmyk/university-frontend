@@ -1,7 +1,7 @@
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { motion } from 'framer-motion';
-import { APPEAL_CATEGORIES, PRIORITY_LEVELS } from '../../../types/appeal';
+import { APPEAL_CATEGORIES, PRIORITY_LEVELS } from '../../../types/appeal.types';
 
 interface AppealDetailsFormProps {
   appealType: string;

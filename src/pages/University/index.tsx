@@ -2,7 +2,7 @@ import React from 'react';
 import PageTemplate from '@/components/shared/PageTemplate';
 import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
 import { useStandardPage } from '@/hooks/useStandardPage';
-import { fetchUniversityContentBlocks } from '@/api/universityContentApi';
+import { fetchUniversityContentBlocks } from '@/services/universityContentService';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 
 const UniversityPage: React.FC = () => {

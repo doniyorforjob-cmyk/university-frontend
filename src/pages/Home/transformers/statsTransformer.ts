@@ -1,4 +1,4 @@
-import { HomeStatsData } from '../../../api/homeApi';
+import { HomeStatsData } from '../../../services/homeService';
 
 export const transformStatsData = (apiData: any): HomeStatsData => {
   // Handle different API response formats

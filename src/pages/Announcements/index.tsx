@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAnnouncements } from '@/services/announcementService';
-import { Announcement } from '@/types/announcement';
+import { Announcement } from '@/types/announcement.types';
 import SectionTemplate, { SectionItem } from '@/components/templates/SectionTemplate';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 import { useStandardPage } from '@/hooks/useStandardPage';

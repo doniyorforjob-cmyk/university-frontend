@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
-import { getMediaArticles } from '../../api/mediaApi';
-import { MediaArticle } from '../../types/media';
+import { getMediaArticles } from '../../services/mediaService';
+import { MediaArticle } from '../../types/media.types';
 import SectionTemplate, { SectionItem } from '@/components/templates/SectionTemplate';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 import { useStandardPage } from '@/hooks/useStandardPage';

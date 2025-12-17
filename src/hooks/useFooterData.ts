@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchFooterData } from '../api/footerApi';
-import { FooterData } from '../types/footer';
+import { fetchFooterData } from '../services/footerService';
+import { FooterData } from '../types/footer.types';
 
 export const useFooterData = () => {
   return useQuery<FooterData, Error>({

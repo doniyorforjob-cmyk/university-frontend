@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getPosts } from '../api/postsApi';
-import { Post, PostCategory } from '../types/post';
+import { getPosts } from '../services/postService';
+import { Post, PostCategory } from '../types/post.types';
 
 export const useNewsData = (category: PostCategory) => {
   const [data, setData] = useState<Post[]>([]);

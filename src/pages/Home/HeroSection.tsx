@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useStandardSection } from './hooks/useStandardSection';
 import { transformHeroData } from './transformers/heroTransformer';
-import { homeApi } from '../../api/homeApi';
+import { homeApi } from '../../services/homeService';
 import {
   SliderBtnGroup,
   ProgressSlider,
@@ -21,22 +21,27 @@ interface CarouselItem {
   enabled?: boolean;
 }
 
-export default function HeroSection() {
+export default function HeroSection({ data: propData }: { data?: any } = {}) {
   const [firstImageLoaded, setFirstImageLoaded] = useState(false);
 
-  // Yangi arxitektura: useStandardSection hook with API
+  // If propData is provided, use it directly, otherwise fetch
+  const shouldFetch = !propData;
   const { data, loading, isCached } = useStandardSection(
     'hero',
     homeApi.getHeroData,
     {
-      transformData: transformHeroData
+      transformData: transformHeroData,
+      enabled: shouldFetch
     }
   );
 
-  // Debug cache status
-  console.log('HeroSection cache status:', { loading, isCached, hasData: !!data });
+  // Use prop data if available, otherwise use fetched data
+  const heroData = propData || data;
 
-  const carouselItems: CarouselItem[] = data?.carouselItems || [];
+  // Debug
+  console.log('HeroSection:', { propData: !!propData, fetchedData: !!data, heroData: !!heroData, shouldFetch });
+
+  const carouselItems: CarouselItem[] = heroData?.carouselItems || [];
   const enabledItems = carouselItems
     .filter((item: CarouselItem) => item.enabled !== false)
     .sort((a: CarouselItem, b: CarouselItem) => (a.order || 0) - (b.order || 0));
@@ -54,9 +59,11 @@ export default function HeroSection() {
   }, [enabledItems]);
 
   // Loading state - show skeleton until data is loaded
-  if (loading || !data) {
+  if ((shouldFetch && loading) || !heroData) {
     return <SectionSkeleton sectionType="hero" />;
   }
+
+  console.log('HeroSection rendering with', enabledItems.length, 'items');
 
   return (
     <section className="relative min-h-[60vh] overflow-hidden">

@@ -1,12 +1,9 @@
-import { getAnnouncements as apiGetAnnouncements, getAnnouncementBySlug as apiGetAnnouncementBySlug } from '../api/announcementApi';
-import { Announcement, AnnouncementDetail } from '../types/announcement';
+import { getAnnouncements as mockGetAnnouncements, getAnnouncementBySlug as mockGetAnnouncementBySlug } from '../api/mock/announcement.mock';
+import { getAnnouncements as httpGetAnnouncements, getAnnouncementBySlug as httpGetAnnouncementBySlug } from '../api/http/announcement.http';
+import { Announcement, AnnouncementDetail } from '../types/announcement.types';
 
-// Barcha e'lonlar ro'yxatini olish
-export const getAnnouncements = (): Promise<Announcement[]> => {
-  return apiGetAnnouncements();
-};
+const useMock = process.env.REACT_APP_USE_MOCK_API === 'true';
 
-// Bitta e'lonni 'slug' orqali olish
-export const getAnnouncementBySlug = (slug: string): Promise<AnnouncementDetail> => {
-  return apiGetAnnouncementBySlug(slug);
-};
+// Aqlli switcher: env'ga qarab mock yoki http API'ni tanlash
+export const getAnnouncements = useMock ? mockGetAnnouncements : httpGetAnnouncements;
+export const getAnnouncementBySlug = useMock ? mockGetAnnouncementBySlug : httpGetAnnouncementBySlug;

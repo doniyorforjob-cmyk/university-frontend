@@ -1,4 +1,4 @@
-import { HomeMediaData } from '../../../api/homeApi';
+import { HomeMediaData } from '../../../services/homeService';
 
 export const transformVideoGalleryData = (apiData: any): HomeMediaData => {
   const videos = apiData.videos || apiData.data || apiData.gallery || [];

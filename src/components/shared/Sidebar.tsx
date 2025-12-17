@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, memo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { fetchNavItems, NavItem } from '../../api/navbarApi';
+import { fetchNavItems, NavItem } from '../../services/navbarService';
 import OptimizedImage from './OptimizedImage';
 
 // Kesh – faqat bir marta fetch qilish uchun
@@ -43,7 +43,7 @@ const Sidebar = memo(() => {
   }, [informationService]);
 
   const renderLink = useMemo(() => {
-    return filteredChildren.map((child, index) => {
+    return filteredChildren.map((child: NavItem, index: number) => {
       const href = child.href === '/media' ? '/media-about-us' : child.href;
       const isActive = location.pathname.startsWith(href!);
       const isLast = index === filteredChildren.length - 1;

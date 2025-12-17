@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Container from '../../components/shared/Container';
-import { homeApi, HomeFacultiesData } from '../../api/homeApi';
+import { homeApi, HomeFacultiesData } from '../../services/homeService';
 import { useStandardSection } from './hooks/useStandardSection';
 import SectionHeader from './components/SectionHeader';
 import { OptimizedImage } from '../../components/shared';

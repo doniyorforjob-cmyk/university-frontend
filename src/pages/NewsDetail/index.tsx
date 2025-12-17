@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getPostBySlug } from '../../services/postService';
-import { PostDetail as NewsType } from '../../types/post';
+import { PostDetail as NewsType } from '../../types/post.types';
 import DetailTemplate, { DetailMeta } from '@/components/templates/DetailTemplate';
 import { PageSkeleton } from '@/components/shared';
 

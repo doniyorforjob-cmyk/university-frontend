@@ -5,7 +5,7 @@ import { useInView } from 'react-intersection-observer';
 import Container from '../../components/shared/Container';
 import SectionHeader from './components/SectionHeader';
 import { useStandardSection } from './hooks/useStandardSection';
-import { homeApi } from '../../api/homeApi';
+import { homeApi } from '../../services/homeService';
 import { AOS_CONFIG } from '../../config/constants';
 import { useTranslation } from 'react-i18next';
 

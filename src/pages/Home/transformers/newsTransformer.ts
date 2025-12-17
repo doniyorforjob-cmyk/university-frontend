@@ -1,4 +1,4 @@
-import { HomeNewsData } from '../../../api/homeApi';
+import { HomeNewsData } from '../../../types/home.types';
 
 export const transformNewsData = (apiData: any): HomeNewsData => {
   const data = apiData.news || apiData.data || apiData;

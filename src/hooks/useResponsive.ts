@@ -2,7 +2,7 @@
 // Hook for responsive design utilities
 
 import { useState, useEffect } from 'react';
-import { breakpoints, BreakpointValues, UseResponsiveReturn } from '../types/responsive';
+import { breakpoints, BreakpointValues, UseResponsiveReturn } from '../types/responsive.types';
 
 export const useResponsive = (): UseResponsiveReturn => {
   const [screenWidth, setScreenWidth] = useState<number>(

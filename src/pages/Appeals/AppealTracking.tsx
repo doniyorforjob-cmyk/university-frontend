@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircleIcon, ClockIcon, XCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid';
-import { STATUS_LABELS, RESPONSE_TIME_ESTIMATES } from '../../types/appeal';
+import { STATUS_LABELS, RESPONSE_TIME_ESTIMATES } from '../../types/appeal.types';
 
 interface AppealTrackingProps {
   trackingId: string;

@@ -2,7 +2,7 @@ import React from 'react';
 import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import useClickOutside from '../../../hooks/useClickOutside';
-import { socialLinks, quickLinks } from '../../../api/navbarApi';
+import { socialLinks, quickLinks } from '../../../services/navbarService';
 import useFontSizeStore from '../../../store/fontSizeStore';
 import useThemeStore from '../../../store/themeStore';
 import Container from '../../shared/Container';

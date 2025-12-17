@@ -5,20 +5,12 @@ import Container from '../../components/shared/Container';
 import SectionHeader from './components/SectionHeader';
 import { AnimatedNewsTabs } from './components/AnimatedNewsTabs';
 import { useStandardSection } from './hooks/useStandardSection';
-import { homeApi, HomeNewsData } from '../../api/homeApi';
-import { PostCategory } from '../../types/post';
+import { homeApi, HomeNewsData } from '../../services/homeService';
+import { PostCategory } from '../../types/post.types';
 import { AspectRatio } from '../../components/ui';
 import { OptimizedImage } from '../../components/shared';
 import { useTranslation } from 'react-i18next';
-import { AOS_CONFIG } from '../../config/constants';
-
-const tabs: { id: PostCategory; label: string }[] = [
-  { id: 'news', label: 'Yangiliklar' },
-  { id: 'announcements', label: 'E`lonlar' },
-  { id: 'corruption', label: 'Korrupsiyaga qarshi kurashish' },
-  { id: 'events', label: 'Tadbirlar' },
-  { id: 'sport', label: 'Sport' },
-];
+import { AOS_CONFIG, NEWS_TABS } from '../../config/constants';
 
 const AnnouncementsPreview = ({ announcements }: { announcements?: HomeNewsData['announcements'] }) => {
     const otherAnnouncements = announcements?.slice(0, 10) || [];
@@ -28,7 +20,7 @@ const AnnouncementsPreview = ({ announcements }: { announcements?: HomeNewsData[
             <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4 border-b-2 border-primary pb-2">Boshqa e&apos;lonlar</h3>
                 <ul className="space-y-3 mt-4 overflow-y-auto max-h-[36rem] pr-2" data-aos="fade-left" data-aos-duration="800" data-aos-delay="200">
-                    {otherAnnouncements.map((item) => {
+                    {otherAnnouncements.map((item: HomeNewsData['announcements'][0]) => {
                         const date = new Date(item.date);
                         const uzbekMonths = ['Yan', 'Fev', 'Mar', 'Apr', 'May', 'Iyn', 'Iyl', 'Avg', 'Sen', 'Okt', 'Noy', 'Dek'];
                         const month = uzbekMonths[date.getMonth()];
@@ -63,6 +55,21 @@ const AnnouncementsPreview = ({ announcements }: { announcements?: HomeNewsData[
     );
 }
 
+// Sana formatini o'zgartiruvchi funksiya
+const formatDate = (dateString?: string) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const months = [
+        'Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun',
+        'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'
+    ];
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${day} ${month} ${year} | ${hours}:${minutes}`;
+};
 
 const NewsSection = () => {
   const { t } = useTranslation();
@@ -106,7 +113,7 @@ const NewsSection = () => {
             <div className="absolute bottom-0 left-0 p-4">
               <div className="flex items-center text-sm text-gray-300 mb-2">
                 <CalendarDaysIcon className="w-5 h-5 mr-2" />
-                <time dateTime={item.published_at}>{new Date(item.published_at).toLocaleDateString('uz-UZ', { day: 'numeric', month: 'long', year: 'numeric' })}</time>
+                <time dateTime={item.published_at}>{formatDate(item.published_at)}</time>
               </div>
               <h3 className="text-lg font-bold text-card-title group-hover:text-white transition-colors duration-300 line-clamp-2">
                 {item.title}
@@ -122,13 +129,10 @@ const NewsSection = () => {
   );
 
   // Tabs array
-  const tabs = [
-    { id: 'news', label: 'Yangiliklar', content: renderGrid(data.news || []) },
-    { id: 'announcements', label: 'E`lonlar', content: renderGrid(data.announcements || []) },
-    { id: 'events', label: 'Tadbirlar', content: renderGrid(data.events || []) },
-    { id: 'corruption', label: 'Korrupsiyaga qarshi kurashish', content: renderGrid(data.corruption || []) },
-    { id: 'sport', label: 'Sport', content: renderGrid(data.sport || []) },
-  ];
+  const tabs = NEWS_TABS.map(tab => ({
+    ...tab,
+    content: renderGrid((data as any)[tab.id] || [])
+  }));
 
   return (
     <div className="py-16">

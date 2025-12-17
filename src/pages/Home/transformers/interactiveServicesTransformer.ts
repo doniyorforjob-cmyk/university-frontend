@@ -1,4 +1,4 @@
-import { HomeInteractiveServicesData } from '../../../api/homeApi';
+import { HomeInteractiveServicesData } from '../../../services/homeService';
 
 export const transformInteractiveServicesData = (apiData: any): HomeInteractiveServicesData => {
   return {

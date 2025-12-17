@@ -111,6 +111,15 @@ export const SECTION_CACHE_CONFIG = {
   'university-systems': { ttlMinutes: 60 }, // 1 soat - kam o'zgaradi
 } as const;
 
+// ===== NEWS TABS =====
+export const NEWS_TABS = [
+  { id: 'news', label: 'Yangiliklar' },
+  { id: 'announcements', label: 'E`lonlar' },
+  { id: 'corruption', label: 'Korrupsiyaga qarshi kurashish' },
+  { id: 'events', label: 'Tadbirlar' },
+  { id: 'sport', label: 'Sport' },
+] as const;
+
 // ===== AOS ANIMATSIYASI =====
 export const AOS_CONFIG = {
   enabled: true,

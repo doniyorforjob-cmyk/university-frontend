@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { HomeSectionBlock } from '../types';
 import { useStandardSection } from './useStandardSection';
-import { homeApi } from '../../../api/homeApi';
+import { homeApi } from '../../../services/homeService';
 import { generateDefaultSections } from '../HomeSectionTemplate';
 import { transformHeroData } from '../transformers/heroTransformer';
 import { transformStatsData } from '../transformers/statsTransformer';

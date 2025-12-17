@@ -3,7 +3,7 @@ import { useFormContext } from 'react-hook-form';
 import { useDropzone } from 'react-dropzone';
 import { motion } from 'framer-motion';
 import { validateFiles } from '../../../utils/validationSchemas';
-import { FILE_CONSTRAINTS } from '../../../types/appeal';
+import { FILE_CONSTRAINTS } from '../../../types/appeal.types';
 
 export const FileUploadForm: React.FC = () => {
   const { watch, setValue, formState: { errors } } = useFormContext();

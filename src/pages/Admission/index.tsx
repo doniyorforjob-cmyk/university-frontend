@@ -2,7 +2,7 @@ import React from 'react';
 import PageTemplate from '@/components/shared/PageTemplate';
 import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
 import { useStandardPage } from '@/hooks/useStandardPage';
-import { fetchAdmissionData } from '@/api/admissionApi';
+import { fetchAdmissionData } from '@/services/admissionService';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 import ContentBuilder from '@/components/shared/ContentBuilder';
 

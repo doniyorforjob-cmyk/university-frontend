@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Stat } from '../types/stat';
-import { fetchStats } from '../api/statsApi';
+import { Stat } from '../types/stat.types';
+import { fetchStats } from '../services/statsService';
 
 export const useStatsData = () => {
   const [stats, setStats] = useState<Stat[]>([]);

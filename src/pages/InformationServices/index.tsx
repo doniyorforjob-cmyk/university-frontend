@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import PageTemplate from '@/components/shared/PageTemplate';
 import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
 import { useStandardPage } from '@/hooks/useStandardPage';
-import { fetchInformationServicesData } from '@/api/informationServicesApi';
+import { fetchInformationServicesData } from '@/services/informationServicesService';
 import { ContentBlock } from '@/components/shared/ContentBuilder';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 import ContentBuilder from '@/components/shared/ContentBuilder';

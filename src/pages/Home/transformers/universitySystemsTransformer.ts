@@ -1,4 +1,4 @@
-import { HomeUniversitySystemsData } from '../../../api/homeApi';
+import { HomeUniversitySystemsData } from '../../../types/home.types';
 
 // Type for the data after transformation, ready for the component
 export interface TransformedUniversitySystemsData {
@@ -27,10 +27,10 @@ export const transformUniversitySystemsData = (
   return {
     title: apiData.title,
     subtitle: apiData.subtitle,
-    systems: apiData.systems.map(system => ({
+    systems: apiData.systems.map((system: HomeUniversitySystemsData['systems'][0]) => ({
       ...system,
     })),
-    quickLinks: apiData.quickLinks.map(link => ({
+    quickLinks: apiData.quickLinks.map((link: HomeUniversitySystemsData['quickLinks'][0]) => ({
       ...link,
     })),
   };

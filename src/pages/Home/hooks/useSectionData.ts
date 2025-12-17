@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { HomeSectionType } from '../types';
-import { homeApi } from '../../../api/homeApi';
+import { homeApi } from '../../../services/homeService';
 
 interface SectionDataCache {
   [key: string]: {

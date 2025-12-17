@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchStructureData } from '../api/structureApi';
+import { fetchStructureData } from '../services/structureService';
 
 export const useStructureData = () => {
   return useQuery({
