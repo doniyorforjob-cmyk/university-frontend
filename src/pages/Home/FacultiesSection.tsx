@@ -46,8 +46,6 @@ const FacultiesSection: React.FC = () => {
       <Container>
         <SectionHeader
           title={t('faculties')}
-          seeAllLink="/faculties"
-          seeAllText={t('seeAllFaculties')}
           noContainer={true}
           className="mb-2"
         />
@@ -112,9 +110,8 @@ const FacultiesSection: React.FC = () => {
 
                     <div className="mt-3">
                       <div
-                        className={`bg-gray-200 rounded-full overflow-hidden transition-all duration-300 ${
-                          isActive ? 'h-2 shadow-md' : 'h-1'
-                        }`}
+                        className={`bg-gray-200 rounded-full overflow-hidden transition-all duration-300 ${isActive ? 'h-2 shadow-md' : 'h-1'
+                          }`}
                       >
                         <div
                           className={`h-full bg-gradient-to-r ${faculty.color} transition-all duration-[4000ms] ease-linear`}

@@ -1,6 +1,7 @@
 import apiClient from '../client';
 import { HomeSectionBlock, HomeSectionType } from '../../pages/Home/types';
 import { HomeHeroData, HomeStatsData, HomeNewsData, HomeFacultiesData, HomeVideoGalleryData, HomeMediaData, HomeInteractiveServicesData, HomeUniversitySystemsData } from '../../types/home.types';
+import { homeApi as mockHomeApi } from '../mock/home.mock';
 
 export const homeApi = {
   getHomeSections: async (): Promise<HomeSectionBlock[]> => {
@@ -16,11 +17,13 @@ export const homeApi = {
   getHeroData: async (): Promise<HomeHeroData> => {
     try {
       const response = await apiClient.get('/hero');
-      const data = Array.isArray(response.data) ? response.data[0] : response.data;
-      return data;
+      console.log('Successfully fetched hero data from API:', response.data);
+      // The transformer is robust enough to handle different shapes.
+      return response.data;
     } catch (error) {
-      console.error('Error fetching hero data:', error);
-      throw error;
+      console.error('Error fetching hero data from API. Falling back to mock data.', error);
+      // Fallback to mock data to ensure the UI doesn't break
+      return mockHomeApi.getHeroData();
     }
   },
 

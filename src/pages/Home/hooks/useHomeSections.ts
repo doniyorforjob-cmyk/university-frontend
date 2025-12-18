@@ -81,27 +81,13 @@ export const useHomeSections = () => {
   const sections = useMemo(() => {
     const sectionBlocks: HomeSectionBlock[] = [];
 
-    if (heroSection.data) {
-      sectionBlocks.push(createHeroSectionBlock(heroSection.data));
-    }
-    if (statsSection.data) {
-      sectionBlocks.push(createStatsSectionBlock(statsSection.data));
-    }
-    if (newsSection.data) {
-      sectionBlocks.push(createNewsSectionBlock(newsSection.data));
-    }
-    if (facultiesSection.data) {
-      sectionBlocks.push(createFacultiesSectionBlock(facultiesSection.data));
-    }
-    if (videoGallerySection.data) {
-      sectionBlocks.push(createVideoGallerySectionBlock(videoGallerySection.data));
-    }
-    if (interactiveServicesSection.data) {
-      sectionBlocks.push(createInteractiveServicesSectionBlock(interactiveServicesSection.data));
-    }
-    if (universitySystemsSection.data) {
-      sectionBlocks.push(createUniversitySystemsSectionBlock(universitySystemsSection.data));
-    }
+    sectionBlocks.push(createHeroSectionBlock(heroSection.data));
+    sectionBlocks.push(createStatsSectionBlock(statsSection.data));
+    sectionBlocks.push(createNewsSectionBlock(newsSection.data));
+    sectionBlocks.push(createFacultiesSectionBlock(facultiesSection.data));
+    sectionBlocks.push(createVideoGallerySectionBlock(videoGallerySection.data));
+    sectionBlocks.push(createInteractiveServicesSectionBlock(interactiveServicesSection.data));
+    sectionBlocks.push(createUniversitySystemsSectionBlock(universitySystemsSection.data));
 
     return sectionBlocks.sort((a, b) => a.order - b.order);
   }, [

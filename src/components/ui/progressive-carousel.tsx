@@ -169,20 +169,12 @@ export const SliderWrapper: FC<SliderWrapperProps> = ({
 }) => {
   const { active } = useProgressSliderContext();
 
+  if (active !== value) return null;
+
   return (
-    <AnimatePresence mode='popLayout'>
-      {active === value && (
-        <motion.div
-          key={value}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className={cn('', className)}
-        >
-          {children}
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <div className={cn('', className)}>
+      {children}
+    </div>
   );
 };
 

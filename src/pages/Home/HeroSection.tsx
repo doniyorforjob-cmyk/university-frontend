@@ -41,7 +41,8 @@ export default function HeroSection({ data: propData }: { data?: any } = {}) {
   // Debug
   console.log('HeroSection:', { propData: !!propData, fetchedData: !!data, heroData: !!heroData, shouldFetch });
 
-  const carouselItems: CarouselItem[] = heroData?.carouselItems || [];
+  // Handle if heroData is the carouselItems array directly
+  const carouselItems: CarouselItem[] = Array.isArray(heroData) ? heroData : heroData?.carouselItems || [];
   const enabledItems = carouselItems
     .filter((item: CarouselItem) => item.enabled !== false)
     .sort((a: CarouselItem, b: CarouselItem) => (a.order || 0) - (b.order || 0));

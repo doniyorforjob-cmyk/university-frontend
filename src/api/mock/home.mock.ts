@@ -18,19 +18,6 @@ import {
 
 // Static data - will be replaced with API calls
 const homeHeroData: HomeHeroData = {
-  title: "Namangan davlat texnika universiteti",
-  subtitle: "Zamonaviy texnologiyalar va innovatsion yechimlar bilan kelajakni shakllantiruvchi yetakchi texnika ta'lim muassasasi.",
-  backgroundVideo: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", // Google's sample video - more reliable
-  backgroundImage: "https://images.unsplash.com/photo-1523050853548-1d7deb8cf421?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1920&q=80",
-  ctaButton: {
-    text: "Biz haqimizda",
-    link: "/about",
-    variant: "primary"
-  },
-  overlay: {
-    opacity: 0.3, // Lighter overlay so video is more visible
-    color: "#000000"
-  },
   carouselItems: [
     {
       id: 'bridge-1',

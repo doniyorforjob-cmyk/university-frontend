@@ -10,11 +10,11 @@ export interface CarouselItem {
 }
 
 export interface HomeHeroData {
-  title: string;
-  subtitle: string;
+  title?: string;
+  subtitle?: string;
   backgroundVideo?: string;
   backgroundImage?: string; // Keep for fallback
-  ctaButton: {
+  ctaButton?: {
     text: string;
     link: string;
     variant?: 'primary' | 'secondary';
