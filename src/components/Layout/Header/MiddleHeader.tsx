@@ -4,13 +4,13 @@ import Container from '../../shared/Container';
 
 const MiddleHeader: React.FC = () => {
     return (
-        <div className="bg-white py-8">
+        <div className="bg-white py-6 header-middle">
             <Container>
                 {/* Katta ekranlar uchun layout */}
                 <div className="hidden md:flex items-center justify-between">
                     {/* Chap tomon: Logotip va Universitet nomi */}
                     <Link to="/" className="flex items-center">
-                        <img src="/images/logo.png" alt="Logo" className="h-28 w-28 mr-4 rounded-full" />
+                        <img src="/images/logo.png" alt="Logo" width="112" height="112" className="h-28 w-28 mr-4 rounded-full" />
                         <div>
                             <h1 className="text-4xl font-bold text-[#0E104B]">Namangan Davlat Texnika Universiteti</h1>
                             <p className="text-base text-gray-500">Rasmiy web sahifasi</p>
@@ -83,7 +83,7 @@ const MiddleHeader: React.FC = () => {
                 {/* Kichik ekranlar uchun layout */}
                 <div className="md:hidden">
                     <Link to="/" className="flex items-center justify-center mb-4">
-                        <img src="/images/logo.png" alt="Logo" className="h-20 w-20 mr-3 rounded-full" />
+                        <img src="/images/logo.png" alt="Logo" width="80" height="80" className="h-20 w-20 mr-3 rounded-full" />
                         <div>
                             <h1 className="text-3xl font-bold text-[#0E104B] text-center">Namangan Davlat Texnika Universiteti</h1>
                             <p className="text-sm text-gray-500 text-center">Rasmiy web sahifasi</p>

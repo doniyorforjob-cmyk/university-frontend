@@ -1,4 +1,3 @@
-
 /* src/index.css */
 
 /* 1. Google Fonts — Inter (asosiy) + Montserrat (sarlavhalar) */
@@ -39,7 +38,7 @@
     --breakpoint-lg: 1024px;
     --breakpoint-xl: 1280px;
     --breakpoint-2xl: 1536px;
-  
+
   }
 }
 
@@ -94,7 +93,8 @@
 }
 
 @layer base {
-  /* BODY RANGI: #f7f7f7 – TO‘LIQ O‘ZGARTIRILDI */
+
+  /* BODY RANGI: #f7f7f7 */
   body {
     background-color: #f7f7f7 !important;
     color: #212121;
@@ -102,6 +102,15 @@
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  /* HTML ham to'liq kenglikda bo'lishi kerak */
+  html {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    width: 100%;
   }
 }
 
@@ -115,4 +124,55 @@ code {
   font-size: 0.9em;
 }
 
+/* 5. Header Layout Stability - Fixed Heights */
+@layer components {
 
+  /* TopHeader - Responsive height */
+  .header-top {
+    height: auto !important;
+    /* Mobile: auto to fit all content */
+    min-height: 4rem;
+    /* Mobile: increased for better spacing */
+  }
+
+  @media (min-width: 768px) {
+    .header-top {
+      height: 4rem !important;
+      /* Desktop: fixed */
+      min-height: unset;
+      /* Desktop: remove mobile min-height */
+    }
+  }
+
+  /* MiddleHeader - Responsive height */
+  .header-middle {
+    height: auto !important;
+    /* Mobile: auto height */
+    min-height: 13rem;
+    /* Mobile: reduced for better spacing */
+  }
+
+  @media (min-width: 768px) {
+    .header-middle {
+      height: 10rem !important;
+      /* Desktop: fixed 160px */
+      min-height: unset;
+    }
+  }
+
+  /* Navbar - consistent height */
+  .header-navbar {
+    height: 4rem !important;
+    /* 64px - matches h-16 */
+  }
+
+  /* Prevent font swap layout shift */
+  body {
+    font-display: swap;
+  }
+
+  /* Reserve space for hero section to prevent large shifts */
+  .hero-section {
+    min-height: 500px;
+  }
+}

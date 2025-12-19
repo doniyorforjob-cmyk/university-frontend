@@ -31,7 +31,7 @@ const TopHeader = () => {
     const currentLangDetails = languageOptions[currentLanguage] || languageOptions.uz;
 
     return (
-        <div className="bg-primary border-b border-secondary/50 h-16">
+        <div className="bg-primary border-b border-secondary/50 h-16 header-top">
             <Container className="h-full flex flex-col md:flex-row items-center justify-between gap-2 md:gap-4">
                 {/* Ijtimoiy tarmoqlar havolalari chap tomonga o'tkazildi */}
                 <div className="flex-1 flex justify-center md:justify-start items-center pb-1">
@@ -62,11 +62,21 @@ const TopHeader = () => {
                 </div>
 
                 {/* O'ng tomondagi kontent (tezkor havolalar va til o'zgartirish) */}
-                <div className="flex-1 flex justify-center md:justify-end items-center">
-                    <div className="flex flex-wrap justify-center items-center space-x-3 text-lg">
-                        {quickLinks.map((link: any) => (
-                            <a key={link.title} href={link.href} className="text-white hover:text-secondary transition-colors">{link.title}</a>
-                        ))}
+                <div className="flex-1 flex justify-center md:justify-end items-center mt-1 md:mt-0">
+                    <div className="flex flex-wrap justify-center items-center gap-x-4 md:gap-x-6">
+                        {/* Quick links - Desktop va Mobile uchun moslangan */}
+                        <div className="flex flex-wrap justify-center items-center gap-x-3 gap-y-1">
+                            {quickLinks.map((link: any) => (
+                                <a
+                                    key={link.title}
+                                    href={link.href}
+                                    className="text-white hover:text-secondary transition-colors text-sm md:text-lg"
+                                >
+                                    {link.title}
+                                </a>
+                            ))}
+                        </div>
+                        {/* Language selector - har doim ko'rinadi */}
                         <div className="relative" ref={langDropdownRef}>
                             <button onClick={() => setLangDropdownOpen(!isLangDropdownOpen)} className="flex items-center focus:outline-none text-white hover:text-secondary">
                                 <img src={currentLangDetails.flag} width="20" alt={currentLangDetails.name} className="mr-2" />
@@ -74,7 +84,7 @@ const TopHeader = () => {
                                 <svg className="h-4 w-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                             </button>
                             {isLangDropdownOpen && (
-                                <div className="absolute right-0 mt-2 w-28 rounded-md bg-white py-1 shadow-xl ring-1 ring-black ring-opacity-5 z-10">
+                                <div className="absolute right-0 mt-2 w-28 rounded-md bg-white py-1 shadow-xl ring-1 ring-black ring-opacity-5 z-50">
                                     {Object.keys(languageOptions).map((lng) => (
                                         <button
                                             key={lng}
