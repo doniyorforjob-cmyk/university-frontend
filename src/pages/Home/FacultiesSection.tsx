@@ -46,6 +46,8 @@ const FacultiesSection: React.FC = () => {
       <Container>
         <SectionHeader
           title={t('faculties')}
+          seeAllLink="/organizational-structure"
+          seeAllText={t('seeAllFaculties')}
           noContainer={true}
           className="mb-2"
         />

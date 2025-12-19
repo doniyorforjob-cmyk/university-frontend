@@ -12,7 +12,7 @@ interface InformationServicesData {
 }
 
 const InformationServicesPage: React.FC = () => {
-  const { setBreadcrumbsData } = useGlobalLayout();
+  const { setBreadcrumbsData, setSidebarType } = useGlobalLayout();
   const { data, loading, error, refetch } = useStandardPage(
     'information-services',
     fetchInformationServicesData
@@ -24,10 +24,13 @@ const InformationServicesPage: React.FC = () => {
       { label: 'Axborot Xizmatlari' }
     ]);
 
+    setSidebarType('systems');
+
     return () => {
       setBreadcrumbsData(undefined);
+      setSidebarType(undefined);
     };
-  }, [setBreadcrumbsData]);
+  }, [setBreadcrumbsData, setSidebarType]);
 
   if (loading) {
     return <GenericPageSkeleton showSidebar={true} showHeroImage={false} contentBlocks={8} showBanner={false} />;
@@ -40,7 +43,7 @@ const InformationServicesPage: React.FC = () => {
       > {/* PageTemplate no longer takes showSidebar */}
         <div className="text-center py-8">
           <p className="text-red-600 mb-4">{error?.message || 'Ma\'lumot topilmadi'}</p>
-          <button 
+          <button
             onClick={refetch}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
           >

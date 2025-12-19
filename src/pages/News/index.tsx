@@ -5,6 +5,7 @@ import { Post } from '../../types/post.types';
 import SectionTemplate, { SectionItem } from '@/components/templates/SectionTemplate';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 import { useStandardPage } from '@/hooks/useStandardPage';
+import ServerError from '@/pages/Errors/ServerError';
 
 // News ma'lumotlarini olish funksiyasi
 const fetchNewsData = async (): Promise<SectionItem[]> => {
@@ -26,7 +27,7 @@ const fetchNewsData = async (): Promise<SectionItem[]> => {
 
 const NewsPage: React.FC = () => {
   const navigate = useNavigate();
-  const { setBannerData, setBreadcrumbsData } = useGlobalLayout();
+  const { setBannerData, setBreadcrumbsData, setSidebarType } = useGlobalLayout();
   const { data: items, loading, error, refetch } = useStandardPage(
     'news',
     fetchNewsData
@@ -39,10 +40,13 @@ const NewsPage: React.FC = () => {
       { label: 'Yangiliklar' }
     ]);
 
+    setSidebarType('info');
+
     return () => {
       setBreadcrumbsData(undefined);
+      setSidebarType(undefined);
     };
-  }, [setBreadcrumbsData]);
+  }, [setBreadcrumbsData, setSidebarType]);
 
 
   const handleItemClick = useCallback((item: SectionItem) => {
@@ -50,11 +54,7 @@ const NewsPage: React.FC = () => {
   }, [navigate]);
 
   if (error) {
-    return (
-      <div className="text-center py-20 text-red-500">
-        <p>{error?.message || 'Ma\'lumot topilmadi'}</p>
-      </div>
-    );
+    return <ServerError />;
   }
 
   return (

@@ -14,6 +14,7 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import GenericPageSkeleton from '../shared/GenericPageSkeleton';
+import Container from '../shared/Container';
 
 
 // Section turlari
@@ -55,15 +56,15 @@ interface SectionTemplateProps {
   parentTitle: string;
   sectionTitle: string;
   sectionType: SectionType;
-  
+
   // Content
   items: SectionItem[];
   totalItems?: number;
-  
+
   // Layout sozlamalari
   layoutType?: LayoutType;
   itemsPerPage?: number;
-  
+
   // Features
   showFilters?: boolean;
   showSearch?: boolean;
@@ -72,7 +73,7 @@ interface SectionTemplateProps {
   showSidebar?: boolean;
 
   loading?: boolean; // Keep loading for skeleton logic
-  
+
   // Callbacks
   onItemClick?: (item: SectionItem) => void;
   onFilterChange?: (filters: SectionFilters) => void;
@@ -89,6 +90,7 @@ interface SectionTemplateProps {
   onDateChange?: (date: Date) => void;
 
   className?: string;
+  children?: React.ReactNode;
 }
 
 const SectionTemplate: React.FC<SectionTemplateProps> = ({
@@ -114,14 +116,15 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
   displayDate = new Date(),
   onCalendarViewChange,
   onDateChange,
-  className = ''
+  className = '',
+  children
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<SectionFilters>({});
   const [searchQuery, setSearchQuery] = useState('');
 
   // Calendar state
-  const [activeCalendarView, setActiveCalendarView] = useState(sectionType === 'announcements' ? 'today' : calendarView);
+  const [activeCalendarView, setActiveCalendarView] = useState(sectionType === 'announcements' ? 'all' : calendarView);
   const [currentDisplayDate, setCurrentDisplayDate] = useState(displayDate);
 
   // Calendar handlers
@@ -167,10 +170,9 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
     handleCalendarViewChange(activeCalendarView);
   };
 
-  // Initial filter application for announcements
   useEffect(() => {
-    if (sectionType === 'announcements' && activeCalendarView === 'today') {
-      handleCalendarViewChange('today');
+    if (sectionType === 'announcements') {
+      handleCalendarViewChange(activeCalendarView);
     }
   }, []);
 
@@ -269,8 +271,8 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
     if (!dateString) return '';
     const date = new Date(dateString);
     const months = [
-        'Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun',
-        'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'
+      'Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun',
+      'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'
     ];
     const day = date.getDate();
     const month = months[date.getMonth()];
@@ -376,7 +378,7 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
       >
         <div className="absolute bottom-0 left-0 h-1 bg-secondary w-[10%] group-hover:w-full transition-all duration-700 ease-out"></div>
         <div className="overflow-hidden relative block">
-          <AspectRatio ratio={4/3}>
+          <AspectRatio ratio={4 / 3}>
             <OptimizedImage
               src={item.image || 'https://via.placeholder.com/400x400/cccccc/000000?text=Rasm+Yuklanmadi'}
               alt={item.title}
@@ -434,7 +436,7 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
   return (
     <div className={`${className}`}>
       <div className="flex flex-col lg:flex-row gap-8">
-        <div className={`w-full ${showSidebar ? 'lg:w-[70%]' : 'lg:w-full'}`}>
+        <div className="w-full">
           <motion.div
             key={sectionTitle} // Re-animate on page change
             initial={{ opacity: 0, y: 20 }}
@@ -478,8 +480,16 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
               </div>
             )}
 
-            {/* Items grid/list */}
-            {currentItems.length > 0 ? (
+            {/* Items grid/list or Children */}
+            {children ? (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                {children}
+              </motion.div>
+            ) : currentItems.length > 0 ? (
               <motion.div
                 className={getLayoutClasses()}
                 initial="hidden"
@@ -493,7 +503,7 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
                 <p className="text-gray-500 text-lg">Hech narsa topilmadi</p>
               </div>
             )}
-            
+
             {/* Pagination */}
             {showPagination && totalPages > 1 && (
               <Pagination className="mt-12 justify-center">
@@ -520,7 +530,7 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
         </div>
 
         {showSidebar && (
-          <aside className="w-full lg:w-[30%]">
+          <aside className="w-full lg:w-1/4">
             {sidebarContent}
           </aside>
         )}

@@ -163,7 +163,6 @@ code {
   /* Navbar - consistent height */
   .header-navbar {
     height: 4rem !important;
-    /* 64px - matches h-16 */
   }
 
   /* Prevent font swap layout shift */

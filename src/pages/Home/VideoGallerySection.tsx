@@ -6,27 +6,20 @@ import { homeApi, HomeMediaData } from '../../services/homeService';
 import { MediaGalleryHeader } from './components/SectionHeader';
 import MediaCard from './components/MediaCard';
 
-const formatDate = (dateString: string) => {
+const formatDate = (dateString: string, language: string) => {
   const date = new Date(dateString);
 
-  const time = date.toLocaleTimeString('uz-UZ', {
+  const time = date.toLocaleTimeString(language, {
     hour: '2-digit',
     minute: '2-digit'
   });
-  const day = date.getDate();
 
-  // Uzbekcha oy nomlari bosh harfi katta
-  const uzMonths = [
-    'Yan', 'Fev', 'Mar', 'Apr', 'May', 'Iyn',
-    'Iyl', 'Avg', 'Sen', 'Okt', 'Noy', 'Dek'
-  ];
-  const month = uzMonths[date.getMonth()];
-  return `${time} ${day}-${month}`;
+  return `${time} ${date.toLocaleDateString(language, { day: 'numeric', month: 'short' })}`;
 };
 
 
 const MediaGallery: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState<'photos' | 'videos'>('videos');
   const [activeVideo, setActiveVideo] = useState<number | null>(null);
 
@@ -51,10 +44,11 @@ const MediaGallery: React.FC = () => {
           type="photo"
           title={photo.title}
           thumbnail={photo.image}
-          date={formatDate(photo.uploadDate || new Date().toISOString())}
+          date={formatDate(photo.uploadDate || new Date().toISOString(), i18n.language)}
           views={736}
           photos={6}
           imageUrl={photo.image}
+          slug={photo.id}
         />
       ))}
     </div>
@@ -68,7 +62,7 @@ const MediaGallery: React.FC = () => {
             type="video"
             title={video.title}
             thumbnail={video.thumbnail}
-            date={formatDate(video.uploadDate)}
+            date={formatDate(video.uploadDate, i18n.language)}
             views={123}
             videoId={video.id}
             embedUrl={`https://www.youtube.com/embed/${video.id}`}
@@ -138,7 +132,7 @@ const MediaGallery: React.FC = () => {
                       </div>
                       <span className="text-lg font-semibold text-gray-800">Namangan Davlat Texnika Universiteti</span>
                     </div>
-                    <span className="text-sm text-gray-600">{formatDate(data.videos[activeVideo].uploadDate)}</span>
+                    <span className="text-sm text-gray-600">{formatDate(data.videos[activeVideo].uploadDate, i18n.language)}</span>
                   </div>
 
                   {/* Video title */}
@@ -154,9 +148,9 @@ const MediaGallery: React.FC = () => {
                     >
                       <span className="bg-primary absolute inset-0 scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100 -z-10 rounded-lg"></span>
                       <svg className="w-5 h-5 relative z-10" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M8 5v10l8-5-8-5z"/>
+                        <path d="M8 5v10l8-5-8-5z" />
                       </svg>
-                      <span className="relative z-10">Tomosha qilish</span>
+                      <span className="relative z-10">{t('watchVideo')}</span>
                     </a>
                   </div>
                 </div>

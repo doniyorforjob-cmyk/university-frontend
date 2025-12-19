@@ -598,6 +598,22 @@ export const homeApi = {
     return homeMediaData;
   },
 
+  getPhotoDetailById: async (id: string): Promise<any> => {
+    await new Promise(resolve => setTimeout(resolve, 200));
+    const photo = homeMediaData.photos.find(p => p.id === id);
+    if (!photo) return null;
+    return {
+      ...photo,
+      content: `
+        <p>Bu ${photo.title} haqida batafsil ma'lumot.</p>
+        <p>Universitet hayotining unutilmas lahzalari muhrlangan ushbu fotosuratda bizning bilim maskanimizning o'ziga xos tarovati aks etgan.</p>
+        <p>Galleriyamizda bunday rasmlar juda ko'p va ular universitetimizning boy tarixini va bugungi qudratini namoyish etadi.</p>
+      `,
+      views: 736,
+      author: "Axborot xizmati"
+    };
+  },
+
   getInteractiveServicesData: async (): Promise<HomeInteractiveServicesData> => {
     await new Promise(resolve => setTimeout(resolve, 200));
     return homeInteractiveServicesData;

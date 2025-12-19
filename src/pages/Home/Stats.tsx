@@ -9,6 +9,8 @@ import { homeApi } from '../../services/homeService';
 import { AOS_CONFIG } from '../../config/constants';
 import { useTranslation } from 'react-i18next';
 
+import { MapIcon } from '@heroicons/react/24/outline';
+
 const Stats = () => {
   const { t } = useTranslation();
 
@@ -59,7 +61,7 @@ const Stats = () => {
               {/* Pastki qism */}
               <div className="flex-1 p-6 bg-gradient-to-br from-green-50 to-white flex flex-col justify-center items-center">
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3">
-                  <i className="ri-road-map-line text-xl text-green-600"></i>
+                  <MapIcon className="w-6 h-6 text-green-600" />
                 </div>
                 <p className="text-sm font-medium text-gray-700 text-center">
                   Universitetning umumiy maydoni

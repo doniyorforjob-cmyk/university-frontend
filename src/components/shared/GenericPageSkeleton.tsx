@@ -20,17 +20,16 @@ const GenericPageSkeleton: React.FC<GenericPageSkeletonProps> = ({
   gridItems = 9,
 }) => {
   return (
-    <div className="bg-gray-50 min-h-screen">
-      <Container className="py-8">
-
+    <Container className="py-8">
+      <div className="">
         {/* Main flex container */}
-        <div className="flex flex-col lg:flex-row gap-8 mt-6">
+        <div className="flex flex-col lg:flex-row gap-8">
           {/* Main Content */}
           <div className={`w-full ${showSidebar ? 'lg:w-[75%]' : 'lg:w-full'}`}>
             {layoutType === 'grid' ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {Array.from({ length: gridItems }).map((_, i) => (
-                  <div key={i} className="bg-white rounded-lg shadow-sm overflow-hidden">
+                  <div key={i} className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100">
                     <div className="h-48 bg-gray-200 animate-pulse"></div>
                     <div className="p-6">
                       <div className="h-4 bg-gray-200 rounded w-1/2 mb-3 animate-pulse"></div>
@@ -43,7 +42,7 @@ const GenericPageSkeleton: React.FC<GenericPageSkeletonProps> = ({
                 ))}
               </div>
             ) : (
-              <div className="bg-white p-8 rounded-lg">
+              <div className="bg-white p-8 rounded-lg shadow-sm">
                 {/* Title */}
                 <div className="h-8 bg-gray-200 rounded w-64 mb-6 animate-pulse"></div>
 
@@ -79,12 +78,12 @@ const GenericPageSkeleton: React.FC<GenericPageSkeletonProps> = ({
           {/* Sidebar */}
           {showSidebar && (
             <aside className="w-full lg:w-[25%]">
-              <div className="bg-white p-6 rounded-lg">
+              <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
                 <div className="h-6 bg-gray-200 rounded w-2/3 mb-6 animate-pulse"></div>
 
                 <div className="space-y-4">
                   {Array.from({ length: 5 }).map((_, index) => (
-                    <div key={index} className="p-4 border border-gray-200 rounded-lg">
+                    <div key={index} className="p-4 border border-gray-100 rounded-lg">
                       <div className="flex items-start space-x-3">
                         <div className="w-10 h-10 bg-gray-200 rounded animate-pulse"></div>
                         <div className="flex-1 space-y-2">
@@ -96,7 +95,7 @@ const GenericPageSkeleton: React.FC<GenericPageSkeletonProps> = ({
                   ))}
                 </div>
 
-                <div className="mt-6 pt-6 border-t border-gray-200">
+                <div className="mt-6 pt-6 border-t border-gray-100">
                   <div className="h-5 bg-gray-200 rounded w-1/2 mb-3 animate-pulse"></div>
                   <div className="space-y-2">
                     {Array.from({ length: 4 }).map((_, index) => (
@@ -108,9 +107,8 @@ const GenericPageSkeleton: React.FC<GenericPageSkeletonProps> = ({
             </aside>
           )}
         </div>
-        {/* End of flex container */}
-      </Container>
-    </div>
+      </div>
+    </Container>
   );
 };
 

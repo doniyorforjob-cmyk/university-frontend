@@ -25,7 +25,7 @@ export const useCachedApi = <T = any>({
 
   const { cacheManager, config } = useGlobalCache();
   const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(enabled);
   const [error, setError] = useState<Error | null>(null);
 
   const ttl = ttlMinutes || config.defaultTtl;

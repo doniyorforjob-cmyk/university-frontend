@@ -1,87 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
-
-interface FAQItem {
-  id: string;
-  question: string;
-  answer: string;
-  category: string;
-}
-
-const faqData: FAQItem[] = [
-  {
-    id: '1',
-    question: 'Murojaat yuborish uchun qanday ma&apos;lumotlar kerak?',
-    answer: 'Murojaat yuborish uchun F.I.Sh., telefon raqami, email manzili va murojaat matni talab qilinadi. Ixtiyoriy ravishda manzil va qo&apos;shimcha fayllarni ham biriktirishingiz mumkin.',
-    category: 'general'
-  },
-  {
-    id: '2',
-    question: 'Murojaatga javob qachon keladi?',
-    answer: 'Murojaatga javob berish vaqti murojaatning muhimlik darajasiga qarab farq qiladi: Past - 5-7 kun, O&apos;rtacha - 3-5 kun, Yuqori - 1-2 kun, Shoshilinch - 24 soat ichida.',
-    category: 'timing'
-  },
-  {
-    id: '3',
-    question: 'Qanday fayllarni biriktirish mumkin?',
-    answer: 'PDF, DOC, DOCX, JPG, PNG formatdagi fayllarni yuklashingiz mumkin. Har bir fayl maksimal 10MB bo\'lishi va jami 5 tagacha fayl yuklashingiz mumkin.',
-    category: 'files'
-  },
-  {
-    id: '4',
-    question: 'Murojaat holatini qanday tekshirish mumkin?',
-    answer: 'Murojaat yuborilgandan keyin sizga berilgan Tracking ID orqali murojaat holatini tekshirishingiz mumkin. Shuningdek, email orqali status o&apos;zgarishlari haqida xabar beriladi.',
-    category: 'tracking'
-  },
-  {
-    id: '5',
-    question: 'Murojaatni qaytarib olish yoki o&apos;zgartirish mumkinmi?',
-    answer: 'Murojaat yuborilgandan keyin uni qaytarib olish yoki o&apos;zgartirish imkoni yo&apos;q. Agar murojaatda xatolik bo&apos;lsa, yangi murojaat yuborishingiz mumkin.',
-    category: 'general'
-  },
-  {
-    id: '6',
-    question: 'Shikoyat va taklif o&apos;rtasidagi farq nima?',
-    answer: 'Shikoyat - mavjud muammolar va kamchiliklar haqida, taklif esa o&apos;qitish sifatini yaxshilash, infratuzilma va xizmatlar bo&apos;yicha yangi g&apos;oyalar haqida bo&apos;ladi.',
-    category: 'types'
-  },
-  {
-    id: '7',
-    question: 'Anonim murojaat yuborish mumkinmi?',
-    answer: 'Hozirda barcha murojaatlar identifikatsiya qilinishi shart. Kelajakda anonim murojaat imkoni ham qo&apos;shilishi mumkin.',
-    category: 'privacy'
-  },
-  {
-    id: '8',
-    question: 'Murojaat qayerda ko\'rib chiqiladi?',
-    answer: 'Barcha murojaatlar tegishli bo&apos;lim va fakultet rahbariyati tomonidan ko&apos;rib chiqiladi. Murakkab masala bo&apos;lsa, rektoratga yo&apos;naltiriladi.',
-    category: 'process'
-  }
-];
+import { useSettingsStore } from '../../store/settingsStore';
+import { useFAQData } from '../../hooks/useFAQData';
+import { FAQCategory } from '../../types/faq.types';
 
 export const FAQSection: React.FC = () => {
+  const { settings } = useSettingsStore();
+  const { data: faqData = [], isLoading, error } = useFAQData();
   const [openItems, setOpenItems] = useState<Set<string>>(new Set());
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
-  const categories = [
-    { id: 'all', name: 'Barcha', count: faqData.length },
-    { id: 'general', name: 'Umumiy', count: faqData.filter(f => f.category === 'general').length },
-    { id: 'timing', name: 'Vaqt', count: faqData.filter(f => f.category === 'timing').length },
-    { id: 'files', name: 'Fayllar', count: faqData.filter(f => f.category === 'files').length },
-    { id: 'tracking', name: 'Kuzatish', count: faqData.filter(f => f.category === 'tracking').length },
-    { id: 'types', name: 'Turlari', count: faqData.filter(f => f.category === 'types').length },
-    { id: 'privacy', name: 'Maxfiylik', count: faqData.filter(f => f.category === 'privacy').length },
-    { id: 'process', name: 'Jarayon', count: faqData.filter(f => f.category === 'process').length },
-  ];
+  const phone = settings?.contacts?.primaryPhone || "+998 69 227 00 00";
+  const email = settings?.contacts?.email || "info@namdtu.uz";
 
-  const filteredFAQs = faqData.filter(faq => {
-    const matchesSearch = faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         faq.answer.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || faq.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const categories = useMemo((): FAQCategory[] => {
+    const counts = faqData.reduce((acc, faq) => {
+      acc[faq.category] = (acc[faq.category] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const categoryNames: Record<string, string> = {
+      general: 'Umumiy',
+      timing: 'Vaqt',
+      files: 'Fayllar',
+      tracking: 'Kuzatish',
+      types: 'Turlari',
+      privacy: 'Maxfiylik',
+      process: 'Jarayon',
+    };
+
+    const result: FAQCategory[] = [
+      { id: 'all', name: 'Barchasi', count: faqData.length }
+    ];
+
+    Object.entries(counts).forEach(([id, count]) => {
+      result.push({
+        id,
+        name: categoryNames[id] || id,
+        count
+      });
+    });
+
+    return result;
+  }, [faqData]);
+
+  const filteredFAQs = useMemo(() => {
+    return faqData.filter(faq => {
+      const matchesSearch = faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        faq.answer.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = selectedCategory === 'all' || faq.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    });
+  }, [faqData, searchTerm, selectedCategory]);
 
   const toggleItem = (id: string) => {
     const newOpenItems = new Set(openItems);
@@ -93,6 +65,28 @@ export const FAQSection: React.FC = () => {
     setOpenItems(newOpenItems);
   };
 
+  if (isLoading) {
+    return (
+      <div className="bg-white shadow-lg p-6 animate-pulse">
+        <div className="h-8 bg-gray-200 rounded w-1/3 mx-auto mb-4"></div>
+        <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto mb-8"></div>
+        <div className="space-y-4">
+          {[1, 2, 3, 4, 5].map(i => (
+            <div key={i} className="h-12 bg-gray-100 rounded"></div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-white shadow-lg p-6 text-center text-red-600">
+        <p>Xatolik yuz berdi: {error.message}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white shadow-lg p-6">
       <div className="text-center mb-8">
@@ -103,7 +97,7 @@ export const FAQSection: React.FC = () => {
           Murojaat jarayoni haqida eng kop beriladigan savollar
         </p>
       </div>
-      
+
       {/* Search */}
       <div className="mb-6">
         <input
@@ -121,11 +115,10 @@ export const FAQSection: React.FC = () => {
           <button
             key={category.id}
             onClick={() => setSelectedCategory(category.id)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              selectedCategory === category.id
-                ? 'bg-primary text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedCategory === category.id
+              ? 'bg-primary text-white'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
           >
             {category.name} ({category.count})
           </button>
@@ -190,16 +183,16 @@ export const FAQSection: React.FC = () => {
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <a
-            href="tel:+998692270000"
+            href={`tel:${phone.replace(/[^0-9+]/g, '')}`}
             className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
-            📞 +998 69 227 00 00
+            📞 {phone}
           </a>
           <a
-            href="mailto:info@namdtu.uz"
+            href={`mailto:${email}`}
             className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
           >
-            ✉️ info@namdtu.uz
+            ✉️ {email}
           </a>
         </div>
       </div>

@@ -3,6 +3,7 @@ import HomeContentBuilder from './HomeContentBuilder';
 import { useHomeSections } from './hooks';
 import { generateDefaultSections, homeSectionTemplates } from './HomeSectionTemplate';
 import { SectionSkeleton } from './components/SectionSkeleton';
+import ServerError from '@/pages/Errors/ServerError';
 
 const HomePage = () => {
     // Home sections management hook
@@ -30,16 +31,7 @@ const HomePage = () => {
     if (error) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <div className="text-center text-red-600">
-                    <h2 className="text-2xl font-bold mb-4">Xatolik yuz berdi</h2>
-                    <p>{error?.message || 'Noma\'lum xatolik'}</p>
-                    <button
-                        onClick={() => window.location.reload()}
-                        className="mt-4 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
-                    >
-                        Qayta yuklash
-                    </button>
-                </div>
+                <ServerError />
             </div>
         );
     }

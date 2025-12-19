@@ -8,14 +8,14 @@ export const ROUTES = {
   HOME: '/',
   ABOUT: '/about',
   CONTACT: '/contact',
-  
+
   // Axborot xizmati
   NEWS: '/news',
   NEWS_DETAIL: '/news/:slug',
   ANNOUNCEMENTS: '/announcements',
   ANNOUNCEMENT_DETAIL: '/announcements/:slug',
   MEDIA_ABOUT_US: '/media-about-us',
-  
+
   // Tuzilma
   ORGANIZATIONAL_STRUCTURE: '/organizational-structure',
   ACTIVITIES: '/activities',
@@ -23,17 +23,21 @@ export const ROUTES = {
   DEPARTMENT_DETAIL: '/departments/:id',
   FACULTIES: '/faculties',
   FACULTY_DETAIL: '/faculties/:id',
-  
+
   // Foydalanuvchilar
   STUDENTS: '/students',
   TEACHERS: '/teachers',
-  
+
   // Murojaat
   APPEALS: '/appeals',
-  
+
   // Xizmatlar
   INTERACTIVE_SERVICES: '/interactive-services',
   INFORMATION_SERVICES: '/information-services',
+
+  // Media
+  PHOTOS: '/photos',
+  PHOTO_DETAIL: '/photos/:id',
 } as const;
 
 /**

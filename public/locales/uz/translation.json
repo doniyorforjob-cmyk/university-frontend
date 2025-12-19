@@ -1,4 +1,8 @@
 {
+  "seeAll": "Barchasi",
+  "watchVideo": "Tomosha qilish",
+  "otherAnnouncements": "Boshqa e'lonlar",
+  "seeAllAnnouncements": "Barcha e'lonlarni ko'rish",
   "header": {
     "announcement": "E'lon"
   },

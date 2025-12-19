@@ -1,7 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { AspectRatio } from '../../../components/ui/aspect-ratio';
-import { CalendarDaysIcon, EyeIcon, PhotoIcon } from '@heroicons/react/24/outline'; // Keep these for date/views/photos
-import { PlayIcon as SolidPlayIcon, PhotoIcon as SolidPhotoIcon } from '@heroicons/react/24/solid'; // For solid icons
+import { CalendarDaysIcon, EyeIcon, PhotoIcon } from '@heroicons/react/24/outline';
+import { PlayIcon as SolidPlayIcon, PhotoIcon as SolidPhotoIcon } from '@heroicons/react/24/solid';
 
 type BaseMediaCardProps = {
   title: string;
@@ -20,6 +21,7 @@ type PhotoCardProps = BaseMediaCardProps & {
   type: 'photo';
   imageUrl: string;
   photos?: number;
+  slug?: string;
 };
 
 type MediaCardProps = VideoCardProps | PhotoCardProps;
@@ -29,47 +31,58 @@ const MediaCard: React.FC<MediaCardProps> = (props) => {
 
   const isVideo = type === 'video';
 
-  // For video cards, we don't need href or data-fancybox here, as the parent div handles the click
-  // For photo cards, we might still want data-fancybox if it's used for a photo gallery
-  const href = isVideo ? (props as VideoCardProps).embedUrl : (props as PhotoCardProps).imageUrl;
-  const className = `g-card _1 _1-2`; // Removed 'video_btn' class from here
-  const photos = !isVideo ? ((props as PhotoCardProps).photos ?? 0) : 0; // Ensure photos is always a number
+  const className = `g-card _1 _1-2 group cursor-pointer`;
+  const photos = !isVideo ? ((props as PhotoCardProps).photos ?? 0) : 0;
 
-  return (
-    <div className={className}> {/* MediaCard is always a div */}
-      <div className="g-card-image relative">
+  const CardContent = () => (
+    <>
+      <div className="g-card-image relative overflow-hidden">
         <AspectRatio ratio={1}>
-          <img src={thumbnail} alt="news" className="h-full w-full object-cover" />
+          <img src={thumbnail} alt={title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
         </AspectRatio>
-        <div className="g-card-image-icon absolute top-4 left-4 bg-black/30 backdrop-blur-sm rounded p-2">
+        <div className="g-card-image-icon absolute top-4 left-4 bg-black/30 backdrop-blur-sm rounded p-2 z-20">
           {type === 'video' ? (
-            <SolidPlayIcon className="w-8 h-8 text-white" fill="currentColor" /> // Using Heroicon
+            <SolidPlayIcon className="w-8 h-8 text-white" fill="currentColor" />
           ) : (
-            <SolidPhotoIcon className="w-8 h-8 text-white" fill="currentColor" /> // Using Heroicon
+            <SolidPhotoIcon className="w-8 h-8 text-white" fill="currentColor" />
           )}
         </div>
-        <div className="absolute bottom-4 left-4 bg-black/30 backdrop-blur rounded p-2 z-10">
-          <div className="flex justify-between items-center text-secondary-500 w-full gap-2 font-bold">
-            <span className="flex items-center gap-1 rounded px-1 py-0.5">
-              <CalendarDaysIcon className="w-4 h-4" />
+        <div className="absolute bottom-4 left-4 right-4 bg-black/30 backdrop-blur rounded p-2 z-10">
+          <div className="flex justify-between items-center text-secondary-500 w-full gap-2 font-bold text-sm md:text-base">
+            <span className="flex items-center gap-1">
+              <CalendarDaysIcon className="w-5 h-5" />
               {date}
             </span>
-            <span className="flex items-center gap-1 rounded px-1 py-0.5">
-              <EyeIcon className="w-4 h-4" />
+            <span className="flex items-center gap-1">
+              <EyeIcon className="w-5 h-5" />
               {views}
             </span>
-            {photos > 0 && ( // Only render if photos is strictly greater than 0
-              <span className="flex items-center gap-1 rounded px-1 py-0.5">
-                <PhotoIcon className="w-4 h-4" />
+            {photos > 0 && (
+              <span className="flex items-center gap-1">
+                <PhotoIcon className="w-5 h-5" />
                 {photos}
               </span>
             )}
           </div>
         </div>
       </div>
-      <div className="g-card-info">
-        <h3>{title}</h3>
+      <div className="g-card-info mt-3">
+        <h3 className="text-lg font-bold text-[#0E104B] group-hover:text-primary transition-colors duration-300 line-clamp-2">{title}</h3>
       </div>
+    </>
+  );
+
+  if (type === 'photo' && (props as PhotoCardProps).slug) {
+    return (
+      <Link to={`/photos/${(props as PhotoCardProps).slug}`} className={className}>
+        <CardContent />
+      </Link>
+    );
+  }
+
+  return (
+    <div className={className}>
+      <CardContent />
     </div>
   );
 };

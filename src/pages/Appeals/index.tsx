@@ -1,20 +1,39 @@
-import React, { useState } from 'react';
-import { toast, Toaster } from 'react-hot-toast';
-import Breadcrumbs from '../../components/shared/Breadcrumbs';
-import Sidebar from '../../components/shared/Sidebar';
+import React, { useState, useEffect } from 'react';
+import { Toaster, toast } from 'react-hot-toast';
+import SectionTemplate from '@/components/templates/SectionTemplate';
+import { useGlobalLayout } from '@/components/templates/GlobalLayout';
+import { useStandardPage } from '@/hooks/useStandardPage';
 import { AppealWizard } from '../../components/features/appeals/AppealWizard';
 import { AppealFormData } from '../../utils/validationSchemas';
 import { AppealTracking } from './AppealTracking';
 import { FAQSection } from './FAQSection';
 import { ContactSection } from './ContactSection';
-import Banner from '@/components/shared/Banner';
-import Container from '@/components/shared/Container';
 
 const AppealsPage: React.FC = () => {
+  const { setBannerData, setBreadcrumbsData, setSidebarType } = useGlobalLayout();
   const [showTracking, setShowTracking] = useState(false);
   const [trackingId, setTrackingId] = useState<string>('');
 
-  const bannerImageUrl = 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=1200&h=300&auto=format&fit=crop';
+  // Ma'lumotlarni yuklash (agar kerak bo'lsa, masalan FAQ yoki boshqa info)
+  const { loading } = useStandardPage('appeals', async () => {
+    // Appeals sahifasi uchun yuklanadigan maxsus ma'lumotlar yo'q, shunchaki lifecycle uchun
+    return [];
+  });
+
+  useEffect(() => {
+    setBreadcrumbsData([
+      { label: 'Bosh sahifa', href: '/' },
+      { label: 'Arizalar, takliflar va shikoyatlar' }
+    ]);
+
+    setSidebarType('info');
+
+    return () => {
+      setBannerData(undefined);
+      setBreadcrumbsData(undefined);
+      setSidebarType(undefined);
+    };
+  }, [setBannerData, setBreadcrumbsData, setSidebarType]);
 
   const handleAppealSubmit = async (data: AppealFormData) => {
     try {
@@ -47,8 +66,7 @@ const AppealsPage: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen">
-      {/* Toast Notifications */}
+    <>
       <Toaster
         position="top-right"
         toastOptions={{
@@ -74,53 +92,36 @@ const AppealsPage: React.FC = () => {
         }}
       />
 
-      {/* Hero Section */}
-      <Banner
-        title="Arizalar, takliflar va shikoyatlar"
-        subtitle="O'z murojaatingizni yuborish uchun quyidagi oddiy jarayondan o'ting"
-        backgroundImage={bannerImageUrl}
-      />
+      <SectionTemplate
+        loading={loading}
+        parentTitle="Murojaatlar"
+        sectionTitle="Arizalar va takliflar"
+        sectionType="info"
+        items={[]}
+        showSidebar={false}
+        showSearch={false}
+        showFilters={false}
+        showPagination={false}
+        showSorting={false}
+      >
+        <div className="space-y-12">
+          {showTracking ? (
+            <AppealTracking
+              trackingId={trackingId}
+              onNewAppeal={handleNewAppeal}
+            />
+          ) : (
+            <AppealWizard onSubmit={handleAppealSubmit} />
+          )}
 
-      {/* Asosiy kontent */}
-      <Container className="py-6 pb-12">
-        <Breadcrumbs
-          items={[
-            { label: 'Bosh sahifa', href: '/' },
-            { label: 'Arizalar, takliflar va shikoyatlar' },
-          ]}
-        />
-        <div className="flex flex-col lg:flex-row gap-10 mt-6">
-          {/* Main Content */}
-          <div className="lg:w-3/4">
-            {showTracking ? (
-              <div className="space-y-6">
-                <AppealTracking
-                  trackingId={trackingId}
-                  onNewAppeal={handleNewAppeal}
-                />
-              </div>
-            ) : (
-              <div>
-                <AppealWizard onSubmit={handleAppealSubmit} />
-              </div>
-            )}
+          {/* FAQ Section */}
+          <FAQSection />
 
-            {/* FAQ Section */}
-            <div className="mt-12">
-              <FAQSection />
-            </div>
-
-            {/* Contact Information */}
-            <div className="mt-12">
-              <ContactSection />
-            </div>
-          </div>
-
-          {/* Sidebar */}
-          <Sidebar />
+          {/* Contact Information */}
+          <ContactSection />
         </div>
-      </Container>
-    </div>
+      </SectionTemplate>
+    </>
   );
 };
 

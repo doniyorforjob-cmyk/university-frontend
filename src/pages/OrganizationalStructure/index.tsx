@@ -11,7 +11,7 @@ interface OrganizationalStructureData {
 }
 
 const OrganizationalStructurePage: React.FC = () => {
-  const { setBreadcrumbsData } = useGlobalLayout();
+  const { setBreadcrumbsData, setSidebarType } = useGlobalLayout();
   const { data, loading, error, refetch } = useStandardPage(
     'organizational-structure',
     fetchOrganizationalStructureData
@@ -24,10 +24,13 @@ const OrganizationalStructurePage: React.FC = () => {
       { label: 'Tuzilma' }
     ]);
 
+    setSidebarType('systems');
+
     return () => {
       setBreadcrumbsData(undefined);
+      setSidebarType(undefined);
     };
-  }, [setBreadcrumbsData]);
+  }, [setBreadcrumbsData, setSidebarType]);
 
   if (loading) {
     return <GenericPageSkeleton showSidebar={false} showHeroImage={false} contentBlocks={5} />;

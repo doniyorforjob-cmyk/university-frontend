@@ -6,7 +6,7 @@ import { fetchUniversityContentBlocks } from '@/services/universityContentServic
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 
 const UniversityPage: React.FC = () => {
-  const { setBreadcrumbsData } = useGlobalLayout();
+  const { setBreadcrumbsData, setSidebarType } = useGlobalLayout();
   const { data, loading, error, refetch } = useStandardPage(
     'university',
     fetchUniversityContentBlocks
@@ -18,10 +18,13 @@ const UniversityPage: React.FC = () => {
       { label: 'Universitet' }
     ]);
 
+    setSidebarType('systems');
+
     return () => {
       setBreadcrumbsData(undefined);
+      setSidebarType(undefined);
     };
-  }, [setBreadcrumbsData]);
+  }, [setBreadcrumbsData, setSidebarType]);
 
   if (loading) {
     return <GenericPageSkeleton showSidebar={false} showHeroImage={false} contentBlocks={5} />;

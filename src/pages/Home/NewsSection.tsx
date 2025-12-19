@@ -13,62 +13,62 @@ import { useTranslation } from 'react-i18next';
 import { AOS_CONFIG, NEWS_TABS } from '../../config/constants';
 
 const AnnouncementsPreview = ({ announcements }: { announcements?: HomeNewsData['announcements'] }) => {
-    const otherAnnouncements = announcements?.slice(0, 10) || [];
+  const { t, i18n } = useTranslation();
+  const otherAnnouncements = announcements?.slice(0, 10) || [];
 
-    return (
-        <div className="flex flex-col">
-            <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4 border-b-2 border-primary pb-2">Boshqa e&apos;lonlar</h3>
-                <ul className="space-y-3 mt-4 overflow-y-auto max-h-[36rem] pr-2" data-aos="fade-left" data-aos-duration="800" data-aos-delay="200">
-                    {otherAnnouncements.map((item: HomeNewsData['announcements'][0]) => {
-                        const date = new Date(item.date);
-                        const uzbekMonths = ['Yan', 'Fev', 'Mar', 'Apr', 'May', 'Iyn', 'Iyl', 'Avg', 'Sen', 'Okt', 'Noy', 'Dek'];
-                        const month = uzbekMonths[date.getMonth()];
-                        const day = date.getDate();
-                        const truncatedDescription = item.description.length > 60 ? item.description.substring(0, 60) + '...' : item.description;
+  return (
+    <div className="flex flex-col">
+      <div>
+        <h3 className="text-xl font-bold text-gray-900 mb-4 border-b-2 border-primary pb-2">{t('otherAnnouncements')}</h3>
+        <ul className="space-y-3 mt-4 overflow-y-auto max-h-[36rem] pr-2" data-aos="fade-left" data-aos-duration="800" data-aos-delay="200">
+          {otherAnnouncements.map((item: HomeNewsData['announcements'][0]) => {
+            const date = new Date(item.date);
+            const month = date.toLocaleDateString(i18n.language, { month: 'short' });
+            const day = date.getDate();
+            const truncatedDescription = item.description.length > 60 ? item.description.substring(0, 60) + '...' : item.description;
 
-                        return (
-                            <li key={item.id}>
-                                <Link to={`/announcements/${item.id}`} className="group flex items-center p-3 bg-white hover:bg-gray-50 transition-all duration-300 border border-gray-200">
-                                    <div className="flex flex-col items-center justify-center w-16 text-center flex-shrink-0">
-                                        <span className="text-xs font-bold text-[#0E104B] uppercase tracking-wider">{month}</span>
-                                        <span className="text-2xl font-extrabold text-gray-800">{day}</span>
-                                    </div>
-                                    <div className="w-0.5 h-12 bg-primary/20 mx-4 rounded-full"></div>
-                                    <div className="flex-1 overflow-hidden">
-                                        <p className="font-bold text-[#0E104B] transition-colors duration-300 leading-tight truncate">{item.text}</p>
-                                        <p className="text-sm text-gray-600 mt-1 truncate">{truncatedDescription}</p>
-                                    </div>
-                                </Link>
-                            </li>
-                        );
-                    })}
-                </ul>
-            </div>
-            <div className="mt-auto pt-8 text-center lg:text-right">
-                <Link to="/announcements" className="inline-flex items-center text-[#0E104B] font-semibold hover:underline">
-                    Barcha e&apos;lonlarni ko&apos;rish
-                    <ChevronRightIcon className="w-5 h-5 ml-1" />
+            return (
+              <li key={item.id}>
+                <Link to={`/announcements/${item.id}`} className="group flex items-center p-3 bg-white hover:bg-gray-50 transition-all duration-300 border border-gray-200">
+                  <div className="flex flex-col items-center justify-center w-16 text-center flex-shrink-0">
+                    <span className="text-xs font-bold text-[#0E104B] uppercase tracking-wider">{month}</span>
+                    <span className="text-2xl font-extrabold text-gray-800">{day}</span>
+                  </div>
+                  <div className="w-0.5 h-12 bg-primary/20 mx-4 rounded-full"></div>
+                  <div className="flex-1 overflow-hidden">
+                    <p className="font-bold text-[#0E104B] transition-colors duration-300 leading-tight truncate">{item.text}</p>
+                    <p className="text-sm text-gray-600 mt-1 truncate">{truncatedDescription}</p>
+                  </div>
                 </Link>
-            </div>
-        </div>
-    );
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+      <div className="mt-auto pt-8 text-center lg:text-right">
+        <Link to="/announcements" className="inline-flex items-center text-[#0E104B] font-semibold hover:underline">
+          {t('seeAllAnnouncements')}
+          <ChevronRightIcon className="w-5 h-5 ml-1" />
+        </Link>
+      </div>
+    </div>
+  );
 }
 
 // Sana formatini o'zgartiruvchi funksiya
 const formatDate = (dateString?: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    const months = [
-        'Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun',
-        'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'
-    ];
-    const day = date.getDate();
-    const month = months[date.getMonth()];
-    const year = date.getFullYear();
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${day} ${month} ${year} | ${hours}:${minutes}`;
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  const months = [
+    'Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun',
+    'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'
+  ];
+  const day = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${day} ${month} ${year} | ${hours}:${minutes}`;
 };
 
 const NewsSection = () => {
@@ -138,21 +138,21 @@ const NewsSection = () => {
     <div className="py-16">
       <Container>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            {/* Left Column: News with Tabs */}
-            <div className="lg:col-span-2">
-                <SectionHeader
-                  title={t('news')}
-                  seeAllLink="/news"
-                  seeAllText={t('seeAllNews')}
-                  noContainer={true}
-                />
-                <AnimatedNewsTabs tabs={tabs} defaultTab="news" />
-            </div>
+          {/* Left Column: News with Tabs */}
+          <div className="lg:col-span-2">
+            <SectionHeader
+              title={t('news')}
+              seeAllLink="/news"
+              seeAllText={t('seeAllNews')}
+              noContainer={true}
+            />
+            <AnimatedNewsTabs tabs={tabs} defaultTab="news" />
+          </div>
 
-            {/* Right Column: Announcements Preview */}
-            <div className="lg:col-span-1">
-                <AnnouncementsPreview announcements={data?.announcements} />
-            </div>
+          {/* Right Column: Announcements Preview */}
+          <div className="lg:col-span-1">
+            <AnnouncementsPreview announcements={data?.announcements} />
+          </div>
         </div>
       </Container>
     </div>

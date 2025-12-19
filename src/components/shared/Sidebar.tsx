@@ -52,11 +52,10 @@ const Sidebar = memo(() => {
         <Link
           key={href || index}
           to={href!}
-          className={`block px-8 py-3 text-lg text-gray-800 transition-all duration-200 ${
-            isActive
-              ? 'bg-secondary/10 border-l-4 border-l-secondary pl-[31px]'
-              : 'hover:bg-gray-50 border-l-4 border-l-transparent pl-[31px]'
-          } ${!isLast ? 'border-b border-gray-300' : ''}`}
+          className={`block px-8 py-3 text-lg text-gray-800 transition-all duration-200 ${isActive
+            ? 'bg-secondary/10 border-l-4 border-l-secondary pl-[31px]'
+            : 'hover:bg-gray-50 border-l-4 border-l-transparent pl-[31px]'
+            } ${!isLast ? 'border-b border-gray-300' : ''}`}
         >
           {child.title === "E'lonlar" ? "Elonlar" : child.title}
         </Link>
@@ -93,36 +92,34 @@ const Sidebar = memo(() => {
       </div>
 
       {/* 2-BOX: Rektorga murojaat */}
-      {location.pathname !== '/appeals' && (
-        <div className="overflow-hidden shadow-lg bg-white border border-gray-300">
-          <div className="bg-gray-50 px-8 py-3 flex flex-col justify-between h-full">
-            {/* Sarlavha va kichik tugma – CHAPGA */}
-            <div className="mb-4">
-              <h4 className="text-md font-bold text-gray-800 mb-2">
-                Rektorga murojaat
-              </h4>
-              <Link
-                to="/appeals"
-                className="inline-block px-5 py-1.5 text-sm bg-primary text-white font-semibold rounded-md hover:bg-primary-dark transition-colors"
-              >
-                Murojaat qilish
-              </Link>
-            </div>
-  
-            {/* Rektor rasmi – eng pastki chegaragacha, bo‘shliq bor */}
-            <div className="-mx-8 -mb-3">
-              <OptimizedImage
-                src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                alt="Rektor rasmi"
-                className="w-full h-auto object-cover block"
-                lazy={true}
-                width={384}
-                height={256}
-              />
-            </div>
+      <div className="overflow-hidden shadow-lg bg-white border border-gray-300">
+        <div className="bg-gray-50 px-8 py-3 flex flex-col justify-between h-full">
+          {/* Sarlavha va kichik tugma – CHAPGA */}
+          <div className="mb-4">
+            <h4 className="text-md font-bold text-gray-800 mb-2">
+              Rektorga murojaat
+            </h4>
+            <Link
+              to="/appeals"
+              className="inline-block px-5 py-1.5 text-sm bg-primary text-white font-semibold rounded-md hover:bg-primary-dark transition-colors"
+            >
+              Murojaat qilish
+            </Link>
+          </div>
+
+          {/* Rektor rasmi – eng pastki chegaragacha, bo‘shliq bor */}
+          <div className="-mx-8 -mb-3">
+            <OptimizedImage
+              src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+              alt="Rektor rasmi"
+              className="w-full h-auto object-cover block"
+              lazy={true}
+              width={384}
+              height={256}
+            />
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 });

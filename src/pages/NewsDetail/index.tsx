@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 import { getPostBySlug } from '../../services/postService';
 import { PostDetail as NewsType } from '../../types/post.types';
 import DetailTemplate, { DetailMeta } from '@/components/templates/DetailTemplate';
 import { PageSkeleton } from '@/components/shared';
+import NotFound from '@/pages/Errors/NotFound';
 
 const NewsDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
+  const { setSidebarType } = useGlobalLayout();
   const [newsItem, setNewsItem] = useState<NewsType | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,30 +38,19 @@ const NewsDetailPage: React.FC = () => {
     };
 
     fetchNewsItem();
-  }, [slug]);
+
+    setSidebarType('info');
+    return () => {
+      setSidebarType(undefined);
+    };
+  }, [slug, setSidebarType]);
 
   if (loading) {
     return <PageSkeleton type="news" />;
   }
 
   if (error || !newsItem) {
-    return (
-      <div className="bg-gray-50 min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex justify-center items-center min-h-[400px]">
-            <div className="text-center">
-              <p className="text-red-600 mb-4">{error || 'Yangilik topilmadi'}</p>
-              <button
-                onClick={() => window.location.href = '/news'}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-              >
-                Yangiliklarga qaytish
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <NotFound />;
   }
 
   const meta: DetailMeta = {
@@ -85,7 +77,7 @@ const NewsDetailPage: React.FC = () => {
       showSocialShare={true}
       showPrintButton={true}
       showComments={false}
-      showSidebar={true}
+      showSidebar={false}
       socialShare={{
         facebook: true,
         telegram: true,

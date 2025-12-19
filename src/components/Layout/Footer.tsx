@@ -12,52 +12,18 @@ import {
   PhoneIcon,
   EnvelopeIcon,
 } from '@heroicons/react/24/outline';
+import { useSettingsStore } from '../../store/settingsStore';
 import { useFooterData } from '../../hooks/useFooterData';
 import { SocialLink } from '../../types/footer.types';
 import FooterSkeleton from './FooterSkeleton';
 import Container from '../shared/Container';
 
-// Ijtimoiy tarmoq ikonkalarini nomiga qarab qaytaruvchi komponent
-const SocialIcon: React.FC<{ name: SocialLink['name'] }> = ({ name }) => {
-  const iconClass = "w-6 h-6 transition-transform duration-300 group-hover:scale-110";
-
-  switch (name) {
-    case 'Facebook':
-      return <FaFacebookF className={iconClass} />;
-    case 'Telegram':
-      return <FaTelegramPlane className={iconClass} />;
-    case 'Instagram':
-      return <FaInstagram className={iconClass} />;
-    case 'YouTube':
-      return <FaYoutube className={iconClass} />;
-    case 'Twitter':
-      return <FaTwitter className={iconClass} />;
-    default:
-      return null;
-  }
-};
-
-// Ijtimoiy tarmoq ranglarini qaytaruvchi funksiya
-const getSocialColor = (name: SocialLink['name']): string => {
-  switch (name) {
-    case 'Facebook':
-      return 'hover:bg-[#1877F2] hover:text-white';
-    case 'Telegram':
-      return 'hover:bg-[#0088cc] hover:text-white';
-    case 'Instagram':
-      return 'hover:bg-gradient-to-br hover:from-[#833AB4] hover:via-[#FD1D1D] hover:to-[#F77737] hover:text-white';
-    case 'YouTube':
-      return 'hover:bg-[#FF0000] hover:text-white';
-    case 'Twitter':
-      return 'hover:bg-[#1DA1F2] hover:text-white';
-    default:
-      return 'hover:bg-gray-700 hover:text-white';
-  }
-};
-
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
-  const { data, isLoading, error } = useFooterData();
+  const { data, isLoading: footerLoading, error } = useFooterData();
+  const { settings, isLoading: settingsLoading } = useSettingsStore();
+
+  const isLoading = footerLoading || settingsLoading;
 
   if (isLoading) {
     return <FooterSkeleton />;
@@ -74,7 +40,7 @@ const Footer: React.FC = () => {
   }
 
   if (!data) {
-    return null; // Yoki boshqa biror "ma'lumot yo'q" xabarini ko'rsatish
+    return null;
   }
 
   const { contactInfo, socialLinks, linkGroups } = data;
@@ -82,7 +48,6 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-t border-gray-700">
       <Container className="py-16">
-        {/* ==== 1-qator – logo + qisqacha ma'lumot + ijtimoiy tarmoqlar ==== */}
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div>
             <Link
@@ -96,11 +61,9 @@ const Footer: React.FC = () => {
             </Link>
 
             <p className="max-w-xs mt-4 text-base text-gray-300 leading-relaxed">
-              O‘zbekistonning yetakchi oliy ta’lim muassasasi. Biz kelajak
-              yetakchilarini tarbiyalaymiz.
+              {settings?.footer?.mission || "O‘zbekistonning yetakchi oliy ta’lim muassasasi. Biz kelajak yetakchilarini tarbiyalaymiz."}
             </p>
 
-            {/* Ijtimoiy tarmoqlar */}
             <div className="flex mt-8 space-x-4">
               {socialLinks.map((link) => (
                 <a
@@ -117,9 +80,7 @@ const Footer: React.FC = () => {
             </div>
           </div>
 
-          {/* ==== 2-qator – ustunlar (Aloqa, Havolalar) ==== */}
           <div className="grid grid-cols-1 gap-8 lg:col-span-2 sm:grid-cols-2 lg:grid-cols-4">
-            {/* 1 – Aloqa */}
             <div>
               <div className="flex items-center mb-4">
                 <span className="w-1 h-5 bg-secondary-500 mr-3"></span>
@@ -129,36 +90,35 @@ const Footer: React.FC = () => {
                 <li className="flex items-start group">
                   <MapPinIcon className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0 text-gray-400 transition-colors duration-300 group-hover:text-white" />
                   <a
-                    href={contactInfo.address.url}
+                    href={settings?.contacts?.googleMapsUrl || contactInfo.address.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-white hover:bg-gray-700/50 px-2 py-1 transition-all duration-300 focus:outline-none focus:text-white focus:bg-gray-700/50 -ml-2"
                   >
-                    {contactInfo.address.text}
+                    {settings?.contacts?.address || contactInfo.address.text}
                   </a>
                 </li>
                 <li className="flex items-center group">
                   <PhoneIcon className="h-5 w-5 mr-2 flex-shrink-0 text-gray-400 transition-colors duration-300 group-hover:text-white" />
                   <a
-                    href={`tel:${contactInfo.phone.tel}`}
+                    href={`tel:${settings?.contacts?.primaryPhone?.replace(/[^0-9+]/g, '') || contactInfo.phone.tel}`}
                     className="hover:text-white hover:bg-gray-700/50 px-2 py-1 transition-all duration-300 focus:outline-none focus:text-white focus:bg-gray-700/50 -ml-2"
                   >
-                    {contactInfo.phone.number}
+                    {settings?.contacts?.primaryPhone || contactInfo.phone.number}
                   </a>
                 </li>
                 <li className="flex items-center group">
                   <EnvelopeIcon className="h-5 w-5 mr-2 flex-shrink-0 text-gray-400 transition-colors duration-300 group-hover:text-white" />
                   <a
-                    href={contactInfo.email.mailto}
+                    href={`mailto:${settings?.contacts?.email || contactInfo.email.address}`}
                     className="hover:text-white hover:bg-gray-700/50 px-2 py-1 transition-all duration-300 focus:outline-none focus:text-white focus:bg-gray-700/50 -ml-2"
                   >
-                    {contactInfo.email.address}
+                    {settings?.contacts?.email || contactInfo.email.address}
                   </a>
                 </li>
               </ul>
             </div>
 
-            {/* 2, 3, 4 – Havolalar guruhlari */}
             {linkGroups.map((group) => (
               <div key={group.id}>
                 <div className="flex items-center mb-4">
@@ -181,15 +141,50 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-        {/* ==== Pastki qism – mualliflik huquqi ==== */}
         <div className="mt-12 pt-8 border-t border-gray-700">
           <p className="text-sm text-gray-400 text-center">
-            © {currentYear} <span className="font-semibold text-white">Namangan Davlat Texnika Universiteti</span>. Barcha huquqlar himoyalangan.
+            {settings?.footer?.copyright || `© ${currentYear} Namangan Davlat Texnika Universiteti. Barcha huquqlar himoyalangan.`}
           </p>
         </div>
       </Container>
     </footer>
   );
+};
+
+const SocialIcon: React.FC<{ name: SocialLink['name'] }> = ({ name }) => {
+  const iconClass = "w-6 h-6 transition-transform duration-300 group-hover:scale-110";
+
+  switch (name) {
+    case 'Facebook':
+      return <FaFacebookF className={iconClass} />;
+    case 'Telegram':
+      return <FaTelegramPlane className={iconClass} />;
+    case 'Instagram':
+      return <FaInstagram className={iconClass} />;
+    case 'YouTube':
+      return <FaYoutube className={iconClass} />;
+    case 'Twitter':
+      return <FaTwitter className={iconClass} />;
+    default:
+      return null;
+  }
+};
+
+const getSocialColor = (name: SocialLink['name']): string => {
+  switch (name) {
+    case 'Facebook':
+      return 'hover:bg-[#1877F2] hover:text-white';
+    case 'Telegram':
+      return 'hover:bg-[#0088cc] hover:text-white';
+    case 'Instagram':
+      return 'hover:bg-gradient-to-br hover:from-[#833AB4] hover:via-[#FD1D1D] hover:to-[#F77737] hover:text-white';
+    case 'YouTube':
+      return 'hover:bg-[#FF0000] hover:text-white';
+    case 'Twitter':
+      return 'hover:bg-[#1DA1F2] hover:text-white';
+    default:
+      return 'hover:bg-gray-700 hover:text-white';
+  }
 };
 
 export default Footer;

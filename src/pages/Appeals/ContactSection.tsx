@@ -7,16 +7,19 @@ import {
   ClockIcon,
   UserGroupIcon
 } from '@heroicons/react/24/outline';
+import { useSettingsStore } from '../../store/settingsStore';
 
 export const ContactSection: React.FC = () => {
+  const { settings } = useSettingsStore();
+
   const contactInfo = {
-    phone: '+998 69 227 00 00',
-    email: 'info@namdtu.uz',
-    address: 'Namangan shahri, Kosonsoy ko&apos;chasi, 12',
+    phone: settings?.contacts?.primaryPhone || '+998 69 227 00 00',
+    email: settings?.contacts?.email || 'info@namdtu.uz',
+    address: settings?.contacts?.address || 'Namangan shahri, Kosonsoy ko\'chasi, 12',
     workingHours: {
-      weekdays: 'Dushanba - Juma: 08:00 - 17:00',
-      weekend: 'Shanba: 08:00 - 13:00',
-      closed: 'Yakshanba: Dam olish kuni'
+      weekdays: settings?.contacts?.workingHours?.weekdays || 'Dushanba - Juma: 08:00 - 17:00',
+      weekend: settings?.contacts?.workingHours?.saturday || 'Shanba: 08:00 - 13:00',
+      closed: settings?.contacts?.workingHours?.sunday || 'Yakshanba: Dam olish kuni'
     }
   };
 
@@ -140,9 +143,9 @@ export const ContactSection: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
       >
-          <div className="flex items-center mb-6 text-gray-900">
+        <div className="flex items-center mb-6 text-gray-900">
           <UserGroupIcon className="w-6 h-6 text-gray-600 mr-3" />
-            <h4 className="text-xl font-semibold">Bo&apos;limlar bo&apos;yicha kontaktlar</h4>
+          <h4 className="text-xl font-semibold">Bo&apos;limlar bo&apos;yicha kontaktlar</h4>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

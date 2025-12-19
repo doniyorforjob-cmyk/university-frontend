@@ -26,7 +26,7 @@ const fetchAnnouncementsData = async (): Promise<SectionItem[]> => {
 
 const AnnouncementsPage: React.FC = () => {
   const navigate = useNavigate();
-  const { setBannerData, setBreadcrumbsData } = useGlobalLayout();
+  const { setBannerData, setBreadcrumbsData, setSidebarType } = useGlobalLayout();
   const { data: items, loading, error, refetch } = useStandardPage(
     'announcements',
     fetchAnnouncementsData
@@ -39,10 +39,13 @@ const AnnouncementsPage: React.FC = () => {
       { label: 'E\'lonlar' }
     ]);
 
+    setSidebarType('info');
+
     return () => {
       setBreadcrumbsData(undefined);
+      setSidebarType(undefined);
     };
-  }, [setBreadcrumbsData]);
+  }, [setBreadcrumbsData, setSidebarType]);
 
 
   const handleItemClick = useCallback((item: SectionItem) => {

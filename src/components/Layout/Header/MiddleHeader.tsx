@@ -1,8 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Container from '../../shared/Container';
+import { useSettingsStore } from '../../../store/settingsStore';
 
 const MiddleHeader: React.FC = () => {
+    const { settings } = useSettingsStore();
+    const phone = settings?.contacts?.primaryPhone || "+998 (69) 228-84-33";
+    const phoneRaw = phone.replace(/[^0-9+]/g, '');
+    const address = settings?.contacts?.address || "Namangan sh, Boburshox k, 1-uy";
     return (
         <div className="bg-white py-6 header-middle">
             <Container>
@@ -40,10 +45,10 @@ const MiddleHeader: React.FC = () => {
                             <div>
                                 <p className="text-sm font-semibold text-gray-600">Ishonch telefoni</p>
                                 <a
-                                    href="tel:+998692288433"
+                                    href={`tel:${phoneRaw}`}
                                     className="text-[#0E104B] font-bold hover:underline text-lg"
                                 >
-                                    +998 (69) 228-84-33
+                                    {phone}
                                 </a>
                             </div>
                         </div>
@@ -74,7 +79,7 @@ const MiddleHeader: React.FC = () => {
                             </div>
                             <div>
                                 <p className="text-base font-semibold text-gray-600">Manzil</p>
-                                <p className="text-[#0E104B] font-bold text-lg">Namangan sh, Boburshox k, 1-uy</p>
+                                <p className="text-[#0E104B] font-bold text-lg">{address}</p>
                             </div>
                         </div>
                     </div>
@@ -111,10 +116,10 @@ const MiddleHeader: React.FC = () => {
                             <div>
                                 <p className="text-sm font-semibold text-gray-600">Ishonch telefoni</p>
                                 <a
-                                    href="tel:+998692288433"
+                                    href={`tel:${phoneRaw}`}
                                     className="text-[#0E104B] font-bold hover:underline"
                                 >
-                                    +998 (69) 228-84-33
+                                    {phone}
                                 </a>
                             </div>
                         </div>

@@ -7,7 +7,7 @@ import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 import ContentBuilder from '@/components/shared/ContentBuilder';
 
 const ActivitiesPage: React.FC = () => {
-  const { setBreadcrumbsData } = useGlobalLayout();
+  const { setBreadcrumbsData, setSidebarType } = useGlobalLayout();
   const { data, loading, error, refetch } = useStandardPage(
     'activities',
     fetchActivitiesData
@@ -19,10 +19,13 @@ const ActivitiesPage: React.FC = () => {
       { label: 'Faoliyat' }
     ]);
 
+    setSidebarType('systems');
+
     return () => {
       setBreadcrumbsData(undefined);
+      setSidebarType(undefined);
     };
-  }, [setBreadcrumbsData]);
+  }, [setBreadcrumbsData, setSidebarType]);
 
   if (loading) {
     return <GenericPageSkeleton showSidebar={false} showHeroImage={false} contentBlocks={12} />;
