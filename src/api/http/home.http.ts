@@ -40,23 +40,62 @@ export const homeApi = {
 
   getNewsData: async (): Promise<HomeNewsData> => {
     try {
-      const response = await apiClient.get('/news');
-      const data = Array.isArray(response.data) ? response.data[0] : response.data;
-      return data;
+      const response = await apiClient.get('/collections/news/entries', {
+        params: { with: 'image', per_page: 50 }
+      });
+      const allEntries = response.data.data;
+
+      const mapEntry = (entry: any) => ({
+        id: entry.id || entry.uuid,
+        slug: entry.slug,
+        title: entry.title || '',
+        image_url: entry.image?.url || '',
+        description: entry.content ? entry.content.substring(0, 150) + '...' : '',
+        published_at: entry.date || entry.created_at,
+        date: entry.date || entry.created_at,
+      });
+
+      return {
+        news: allEntries
+          .filter((e: any) => e.category === 'news' || !e.category)
+          .slice(0, 12)
+          .map(mapEntry),
+        announcements: allEntries
+          .filter((e: any) => e.category === 'announcements')
+          .map((e: any) => ({ ...mapEntry(e), text: e.title })),
+        events: allEntries
+          .filter((e: any) => e.category === 'events')
+          .map(mapEntry),
+        corruption: allEntries
+          .filter((e: any) => e.category === 'corruption')
+          .map(mapEntry),
+        sport: allEntries
+          .filter((e: any) => e.category === 'sport')
+          .map(mapEntry),
+      };
     } catch (error) {
       console.error('Error fetching news data:', error);
-      throw error;
+      return mockHomeApi.getNewsData();
     }
   },
 
   getFacultiesData: async (): Promise<HomeFacultiesData> => {
     try {
-      const response = await apiClient.get('/faculties');
-      const data = Array.isArray(response.data) ? response.data[0] : response.data;
-      return data;
+      const response = await apiClient.get('/collections/faculties/entries', {
+        params: { with: 'icon' }
+      });
+      return {
+        faculties: response.data.data.map((entry: any) => ({
+          id: entry.id || entry.uuid,
+          name: entry.name,
+          color: entry.color || 'from-sky-500 to-indigo-500',
+          image: entry.icon?.url || '',
+          iconImage: entry.icon?.url || '',
+        }))
+      };
     } catch (error) {
       console.error('Error fetching faculties data:', error);
-      throw error;
+      return mockHomeApi.getFacultiesData();
     }
   },
 
