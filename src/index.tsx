@@ -11,6 +11,10 @@ import 'aos/dist/aos.css';
 import { registerServiceWorker } from './utils/serviceWorker';
 import { observeWebVitals, reportPerformance } from './utils/performance';
 import { setupResourceHints } from './utils/preload';
+import { disableConsoleInProduction } from './utils/logger';
+
+// Disable console logs in production
+disableConsoleInProduction();
 
 const queryClient = new QueryClient();
 

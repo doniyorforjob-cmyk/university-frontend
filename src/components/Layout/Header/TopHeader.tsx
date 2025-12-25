@@ -1,11 +1,12 @@
 import React from 'react';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import useClickOutside from '../../../hooks/useClickOutside';
 import { socialLinks, quickLinks } from '../../../services/navbarService';
 import useFontSizeStore from '../../../store/fontSizeStore';
 import useThemeStore from '../../../store/themeStore';
 import Container from '../../shared/Container';
+import { useLocale } from '../../../contexts/LocaleContext';
 
 const languageOptions = {
     uz: { name: "O'z", flag: "https://flagcdn.com/w20/uz.png" },
@@ -15,6 +16,7 @@ const languageOptions = {
 
 const TopHeader = () => {
     const { i18n } = useTranslation();
+    const { locale, setLocale } = useLocale();
     const [isLangDropdownOpen, setLangDropdownOpen] = useState(false);
     const langDropdownRef = useRef<HTMLDivElement>(null);
     const { increaseFontSize, decreaseFontSize, resetFontSize } = useFontSizeStore();
@@ -22,12 +24,17 @@ const TopHeader = () => {
 
     useClickOutside(langDropdownRef, () => setLangDropdownOpen(false));
 
+    // Sync LocaleContext with react-i18next
+    useEffect(() => {
+        i18n.changeLanguage(locale);
+    }, [locale, i18n]);
+
     const changeLanguage = (lng: string) => {
-        i18n.changeLanguage(lng);
+        setLocale(lng as 'uz' | 'ru' | 'en');
         setLangDropdownOpen(false);
     };
 
-    const currentLanguage = i18n.language as keyof typeof languageOptions;
+    const currentLanguage = locale as keyof typeof languageOptions;
     const currentLangDetails = languageOptions[currentLanguage] || languageOptions.uz;
 
     return (

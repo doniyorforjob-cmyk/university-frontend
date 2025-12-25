@@ -4,6 +4,7 @@ import Layout from '@/components/Layout';
 import MainLayout from '@/components/shared/MainLayout';
 import GlobalLayout from '@/components/templates/GlobalLayout';
 import { ScrollToTop } from '@/components/shared';
+import { LocaleProvider } from '@/contexts/LocaleContext';
 // Error Pages & Components
 import NotFound from '@/pages/Errors/NotFound';
 import NetworkError from '@/pages/Errors/NetworkError';
@@ -56,54 +57,56 @@ function App() {
   const isHome = location.pathname === '/';
 
   return (
-    <div className="min-h-screen text-gray-900">
-      {/* Network Error Overlay */}
-      {!isOnline && <NetworkError />}
+    <LocaleProvider>
+      <div className="min-h-screen text-gray-900">
+        {/* Network Error Overlay */}
+        {!isOnline && <NetworkError />}
 
-      <Layout>
-        <ErrorBoundary>
-          <Suspense fallback={isHome ? null : <GenericPageSkeleton showSidebar={true} showBanner={true} />}> {/* This fallback is for the initial load of the entire app */}
-            <Routes> {/* Routes should be wrapped by GlobalLayout */}
-              <Route element={<GlobalLayout />}> {/* GlobalLayout will handle Banner and Breadcrumbs */}
-                <Route index element={<HomePage />} />
-                <Route path="/contact" element={<ContactPage />} />
+        <Layout>
+          <ErrorBoundary>
+            <Suspense fallback={isHome ? null : <GenericPageSkeleton showSidebar={true} showBanner={true} />}> {/* This fallback is for the initial load of the entire app */}
+              <Routes> {/* Routes should be wrapped by GlobalLayout */}
+                <Route element={<GlobalLayout />}> {/* GlobalLayout will handle Banner and Breadcrumbs */}
+                  <Route index element={<HomePage />} />
+                  <Route path="/contact" element={<ContactPage />} />
 
-                {/* "Axborot xizmati" uchun doimiy Sidebar bilan ishlaydigan sahifalar */}
-                <Route element={<MainLayout />}>
-                  <Route path="/news" element={<NewsPage />} />
-                  <Route path="/news/:slug" element={<NewsDetailPage />} />
-                  <Route path="/announcements" element={<AnnouncementsPage />} />
-                  <Route path="/media-about-us" element={<MediaAboutUsPage />} />
-                  <Route path="/appeals" element={<AppealsPage />} />
-                </Route>
+                  {/* "Axborot xizmati" uchun doimiy Sidebar bilan ishlaydigan sahifalar */}
+                  <Route element={<MainLayout />}>
+                    <Route path="/news" element={<NewsPage />} />
+                    <Route path="/news/:slug" element={<NewsDetailPage />} />
+                    <Route path="/announcements" element={<AnnouncementsPage />} />
+                    <Route path="/media-about-us" element={<MediaAboutUsPage />} />
+                    <Route path="/appeals" element={<AppealsPage />} />
+                  </Route>
 
-                {/* "UniversitySystems" Sidebar bilan ishlaydigan sahifalar */}
-                <Route element={<MainLayout />}>
-                  <Route path="/university" element={<UniversityPage />} />
-                  <Route path="/information-services" element={<InformationServicesPage />} />
-                  <Route
-                    path="/organizational-structure"
-                    element={<OrganizationalStructurePage />}
-                  />
-                  <Route path="/activities" element={<ActivitiesPage />} />
-                  <Route path="/admission" element={<AdmissionPage />} />
-                  <Route path="/yashil-universitet" element={<YashilUniversitetPage />} />
-                  <Route path="/eco-active-students" element={<EcoActiveStudentsPage />} />
-                  <Route path="/photos/:id" element={<PhotoDetailPage />} />
-                  {/* Boshqa sahifalarni shu yerga qo'shish mumkin */}
-                </Route>
-                {/* 404 Catch-All Route - Eng oxirida bo'lishi shart */}
-                {/* 404 Catch-All Route - Eng oxirida bo'lishi shart */}
-                <Route path="*" element={<NotFound />} />
-              </Route> {/* End of GlobalLayout route */}
-            </Routes>
-          </Suspense>
-        </ErrorBoundary>
-      </Layout>
+                  {/* "UniversitySystems" Sidebar bilan ishlaydigan sahifalar */}
+                  <Route element={<MainLayout />}>
+                    <Route path="/university" element={<UniversityPage />} />
+                    <Route path="/information-services" element={<InformationServicesPage />} />
+                    <Route
+                      path="/organizational-structure"
+                      element={<OrganizationalStructurePage />}
+                    />
+                    <Route path="/activities" element={<ActivitiesPage />} />
+                    <Route path="/admission" element={<AdmissionPage />} />
+                    <Route path="/yashil-universitet" element={<YashilUniversitetPage />} />
+                    <Route path="/eco-active-students" element={<EcoActiveStudentsPage />} />
+                    <Route path="/photos/:id" element={<PhotoDetailPage />} />
+                    {/* Boshqa sahifalarni shu yerga qo'shish mumkin */}
+                  </Route>
+                  {/* 404 Catch-All Route - Eng oxirida bo'lishi shart */}
+                  {/* 404 Catch-All Route - Eng oxirida bo'lishi shart */}
+                  <Route path="*" element={<NotFound />} />
+                </Route> {/* End of GlobalLayout route */}
+              </Routes>
+            </Suspense>
+          </ErrorBoundary>
+        </Layout>
 
-      {/* Global "Yuqoriga qaytish" tugmasi */}
-      <ScrollToTop />
-    </div>
+        {/* Global "Yuqoriga qaytish" tugmasi */}
+        <ScrollToTop />
+      </div>
+    </LocaleProvider>
   );
 }
 

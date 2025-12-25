@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import useClickOutside from '../../../hooks/useClickOutside';
 import { fetchNavItems, NavItem } from '../../../services/navbarService';
 import { useCachedApi } from '../../../hooks/useCachedApi';
+import { useLocale } from '../../../contexts/LocaleContext';
 import Container from '../../shared/Container';
 import { PrefetchLink } from '../../shared';
 import {
@@ -19,8 +20,9 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
+  const { locale } = useLocale();
   const { data: navItems, loading } = useCachedApi({
-    key: 'navbar-items-v2',
+    key: `navbar-items-v3-${locale}`, // Cache key depends on locale, v3 to force refresh
     fetcher: fetchNavItems,
     ttlMinutes: 60, // Cache for 1 hour
   });

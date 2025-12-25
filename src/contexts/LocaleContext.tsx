@@ -1,0 +1,45 @@
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+
+export type Locale = 'uz' | 'ru' | 'en';
+
+interface LocaleContextType {
+    locale: Locale;
+    setLocale: (locale: Locale) => void;
+}
+
+const LocaleContext = createContext<LocaleContextType | undefined>(undefined);
+
+export const useLocale = () => {
+    const context = useContext(LocaleContext);
+    if (!context) {
+        throw new Error('useLocale must be used within LocaleProvider');
+    }
+    return context;
+};
+
+interface LocaleProviderProps {
+    children: ReactNode;
+}
+
+export const LocaleProvider: React.FC<LocaleProviderProps> = ({ children }) => {
+    // Get initial locale from localStorage or default to 'en' (backend has only English content)
+    const [locale, setLocaleState] = useState<Locale>(() => {
+        const saved = localStorage.getItem('locale');
+        return (saved as Locale) || 'en';
+    });
+
+    // Save locale to localStorage whenever it changes
+    useEffect(() => {
+        localStorage.setItem('locale', locale);
+    }, [locale]);
+
+    const setLocale = (newLocale: Locale) => {
+        setLocaleState(newLocale);
+    };
+
+    return (
+        <LocaleContext.Provider value={{ locale, setLocale }}>
+            {children}
+        </LocaleContext.Provider>
+    );
+};

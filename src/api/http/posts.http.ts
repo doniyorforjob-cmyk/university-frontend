@@ -3,22 +3,39 @@ import { Post, PostDetail, PostCategory } from '../../types/post.types';
 
 export const getPosts = async (category?: PostCategory): Promise<Post[]> => {
   try {
-    const response = await apiClient.get('/collections/news/entries', {
-      params: {
-        with: 'image',
-        'filter[category][eq]': category
-      }
-    });
+    const projectId = process.env.REACT_APP_PROJECT_ID;
+    console.log("Using projectId:", projectId);
+    const params: any = { with: 'image' };
+    if (category) {
+      params['filter[category][eq]'] = category;
+    }
 
-    return response.data.data.map((entry: any) => ({
-      id: entry.id || entry.uuid,
-      slug: entry.slug,
-      title: entry.title,
-      image_url: entry.image?.url || '',
-      description: entry.content ? entry.content.substring(0, 150) + '...' : '',
-      published_at: entry.date || entry.created_at,
-      views: entry.views || 0,
-      category: entry.category as PostCategory,
+    let response = await apiClient.get(`/projects/${projectId}/content/news`, { params });
+
+    let data = Array.isArray(response.data) ? response.data : response.data.data;
+
+    // Fallback to English if no data found and current locale is not English
+    if ((!data || data.length === 0) && localStorage.getItem('locale') !== 'en') {
+      console.log('No news found in current locale, trying English fallback for list...');
+      response = await apiClient.get(`/projects/${projectId}/content/news`, {
+        params: {
+          with: 'image',
+          'filter[category][eq]': category,
+          locale: 'en'
+        }
+      });
+      data = Array.isArray(response.data) ? response.data : response.data.data;
+    }
+
+    return data.map((entry: any) => ({
+      id: entry.uuid || entry.id,
+      slug: entry.fields?.slug || entry.slug,
+      title: entry.fields?.title || entry.title,
+      image_url: (Array.isArray(entry.fields?.image) ? entry.fields.image[0]?.url : (entry.fields?.image?.url || '')) || '/images/logo.png',
+      description: entry.fields?.content ? entry.fields.content.substring(0, 150) + '...' : '',
+      published_at: entry.created_at || entry.published_at,
+      views: entry.fields?.views || 0,
+      category: (entry.fields?.category || 'news') as PostCategory,
     }));
   } catch (error) {
     console.error("News fetch error:", error);
@@ -28,26 +45,45 @@ export const getPosts = async (category?: PostCategory): Promise<Post[]> => {
 
 export const getPostBySlug = async (slug: string): Promise<PostDetail | undefined> => {
   try {
-    const response = await apiClient.get('/collections/news/entries', {
+    const projectId = process.env.REACT_APP_PROJECT_ID;
+    let response = await apiClient.get(`/projects/${projectId}/content/news`, {
       params: {
         'filter[slug][eq]': slug,
         with: 'image,gallery'
       }
     });
 
-    const entry = response.data.data[0];
+
+
+    // Handle both array response and paginated response
+    let data = Array.isArray(response.data) ? response.data : response.data.data;
+
+    // Retry with English locale if not found in current locale
+    if ((!data || data.length === 0) && localStorage.getItem('locale') !== 'en') {
+      console.log('Post not found in current locale, trying English fallback...');
+      response = await apiClient.get(`/projects/${projectId}/content/news`, {
+        params: {
+          'filter[slug][eq]': slug,
+          with: 'image,gallery',
+          locale: 'en'
+        }
+      });
+      data = Array.isArray(response.data) ? response.data : response.data.data;
+    }
+
+    const entry = data[0];
     if (!entry) return undefined;
 
     return {
-      id: entry.id || entry.uuid,
-      slug: entry.slug,
-      title: entry.title,
-      image_url: entry.image?.url || '',
-      description: entry.content ? entry.content.substring(0, 150) + '...' : '',
-      published_at: entry.date || entry.created_at,
-      views: entry.views || 0,
-      category: entry.category as PostCategory,
-      content: entry.content || '',
+      id: entry.uuid || entry.id,
+      slug: entry.fields?.slug || entry.slug,
+      title: entry.fields?.title || entry.title,
+      image_url: (Array.isArray(entry.fields?.image) ? entry.fields.image[0]?.url : (entry.fields?.image?.url || '')) || '/images/logo.png',
+      description: entry.fields?.content ? entry.fields.content.substring(0, 150) + '...' : '',
+      published_at: entry.created_at || entry.published_at,
+      views: entry.fields?.views || 0,
+      category: (entry.fields?.category || 'news') as PostCategory,
+      content: entry.fields?.content || '',
       author: { name: 'Matbuot xizmati' }
     };
   } catch (error) {

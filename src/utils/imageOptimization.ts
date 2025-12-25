@@ -21,6 +21,12 @@ export const getWebPUrl = (url: string): string => {
   // Agar allaqachon WebP bo'lsa, o'zini qaytar
   if (url.includes('.webp')) return url;
 
+  // Tashi URLlarni o'zgartirmaslik (http/https)
+  if (url.startsWith('http')) return url;
+
+  // Mahalliy /images/ papkasidagi rasmlarni o'zgartirmaslik
+  if (url.startsWith('/images/')) return url;
+
   // Fayl kengaytmasini WebP ga o'zgartirish
   return url.replace(/\.(jpg|jpeg|png)$/i, '.webp');
 };

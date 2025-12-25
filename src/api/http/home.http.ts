@@ -40,19 +40,20 @@ export const homeApi = {
 
   getNewsData: async (): Promise<HomeNewsData> => {
     try {
-      const response = await apiClient.get('/collections/news/entries', {
+      const projectId = process.env.REACT_APP_PROJECT_ID;
+      const response = await apiClient.get(`/projects/${projectId}/content/news`, {
         params: { with: 'image', per_page: 50 }
       });
-      const allEntries = response.data.data;
+      const allEntries = Array.isArray(response.data) ? response.data : response.data.data;
 
       const mapEntry = (entry: any) => ({
-        id: entry.id || entry.uuid,
-        slug: entry.slug,
-        title: entry.title || '',
-        image_url: entry.image?.url || '',
-        description: entry.content ? entry.content.substring(0, 150) + '...' : '',
-        published_at: entry.date || entry.created_at,
-        date: entry.date || entry.created_at,
+        id: entry.uuid || entry.id,
+        slug: entry.fields?.slug || entry.slug,
+        title: entry.fields?.title || entry.title || '',
+        image_url: (Array.isArray(entry.fields?.image) ? entry.fields.image[0]?.url : (entry.fields?.image?.url || '')) || '/images/logo.png',
+        description: entry.fields?.content ? entry.fields.content.substring(0, 150) + '...' : '',
+        published_at: entry.fields?.date || entry.published_at || entry.created_at,
+        date: entry.fields?.date || entry.published_at || entry.created_at,
       });
 
       return {
@@ -61,10 +62,10 @@ export const homeApi = {
           .slice(0, 12)
           .map(mapEntry),
         announcements: allEntries
-          .filter((e: any) => e.category === 'announcements')
+          .filter((e: any) => (e.fields?.category || e.category) === 'announcements')
           .map((e: any) => ({ ...mapEntry(e), text: e.title })),
         events: allEntries
-          .filter((e: any) => e.category === 'events')
+          .filter((e: any) => (e.fields?.category || e.category) === 'events')
           .map(mapEntry),
         corruption: allEntries
           .filter((e: any) => e.category === 'corruption')
@@ -81,16 +82,18 @@ export const homeApi = {
 
   getFacultiesData: async (): Promise<HomeFacultiesData> => {
     try {
-      const response = await apiClient.get('/collections/faculties/entries', {
+      const projectId = process.env.REACT_APP_PROJECT_ID;
+      const response = await apiClient.get(`/projects/${projectId}/content/faculties`, {
         params: { with: 'icon' }
       });
+      const data = Array.isArray(response.data) ? response.data : response.data.data;
       return {
-        faculties: response.data.data.map((entry: any) => ({
-          id: entry.id || entry.uuid,
-          name: entry.name,
-          color: entry.color || 'from-sky-500 to-indigo-500',
-          image: entry.icon?.url || '',
-          iconImage: entry.icon?.url || '',
+        faculties: data.map((entry: any) => ({
+          id: entry.uuid || entry.id,
+          name: entry.fields?.name || entry.name,
+          color: entry.fields?.color || 'from-sky-500 to-indigo-500',
+          image: (Array.isArray(entry.fields?.icon) ? entry.fields.icon[0]?.url : (entry.fields?.icon?.url || '')) || '/images/logo.png',
+          iconImage: (Array.isArray(entry.fields?.icon) ? entry.fields.icon[0]?.url : (entry.fields?.icon?.url || '')) || '/images/logo.png',
         }))
       };
     } catch (error) {

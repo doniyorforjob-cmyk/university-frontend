@@ -1,8 +1,21 @@
 import apiClient from '../client';
 import { ContentBlock } from '@/components/shared/ContentBuilder';
 
-export const fetchUniversityContentBlocks = async (layout: 'grid' | 'accordion' | 'cards' = 'grid'): Promise<ContentBlock[]> => {
-  // TODO: Haqiqiy API so'rovi shu yerda yoziladi
-  console.warn("fetchUniversityContentBlocks: http versiyasi hali yozilmagan.");
-  return [];
+export const fetchUniversityContentData = async (): Promise<ContentBlock[]> => {
+  try {
+    const projectId = process.env.REACT_APP_PROJECT_ID;
+    const response = await apiClient.get(`/projects/${projectId}/content/university`);
+
+    const data = Array.isArray(response.data) ? response.data : response.data.data;
+
+    // Transform to ContentBlock format
+    return data.map((entry: any) => ({
+      type: entry.fields?.type || 'text',
+      content: entry.fields?.content || entry.content,
+      data: entry.fields?.data || entry.data
+    }));
+  } catch (error) {
+    console.error("University content fetch error:", error);
+    return [];
+  }
 };

@@ -111,9 +111,9 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
           width={width}
           height={height}
           loading={lazy ? 'lazy' : 'eager'}
-          onLoad={handleLoad} 
+          onLoad={handleLoad}
           onError={handleError}
-          className={`${isLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300 w-full h-full object-cover`}
+          className={`${className} w-full h-full object-cover`}
           style={{
             backgroundImage: !isLoaded ? `url(${getPlaceholder()})` : undefined,
             backgroundSize: 'cover',
@@ -130,7 +130,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
       ref={imgRef}
       src={src}
       alt={alt}
-      className={`${className} ${isLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300 w-full h-full object-cover`} 
+      className={`${className} w-full h-full object-cover`}
       width={width}
       height={height}
       loading={lazy ? 'lazy' : 'eager'}

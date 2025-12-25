@@ -311,11 +311,11 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
         <div
           className="flex items-start justify-between border-b border-gray-200 transition-colors py-4"
         >
-          <div className="w-40 h-36 flex-shrink-0">
+          <div className="w-40 h-36 flex-shrink-0 bg-gray-50 rounded overflow-hidden">
             <OptimizedImage
-              src={item.image || 'https://via.placeholder.com/400x400/cccccc/000000?text=Rasm+Yuklanmadi'}
+              src={item.image || '/images/logo.png'}
               alt={item.title}
-              className="w-full h-full object-cover rounded"
+              className={`w-full h-full ${item.image === '/images/logo.png' ? 'object-contain p-2' : 'object-cover'}`}
               width={160}
               height={144}
               lazy={true}
@@ -378,11 +378,11 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
       >
         <div className="absolute bottom-0 left-0 h-1 bg-secondary w-[10%] group-hover:w-full transition-all duration-700 ease-out"></div>
         <div className="overflow-hidden relative block">
-          <AspectRatio ratio={4 / 3}>
+          <AspectRatio ratio={4 / 3} className="bg-gray-50">
             <OptimizedImage
-              src={item.image || 'https://via.placeholder.com/400x400/cccccc/000000?text=Rasm+Yuklanmadi'}
+              src={item.image || '/images/logo.png'}
               alt={item.title}
-              className="w-full h-full object-cover"
+              className={`w-full h-full ${item.image === '/images/logo.png' ? 'object-contain p-8' : 'object-cover'}`}
               width={400}
               height={225}
               lazy={true}

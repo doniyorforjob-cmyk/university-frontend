@@ -2,13 +2,66 @@ import apiClient from '../client';
 import { Announcement, AnnouncementDetail } from '../../types/announcement.types';
 
 export const getAnnouncements = async (): Promise<Announcement[]> => {
-  // TODO: Haqiqiy API so'rovi shu yerda yoziladi
-  console.warn("getAnnouncements: http versiyasi hali yozilmagan.");
-  return [];
+  try {
+    const projectId = process.env.REACT_APP_PROJECT_ID;
+    const response = await apiClient.get(`/projects/${projectId}/content/news`, {
+      params: {
+        'filter[category][eq]': 'announcements',
+        with: 'image'
+      }
+    });
+
+    const data = Array.isArray(response.data) ? response.data : response.data.data;
+
+    return data.map((entry: any) => ({
+      id: entry.uuid || entry.id,
+      slug: entry.fields?.slug || entry.slug,
+      title: entry.fields?.title || entry.title,
+      image_url: (Array.isArray(entry.fields?.image) ? entry.fields.image[0]?.url : (entry.fields?.image?.url || '')) || '/images/logo.png',
+      description: entry.fields?.content ? entry.fields.content.substring(0, 150) + '...' : '',
+      published_at: entry.fields?.date || entry.published_at || entry.created_at,
+      category: 'announcements'
+    }));
+  } catch (error) {
+    console.error("Announcements fetch error:", error);
+    return [];
+  }
 };
 
 export const getAnnouncementBySlug = async (slug: string): Promise<AnnouncementDetail | undefined> => {
-  // TODO: Haqiqiy API so'rovi shu yerda yoziladi
-  console.warn("getAnnouncementBySlug: http versiyasi hali yozilmagan.");
-  return undefined;
+  try {
+    const projectId = process.env.REACT_APP_PROJECT_ID;
+    const response = await apiClient.get(`/projects/${projectId}/content/news`, {
+      params: {
+        'filter[slug][eq]': slug,
+        'filter[category][eq]': 'announcements',
+        with: 'image,gallery'
+      }
+    });
+
+    const data = Array.isArray(response.data) ? response.data : response.data.data;
+    const entry = data[0];
+    if (!entry) return undefined;
+
+    return {
+      id: entry.uuid || entry.id,
+      slug: entry.fields?.slug || entry.slug,
+      title: entry.fields?.title || entry.title,
+      image_url: (Array.isArray(entry.fields?.image) ? entry.fields.image[0]?.url : (entry.fields?.image?.url || '')) || '/images/logo.png',
+      excerpt: entry.fields?.content ? entry.fields.content.substring(0, 150) + '...' : '',
+      published_at: entry.fields?.date || entry.published_at || entry.created_at,
+      views: entry.fields?.views || 0,
+      category: {
+        id: 1,
+        name: 'announcements'
+      },
+      content: entry.fields?.content || '',
+      author: {
+        name: entry.fields?.author || 'Matbuot xizmati'
+      }
+    };
+  } catch (error) {
+    console.error("Announcement detail fetch error:", error);
+    return undefined;
+  }
 };
