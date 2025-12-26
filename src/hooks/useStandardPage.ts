@@ -13,7 +13,7 @@ export const useStandardPage = <T = any>(
   }
 ) => {
   const {
-    ttlMinutes = 15,
+    ttlMinutes = 0.5,
     enabled = true
   } = options || {};
 

@@ -1,7 +1,7 @@
 import apiClient from '../client';
 import { HomeSectionBlock, HomeSectionType } from '../../pages/Home/types';
 import { HomeHeroData, HomeStatsData, HomeNewsData, HomeFacultiesData, HomeVideoGalleryData, HomeMediaData, HomeInteractiveServicesData, HomeUniversitySystemsData } from '../../types/home.types';
-import { homeApi as mockHomeApi } from '../mock/home.mock';
+
 
 export const homeApi = {
   getHomeSections: async (): Promise<HomeSectionBlock[]> => {
@@ -21,9 +21,8 @@ export const homeApi = {
       // The transformer is robust enough to handle different shapes.
       return response.data;
     } catch (error) {
-      console.error('Error fetching hero data from API. Falling back to mock data.', error);
-      // Fallback to mock data to ensure the UI doesn't break
-      return mockHomeApi.getHeroData();
+      console.error('Error fetching hero data from API:', error);
+      throw error;
     }
   },
 
@@ -41,10 +40,36 @@ export const homeApi = {
   getNewsData: async (): Promise<HomeNewsData> => {
     try {
       const projectId = process.env.REACT_APP_PROJECT_ID;
-      const response = await apiClient.get(`/projects/${projectId}/content/news`, {
-        params: { with: 'image', per_page: 50 }
-      });
-      const allEntries = Array.isArray(response.data) ? response.data : response.data.data;
+      const currentLocale = localStorage.getItem('locale') || 'en';
+
+      let allEntries;
+      if (currentLocale !== 'en') {
+        try {
+          const [resLocalized, resEnglish] = await Promise.all([
+            apiClient.get(`/projects/${projectId}/content/news`, {
+              params: { with: 'image', per_page: 12 }
+            }),
+            apiClient.get(`/projects/${projectId}/content/news`, {
+              params: { with: 'image', per_page: 12, locale: 'en' }
+            })
+          ]);
+
+          const dataLocalized = Array.isArray(resLocalized.data) ? resLocalized.data : resLocalized.data.data;
+          const dataEnglish = Array.isArray(resEnglish.data) ? resEnglish.data : resEnglish.data.data;
+
+          allEntries = (dataLocalized && dataLocalized.length > 0) ? dataLocalized : dataEnglish;
+        } catch (e) {
+          const response = await apiClient.get(`/projects/${projectId}/content/news`, {
+            params: { with: 'image', per_page: 12 }
+          });
+          allEntries = Array.isArray(response.data) ? response.data : response.data.data;
+        }
+      } else {
+        const response = await apiClient.get(`/projects/${projectId}/content/news`, {
+          params: { with: 'image', per_page: 12 }
+        });
+        allEntries = Array.isArray(response.data) ? response.data : response.data.data;
+      }
 
       const mapEntry = (entry: any) => ({
         id: entry.uuid || entry.id,
@@ -76,7 +101,7 @@ export const homeApi = {
       };
     } catch (error) {
       console.error('Error fetching news data:', error);
-      return mockHomeApi.getNewsData();
+      throw error;
     }
   },
 
@@ -98,7 +123,7 @@ export const homeApi = {
       };
     } catch (error) {
       console.error('Error fetching faculties data:', error);
-      return mockHomeApi.getFacultiesData();
+      throw error;
     }
   },
 

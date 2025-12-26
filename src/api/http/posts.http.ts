@@ -10,21 +10,40 @@ export const getPosts = async (category?: PostCategory): Promise<Post[]> => {
       params['filter[category][eq]'] = category;
     }
 
-    let response = await apiClient.get(`/projects/${projectId}/content/news`, { params });
+    // Start localized and English fallback requests in parallel if current locale is not English
+    const currentLocale = params.locale || localStorage.getItem('locale') || 'en';
 
-    let data = Array.isArray(response.data) ? response.data : response.data.data;
+    let data;
+    if (currentLocale !== 'en') {
+      try {
+        const [resLocalized, resEnglish] = await Promise.all([
+          apiClient.get(`/projects/${projectId}/content/news`, { params }),
+          apiClient.get(`/projects/${projectId}/content/news`, {
+            params: { ...params, locale: 'en' }
+          })
+        ]);
 
-    // Fallback to English if no data found and current locale is not English
-    if ((!data || data.length === 0) && localStorage.getItem('locale') !== 'en') {
-      console.log('No news found in current locale, trying English fallback for list...');
-      response = await apiClient.get(`/projects/${projectId}/content/news`, {
-        params: {
-          with: 'image',
-          'filter[category][eq]': category,
-          locale: 'en'
-        }
-      });
+        const dataLocalized = Array.isArray(resLocalized.data) ? resLocalized.data : resLocalized.data.data;
+        const dataEnglish = Array.isArray(resEnglish.data) ? resEnglish.data : resEnglish.data.data;
+
+        data = (dataLocalized && dataLocalized.length > 0) ? dataLocalized : dataEnglish;
+      } catch (e) {
+        // Fallback to single request if parallel fails
+        const response = await apiClient.get(`/projects/${projectId}/content/news`, { params });
+        data = Array.isArray(response.data) ? response.data : response.data.data;
+      }
+    } else {
+      const response = await apiClient.get(`/projects/${projectId}/content/news`, { params });
       data = Array.isArray(response.data) ? response.data : response.data.data;
+    }
+
+    // FINAL FALLBACK: If category was 'news' and returned 0 items, try WITHOUT category filter
+    if (category === 'news' && (!data || data.length === 0)) {
+      console.log("No items found with category 'news', trying unfiltered fetch...");
+      const fallbackRes = await apiClient.get(`/projects/${projectId}/content/news`, {
+        params: { with: 'image', per_page: 50 }
+      });
+      data = Array.isArray(fallbackRes.data) ? fallbackRes.data : fallbackRes.data.data;
     }
 
     return data.map((entry: any) => ({
@@ -46,27 +65,35 @@ export const getPosts = async (category?: PostCategory): Promise<Post[]> => {
 export const getPostBySlug = async (slug: string): Promise<PostDetail | undefined> => {
   try {
     const projectId = process.env.REACT_APP_PROJECT_ID;
-    let response = await apiClient.get(`/projects/${projectId}/content/news`, {
-      params: {
-        'filter[slug][eq]': slug,
-        with: 'image,gallery'
+    // Start localized and English fallback requests in parallel if current locale is not English
+    const currentLocale = localStorage.getItem('locale') || 'en';
+
+    let data;
+    if (currentLocale !== 'en') {
+      try {
+        const [resLocalized, resEnglish] = await Promise.all([
+          apiClient.get(`/projects/${projectId}/content/news`, {
+            params: { 'filter[slug][eq]': slug, with: 'image,gallery' }
+          }),
+          apiClient.get(`/projects/${projectId}/content/news`, {
+            params: { 'filter[slug][eq]': slug, with: 'image,gallery', locale: 'en' }
+          })
+        ]);
+
+        const dataLocalized = Array.isArray(resLocalized.data) ? resLocalized.data : resLocalized.data.data;
+        const dataEnglish = Array.isArray(resEnglish.data) ? resEnglish.data : resEnglish.data.data;
+
+        data = (dataLocalized && dataLocalized.length > 0) ? dataLocalized : dataEnglish;
+      } catch (e) {
+        // Fallback to single request if parallel fails
+        const response = await apiClient.get(`/projects/${projectId}/content/news`, {
+          params: { 'filter[slug][eq]': slug, with: 'image,gallery' }
+        });
+        data = Array.isArray(response.data) ? response.data : response.data.data;
       }
-    });
-
-
-
-    // Handle both array response and paginated response
-    let data = Array.isArray(response.data) ? response.data : response.data.data;
-
-    // Retry with English locale if not found in current locale
-    if ((!data || data.length === 0) && localStorage.getItem('locale') !== 'en') {
-      console.log('Post not found in current locale, trying English fallback...');
-      response = await apiClient.get(`/projects/${projectId}/content/news`, {
-        params: {
-          'filter[slug][eq]': slug,
-          with: 'image,gallery',
-          locale: 'en'
-        }
+    } else {
+      const response = await apiClient.get(`/projects/${projectId}/content/news`, {
+        params: { 'filter[slug][eq]': slug, with: 'image,gallery' }
       });
       data = Array.isArray(response.data) ? response.data : response.data.data;
     }

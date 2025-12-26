@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useWebPSupport } from '../../hooks/useWebPSupport';
-import { getWebPUrl, createImageObserver, generateBlurPlaceholder } from '../../utils/imageOptimization';
+import { getWebPUrl, getAvifUrl, createImageObserver, generateBlurPlaceholder } from '../../utils/imageOptimization';
 
 interface OptimizedImageProps {
   src: string;
@@ -8,6 +8,7 @@ interface OptimizedImageProps {
   className?: string;
   width?: number;
   height?: number;
+  aspectRatio?: number; // e.g., 16/9, 4/3, 1/1
   lazy?: boolean;
   placeholder?: string;
   onLoad?: () => void;
@@ -24,6 +25,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   className = '',
   width,
   height,
+  aspectRatio,
   lazy = true,
   placeholder,
   onLoad,
@@ -66,82 +68,78 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   // Placeholder yaratish
   const getPlaceholder = () => {
     if (placeholder) return placeholder;
-    if (width && height) {
-      return generateBlurPlaceholder(width / 10, height / 10);
-    }
-    return generateBlurPlaceholder();
+    return generateBlurPlaceholder(20, 20);
   };
 
-  // Agar WebP loading bo'lsa yoki lazy loading ishlamayotgan bo'lsa
-  if (webpLoading || (lazy && !isInView)) {
-    return (
-      <div
-        ref={imgRef}
-        className={`bg-gray-200 animate-pulse ${className}`}
-        style={{ width, height }}
-        role="img"
-        aria-label={alt}
-      />
-    );
-  }
+  const avifUrl = getAvifUrl(src);
+  const webpUrl = getWebPUrl(src);
+  const hasSources = avifUrl !== src || webpUrl !== src;
 
-  // Xatolik bo'lganda
-  if (hasError) {
-    return (
-      <div
-        className={`bg-gray-100 flex items-center justify-center text-gray-400 text-sm ${className}`}
-        style={{ width, height }}
-        role="img"
-        aria-label={`${alt} - Rasm yuklanmadi`}
-      >
-        Rasm yuklanmadi
-      </div>
-    );
-  }
-
-  // WebP qo'llab-quvvatlaydigan brauzerlar uchun
-  if (supportsWebP) {
-    return (
-      <picture className={className}>
-        <source srcSet={getWebPUrl(src)} type="image/webp" />
-        <img
-          ref={imgRef}
-          src={src}
-          alt={alt}
-          width={width}
-          height={height}
-          loading={lazy ? 'lazy' : 'eager'}
-          onLoad={handleLoad}
-          onError={handleError}
-          className={`${className} w-full h-full object-cover`}
-          style={{
-            backgroundImage: !isLoaded ? `url(${getPlaceholder()})` : undefined,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        />
-      </picture>
-    );
-  }
-
-  // Oddiy rasm
-  return (
+  // Render content
+  const renderImage = () => (
     <img
       ref={imgRef}
       src={src}
       alt={alt}
-      className={`${className} w-full h-full object-cover`}
       width={width}
       height={height}
       loading={lazy ? 'lazy' : 'eager'}
       onLoad={handleLoad}
       onError={handleError}
+      className={`${className} w-full h-full object-cover transition-all duration-500 ${isLoaded ? 'opacity-100 blur-0' : 'opacity-0 blur-lg'
+        }`}
       style={{
         backgroundImage: !isLoaded ? `url(${getPlaceholder()})` : undefined,
         backgroundSize: 'cover',
-        backgroundPosition: 'center',
       }}
     />
+  );
+
+  // Xatolik bo'lganda - universitet logosini ko'rsatish
+  if (hasError) {
+    return (
+      <div
+        className={`relative bg-gray-50 flex items-center justify-center ${className}`}
+        style={aspectRatio ? { aspectRatio: aspectRatio.toString(), width: width || '100%' } : { width, height }}
+      >
+        <img
+          src="/images/logo.png"
+          alt="NDTU Logo"
+          className="absolute inset-0 m-auto w-1/2 h-1/2 object-contain opacity-50"
+        />
+      </div>
+    );
+  }
+
+  // Skeletons
+  if (!isInView && lazy) {
+    return (
+      <div
+        ref={imgRef}
+        className={`bg-gray-200 animate-pulse ${className}`}
+        style={{ width, height }}
+      />
+    );
+  }
+
+  return (
+    <div
+      className={`relative overflow-hidden ${className}`}
+      style={aspectRatio ? { aspectRatio: aspectRatio.toString(), width: width || '100%' } : { width, height }}
+    >
+      {!isLoaded && (
+        <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+      )}
+      {hasSources ? (
+        <picture>
+          {avifUrl !== src && <source srcSet={avifUrl} type="image/avif" />}
+          {webpUrl !== src && <source srcSet={webpUrl} type="image/webp" />}
+          {renderImage()}
+        </picture>
+      ) : (
+        renderImage()
+      )}
+    </div>
   );
 };
 

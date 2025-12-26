@@ -25,7 +25,7 @@ export const useHomeSections = () => {
   const heroSection = useStandardSection('hero',
     () => homeApi.getHeroData(),
     {
-      ttlMinutes: 30, // Hero less frequent updates
+      ttlMinutes: 0.5, // Hero less frequent updates
       transformData: transformHeroData
     }
   );
@@ -33,7 +33,7 @@ export const useHomeSections = () => {
   const statsSection = useStandardSection('stats',
     () => homeApi.getStatsData(),
     {
-      ttlMinutes: 15,
+      ttlMinutes: 0.5,
       transformData: transformStatsData
     }
   );
@@ -41,14 +41,14 @@ export const useHomeSections = () => {
   const newsSection = useStandardSection('news',
     () => homeApi.getNewsData(),
     {
-      ttlMinutes: 10 // News updates more frequently
+      ttlMinutes: 0.5 // News updates more frequently
     }
   );
 
   const facultiesSection = useStandardSection('faculties',
     () => homeApi.getFacultiesData(),
     {
-      ttlMinutes: 60, // Faculty data rarely changes
+      ttlMinutes: 0.5, // Faculty data rarely changes
       transformData: transformFacultiesData
     }
   );
@@ -56,7 +56,7 @@ export const useHomeSections = () => {
   const videoGallerySection = useStandardSection('video-gallery',
     () => homeApi.getVideoGalleryData(),
     {
-      ttlMinutes: 30,
+      ttlMinutes: 0.5,
       transformData: transformVideoGalleryData
     }
   );
@@ -64,7 +64,7 @@ export const useHomeSections = () => {
   const interactiveServicesSection = useStandardSection('interactive-services',
     () => homeApi.getInteractiveServicesData(),
     {
-      ttlMinutes: 60, // Services rarely change
+      ttlMinutes: 0.5, // Services rarely change
       transformData: transformInteractiveServicesData
     }
   );
@@ -72,7 +72,7 @@ export const useHomeSections = () => {
   const universitySystemsSection = useStandardSection('university-systems',
     () => homeApi.getUniversitySystemsData(),
     {
-      ttlMinutes: 60, // Systems rarely change
+      ttlMinutes: 0.5, // Systems rarely change
       transformData: transformUniversitySystemsData
     }
   );
@@ -102,13 +102,13 @@ export const useHomeSections = () => {
 
   // Combined loading state
   const loading = heroSection.loading || statsSection.loading || newsSection.loading ||
-                  facultiesSection.loading || videoGallerySection.loading || interactiveServicesSection.loading ||
-                  universitySystemsSection.loading;
+    facultiesSection.loading || videoGallerySection.loading || interactiveServicesSection.loading ||
+    universitySystemsSection.loading;
 
   // Combined error state (first error encountered)
   const error = heroSection.error || statsSection.error || newsSection.error ||
-                facultiesSection.error || videoGallerySection.error || interactiveServicesSection.error ||
-                universitySystemsSection.error;
+    facultiesSection.error || videoGallerySection.error || interactiveServicesSection.error ||
+    universitySystemsSection.error;
 
   // Refetch all sections
   const refetch = () => {

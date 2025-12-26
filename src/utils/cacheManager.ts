@@ -22,7 +22,7 @@ class CacheManager {
   private static instance: CacheManager;
   private cache = new Map<string, CacheItem>();
   private readonly VERSION = 'v1.0';
-  private readonly DEFAULT_TTL = 15 * 60 * 1000; // 15 minutes
+  private readonly DEFAULT_TTL = 30 * 1000; // 30 seconds (0.5 minutes)
   private readonly MAX_MEMORY_ITEMS = 100;
   private hits = 0;
   private misses = 0;
@@ -57,7 +57,7 @@ class CacheManager {
     toRemove.forEach(([key]) => this.cache.delete(key));
   }
 
-  set(key: string, data: any, ttlMinutes: number = 15): void {
+  set(key: string, data: any, ttlMinutes: number = 0.5): void {
     const expiresAt = Date.now() + (ttlMinutes * 60 * 1000);
     const size = this.calculateSize(data);
 
@@ -206,11 +206,11 @@ class CacheManager {
   }
 
   // Background cleanup
-  startBackgroundCleanup(intervalMinutes: number = 30): () => void {
+  startBackgroundCleanup(intervalSeconds: number = 30): () => void {
     const interval = setInterval(() => {
       this.cleanupStorage();
       this.cleanupMemory();
-    }, intervalMinutes * 60 * 1000);
+    }, intervalSeconds * 1000);
 
     return () => clearInterval(interval);
   }
@@ -219,7 +219,7 @@ class CacheManager {
   async cachedApiCall<T>(
     key: string,
     apiCall: () => Promise<T>,
-    ttlMinutes: number = 15
+    ttlMinutes: number = 0.5
   ): Promise<T> {
     // Check cache first
     const cached = this.get(key);

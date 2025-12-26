@@ -12,7 +12,7 @@ interface SectionDataCache {
 
 class SectionDataCacheManager {
   private static cache: SectionDataCache = {};
-  private static readonly DEFAULT_TTL = 15 * 60 * 1000; // 15 minutes
+  private static readonly DEFAULT_TTL = 30 * 1000; // 30 seconds
 
   static get(key: string): any | null {
     const cached = this.cache[key];
@@ -55,7 +55,7 @@ export const useSectionData = (
   options: UseSectionDataOptions = {}
 ) => {
   const {
-    ttl = 15 * 60 * 1000,
+    ttl = 30 * 1000,
     enabled = true,
     refetchOnMount = false,
   } = options;

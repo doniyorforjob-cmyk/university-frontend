@@ -12,6 +12,9 @@ import { registerServiceWorker } from './utils/serviceWorker';
 import { observeWebVitals, reportPerformance } from './utils/performance';
 import { setupResourceHints } from './utils/preload';
 import { disableConsoleInProduction } from './utils/logger';
+import { fetchNavItems } from './api/http/navbar.http';
+import { homeApi } from './api/http/home.http';
+import { cacheManager } from './utils/cacheManager';
 
 // Disable console logs in production
 disableConsoleInProduction();
@@ -26,6 +29,21 @@ observeWebVitals((metrics) => {
 // Resource hints for performance
 setupResourceHints();
 
+// Prefetch critical data
+const prefetchData = async () => {
+  const locale = localStorage.getItem('locale') || 'en';
+  const { prefetchService } = await import('./services/prefetchService');
+
+  // Parallel prefetch using the new service
+  await Promise.all([
+    prefetchService.prefetchNavbar(locale),
+    prefetchService.prefetchHomeNews(),
+    prefetchService.prefetchFaculties(),
+    prefetchService.prefetchNewsPage()
+  ]);
+};
+prefetchData();
+
 // Initialize AOS
 AOS.init({
   duration: 800,
@@ -39,10 +57,8 @@ if (process.env.NODE_ENV === 'production') {
   registerServiceWorker();
 }
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
-root.render(
+const rootElement = document.getElementById('root') as HTMLElement;
+const app = (
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <CachedApiProvider>
@@ -53,3 +69,10 @@ root.render(
     </QueryClientProvider>
   </React.StrictMode>
 );
+
+if (rootElement.hasChildNodes()) {
+  ReactDOM.hydrateRoot(rootElement, app);
+} else {
+  const root = ReactDOM.createRoot(rootElement);
+  root.render(app);
+}

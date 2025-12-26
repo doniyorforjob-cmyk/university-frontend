@@ -429,8 +429,8 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
     );
   };
 
-  if (loading) {
-    return <GenericPageSkeleton layoutType="grid" gridItems={itemsPerPage} showSidebar={false} showBanner={false} />;
+  if (loading && items.length === 0) {
+    return <GenericPageSkeleton layoutType="grid" gridItems={itemsPerPage} showSidebar={false} showBanner={false} noContainer={true} />;
   }
 
   return (

@@ -3,9 +3,9 @@
  * PWA features va performance optimization
  */
 
-const CACHE_NAME = 'university-frontend-v1';
-const STATIC_CACHE = 'static-v1';
-const DYNAMIC_CACHE = 'dynamic-v1';
+const CACHE_NAME = 'university-frontend-v2';
+const STATIC_CACHE = 'static-v2';
+const DYNAMIC_CACHE = 'dynamic-v2';
 
 // Static assets to cache immediately
 const STATIC_ASSETS = [
@@ -25,6 +25,9 @@ const API_CACHE_PATTERNS = [
   /\/api\/navbar/,
   /\/api\/stats/,
   /\/api\/structure/,
+  /\/api\/posts/,
+  /\/api\/sections/,
+  /\/api\/content/,
 ];
 
 // Install event - cache static assets
@@ -74,8 +77,8 @@ self.addEventListener('fetch', (event) => {
 
   // Skip external requests (except images from CDN)
   if (!url.origin.includes(self.location.origin) &&
-      !url.hostname.includes('cdn') &&
-      !url.hostname.includes('img')) return;
+    !url.hostname.includes('cdn') &&
+    !url.hostname.includes('img')) return;
 
   // Handle API requests
   if (API_CACHE_PATTERNS.some(pattern => pattern.test(url.pathname))) {
@@ -97,8 +100,8 @@ self.addEventListener('fetch', (event) => {
 
   // Default strategy - Cache First for static, Network First for dynamic
   if (request.destination === 'document' ||
-      request.destination === 'script' ||
-      request.destination === 'style') {
+    request.destination === 'script' ||
+    request.destination === 'style') {
     event.respondWith(handleStaticRequest(request));
   } else {
     event.respondWith(handleDynamicRequest(request));
@@ -110,17 +113,20 @@ async function handleApiRequest(request) {
   try {
     // Try network first
     const networkResponse = await fetch(request);
+
+    // If response is valid (including 4xx/5xx), return it
+    // We only cache successful 200 responses
     if (networkResponse.ok) {
-      // Cache successful responses
       const cache = await caches.open(DYNAMIC_CACHE);
       cache.put(request, networkResponse.clone());
-      return networkResponse;
     }
+
+    return networkResponse;
   } catch (error) {
     console.log('Network failed, trying cache for API:', request.url);
   }
 
-  // Fallback to cache
+  // Fallback to cache (only on network failure/offline)
   const cachedResponse = await caches.match(request);
   if (cachedResponse) {
     return cachedResponse;

@@ -12,6 +12,8 @@ interface UseCachedApiOptions {
   refetchInterval?: number;
 }
 
+const inflightRequests = new Map<string, Promise<any>>();
+
 export const useCachedApi = <T = any>({
   key,
   fetcher,
@@ -24,18 +26,13 @@ export const useCachedApi = <T = any>({
 }: UseCachedApiOptions) => {
 
   const { cacheManager, config } = useGlobalCache();
-  const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState(enabled);
+  const [data, setData] = useState<T | null>(() => cacheManager.get(key));
+  const [loading, setLoading] = useState(() => enabled && !cacheManager.has(key));
   const [error, setError] = useState<Error | null>(null);
 
   const ttl = ttlMinutes || config.defaultTtl;
 
   const fetchData = useCallback(async (force = false) => {
-    if (!enabled) return;
-
-    setLoading(true);
-    setError(null);
-
     try {
       // Check cache first (unless forcing refresh)
       if (!force) {
@@ -48,14 +45,30 @@ export const useCachedApi = <T = any>({
         }
       }
 
-      // Fetch fresh data
-      const freshData = await fetcher();
-      setData(freshData);
+      setLoading(true);
+      setError(null);
 
-      // Cache the data
-      cacheManager.set(key, freshData, ttl);
+      // Fetch fresh data (with deduplication)
+      let requestPromise = inflightRequests.get(key);
 
-      onSuccess?.(freshData);
+      if (!requestPromise) {
+        requestPromise = fetcher();
+        inflightRequests.set(key, requestPromise);
+
+        try {
+          const freshData = await requestPromise;
+          setData(freshData);
+          cacheManager.set(key, freshData, ttl);
+          onSuccess?.(freshData);
+        } finally {
+          inflightRequests.delete(key);
+        }
+      } else {
+        // Reuse existing request
+        const freshData = await requestPromise;
+        setData(freshData);
+        onSuccess?.(freshData);
+      }
 
     } catch (err) {
       const error = err as Error;

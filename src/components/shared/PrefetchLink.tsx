@@ -10,6 +10,7 @@ interface PrefetchLinkProps {
   className?: string;
   onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
   onMouseEnter?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+  onMouseLeave?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
   onFocus?: (e: React.FocusEvent<HTMLAnchorElement>) => void;
 }
 
@@ -24,6 +25,7 @@ const PrefetchLink: React.FC<PrefetchLinkProps> = ({
   children,
   onClick,
   onMouseEnter,
+  onMouseLeave,
   onFocus,
   ...props
 }) => {
@@ -41,6 +43,10 @@ const PrefetchLink: React.FC<PrefetchLinkProps> = ({
     onMouseEnter?.(e);
   }, [handlePrefetch, onMouseEnter]);
 
+  const handleMouseLeave = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+    onMouseLeave?.(e);
+  }, [onMouseLeave]);
+
   const handleFocus = useCallback((e: React.FocusEvent<HTMLAnchorElement>) => {
     handlePrefetch();
     onFocus?.(e);
@@ -51,6 +57,7 @@ const PrefetchLink: React.FC<PrefetchLinkProps> = ({
       to={to}
       onClick={onClick}
       onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       onFocus={handleFocus}
       {...props}
     >

@@ -39,7 +39,7 @@ export const CachedApiProvider: React.FC<CachedApiProviderProps> = ({
 }) => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [cacheConfig, setCacheConfigState] = useState<CacheConfig>({
-    defaultTtl: 15, // 15 minutes
+    defaultTtl: 0.5, // 30 seconds
     maxCacheSize: 50 * 1024 * 1024, // 50MB
     enableOfflineMode: true,
     enableBackgroundSync: false,
@@ -65,7 +65,7 @@ export const CachedApiProvider: React.FC<CachedApiProviderProps> = ({
   useEffect(() => {
     if (!cacheConfig.enableAutoCleanup) return;
 
-    const cleanup = cacheManager.startBackgroundCleanup(30); // Every 30 minutes
+    const cleanup = cacheManager.startBackgroundCleanup(30); // Every 30 seconds
     return cleanup;
   }, [cacheConfig.enableAutoCleanup]);
 

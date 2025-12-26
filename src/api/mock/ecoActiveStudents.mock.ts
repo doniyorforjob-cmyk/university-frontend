@@ -56,7 +56,7 @@ export const fetchEcoActiveStudentsData = async (): Promise<ContentBlock[]> => {
 
         return simulateApiCall(blocks, 300);
       },
-      30 // 30 daqiqa cache
+      0.5 // 30 soniya cache
     );
   } catch (error) {
     console.error('Ekofaol talabalar ma\'lumotlarini yuklashda xatolik:', error);

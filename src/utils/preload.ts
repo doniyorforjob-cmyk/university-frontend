@@ -92,12 +92,14 @@ export const setupResourceHints = () => {
     'fonts.gstatic.com',
     'www.google-analytics.com',
     'www.googletagmanager.com',
+    'new.namdtu.uz',
   ]);
 
   // Preconnect to critical origins
   preconnectOrigins([
     'https://fonts.googleapis.com',
     'https://fonts.gstatic.com',
+    'https://new.namdtu.uz',
   ]);
 
   // Preload critical fonts

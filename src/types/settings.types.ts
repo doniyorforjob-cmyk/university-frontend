@@ -28,6 +28,9 @@ export interface FooterSettings {
 }
 
 export interface GlobalSettings {
+    logo?: string;
+    siteName?: string;
+    siteDescription?: string;
     contacts: ContactSettings;
     socials: SocialLink[];
     footer: FooterSettings;

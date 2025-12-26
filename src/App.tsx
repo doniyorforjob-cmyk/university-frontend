@@ -28,6 +28,7 @@ const EcoActiveStudentsPage = React.lazy(() => import('./pages/EcoActiveStudents
 const UniversityPage = React.lazy(() => import('./pages/University'));
 const InformationServicesPage = React.lazy(() => import('./pages/InformationServices'));
 const PhotoDetailPage = React.lazy(() => import('./pages/PhotoDetail'));
+const ServerError = React.lazy(() => import('./pages/Error/ServerError'));
 
 function App() {
   const location = useLocation();
@@ -96,6 +97,8 @@ function App() {
                   </Route>
                   {/* 404 Catch-All Route - Eng oxirida bo'lishi shart */}
                   {/* 404 Catch-All Route - Eng oxirida bo'lishi shart */}
+                  {/* 404 Catch-All Route - Eng oxirida bo'lishi shart */}
+                  <Route path="/server-error" element={<ServerError />} />
                   <Route path="*" element={<NotFound />} />
                 </Route> {/* End of GlobalLayout route */}
               </Routes>

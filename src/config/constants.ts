@@ -94,21 +94,21 @@ export const CACHE_KEYS = {
 } as const;
 
 export const CACHE_TIME = {
-  short: 5 * 60 * 1000, // 5 daqiqa
-  medium: 15 * 60 * 1000, // 15 daqiqa
-  long: 60 * 60 * 1000, // 1 soat
+  short: 30 * 1000, // 30 soniya
+  medium: 30 * 1000, // 30 soniya
+  long: 30 * 1000, // 30 soniya
 } as const;
 
 // ===== SECTION CACHE CONFIG =====
 export const SECTION_CACHE_CONFIG = {
-  'hero': { ttlMinutes: 60 }, // 1 soat - kam o'zgaradi
-  'stats': { ttlMinutes: 30 }, // 30 daqiqa - o'rtacha o'zgaradi
-  'news': { ttlMinutes: 15 }, // 15 daqiqa - tez o'zgaradi
-  'faculties': { ttlMinutes: 120 }, // 2 soat - kam o'zgaradi
-  'video-gallery': { ttlMinutes: 45 }, // 45 daqiqa - o'rtacha o'zgaradi
-  'media-gallery': { ttlMinutes: 45 }, // 45 daqiqa - o'rtacha o'zgaradi
-  'interactive-services': { ttlMinutes: 90 }, // 1.5 soat - kam o'zgaradi
-  'university-systems': { ttlMinutes: 60 }, // 1 soat - kam o'zgaradi
+  'hero': { ttlMinutes: 0.5 },
+  'stats': { ttlMinutes: 0.5 },
+  'news': { ttlMinutes: 0.5 },
+  'faculties': { ttlMinutes: 0.5 },
+  'video-gallery': { ttlMinutes: 0.5 },
+  'media-gallery': { ttlMinutes: 0.5 },
+  'interactive-services': { ttlMinutes: 0.5 },
+  'university-systems': { ttlMinutes: 0.5 },
 } as const;
 
 // ===== NEWS TABS =====

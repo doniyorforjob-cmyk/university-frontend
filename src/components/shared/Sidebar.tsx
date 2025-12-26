@@ -2,40 +2,34 @@ import React, { useState, useEffect, useMemo, memo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { fetchNavItems, NavItem } from '../../services/navbarService';
 import OptimizedImage from './OptimizedImage';
-
-// Kesh – faqat bir marta fetch qilish uchun
-let cachedNavItems: NavItem[] | null = null;
-let fetchPromise: Promise<NavItem[]> | null = null;
-
-const fetchNavItemsOnce = (): Promise<NavItem[]> => {
-  if (cachedNavItems) {
-    return Promise.resolve(cachedNavItems);
-  }
-  if (!fetchPromise) {
-    fetchPromise = fetchNavItems().then(items => {
-      cachedNavItems = items;
-      return items;
-    });
-  }
-  return fetchPromise;
-};
+import { useCachedApi } from '../../hooks/useCachedApi';
+import { useLocale } from '../../contexts/LocaleContext';
+import PrefetchLink from './PrefetchLink';
 
 const Sidebar = memo(() => {
-  const [navItems, setNavItems] = useState<NavItem[]>([]);
+  const { locale } = useLocale();
   const location = useLocation();
 
-  useEffect(() => {
-    let isMounted = true;
-    fetchNavItemsOnce().then(items => {
-      if (isMounted) {
-        setNavItems(items);
-      }
-    });
-    return () => { isMounted = false; };
-  }, []);
+  const { data: navItemsRaw, loading } = useCachedApi<NavItem[]>({
+    key: `navbar-items-${locale}`,
+    fetcher: () => fetchNavItems(locale),
+    ttlMinutes: 0.5,
+  });
+
+  const navItems = navItemsRaw || [];
 
   const informationService = useMemo(() => {
-    return navItems.find(item => item.title === 'Axborot xizmati');
+    // Find the navigation item whose title matches "Axborot xizmati" in any language
+    return navItems.find(item => {
+      if (typeof item.title === 'string') {
+        return item.title === 'Axborot xizmati';
+      }
+      // title may be an object with locale keys (e.g., { uz: 'Axborot xizmati', en: 'Information Service' })
+      if (item.title && typeof item.title === 'object') {
+        return Object.values(item.title).some(val => val === 'Axborot xizmati');
+      }
+      return false;
+    });
   }, [navItems]);
 
   const filteredChildren = useMemo(() => {
@@ -49,19 +43,38 @@ const Sidebar = memo(() => {
       const isLast = index === filteredChildren.length - 1;
 
       return (
-        <Link
+        <PrefetchLink
           key={href || index}
           to={href!}
+          prefetch={true}
+          prefetchDelay={150}
+          onMouseEnter={async () => {
+            const { prefetchService } = await import('../../services/prefetchService');
+            if (href === '/news') {
+              prefetchService.prefetchNewsPage();
+            } else if (href === '/') {
+              prefetchService.prefetchHomeNews();
+            }
+          }}
           className={`block px-8 py-3 text-lg text-gray-800 transition-all duration-200 ${isActive
             ? 'bg-secondary/10 border-l-4 border-l-secondary pl-[31px]'
             : 'hover:bg-gray-50 border-l-4 border-l-transparent pl-[31px]'
             } ${!isLast ? 'border-b border-gray-300' : ''}`}
         >
           {child.title === "E'lonlar" ? "Elonlar" : child.title}
-        </Link>
+        </PrefetchLink>
       );
     });
   }, [filteredChildren, location.pathname]);
+
+  if (loading && navItems.length === 0) {
+    return (
+      <div className="w-full space-y-4 animate-pulse">
+        <div className="bg-gray-200 h-[300px] w-full shadow-lg border border-gray-300"></div>
+        <div className="bg-gray-200 h-[200px] w-full shadow-lg border border-gray-300"></div>
+      </div>
+    );
+  }
 
   if (!informationService) return null;
 
@@ -99,12 +112,14 @@ const Sidebar = memo(() => {
             <h4 className="text-md font-bold text-gray-800 mb-2">
               Rektorga murojaat
             </h4>
-            <Link
+            <PrefetchLink
               to="/appeals"
+              prefetch={true}
+              prefetchDelay={150}
               className="inline-block px-5 py-1.5 text-sm bg-primary text-white font-semibold rounded-md hover:bg-primary-dark transition-colors"
             >
               Murojaat qilish
-            </Link>
+            </PrefetchLink>
           </div>
 
           {/* Rektor rasmi – eng pastki chegaragacha, bo‘shliq bor */}

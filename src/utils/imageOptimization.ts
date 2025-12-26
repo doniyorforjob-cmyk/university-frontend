@@ -17,18 +17,24 @@ export const supportsWebP = (): Promise<boolean> => {
 // Rasm URL'ini WebP formatiga o'zgartirish
 export const getWebPUrl = (url: string): string => {
   if (!url) return url;
-
-  // Agar allaqachon WebP bo'lsa, o'zini qaytar
   if (url.includes('.webp')) return url;
 
-  // Tashi URLlarni o'zgartirmaslik (http/https)
-  if (url.startsWith('http')) return url;
+  // Faqat local static assetlar uchun transformatsiya
+  if (url.startsWith('/static/') || url.startsWith('/images/')) {
+    return url.replace(/\.(jpg|jpeg|png|tiff)$/i, '.webp');
+  }
+  return url;
+};
 
-  // Mahalliy /images/ papkasidagi rasmlarni o'zgartirmaslik
-  if (url.startsWith('/images/')) return url;
+// Rasm URL'ini AVIF formatiga o'zgartirish
+export const getAvifUrl = (url: string): string => {
+  if (!url) return url;
+  if (url.includes('.avif')) return url;
 
-  // Fayl kengaytmasini WebP ga o'zgartirish
-  return url.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+  if (url.startsWith('/static/') || url.startsWith('/images/')) {
+    return url.replace(/\.(jpg|jpeg|png|tiff)$/i, '.avif');
+  }
+  return url;
 };
 
 // Rasm yuklash uchun optimizatsiya qilingan komponent

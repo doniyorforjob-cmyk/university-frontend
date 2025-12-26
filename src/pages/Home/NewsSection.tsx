@@ -11,6 +11,7 @@ import { AspectRatio } from '../../components/ui';
 import { OptimizedImage } from '../../components/shared';
 import { useTranslation } from 'react-i18next';
 import { AOS_CONFIG, NEWS_TABS } from '../../config/constants';
+import PrefetchLink from '../../components/shared/PrefetchLink';
 
 const AnnouncementsPreview = ({ announcements }: { announcements?: HomeNewsData['announcements'] }) => {
   const { t, i18n } = useTranslation();
@@ -29,7 +30,11 @@ const AnnouncementsPreview = ({ announcements }: { announcements?: HomeNewsData[
 
             return (
               <li key={item.id}>
-                <Link to={`/announcements/${item.id}`} className="group flex items-center p-3 bg-white hover:bg-gray-50 transition-all duration-300 border border-gray-200">
+                <PrefetchLink
+                  to={`/announcements/${item.id}`}
+                  prefetch={true}
+                  className="group flex items-center p-3 bg-white hover:bg-gray-50 transition-all duration-300 border border-gray-200"
+                >
                   <div className="flex flex-col items-center justify-center w-16 text-center flex-shrink-0">
                     <span className="text-xs font-bold text-[#0E104B] uppercase tracking-wider">{month}</span>
                     <span className="text-2xl font-extrabold text-gray-800">{day}</span>
@@ -39,17 +44,25 @@ const AnnouncementsPreview = ({ announcements }: { announcements?: HomeNewsData[
                     <p className="font-bold text-[#0E104B] transition-colors duration-300 leading-tight truncate">{item.text}</p>
                     <p className="text-sm text-gray-600 mt-1 truncate">{truncatedDescription}</p>
                   </div>
-                </Link>
+                </PrefetchLink>
               </li>
             );
           })}
         </ul>
       </div>
       <div className="mt-auto pt-8 text-center lg:text-right">
-        <Link to="/announcements" className="inline-flex items-center text-[#0E104B] font-semibold hover:underline">
+        <PrefetchLink
+          to="/announcements"
+          prefetch={true}
+          onMouseEnter={async () => {
+            const { prefetchService } = await import('../../services/prefetchService');
+            // prefetchService.prefetchAnnouncementsPage(); 
+          }}
+          className="inline-flex items-center text-[#0E104B] font-semibold hover:underline"
+        >
           {t('seeAllAnnouncements')}
           <ChevronRightIcon className="w-5 h-5 ml-1" />
-        </Link>
+        </PrefetchLink>
       </div>
     </div>
   );
@@ -98,7 +111,7 @@ const NewsSection = () => {
             'data-aos-duration': AOS_CONFIG.defaultDuration,
           })}
         >
-          <Link to={`/news/${item.slug}`} className="block h-full">
+          <PrefetchLink to={`/news/${item.slug}`} prefetch={true} className="block h-full">
             <AspectRatio ratio={1 / 1}>
               <OptimizedImage
                 className="w-full h-full object-cover"
@@ -122,7 +135,7 @@ const NewsSection = () => {
                 {item.description}
               </p>
             </div>
-          </Link>
+          </PrefetchLink>
         </div>
       ))}
     </div>

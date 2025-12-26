@@ -2,7 +2,7 @@ import React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import useClickOutside from '../../../hooks/useClickOutside';
-import { socialLinks, quickLinks } from '../../../services/navbarService';
+import { useSettingsStore } from '../../../store/settingsStore';
 import useFontSizeStore from '../../../store/fontSizeStore';
 import useThemeStore from '../../../store/themeStore';
 import Container from '../../shared/Container';
@@ -21,6 +21,7 @@ const TopHeader = () => {
     const langDropdownRef = useRef<HTMLDivElement>(null);
     const { increaseFontSize, decreaseFontSize, resetFontSize } = useFontSizeStore();
     const { isDark, toggleTheme } = useThemeStore();
+    const { settings } = useSettingsStore();
 
     useClickOutside(langDropdownRef, () => setLangDropdownOpen(false));
 
@@ -40,14 +41,27 @@ const TopHeader = () => {
     return (
         <div className="bg-primary border-b border-secondary/50 h-16 header-top">
             <Container className="h-full flex flex-col md:flex-row items-center justify-between gap-2 md:gap-4">
-                {/* Ijtimoiy tarmoqlar havolalari chap tomonga o'tkazildi */}
+                {/* Ijtimoiy tarmoqlar havolalari - Settings API dan */}
                 <div className="flex-1 flex justify-center md:justify-start items-center pb-1">
                     <div className="flex items-center space-x-4">
-                        {socialLinks.map((link: any) => (
-                            <a key={link.name} href={link.href} className="text-white hover:text-secondary transition-colors">
-                                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d={link.iconD} />
-                                </svg>
+                        {settings?.socials?.map((link: any) => (
+                            <a
+                                key={link.name}
+                                href={link.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-white hover:text-secondary transition-colors"
+                                title={link.name}
+                            >
+                                {link.icon ? (
+                                    <img
+                                        src={link.icon}
+                                        alt={link.name}
+                                        className="h-5 w-5 object-contain filter brightness-0 invert"
+                                    />
+                                ) : (
+                                    <span className="text-sm font-medium">{link.name}</span>
+                                )}
                             </a>
                         ))}
                     </div>
@@ -72,17 +86,7 @@ const TopHeader = () => {
                 <div className="flex-1 flex justify-center md:justify-end items-center mt-1 md:mt-0">
                     <div className="flex flex-wrap justify-center items-center gap-x-4 md:gap-x-6">
                         {/* Quick links - Desktop va Mobile uchun moslangan */}
-                        <div className="flex flex-wrap justify-center items-center gap-x-3 gap-y-1">
-                            {quickLinks.map((link: any) => (
-                                <a
-                                    key={link.title}
-                                    href={link.href}
-                                    className="text-white hover:text-secondary transition-colors text-sm md:text-lg"
-                                >
-                                    {link.title}
-                                </a>
-                            ))}
-                        </div>
+
                         {/* Language selector - har doim ko'rinadi */}
                         <div className="relative" ref={langDropdownRef}>
                             <button onClick={() => setLangDropdownOpen(!isLangDropdownOpen)} className="flex items-center focus:outline-none text-white hover:text-secondary">

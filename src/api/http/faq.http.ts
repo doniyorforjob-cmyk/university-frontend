@@ -1,6 +1,6 @@
 import apiClient from '../client';
 import { FAQItem } from '../../types/faq.types';
-import { faqApi as mockFaqApi } from '../mock/faq.mock';
+
 
 export const faqApi = {
     getFAQs: async (): Promise<FAQItem[]> => {
@@ -17,8 +17,8 @@ export const faqApi = {
                 category: entry.fields?.category || entry.category
             }));
         } catch (error) {
-            console.error('Error fetching FAQs from API. Falling back to mock data.', error);
-            return mockFaqApi.getFAQs();
+            console.error('Error fetching FAQs from API:', error);
+            throw error;
         }
     }
 };

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ChevronRightIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import Container from '../../../components/shared/Container';
+import PrefetchLink from '../../../components/shared/PrefetchLink';
 
 interface SectionHeaderProps {
   title: string;
@@ -39,8 +40,18 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
         <div className="h-px bg-gray-300"></div>
       </div>
       {seeAllLink && seeAllText && (
-        <Link
+        <PrefetchLink
           to={seeAllLink}
+          prefetch={true}
+          prefetchDelay={150}
+          onMouseEnter={async () => {
+            const { prefetchService } = await import('../../../services/prefetchService');
+            if (seeAllLink === '/news') {
+              prefetchService.prefetchNewsPage();
+            } else if (seeAllLink === '/announcements') {
+              // Future: prefetchService.prefetchAnnouncementsPage();
+            }
+          }}
           className="bg-secondary text-white px-4 py-2 inline-flex items-center text-lg font-semibold hover:bg-secondary-dark transition-colors group"
         >
           <span className="mr-2">{seeAllText}</span>
@@ -55,7 +66,7 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
           >
             <ChevronRightIcon className="w-6 h-6" />
           </div>
-        </Link>
+        </PrefetchLink>
       )}
     </div>
   );
@@ -176,15 +187,17 @@ export const MediaGalleryHeader: React.FC<MediaGalleryHeaderProps> = ({
       {/* Line for mobile between tabs and link */}
       <div className="md:hidden h-px bg-gray-300 mb-4"></div>
       {/* Link */}
-      <Link
+      <PrefetchLink
         to="/gallery"
+        prefetch={true}
+        prefetchDelay={150}
         className="self-start bg-secondary text-white px-4 py-2 inline-flex items-center text-lg font-semibold hover:bg-secondary-dark transition-colors group"
       >
-        <span className="mr-2">{seeAllText}</span>
-          <div className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center transition-colors duration-300 group-hover:bg-primary">
-            <ChevronRightIcon className="w-6 h-6 group-hover:text-white" />
-          </div>
-      </Link>
+        <span className="mr-2">{finalSeeAllText}</span>
+        <div className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center transition-colors duration-300 group-hover:bg-primary">
+          <ChevronRightIcon className="w-6 h-6 group-hover:text-white" />
+        </div>
+      </PrefetchLink>
     </div>
   );
 

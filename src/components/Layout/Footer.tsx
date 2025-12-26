@@ -17,6 +17,7 @@ import { useFooterData } from '../../hooks/useFooterData';
 import { SocialLink } from '../../types/footer.types';
 import FooterSkeleton from './FooterSkeleton';
 import Container from '../shared/Container';
+import PrefetchLink from '../shared/PrefetchLink';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -29,21 +30,19 @@ const Footer: React.FC = () => {
     return <FooterSkeleton />;
   }
 
+  // Graceful error handling: log error but try to render what we have (e.g. settings)
   if (error) {
-    return (
-      <footer className="bg-gradient-to-r from-gray-100 via-[#bce1ff] to-gray-100">
-        <div className="max-w-screen-xl px-4 py-16 mx-auto text-center sm:px-6 lg:px-8">
-          <p className="text-red-600">Xatolik yuz berdi: {error.message}</p>
-        </div>
-      </footer>
-    );
+    console.error("Footer API Error:", error);
   }
 
-  if (!data) {
-    return null;
-  }
-
-  const { contactInfo, socialLinks, linkGroups } = data;
+  // Fallback data if API fails
+  const contactInfo = data?.contactInfo || {
+    address: { text: '', url: '' },
+    phone: { number: '', tel: '' },
+    email: { address: '', mailto: '' }
+  };
+  const socialLinks = data?.socialLinks || [];
+  const linkGroups = data?.linkGroups || [];
 
   return (
     <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-t border-gray-700">
@@ -54,27 +53,38 @@ const Footer: React.FC = () => {
               to="/"
               className="flex flex-col sm:flex-row sm:items-center mb-4 group transition-transform duration-300 hover:scale-105"
             >
-              <img src="/images/logo.png" alt="Logo" className="h-20 w-20 sm:h-24 sm:w-24 mb-2 sm:mb-0 sm:mr-4 rounded-full transition-transform duration-300 group-hover:rotate-12 flex-shrink-0" />
+              <img src={settings?.logo || "/images/logo.png"} alt="Logo" className="h-20 w-20 sm:h-24 sm:w-24 mb-2 sm:mb-0 sm:mr-4 rounded-full transition-transform duration-300 group-hover:rotate-12 flex-shrink-0 object-cover" />
               <span className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white text-center sm:text-left">
-                Namangan Davlat Texnika Universiteti
+                {settings?.siteName || "Namangan Davlat Texnika Universiteti"}
               </span>
             </Link>
 
             <p className="max-w-xs mt-4 text-base text-gray-300 leading-relaxed">
-              {settings?.footer?.mission || "O‘zbekistonning yetakchi oliy ta’lim muassasasi. Biz kelajak yetakchilarini tarbiyalaymiz."}
+              {settings?.footer?.mission || settings?.siteDescription || ""}
             </p>
 
             <div className="flex mt-8 space-x-4">
-              {socialLinks.map((link) => (
+              {/* Use settings.socials first (consistent with Header), fallback to footer API socials */}
+              {(settings?.socials?.length ? settings.socials : socialLinks).map((link: any) => (
                 <a
-                  key={link.id}
-                  href={link.url}
+                  key={link.name || link.id}
+                  href={link.url || link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`group p-2 rounded-lg bg-gray-700 text-gray-300 shadow-lg transition-all duration-300 ${getSocialColor(link.name)} focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-gray-900`}
+                  className={`group p-2 rounded-lg bg-gray-700 text-gray-300 shadow-lg transition-all duration-300 hover:bg-white hover:text-black focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-gray-900`}
                   aria-label={link.name}
+                  title={link.name}
                 >
-                  <SocialIcon name={link.name} />
+                  {link.icon ? (
+                    <img
+                      src={link.icon}
+                      alt={link.name}
+                      className="h-5 w-5 object-contain filter brightness-0 invert group-hover:filter-none"
+                    />
+                  ) : (
+                    // Fallback to react-icons if using local data, or text
+                    <SocialIcon name={link.name} />
+                  )}
                 </a>
               ))}
             </div>
@@ -127,13 +137,23 @@ const Footer: React.FC = () => {
                 </div>
                 <nav className="flex flex-col space-y-2 text-base text-gray-300">
                   {group.links.map((link) => (
-                    <Link
+                    <PrefetchLink
                       key={link.id}
                       to={link.url}
+                      prefetch={true}
+                      prefetchDelay={150}
+                      onMouseEnter={async () => {
+                        const { prefetchService } = await import('../../services/prefetchService');
+                        if (link.url === '/news') {
+                          prefetchService.prefetchNewsPage();
+                        } else if (link.url === '/') {
+                          prefetchService.prefetchHomeNews();
+                        }
+                      }}
                       className="hover:text-white hover:bg-gray-700/50 hover:translate-x-1 px-2 py-1 transition-all duration-300 focus:outline-none focus:text-white focus:bg-gray-700/50 focus:translate-x-1 inline-block -ml-2"
                     >
                       {link.text}
-                    </Link>
+                    </PrefetchLink>
                   ))}
                 </nav>
               </div>
@@ -143,7 +163,7 @@ const Footer: React.FC = () => {
 
         <div className="mt-12 pt-8 border-t border-gray-700">
           <p className="text-sm text-gray-400 text-center">
-            {settings?.footer?.copyright || `© ${currentYear} Namangan Davlat Texnika Universiteti. Barcha huquqlar himoyalangan.`}
+            {settings?.footer?.copyright || `© ${currentYear} ${settings?.siteName || "Namangan Davlat Texnika Universiteti"}.`}
           </p>
         </div>
       </Container>

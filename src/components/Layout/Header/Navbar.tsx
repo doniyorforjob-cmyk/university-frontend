@@ -22,9 +22,9 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
   const { locale } = useLocale();
   const { data: navItems, loading } = useCachedApi({
-    key: `navbar-items-v3-${locale}`, // Cache key depends on locale, v3 to force refresh
-    fetcher: fetchNavItems,
-    ttlMinutes: 60, // Cache for 1 hour
+    key: `navbar-items-${locale}`, // Stable cache key
+    fetcher: () => fetchNavItems(locale),
+    ttlMinutes: 0.5,
   });
 
   // Layout shift oldini olish uchun har doim array qaytarish
@@ -67,8 +67,6 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
     setActiveDropdown(null);
   };
 
-
-
   const getSectionIcon = (): JSX.Element => {
     return <BuildingLibraryIcon className="h-9 w-9" />;
   };
@@ -78,7 +76,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
       {/* ==== DESKTOP NAVBAR ==== */}
       <Container>
         <nav className="relative hidden lg:flex items-center justify-between w-full h-16">
-          {loading ? (
+          {loading && !displayNavItems.length ? (
             <NavbarSkeleton isSticky={isSticky} />
           ) : (
             <div
@@ -125,13 +123,21 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                   <div
                     key={item.title}
                     className="group h-full"
-                    onMouseEnter={() => item.children && setActiveDropdown(item.title)}
-                    onMouseLeave={() => item.children && setActiveDropdown(null)}
                   >
                     <PrefetchLink
-                      to={item.title === 'Universitet' ? '/university' : (item.href || '#')}
+                      to={item.href || '#'}
                       prefetch={true}
                       prefetchDelay={150}
+                      onMouseEnter={async () => {
+                        const { prefetchService } = await import('../../../services/prefetchService');
+                        if (item.href === '/news') {
+                          prefetchService.prefetchNewsPage();
+                        } else if (item.href === '/') {
+                          prefetchService.prefetchHomeNews();
+                        }
+                        item.children && setActiveDropdown(item.title);
+                      }}
+                      onMouseLeave={() => item.children && setActiveDropdown(null)}
                       onClick={() => {
                         closeDropdown();
                         if (item.children) {
@@ -154,6 +160,8 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                     {item.children && activeDropdown === item.title && (
                       <div
                         className="absolute top-full left-0 right-0 z-50 pointer-events-none bg-white"
+                        onMouseEnter={() => setActiveDropdown(item.title)}
+                        onMouseLeave={() => setActiveDropdown(null)}
                       >
                         <div className="pointer-events-auto">
                           <div className="bg-white border shadow-lg overflow-hidden animate-slide-in-bottom">

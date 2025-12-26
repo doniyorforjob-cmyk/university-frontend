@@ -1,14 +1,14 @@
 import apiClient from '../client';
 import { NavItem } from '../../types/navbar.types';
-import { fetchNavItems as mockFetchNavItems } from '../mock/navbar.mock';
+
 
 export type { NavItem };
 
-export const fetchNavItems = async (): Promise<NavItem[]> => {
+export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]> => {
   try {
     console.log('Fetching navbar from Navigation API...');
     const projectId = process.env.REACT_APP_PROJECT_ID;
-    const locale = localStorage.getItem('locale') || 'en';
+    const locale = localeOverride || localStorage.getItem('locale') || 'en';
 
     // Use navigation tree API
     const response = await apiClient.get(`/projects/${projectId}/navigation/main/tree`);
@@ -49,7 +49,7 @@ export const fetchNavItems = async (): Promise<NavItem[]> => {
     const transformItem = (item: any): NavItem => {
       // Try to get explicit backend URL first, then fallback to mapped route
       const backendUrl = item.url_uz || item.url_en || item.url_ru;
-      const mappedRoute = getRouteByTitle(item.title);
+      const mappedRoute = getRouteByTitle(item.title?.en || '');
 
       return {
         title: item.title?.[locale] || item.title?.en || item.title?.uz || 'Menu Item',
@@ -64,8 +64,7 @@ export const fetchNavItems = async (): Promise<NavItem[]> => {
     return navItems;
 
   } catch (error) {
-    console.error('Error fetching navbar items from API, falling back to mock:', error);
-    // Fallback to mock data so the site doesn't crash
-    return mockFetchNavItems();
+    console.error('Error fetching navbar items from API:', error);
+    throw error;
   }
 };
