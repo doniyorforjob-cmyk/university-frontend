@@ -2,9 +2,9 @@
 
 export interface NavItem {
   key?: string;
-  title: string;
+  title: string | { uz?: string; ru?: string; en?: string };
   href?: string;
-  description?: string;
+  description?: string | { uz?: string; ru?: string; en?: string };
   children?: NavItem[];
 }
 

@@ -11,3 +11,12 @@ export const getImageUrl = (path?: string | null): string => {
 
     return `${baseUrl}${normalizedPath}`;
 };
+
+export const getLocalized = (value: any, locale: string = 'en'): string => {
+    if (!value) return '';
+    if (typeof value === 'string') return value;
+    if (typeof value === 'object') {
+        return value[locale] || value['en'] || value['uz'] || Object.values(value)[0] || '';
+    }
+    return String(value);
+};

@@ -11,12 +11,24 @@ const Sidebar = memo(() => {
   const location = useLocation();
 
   const { data: navItemsRaw, loading } = useCachedApi<NavItem[]>({
-    key: `navbar-items-${locale}`,
-    fetcher: () => fetchNavItems(locale),
-    ttlMinutes: 0.5,
+    key: 'navbar-items-global',
+    fetcher: () => fetchNavItems(),
+    ttlMinutes: 60,
+    keepPreviousData: true
   });
 
-  const navItems = navItemsRaw || [];
+  const navItems = useMemo(() => {
+    if (!navItemsRaw) return [];
+
+    const transformRecursive = (item: NavItem): NavItem => ({
+      ...item,
+      title: (item.title as any)?.[locale] || (item.title as any)?.en || (item.title as any)?.uz || 'Menu Item',
+      description: (item.description as any)?.[locale] || (item.description as any)?.en || (item.description as any)?.uz,
+      children: item.children?.map(transformRecursive) || []
+    });
+
+    return navItemsRaw.map(transformRecursive);
+  }, [navItemsRaw, locale]);
 
   const informationService = useMemo(() => {
     // Find the navigation item whose title matches "Axborot xizmati" in any language
@@ -43,8 +55,41 @@ const Sidebar = memo(() => {
 
   const renderLink = useMemo(() => {
     return filteredChildren.map((child: NavItem, index: number) => {
-      const href = child.href === '/media' ? '/media-about-us' : child.href;
-      const isActive = location.pathname.startsWith(href!);
+      let href = child.href === '/media' ? '/media-about-us' : child.href;
+      if (!href) return null;
+
+      // Normalization for active state detection
+      const normalizePath = (p: string) => {
+        if (!p) return '';
+        // 1. Remove leading/trailing slashes
+        let clean = p.replace(/^\/+|\/+$/g, '');
+
+        // 2. Strip locale prefixes: uz/, ru/, en/ or just uz, ru, en
+        const prefixes = ['uz', 'ru', 'en'];
+        for (const pref of prefixes) {
+          if (clean === pref) {
+            clean = '';
+            break;
+          }
+          if (clean.startsWith(pref + '/')) {
+            clean = clean.substring(pref.length + 1);
+            break;
+          }
+        }
+
+        // 3. Final cleanup of slashes again just in case
+        return clean.replace(/^\/+|\/+$/g, '');
+      };
+
+      const normalizedCurrent = normalizePath(location.pathname);
+      const normalizedTarget = normalizePath(href);
+
+      // Exact match or sub-path match for active state
+      // If it's a home link (empty normalized target), only active if current is also empty
+      const isActive = normalizedTarget === ''
+        ? normalizedCurrent === ''
+        : normalizedCurrent === normalizedTarget || normalizedCurrent.startsWith(normalizedTarget + '/');
+
       const isLast = index === filteredChildren.length - 1;
 
       return (
@@ -66,7 +111,7 @@ const Sidebar = memo(() => {
             : 'hover:bg-gray-50 border-l-4 border-l-transparent pl-[31px]'
             } ${!isLast ? 'border-b border-gray-300' : ''}`}
         >
-          {child.title === "E'lonlar" ? "Elonlar" : child.title}
+          {child.title as string}
         </PrefetchLink>
       );
     });
@@ -101,7 +146,7 @@ const Sidebar = memo(() => {
             <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           <h3 className="text-lg font-bold text-white tracking-tight">
-            {informationService.title}
+            {informationService.title as string}
           </h3>
         </div>
         <div className="bg-gray-50">

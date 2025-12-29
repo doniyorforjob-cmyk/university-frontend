@@ -14,13 +14,13 @@ import { AOS_CONFIG, NEWS_TABS } from '../../config/constants';
 import PrefetchLink from '../../components/shared/PrefetchLink';
 
 const AnnouncementsPreview = ({ announcements }: { announcements?: HomeNewsData['announcements'] }) => {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation(['common', 'pages']);
   const otherAnnouncements = announcements?.slice(0, 10) || [];
 
   return (
     <div className="flex flex-col">
       <div>
-        <h3 className="text-xl font-bold text-gray-900 mb-4 border-b-2 border-primary pb-2">{t('otherAnnouncements')}</h3>
+        <h3 className="text-xl font-bold text-gray-900 mb-4 border-b-2 border-primary pb-2">{t('common:otherAnnouncements')}</h3>
         <ul className="space-y-3 mt-4 overflow-y-auto max-h-[36rem] pr-2" data-aos="fade-left" data-aos-duration="800" data-aos-delay="200">
           {otherAnnouncements.map((item: HomeNewsData['announcements'][0]) => {
             const date = new Date(item.date);
@@ -60,7 +60,7 @@ const AnnouncementsPreview = ({ announcements }: { announcements?: HomeNewsData[
           }}
           className="inline-flex items-center text-[#0E104B] font-semibold hover:underline"
         >
-          {t('seeAllAnnouncements')}
+          {t('common:seeAllAnnouncements')}
           <ChevronRightIcon className="w-5 h-5 ml-1" />
         </PrefetchLink>
       </div>
@@ -69,13 +69,11 @@ const AnnouncementsPreview = ({ announcements }: { announcements?: HomeNewsData[
 }
 
 // Sana formatini o'zgartiruvchi funksiya
-const formatDate = (dateString?: string) => {
+const formatDate = (dateString?: string, locale: string = 'uz', t: any = (s: any) => s) => {
   if (!dateString) return '';
   const date = new Date(dateString);
-  const months = [
-    'Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun',
-    'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'
-  ];
+  const months = t('components:calendar.months', { returnObjects: true }) as string[];
+
   const day = date.getDate();
   const month = months[date.getMonth()];
   const year = date.getFullYear();
@@ -85,7 +83,8 @@ const formatDate = (dateString?: string) => {
 };
 
 const NewsSection = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation(['common', 'pages', 'components']);
+  const locale = i18n.language;
 
   // Yangi arxitektura: useStandardSection hook
   const { data, loading, isCached } = useStandardSection(
@@ -126,7 +125,7 @@ const NewsSection = () => {
             <div className="absolute bottom-0 left-0 p-4">
               <div className="flex items-center text-sm text-gray-300 mb-2">
                 <CalendarDaysIcon className="w-5 h-5 mr-2" />
-                <time dateTime={item.published_at}>{formatDate(item.published_at)}</time>
+                <time dateTime={item.published_at}>{formatDate(item.published_at, locale, t)}</time>
               </div>
               <h3 className="text-lg font-bold text-card-title group-hover:text-white transition-colors duration-300 line-clamp-2">
                 {item.title}
@@ -154,9 +153,9 @@ const NewsSection = () => {
           {/* Left Column: News with Tabs */}
           <div className="lg:col-span-2">
             <SectionHeader
-              title={t('news')}
+              title={t('pages:news')}
               seeAllLink="/news"
-              seeAllText={t('seeAllNews')}
+              seeAllText={t('common:seeAllNews')}
               noContainer={true}
             />
             <AnimatedNewsTabs tabs={tabs} defaultTab="news" />

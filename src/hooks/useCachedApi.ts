@@ -1,5 +1,7 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { useGlobalCache } from '@/components/providers/CachedApiProvider';
+import { useLocale } from '@/contexts/LocaleContext';
 
 interface UseCachedApiOptions {
   key: string;
@@ -10,6 +12,7 @@ interface UseCachedApiOptions {
   onError?: (error: Error) => void;
   refetchOnWindowFocus?: boolean;
   refetchInterval?: number;
+  keepPreviousData?: boolean;
 }
 
 const inflightRequests = new Map<string, Promise<any>>();
@@ -22,12 +25,18 @@ export const useCachedApi = <T = any>({
   onSuccess,
   onError,
   refetchOnWindowFocus = false,
-  refetchInterval
+  refetchInterval,
+  keepPreviousData = false
 }: UseCachedApiOptions) => {
 
   const { cacheManager, config } = useGlobalCache();
-  const [data, setData] = useState<T | null>(() => cacheManager.get(key));
-  const [loading, setLoading] = useState(() => enabled && !cacheManager.has(key));
+  const { locale } = useLocale();
+
+  // Create a unique composite key that includes the locale
+  const localeKey = key.includes(locale) ? key : `${key}_${locale}`;
+
+  const [data, setData] = useState<T | null>(() => cacheManager.get(localeKey));
+  const [loading, setLoading] = useState(() => enabled && !cacheManager.has(localeKey));
   const [error, setError] = useState<Error | null>(null);
 
   const ttl = ttlMinutes || config.defaultTtl;
@@ -36,7 +45,7 @@ export const useCachedApi = <T = any>({
     try {
       // Check cache first (unless forcing refresh)
       if (!force) {
-        const cachedData = cacheManager.get(key);
+        const cachedData = cacheManager.get(localeKey);
         if (cachedData) {
           setData(cachedData);
           setLoading(false);
@@ -49,19 +58,19 @@ export const useCachedApi = <T = any>({
       setError(null);
 
       // Fetch fresh data (with deduplication)
-      let requestPromise = inflightRequests.get(key);
+      let requestPromise = inflightRequests.get(localeKey);
 
       if (!requestPromise) {
         requestPromise = fetcher();
-        inflightRequests.set(key, requestPromise);
+        inflightRequests.set(localeKey, requestPromise);
 
         try {
           const freshData = await requestPromise;
           setData(freshData);
-          cacheManager.set(key, freshData, ttl);
+          cacheManager.set(localeKey, freshData, ttl);
           onSuccess?.(freshData);
         } finally {
-          inflightRequests.delete(key);
+          inflightRequests.delete(localeKey);
         }
       } else {
         // Reuse existing request
@@ -77,12 +86,22 @@ export const useCachedApi = <T = any>({
     } finally {
       setLoading(false);
     }
-  }, [key, fetcher, ttl, enabled, cacheManager, onSuccess, onError]);
+  }, [localeKey, fetcher, ttl, enabled, cacheManager, onSuccess, onError]);
 
-  // Initial load
+  // Initial load and key change handling
   useEffect(() => {
+    const cachedData = cacheManager.get(localeKey);
+    if (cachedData) {
+      setData(cachedData);
+      setLoading(false);
+    } else {
+      if (!keepPreviousData) {
+        setData(null);
+      }
+      if (enabled) setLoading(true);
+    }
     fetchData();
-  }, [fetchData]);
+  }, [fetchData, localeKey, cacheManager, enabled, keepPreviousData]);
 
   // Refetch on window focus
   useEffect(() => {

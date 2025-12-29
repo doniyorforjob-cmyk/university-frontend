@@ -19,7 +19,7 @@ const formatDate = (dateString: string, language: string) => {
 
 
 const MediaGallery: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation('common');
   const [activeTab, setActiveTab] = useState<'photos' | 'videos'>('videos');
   const [activeVideo, setActiveVideo] = useState<number | null>(null);
 
@@ -79,7 +79,7 @@ const MediaGallery: React.FC = () => {
         <MediaGalleryHeader
           onTabChange={setActiveTab}
           activeTab={activeTab}
-          seeAllText={t('seeAllMedia') as string}
+          seeAllText={t('common:seeAllMedia') as string}
         />
 
         {/* Tab Content */}
@@ -150,7 +150,7 @@ const MediaGallery: React.FC = () => {
                       <svg className="w-5 h-5 relative z-10" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M8 5v10l8-5-8-5z" />
                       </svg>
-                      <span className="relative z-10">{t('watchVideo')}</span>
+                      <span className="relative z-10">{t('common:watchVideo')}</span>
                     </a>
                   </div>
                 </div>

@@ -1,0 +1,44 @@
+{
+    "header": {
+        "announcement": "E'lon"
+    },
+    "calendar": {
+        "today": "Bugun",
+        "day": "Kun",
+        "week": "Hafta",
+        "month": "Oy",
+        "allAnnouncements": "Barcha e'lonlar",
+        "months": [
+            "Yanvar",
+            "Fevral",
+            "Mart",
+            "Aprel",
+            "May",
+            "Iyun",
+            "Iyul",
+            "Avgust",
+            "Sentabr",
+            "Oktabr",
+            "Noyabr",
+            "Dekabr"
+        ],
+        "monthsShort": [
+            "Yan",
+            "Fev",
+            "Mar",
+            "Apr",
+            "May",
+            "Iyn",
+            "Iyl",
+            "Avg",
+            "Sen",
+            "Okt",
+            "Noy",
+            "Dek"
+        ]
+    },
+    "sidebar": {
+        "appealTitle": "Rektorga murojaat",
+        "appealButton": "Murojaat qilish"
+    }
+}

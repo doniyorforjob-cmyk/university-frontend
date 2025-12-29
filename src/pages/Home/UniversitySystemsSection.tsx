@@ -8,7 +8,7 @@ import { SystemsContainer } from '../../components/shared/cards';
 import { useTranslation } from 'react-i18next';
 
 const UniversitySystemsSection: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('common');
   const { data, loading } = useStandardSection<TransformedUniversitySystemsData>(
     'university-systems',
     homeApi.getUniversitySystemsData,
@@ -24,9 +24,9 @@ const UniversitySystemsSection: React.FC = () => {
       <Container>
         <div className="lg:col-span-2">
           <SectionHeader
-            title={t('Universitet tizimlari')}
+            title={t('common:Universitet tizimlari')}
             seeAllLink="/university-systems"
-            seeAllText={t('seeAllUniversitySystems')}
+            seeAllText={t('common:seeAllUniversitySystems')}
             noContainer={true}
           />
         </div>

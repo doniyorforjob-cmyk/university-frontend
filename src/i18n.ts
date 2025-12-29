@@ -16,8 +16,10 @@ i18n
       caches: ['cookie'],
     },
     backend: {
-      loadPath: '/locales/{{lng}}/translation.json', // Tarjima fayllarining yo'li
+      loadPath: '/locales/{{lng}}/{{ns}}.json',
     },
+    ns: ['common', 'components', 'pages'],
+    defaultNS: 'common',
     react: {
       useSuspense: false,
     },

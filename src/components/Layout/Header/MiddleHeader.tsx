@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Container from '../../shared/Container';
 import { useSettingsStore } from '../../../store/settingsStore';
+import { PrefetchLink } from '../../shared';
 
 const MiddleHeader: React.FC = () => {
     const { settings } = useSettingsStore();
@@ -18,13 +19,13 @@ const MiddleHeader: React.FC = () => {
                 {/* Katta ekranlar uchun layout */}
                 <div className="hidden md:flex items-center justify-between">
                     {/* Chap tomon: Logotip va Universitet nomi */}
-                    <Link to="/" className="flex items-center">
+                    <PrefetchLink to="/" className="flex items-center">
                         <img src={logo} alt="Logo" width="112" height="112" className="h-28 w-28 mr-4 rounded-full object-cover" />
                         <div>
                             <h1 className="text-4xl font-bold text-[#0E104B]">{siteName}</h1>
                             <p className="text-base text-gray-500">{siteDescription}</p>
                         </div>
-                    </Link>
+                    </PrefetchLink>
 
                     {/* O'ng tomon: Kontakt ma'lumotlari */}
                     <div className="flex items-center space-x-6">
@@ -95,13 +96,13 @@ const MiddleHeader: React.FC = () => {
 
                 {/* Kichik ekranlar uchun layout */}
                 <div className="md:hidden">
-                    <Link to="/" className="flex items-center justify-center mb-4">
+                    <PrefetchLink to="/" className="flex items-center justify-center mb-4">
                         <img src={logo} alt="Logo" width="80" height="80" className="h-20 w-20 mr-3 rounded-full object-cover" />
                         <div>
                             <h1 className="text-3xl font-bold text-[#0E104B] text-center">{siteName}</h1>
                             <p className="text-sm text-gray-500 text-center">{siteDescription}</p>
                         </div>
-                    </Link>
+                    </PrefetchLink>
                     <div className="flex items-center justify-center space-x-4">
                         {/* Telefon raqami */}
                         {phone && (

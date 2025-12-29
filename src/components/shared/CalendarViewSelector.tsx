@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface CalendarViewSelectorProps {
   activeView: string;
@@ -11,22 +12,20 @@ const CalendarViewSelector: React.FC<CalendarViewSelectorProps> = ({
   onViewChange,
   className = ''
 }) => {
+  const { t } = useTranslation('components');
   const today = new Date();
-  const uzMonthsShort = [
-    'Yan', 'Fev', 'Mar', 'Apr', 'May', 'Iyn',
-    'Iyl', 'Avg', 'Sen', 'Okt', 'Noy', 'Dek'
-  ];
+  const monthsShort = t('calendar.monthsShort', { returnObjects: true }) as string[];
   const day = today.getDate();
-  const month = uzMonthsShort[today.getMonth()];
+  const month = monthsShort[today.getMonth()];
   const year = today.getFullYear();
-  const todayLabel = `${day}-${month}, ${year}`;
+  const todayDateLabel = `${day}-${month}, ${year}`;
 
   const allViews = [
-    { id: 'today', label: `Bugun: ${todayLabel}` },
-    { id: 'day', label: 'Kun' },
-    { id: 'week', label: 'Hafta' },
-    { id: 'month', label: 'Oy' },
-    { id: 'all', label: 'Barcha e\'lonlar' },
+    { id: 'today', label: `${t('calendar.today')}: ${todayDateLabel}` },
+    { id: 'day', label: t('calendar.day') },
+    { id: 'week', label: t('calendar.week') },
+    { id: 'month', label: t('calendar.month') },
+    { id: 'all', label: t('calendar.allAnnouncements') },
   ];
 
   const allEventsView = allViews.find(v => v.id === 'all');
@@ -42,11 +41,10 @@ const CalendarViewSelector: React.FC<CalendarViewSelectorProps> = ({
                 <a
                   href={`#!view/${view.id}`}
                   onClick={(e) => { e.preventDefault(); onViewChange(view.id); }}
-                  className={`block px-4 py-2 text-base font-medium transition-colors ${
-                    activeView === view.id
+                  className={`block px-4 py-2 text-base font-medium transition-colors ${activeView === view.id
                       ? 'bg-primary text-white'
                       : 'text-gray-600 hover:bg-primary-dark hover:text-white'
-                  }`}
+                    }`}
                   aria-current={activeView === view.id ? 'true' : 'false'}
                 >
                   {view.label}

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { getAnnouncements } from '@/services/announcementService';
 import { Announcement } from '@/types/announcement.types';
 import SectionTemplate, { SectionItem } from '@/components/templates/SectionTemplate';
@@ -26,6 +27,8 @@ const fetchAnnouncementsData = async (): Promise<SectionItem[]> => {
 
 const AnnouncementsPage: React.FC = () => {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation(['common', 'pages']);
+  const locale = i18n.language;
   const { setBannerData, setBreadcrumbsData, setSidebarType } = useGlobalLayout();
   const { data: items, loading, error, refetch } = useStandardPage(
     'announcements',
@@ -34,9 +37,9 @@ const AnnouncementsPage: React.FC = () => {
 
   useEffect(() => {
     setBreadcrumbsData([
-      { label: 'Bosh sahifa', href: '/' },
-      { label: 'Axborot xizmati', href: '#' },
-      { label: 'E\'lonlar' }
+      { label: t('home'), href: '/' },
+      { label: t('pages:infoService'), href: '#' },
+      { label: t('pages:announcements') }
     ]);
 
     setSidebarType('info');
@@ -63,8 +66,8 @@ const AnnouncementsPage: React.FC = () => {
   return (
     <SectionTemplate
       loading={loading}
-      parentTitle="Axborot xizmati"
-      sectionTitle="E'lonlar"
+      parentTitle={t('pages:infoService')}
+      sectionTitle={t('pages:announcements')}
       sectionType="announcements"
       items={items || []}
       totalItems={(items || []).length}

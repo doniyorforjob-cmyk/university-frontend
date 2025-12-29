@@ -6,6 +6,8 @@ import SectionHeader from './components/SectionHeader';
 import { AOS_CONFIG } from '../../config/constants';
 import { useStandardSection } from './hooks/useStandardSection';
 import { homeApi } from '../../services/homeService';
+import { getLocalized } from '../../utils/apiUtils';
+import { useLocale } from '../../contexts/LocaleContext';
 
 interface ServiceItem {
   id: number;
@@ -25,7 +27,8 @@ const svgMap: Record<string, string> = {
 };
 
 const InteractiveServicesSection = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['common', 'pages']);
+  const { locale } = useLocale();
 
   const { data, loading } = useStandardSection(
     'interactive-services',
@@ -40,9 +43,9 @@ const InteractiveServicesSection = () => {
   return (
     <div className="pt-16">
       <SectionHeader
-        title={t('interactiveServices')}
+        title={t('pages:interactiveServices')}
         seeAllLink="/services"
-        seeAllText={t('seeAllServices')}
+        seeAllText={t('common:seeAllServices')}
       />
       <Container>
         {services.length === 0 && (
@@ -56,7 +59,7 @@ const InteractiveServicesSection = () => {
             const svgHtml = service.icon.startsWith('<svg')
               ? service.icon
               : svgMap[service.icon] ||
-                `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-16 h-16"><path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>`;
+              `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-16 h-16"><path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>`;
 
             return (
               <Link to={service.href} key={service.id} className="group">
@@ -75,9 +78,9 @@ const InteractiveServicesSection = () => {
                       <div dangerouslySetInnerHTML={{ __html: svgHtml }} />
                     </div>
                     <div className="g-card-info flex-1">
-                      <h4 className="text-white text-xl font-bold">{service.title}</h4>
+                      <h4 className="text-white text-xl font-bold">{getLocalized(service.title, locale)}</h4>
                       <span className="text-white text-lg line-clamp-2 opacity-90">
-                        {service.description}
+                        {getLocalized(service.description, locale)}
                       </span>
                     </div>
                   </div>

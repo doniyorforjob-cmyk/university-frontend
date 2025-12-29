@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { getPosts } from '../../services/postService';
 import { Post } from '../../types/post.types';
 import SectionTemplate, { SectionItem } from '@/components/templates/SectionTemplate';
@@ -29,6 +30,7 @@ const fetchNewsData = async (locale?: string): Promise<SectionItem[]> => {
 
 const NewsPage: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation(['common', 'pages']);
   const { setBannerData, setBreadcrumbsData, setSidebarType } = useGlobalLayout();
   const { locale } = useLocale();
   const { cacheManager } = useGlobalCache();
@@ -59,9 +61,9 @@ const NewsPage: React.FC = () => {
 
   useEffect(() => {
     setBreadcrumbsData([
-      { label: locale === 'uz' ? 'Bosh sahifa' : locale === 'ru' ? 'Главная' : 'Home', href: '/' },
-      { label: locale === 'uz' ? 'Axborot xizmati' : locale === 'ru' ? 'Информационная служба' : 'Information Service', href: '#' },
-      { label: locale === 'uz' ? 'Yangiliklar' : locale === 'ru' ? 'Новости' : 'News' }
+      { label: t('home'), href: '/' },
+      { label: t('pages:infoService'), href: '#' },
+      { label: t('pages:news') }
     ]);
 
     setSidebarType('info');
@@ -84,8 +86,8 @@ const NewsPage: React.FC = () => {
   return (
     <SectionTemplate
       loading={loading}
-      parentTitle={locale === 'uz' ? 'Axborot xizmati' : locale === 'ru' ? 'Информационная служба' : 'Information Service'}
-      sectionTitle={locale === 'uz' ? 'Yangiliklar' : locale === 'ru' ? 'Новости' : 'News'}
+      parentTitle={t('pages:infoService')}
+      sectionTitle={t('pages:news')}
       sectionType="news"
       items={items || []}
       totalItems={(items || []).length}

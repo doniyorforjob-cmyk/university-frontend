@@ -45,23 +45,22 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
       return key ? map[key] : '#';
     };
 
-    // Transform API response to NavItem format
+    // Transform API response to NavItem format (preserving all locales for instant switching)
     const transformItem = (item: any): NavItem => {
-      // Try to get explicit backend URL first, then fallback to mapped route
       const backendUrl = item.url_uz || item.url_en || item.url_ru;
       const mappedRoute = getRouteByTitle(item.title?.en || '');
 
       return {
         key: item.title?.en,
-        title: item.title?.[locale] || item.title?.en || item.title?.uz || 'Menu Item',
-        description: item.description?.[locale] || item.description?.en || item.description?.uz,
+        title: item.title, // Keep as object {uz, ru, en}
+        description: item.description, // Keep as object {uz, ru, en}
         href: backendUrl || mappedRoute,
         children: item.children?.map(transformItem) || []
       };
     };
 
     const navItems = items.map(transformItem);
-    console.log('Navigation items loaded:', navItems.length);
+    console.log('Navigation items loaded (multi-locale):', navItems.length);
     return navItems;
 
   } catch (error) {

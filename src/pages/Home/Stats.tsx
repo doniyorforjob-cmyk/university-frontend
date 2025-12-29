@@ -8,11 +8,14 @@ import { useStandardSection } from './hooks/useStandardSection';
 import { homeApi } from '../../services/homeService';
 import { AOS_CONFIG } from '../../config/constants';
 import { useTranslation } from 'react-i18next';
+import { getLocalized } from '../../utils/apiUtils';
+import { useLocale } from '../../contexts/LocaleContext';
 
 import { MapIcon } from '@heroicons/react/24/outline';
 
 const Stats = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('common');
+  const { locale } = useLocale();
 
   // Yangi arxitektura: useStandardSection hook
   const { data, loading, isCached } = useStandardSection(
@@ -36,7 +39,7 @@ const Stats = () => {
     <section ref={ref} className="py-16 bg-accent">
       <Container>
         <SectionHeader
-          title={t('Biz Raqamlarda')}
+          title={t('common:Biz Raqamlarda')}
           noContainer={true}
         />
 
@@ -64,7 +67,7 @@ const Stats = () => {
                   <MapIcon className="w-6 h-6 text-green-600" />
                 </div>
                 <p className="text-sm font-medium text-gray-700 text-center">
-                  Universitetning umumiy maydoni
+                  {t('common:universityArea')}
                 </p>
                 <p className="text-3xl font-bold text-green-600 mt-1">
                   {data.universityArea?.area || 1500} <span className="text-xl font-normal text-green-700">{data.universityArea?.unit || 'm²'}</span>
@@ -90,7 +93,7 @@ const Stats = () => {
                       `}
                     >
                       <p className="text-lg md:text-xl font-medium text-primary leading-tight mb-2">
-                        {item.text}
+                        {getLocalized(item.text, locale)}
                       </p>
                       <div className={`text-3xl md:text-4xl font-bold ${colors[index] || 'text-gray-600'}`}>
                         {animate ? <CountUp end={item.end} duration={2.8} separator="," /> : '0'}

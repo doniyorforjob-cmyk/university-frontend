@@ -20,10 +20,11 @@ export const useStandardPage = <T = any>(
   } = options || {};
 
   return useCachedApi({
-    key: `${pageName}-data-${locale}`,
+    key: pageName,
     fetcher,
     ttlMinutes,
     enabled,
+    keepPreviousData: true,
     onError: (error) => {
       console.error(`${pageName} sahifasi xatolik:`, error);
       // Bu yerda keyinchalik error reporting qo'shish mumkin

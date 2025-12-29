@@ -15,14 +15,19 @@ import {
 import { useSettingsStore } from '../../store/settingsStore';
 import { useFooterData } from '../../hooks/useFooterData';
 import { SocialLink } from '../../types/footer.types';
+import { getLocalized } from '../../utils/apiUtils';
+import { useLocale } from '../../contexts/LocaleContext';
 import FooterSkeleton from './FooterSkeleton';
 import Container from '../shared/Container';
 import PrefetchLink from '../shared/PrefetchLink';
+import { useTranslation } from 'react-i18next';
 
 const Footer: React.FC = () => {
+  const { t } = useTranslation('common');
   const currentYear = new Date().getFullYear();
   const { data, isLoading: footerLoading, error } = useFooterData();
   const { settings, isLoading: settingsLoading } = useSettingsStore();
+  const { locale } = useLocale();
 
   const isLoading = footerLoading || settingsLoading;
 
@@ -49,7 +54,7 @@ const Footer: React.FC = () => {
       <Container className="py-16">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div>
-            <Link
+            <PrefetchLink
               to="/"
               className="flex flex-col sm:flex-row sm:items-center mb-4 group transition-transform duration-300 hover:scale-105"
             >
@@ -57,7 +62,7 @@ const Footer: React.FC = () => {
               <span className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white text-center sm:text-left">
                 {settings?.siteName || "Namangan Davlat Texnika Universiteti"}
               </span>
-            </Link>
+            </PrefetchLink>
 
             <p className="max-w-xs mt-4 text-base text-gray-300 leading-relaxed">
               {settings?.footer?.mission || settings?.siteDescription || ""}
@@ -94,7 +99,7 @@ const Footer: React.FC = () => {
             <div>
               <div className="flex items-center mb-4">
                 <span className="w-1 h-5 bg-secondary-500 mr-3"></span>
-                <p className="font-medium text-lg text-white">Aloqa uchun</p>
+                <p className="font-medium text-lg text-white">{t('common:contact')}</p>
               </div>
               <ul className="flex flex-col space-y-3 text-base text-gray-300">
                 <li className="flex items-start group">
@@ -133,7 +138,7 @@ const Footer: React.FC = () => {
               <div key={group.id}>
                 <div className="flex items-center mb-4">
                   <span className="w-1 h-5 bg-secondary-500 mr-3"></span>
-                  <p className="font-medium text-lg text-white">{group.title}</p>
+                  <p className="font-medium text-lg text-white">{getLocalized(group.title, locale)}</p>
                 </div>
                 <nav className="flex flex-col space-y-2 text-base text-gray-300">
                   {group.links.map((link) => (
@@ -152,7 +157,7 @@ const Footer: React.FC = () => {
                       }}
                       className="hover:text-white hover:bg-gray-700/50 hover:translate-x-1 px-2 py-1 transition-all duration-300 focus:outline-none focus:text-white focus:bg-gray-700/50 focus:translate-x-1 inline-block -ml-2"
                     >
-                      {link.text}
+                      {getLocalized(link.text, locale)}
                     </PrefetchLink>
                   ))}
                 </nav>

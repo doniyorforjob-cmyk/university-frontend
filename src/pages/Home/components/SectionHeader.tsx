@@ -88,16 +88,16 @@ export const MediaGalleryHeader: React.FC<MediaGalleryHeaderProps> = ({
   videoTabText,
   seeAllText
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['common', 'pages']);
   const [activePosition, setActivePosition] = useState({ left: 0, width: 0 });
   const photoRef = useRef<HTMLButtonElement>(null);
   const videoRef = useRef<HTMLButtonElement>(null);
   const tabContainerRef = useRef<HTMLDivElement>(null);
 
-  const finalTitle = title || t('mediaResources');
-  const finalPhotoTabText = photoTabText || t('photoGallery');
-  const finalVideoTabText = videoTabText || t('videoGallery');
-  const finalSeeAllText = seeAllText || t('seeAllMedia');
+  const finalTitle = title || t('pages:mediaResources');
+  const finalPhotoTabText = photoTabText || t('pages:photoGallery');
+  const finalVideoTabText = videoTabText || t('pages:videoGallery');
+  const finalSeeAllText = seeAllText || t('common:seeAllMedia');
 
   const handleTabChange = (tab: 'photos' | 'videos') => {
     onTabChange(tab);

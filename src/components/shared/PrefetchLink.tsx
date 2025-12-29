@@ -37,21 +37,30 @@ const PrefetchLink: React.FC<PrefetchLinkProps> = ({
     // If external link or anchor, return as is
     if (to.startsWith('http') || to.startsWith('#') || to.startsWith('mailto:')) return to;
 
-    // cleanTo removes leading slash
-    const cleanTo = to.startsWith('/') ? to.substring(1) : to;
+    // 1. First, strip any existing locale prefix to avoid /en/uz/ duplication
+    let cleanTo = to.startsWith('/') ? to.substring(1) : to;
+
+    // Check for common patterns like uz/, ru/, en/
+    const localePrefixes = ['uz/', 'ru/', 'en/', 'uz', 'ru', 'en'];
+    for (const prefix of localePrefixes) {
+      if (cleanTo === prefix) {
+        cleanTo = '';
+        break;
+      }
+      if (cleanTo.startsWith(prefix)) {
+        cleanTo = cleanTo.substring(prefix.length);
+        if (cleanTo.startsWith('/')) cleanTo = cleanTo.substring(1);
+        break;
+      }
+    }
 
     // CASE 1: Root path requested
-    // If original 'to' was '/' (so cleanTo is empty) OR explicit 'home' logic
-    if (to === '/' || cleanTo === '') {
+    if (cleanTo === '') {
       if (locale === 'uz') return '/';
       return `/${locale}`;
     }
 
-    // CASE 2: Inner pages
-    // Check if already prefixed
-    if (cleanTo.startsWith(`${locale}/`) || cleanTo === locale) return to;
-
-    // For inner pages, return prefixed path for ALL locales including UZ
+    // CASE 2: Inner pages - always prefix with current locale
     return `/${locale}/${cleanTo}`;
   }, [to, locale]);
 

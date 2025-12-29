@@ -36,7 +36,7 @@ const prefetchData = async () => {
 
   // Parallel prefetch using the new service
   await Promise.all([
-    prefetchService.prefetchNavbar(locale),
+    prefetchService.prefetchNavbar(),
     prefetchService.prefetchHomeNews(),
     prefetchService.prefetchFaculties(),
     prefetchService.prefetchNewsPage()

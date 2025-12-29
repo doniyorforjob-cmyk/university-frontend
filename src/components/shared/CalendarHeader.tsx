@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface CalendarHeaderProps {
   activeView: string;
@@ -15,35 +16,33 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   onDateChange,
   className = ''
 }) => {
-  const uzMonthsFull = [
-    'Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun',
-    'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'
-  ];
+  const { t } = useTranslation('components');
+  const monthsFull = t('calendar.months', { returnObjects: true }) as string[];
 
   const getHeaderLabel = () => {
     if (activeView === 'today') {
-      return 'Bugun';
+      return t('calendar.today');
     }
     if (activeView === 'day') {
-      return `${displayDate.getDate()} ${uzMonthsFull[displayDate.getMonth()]}, ${displayDate.getFullYear()}`;
+      return `${displayDate.getDate()} ${monthsFull[displayDate.getMonth()]}, ${displayDate.getFullYear()}`;
     }
     if (activeView === 'week') {
       const startOfWeek = new Date(displayDate);
-      startOfWeek.setDate(displayDate.getDate() - displayDate.getDay() + 1); // Dushanba
+      startOfWeek.setDate(displayDate.getDate() - displayDate.getDay() + 1); // Monday
       const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 6); // Yakshanba
+      endOfWeek.setDate(startOfWeek.getDate() + 6); // Sunday
 
-      const startMonth = uzMonthsFull[startOfWeek.getMonth()];
-      const endMonth = uzMonthsFull[endOfWeek.getMonth()];
+      const startMonth = monthsFull[startOfWeek.getMonth()];
+      const endMonth = monthsFull[endOfWeek.getMonth()];
 
       return startMonth === endMonth
         ? `${startOfWeek.getDate()} - ${endOfWeek.getDate()} ${startMonth}, ${startOfWeek.getFullYear()}`
         : `${startOfWeek.getDate()} ${startMonth} - ${endOfWeek.getDate()} ${endMonth}, ${endOfWeek.getFullYear()}`;
     }
     if (activeView === 'month') {
-      return `${uzMonthsFull[displayDate.getMonth()]} ${displayDate.getFullYear()}`;
+      return `${monthsFull[displayDate.getMonth()]} ${displayDate.getFullYear()}`;
     }
-    return 'Bugun';
+    return t('calendar.today');
   };
 
   const handleDateChange = (direction: 'prev' | 'next') => {

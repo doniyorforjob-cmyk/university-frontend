@@ -14,6 +14,7 @@ import {
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import NavbarSkeleton from './NavbarSkeleton';
 import { AnimatePresence, motion } from 'framer-motion';
+import { getLocalized } from '../../../utils/apiUtils';
 
 interface NavbarProps {
   isSticky: boolean;
@@ -21,14 +22,26 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
   const { locale } = useLocale();
-  const { data: navItems, loading } = useCachedApi({
-    key: `navbar-items-${locale}`, // Stable cache key
-    fetcher: () => fetchNavItems(locale),
-    ttlMinutes: 0.5,
+  const { data: navItemsRaw, loading } = useCachedApi<NavItem[]>({
+    key: `navbar-items-global`, // Shared key for all locales
+    fetcher: () => fetchNavItems(),
+    ttlMinutes: 60, // Cache for a long time
+    keepPreviousData: true
   });
 
-  // Layout shift oldini olish uchun har doim array qaytarish
-  const displayNavItems = navItems || [];
+  // Local locale-based transformation for instant switching
+  const displayNavItems = React.useMemo(() => {
+    if (!navItemsRaw) return [];
+
+    const transformRecursive = (item: NavItem): any => ({
+      ...item,
+      title: getLocalized(item.title, locale) || 'Menu Item',
+      description: getLocalized(item.description, locale),
+      children: item.children?.map(transformRecursive) || []
+    });
+
+    return navItemsRaw.map(transformRecursive);
+  }, [navItemsRaw, locale]);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openMobileSubmenu, setOpenMobileSubmenu] = useState<string | null>(null);
@@ -115,13 +128,13 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                   </motion.div>
                 )}
               </AnimatePresence>
-              {displayNavItems.map((item: NavItem) => {
+              {displayNavItems.map((item: any) => {
                 const hasCategories =
-                  item.children && item.children.some((child: NavItem) => child.children && child.children.length > 0);
+                  item.children && item.children.some((child: any) => child.children && child.children.length > 0);
 
                 return (
                   <div
-                    key={item.title}
+                    key={String(item.title)}
                     className="group h-full"
                   >
                     <PrefetchLink
@@ -135,7 +148,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                         } else if (item.href === '/') {
                           prefetchService.prefetchHomeNews();
                         }
-                        item.children && setActiveDropdown(item.title);
+                        item.children && setActiveDropdown(String(item.title));
                       }}
                       onMouseLeave={() => item.children && setActiveDropdown(null)}
                       onClick={() => {
@@ -160,7 +173,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                     {item.children && activeDropdown === item.title && (
                       <div
                         className="absolute top-full left-0 right-0 z-50 pointer-events-none bg-white"
-                        onMouseEnter={() => setActiveDropdown(item.title)}
+                        onMouseEnter={() => setActiveDropdown(String(item.title))}
                         onMouseLeave={() => setActiveDropdown(null)}
                       >
                         <div className="pointer-events-auto">
@@ -173,19 +186,19 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                     <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-primary/10 text-primary ring-1 ring-primary/20">
                                       {getSectionIcon()}
                                     </div>
-                                    <h3 className="text-xl font-bold text-black">{item.title}</h3>
+                                    <h3 className="text-xl font-bold text-black">{String(item.title)}</h3>
                                   </div>
                                   <p className="text-base text-black leading-relaxed max-w-xs">
-                                    {item.description || "Ushbu bo'lim haqida batafsil ma'lumot"}
+                                    {String(item.description || "Ushbu bo'lim haqida batafsil ma'lumot")}
                                   </p>
                                 </div>
 
                                 <div className="col-span-2">
                                   {hasCategories ? (
                                     <div className="grid grid-cols-2 gap-6">
-                                      {item.children!.map((category: NavItem) => (
+                                      {item.children!.map((category: any) => (
                                         <div key={category.title} className="space-y-3">
-                                          <Link
+                                          <PrefetchLink
                                             to={category.href || '#'}
                                             onClick={closeDropdown}
                                             className="
@@ -196,12 +209,12 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                             "
                                           >
                                             {category.title}
-                                          </Link>
+                                          </PrefetchLink>
                                           {category.children && (
                                             <ul className="space-y-1">
-                                              {category.children.map((link: NavItem) => (
-                                                <li key={link.title}>
-                                                  <Link
+                                              {category.children.map((link: any) => (
+                                                <li key={String(link.title)}>
+                                                  <PrefetchLink
                                                     to={link.href!}
                                                     onClick={closeDropdown}
                                                     className="
@@ -213,7 +226,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                                   >
                                                     <ChevronRightIcon className="h-5 w-5 opacity-50" />
                                                     {link.title}
-                                                  </Link>
+                                                  </PrefetchLink>
                                                 </li>
                                               ))}
                                             </ul>
@@ -223,9 +236,9 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                     </div>
                                   ) : (
                                     <ul className="grid grid-cols-2 gap-x-8 gap-y-2">
-                                      {item.children!.map((link: NavItem) => (
-                                        <li key={link.title}>
-                                          <Link
+                                      {item.children!.map((link: any) => (
+                                        <li key={String(link.title)}>
+                                          <PrefetchLink
                                             to={link.href!}
                                             onClick={closeDropdown}
                                             className="
@@ -237,7 +250,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                           >
                                             <ChevronRightIcon className="h-5 w-5 opacity-60" />
                                             {link.title}
-                                          </Link>
+                                          </PrefetchLink>
                                         </li>
                                       ))}
                                     </ul>
@@ -314,43 +327,43 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
         isMobileMenuOpen && (
           <div className="lg:hidden bg-white shadow-lg">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              {displayNavItems.map((item: NavItem) => (
+              {displayNavItems.map((item: any) => (
                 <div key={item.title}>
                   {item.children ? (
                     <>
                       <button
-                        onClick={() => toggleMobileSubmenu(item.title)}
+                        onClick={() => toggleMobileSubmenu(String(item.title))}
                         className="w-full flex justify-between items-center text-gray-700 px-3 py-2 rounded-md text-lg font-medium hover:bg-gray-100"
                       >
-                        <span>{item.title}</span>
+                        <span>{String(item.title)}</span>
                         <ChevronDownIcon
-                          className={`w-5 h-5 transform transition-transform ${openMobileSubmenu === item.title ? 'rotate-180' : ''
+                          className={`w-5 h-5 transform transition-transform ${openMobileSubmenu === String(item.title) ? 'rotate-180' : ''
                             }`}
                         />
                       </button>
                       {openMobileSubmenu === item.title && (
                         <div className="pl-6 mt-1 space-y-1">
-                          {item.children.map((child: NavItem) => (
-                            <Link
-                              key={child.title}
+                          {item.children.map((child: any) => (
+                            <PrefetchLink
+                              key={String(child.title)}
                               to={child.href || '#'}
                               className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-[#0E104B] hover:bg-gray-50"
                               onClick={() => setIsMobileMenuOpen(false)}
                             >
-                              {child.title}
-                            </Link>
+                              {String(child.title)}
+                            </PrefetchLink>
                           ))}
                         </div>
                       )}
                     </>
                   ) : (
-                    <Link
+                    <PrefetchLink
                       to={item.href || '#'}
                       className="block px-3 py-2 rounded-md text-lg font-medium text-gray-700 hover:bg-gray-100"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      {item.title}
-                    </Link>
+                      {String(item.title)}
+                    </PrefetchLink>
                   )}
                 </div>
               ))}

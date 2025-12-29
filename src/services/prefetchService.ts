@@ -11,12 +11,12 @@ export const prefetchService = {
     /**
      * Navigatsiya menyusini prefetch qilish
      */
-    prefetchNavbar: async (locale: string) => {
-        const key = `navbar-items-${locale}`;
+    prefetchNavbar: async () => {
+        const key = 'navbar-items-global';
         if (!cacheManager.has(key)) {
             try {
-                const navItems = await fetchNavItems(locale);
-                cacheManager.set(key, navItems, 0.5); // 30 seconds
+                const navItems = await fetchNavItems();
+                cacheManager.set(key, navItems, 60); // 60 minutes
             } catch (e) {
                 console.warn('Navbar prefetch failed', e);
             }
