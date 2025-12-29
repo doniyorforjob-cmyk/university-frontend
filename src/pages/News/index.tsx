@@ -6,10 +6,12 @@ import SectionTemplate, { SectionItem } from '@/components/templates/SectionTemp
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 import { useStandardPage } from '@/hooks/useStandardPage';
 import ServerError from '@/pages/Errors/ServerError';
+import { useLocale } from '@/contexts/LocaleContext';
+import { useGlobalCache } from '@/components/providers/CachedApiProvider';
 
 // News ma'lumotlarini olish funksiyasi
-const fetchNewsData = async (): Promise<SectionItem[]> => {
-  const data = await getPosts('news');
+const fetchNewsData = async (locale?: string): Promise<SectionItem[]> => {
+  const data = await getPosts('news', locale);
 
   // Post[] ni SectionItem[] ga o'zgartirish
   const sectionItems: SectionItem[] = data.map((post: Post) => ({
@@ -28,16 +30,38 @@ const fetchNewsData = async (): Promise<SectionItem[]> => {
 const NewsPage: React.FC = () => {
   const navigate = useNavigate();
   const { setBannerData, setBreadcrumbsData, setSidebarType } = useGlobalLayout();
+  const { locale } = useLocale();
+  const { cacheManager } = useGlobalCache();
   const { data: items, loading, error, refetch } = useStandardPage(
     'news',
-    fetchNewsData
+    () => fetchNewsData(locale)
   );
+
+  // Background prefetching for other locales
+  useEffect(() => {
+    if (!items || items.length === 0) return;
+
+    const otherLocales = ['uz', 'ru', 'en'].filter(l => l !== locale);
+
+    otherLocales.forEach(async (targetLocale) => {
+      const cacheKey = `news-data-${targetLocale}`;
+      if (!cacheManager.has(cacheKey)) {
+        try {
+          console.log(`Prefetching news for ${targetLocale}...`);
+          const data = await fetchNewsData(targetLocale);
+          cacheManager.set(cacheKey, data, 5); // 5 minutes TTL
+        } catch (e) {
+          console.warn(`Failed to prefetch news for ${targetLocale}`, e);
+        }
+      }
+    });
+  }, [items, locale, cacheManager]);
 
   useEffect(() => {
     setBreadcrumbsData([
-      { label: 'Bosh sahifa', href: '/' },
-      { label: 'Axborot xizmati', href: '#' },
-      { label: 'Yangiliklar' }
+      { label: locale === 'uz' ? 'Bosh sahifa' : locale === 'ru' ? 'Главная' : 'Home', href: '/' },
+      { label: locale === 'uz' ? 'Axborot xizmati' : locale === 'ru' ? 'Информационная служба' : 'Information Service', href: '#' },
+      { label: locale === 'uz' ? 'Yangiliklar' : locale === 'ru' ? 'Новости' : 'News' }
     ]);
 
     setSidebarType('info');
@@ -46,7 +70,7 @@ const NewsPage: React.FC = () => {
       setBreadcrumbsData(undefined);
       setSidebarType(undefined);
     };
-  }, [setBreadcrumbsData, setSidebarType]);
+  }, [setBreadcrumbsData, setSidebarType, locale]);
 
 
   const handleItemClick = useCallback((item: SectionItem) => {
@@ -60,8 +84,8 @@ const NewsPage: React.FC = () => {
   return (
     <SectionTemplate
       loading={loading}
-      parentTitle="Axborot xizmati"
-      sectionTitle="Yangiliklar"
+      parentTitle={locale === 'uz' ? 'Axborot xizmati' : locale === 'ru' ? 'Информационная служба' : 'Information Service'}
+      sectionTitle={locale === 'uz' ? 'Yangiliklar' : locale === 'ru' ? 'Новости' : 'News'}
       sectionType="news"
       items={items || []}
       totalItems={(items || []).length}

@@ -13,14 +13,14 @@ const MainLayout: React.FC = () => {
 
   return (
     <Container className="py-8">
-      <div className="flex flex-col lg:grid lg:grid-cols-[3fr_1fr] gap-8">
-        <main className="w-full">
+      <div className="flex flex-col lg:grid lg:grid-cols-[6fr_2fr] gap-8">
+        <main className="w-full min-w-0">
           <div className="w-full">
             <Outlet />
           </div>
         </main>
         {sidebarContent ? (
-          <aside className="w-full">
+          <aside className="w-full min-w-0">
             {sidebarContent}
           </aside>
         ) : (

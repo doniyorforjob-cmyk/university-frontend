@@ -52,6 +52,7 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
       const mappedRoute = getRouteByTitle(item.title?.en || '');
 
       return {
+        key: item.title?.en,
         title: item.title?.[locale] || item.title?.en || item.title?.uz || 'Menu Item',
         description: item.description?.[locale] || item.description?.en || item.description?.uz,
         href: backendUrl || mappedRoute,

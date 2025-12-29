@@ -1,6 +1,7 @@
 import apiClient from '../client';
 import { HomeSectionBlock, HomeSectionType } from '../../pages/Home/types';
 import { HomeHeroData, HomeStatsData, HomeNewsData, HomeFacultiesData, HomeVideoGalleryData, HomeMediaData, HomeInteractiveServicesData, HomeUniversitySystemsData } from '../../types/home.types';
+import { getImageUrl } from '../../utils/apiUtils';
 
 
 export const homeApi = {
@@ -75,7 +76,14 @@ export const homeApi = {
         id: entry.uuid || entry.id,
         slug: entry.fields?.slug || entry.slug,
         title: entry.fields?.title || entry.title || '',
-        image_url: (Array.isArray(entry.fields?.image) ? entry.fields.image[0]?.url : (entry.fields?.image?.url || '')) || '/images/logo.png',
+        image_url: getImageUrl(
+          (typeof entry.fields?.image === 'object' && !Array.isArray(entry.fields?.image) ? entry.fields.image.path || entry.fields.image.url : '') ||
+          (Array.isArray(entry.fields?.images) ? entry.fields.images[0]?.path : '') ||
+          (entry.fields?.images?.path || '') ||
+          (Array.isArray(entry.fields?.image) ? entry.fields.image[0]?.url : '') ||
+          (entry.fields?.image?.url || '') ||
+          (entry.image_url || entry.image || '')
+        ),
         description: entry.fields?.content ? entry.fields.content.substring(0, 150) + '...' : '',
         published_at: entry.fields?.date || entry.published_at || entry.created_at,
         date: entry.fields?.date || entry.published_at || entry.created_at,
@@ -117,8 +125,8 @@ export const homeApi = {
           id: entry.uuid || entry.id,
           name: entry.fields?.name || entry.name,
           color: entry.fields?.color || 'from-sky-500 to-indigo-500',
-          image: (Array.isArray(entry.fields?.icon) ? entry.fields.icon[0]?.url : (entry.fields?.icon?.url || '')) || '/images/logo.png',
-          iconImage: (Array.isArray(entry.fields?.icon) ? entry.fields.icon[0]?.url : (entry.fields?.icon?.url || '')) || '/images/logo.png',
+          image: getImageUrl(Array.isArray(entry.fields?.icon) ? entry.fields.icon[0]?.url : (entry.fields?.icon?.url || '')),
+          iconImage: getImageUrl(Array.isArray(entry.fields?.icon) ? entry.fields.icon[0]?.url : (entry.fields?.icon?.url || '')),
         }))
       };
     } catch (error) {

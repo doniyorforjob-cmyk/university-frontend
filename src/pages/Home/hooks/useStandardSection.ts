@@ -1,6 +1,7 @@
 import { useCachedApi } from '../../../hooks/useCachedApi';
 import { HomeSectionType } from '../types';
 import { SECTION_CACHE_CONFIG } from '../../../config/constants';
+import { useLocale } from '../../../contexts/LocaleContext';
 
 
 interface UseStandardSectionOptions {
@@ -16,6 +17,7 @@ export const useStandardSection = <T = any>(
   fetcher: () => Promise<T>,
   options: UseStandardSectionOptions = {}
 ) => {
+  const { locale } = useLocale();
   const {
     ttlMinutes = SECTION_CACHE_CONFIG[sectionType]?.ttlMinutes ?? 0.5, // Default from config
     enabled = true,
@@ -25,7 +27,7 @@ export const useStandardSection = <T = any>(
   } = options;
 
   return useCachedApi({
-    key: `home-section-${sectionType}-http`,
+    key: `home-section-${sectionType}-http-${locale}`,
     fetcher: async () => {
       const rawData = await fetcher();
       return transformData ? transformData(rawData) : rawData;

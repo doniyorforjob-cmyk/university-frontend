@@ -30,10 +30,8 @@ const TopHeader = () => {
         i18n.changeLanguage(locale);
     }, [locale, i18n]);
 
-    const changeLanguage = (lng: string) => {
-        setLocale(lng as 'uz' | 'ru' | 'en');
-        setLangDropdownOpen(false);
-    };
+    // URL based language switching handles context update
+    // const changeLanguage = ... removed
 
     const currentLanguage = locale as keyof typeof languageOptions;
     const currentLangDetails = languageOptions[currentLanguage] || languageOptions.uz;
@@ -92,14 +90,50 @@ const TopHeader = () => {
                             <button onClick={() => setLangDropdownOpen(!isLangDropdownOpen)} className="flex items-center focus:outline-none text-white hover:text-secondary">
                                 <img src={currentLangDetails.flag} width="20" alt={currentLangDetails.name} className="mr-2" />
                                 <span>{currentLangDetails.name}</span>
-                                <svg className="h-4 w-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                                <svg className="h-4 w-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7 7"></path></svg>
                             </button>
                             {isLangDropdownOpen && (
                                 <div className="absolute right-0 mt-2 w-28 rounded-md bg-white py-1 shadow-xl ring-1 ring-black ring-opacity-5 z-50">
                                     {Object.keys(languageOptions).map((lng) => (
                                         <button
                                             key={lng}
-                                            onClick={() => changeLanguage(lng)}
+                                            onClick={() => {
+                                                setLangDropdownOpen(false);
+
+                                                // 1. Get raw clean path (remove any existing locale prefix)
+                                                let currentPath = window.location.pathname;
+
+                                                // Regex to remove starting /uz, /ru, /en (with optional trailing slash or followed by end of string)
+                                                // Matches: "/uz", "/uz/", "/uz/news" -> "", "/", "/news"
+                                                currentPath = currentPath.replace(/^\/(uz|ru|en)(\/|$)/, '/');
+
+                                                // Ensure it starts with / (if replace resulted in empty string or simple cleanup)
+                                                if (!currentPath.startsWith('/')) currentPath = '/' + currentPath;
+
+                                                // 2. Build new path
+                                                let newPath = currentPath;
+
+                                                if (lng === 'uz') {
+                                                    // Uz: Root is '/', Inner is '/uz/...'
+                                                    if (newPath === '/' || newPath === '') {
+                                                        newPath = '/';
+                                                    } else {
+                                                        // Ensure separate clean path doesn't have double slash if we prepend
+                                                        newPath = `/uz${newPath}`;
+                                                    }
+                                                } else {
+                                                    // Ru/En: Always prepend /lang
+                                                    // If raw path is '/', result is '/ru' (normalized to no trailing slash usually favored, but let's keep /ru for root)
+                                                    if (newPath === '/') {
+                                                        newPath = `/${lng}`;
+                                                    } else {
+                                                        newPath = `/${lng}${newPath}`;
+                                                    }
+                                                }
+
+                                                // 3. Navigate
+                                                window.location.href = newPath;
+                                            }}
                                             className="flex items-center w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100"
                                         >
                                             <img src={languageOptions[lng as keyof typeof languageOptions].flag} width="20" alt={languageOptions[lng as keyof typeof languageOptions].name} className="mr-2" />

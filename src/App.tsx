@@ -1,34 +1,29 @@
 import React, { Suspense } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import MainLayout from '@/components/shared/MainLayout';
+// MainLayout import removed (moved to AppRoutes)
 import GlobalLayout from '@/components/templates/GlobalLayout';
 import { ScrollToTop } from '@/components/shared';
 import { LocaleProvider } from '@/contexts/LocaleContext';
 // Error Pages & Components
-import NotFound from '@/pages/Errors/NotFound';
+// NetworkError imported
+// NotFound moved to AppRoutes
 import NetworkError from '@/pages/Errors/NetworkError';
 import ErrorBoundary from '@/components/shared/error-boundary';
 import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
 import { useSettingsStore } from '@/store/settingsStore';
 
-// Code splitting bilan lazy loading
+import LocaleWrapper from '@/components/shared/LocaleWrapper';
+import AppRoutes from './AppRoutes';
+
+// Lazy load HomePage for root path
 const HomePage = React.lazy(() => import('./pages/Home'));
-const NewsPage = React.lazy(() => import('./pages/News'));
-const NewsDetailPage = React.lazy(() => import('./pages/NewsDetail'));
-const AnnouncementsPage = React.lazy(() => import('./pages/Announcements'));
-const MediaAboutUsPage = React.lazy(() => import('./pages/MediaAboutUs'));
-const AppealsPage = React.lazy(() => import('./pages/Appeals'));
-const ContactPage = React.lazy(() => import('./pages/Contact'));
-const OrganizationalStructurePage = React.lazy(() => import('./pages/OrganizationalStructure'));
-const ActivitiesPage = React.lazy(() => import('./pages/Activities'));
-const AdmissionPage = React.lazy(() => import('./pages/Admission'));
-const YashilUniversitetPage = React.lazy(() => import('./pages/YashilUniversitet'));
-const EcoActiveStudentsPage = React.lazy(() => import('./pages/EcoActiveStudents'));
-const UniversityPage = React.lazy(() => import('./pages/University'));
-const InformationServicesPage = React.lazy(() => import('./pages/InformationServices'));
-const PhotoDetailPage = React.lazy(() => import('./pages/PhotoDetail'));
-const ServerError = React.lazy(() => import('./pages/Error/ServerError'));
+
+// Redirect component
+const NavigateToUz = () => {
+  const location = useLocation();
+  return <Navigate to={`/uz${location.pathname}`} replace />;
+};
 
 function App() {
   const location = useLocation();
@@ -66,41 +61,29 @@ function App() {
         <Layout>
           <ErrorBoundary>
             <Suspense fallback={isHome ? null : <GenericPageSkeleton showSidebar={true} showBanner={true} />}> {/* This fallback is for the initial load of the entire app */}
-              <Routes> {/* Routes should be wrapped by GlobalLayout */}
-                <Route element={<GlobalLayout />}> {/* GlobalLayout will handle Banner and Breadcrumbs */}
+              <Routes>
+                {/* Russian Locale */}
+                <Route path="ru/*" element={<LocaleWrapper lang="ru" />}>
+                  <Route path="*" element={<AppRoutes />} />
+                </Route>
+
+                {/* English Locale */}
+                <Route path="en/*" element={<LocaleWrapper lang="en" />}>
+                  <Route path="*" element={<AppRoutes />} />
+                </Route>
+
+                {/* Uzbek Locale - Explicit for inner pages */}
+                <Route path="uz/*" element={<LocaleWrapper lang="uz" />}>
+                  <Route path="*" element={<AppRoutes />} />
+                </Route>
+
+                {/* Special Case: Root path is Uzbek Home Page */}
+                <Route path="/" element={<LocaleWrapper lang="uz" />}>
                   <Route index element={<HomePage />} />
-                  <Route path="/contact" element={<ContactPage />} />
+                </Route>
 
-                  {/* "Axborot xizmati" uchun doimiy Sidebar bilan ishlaydigan sahifalar */}
-                  <Route element={<MainLayout />}>
-                    <Route path="/news" element={<NewsPage />} />
-                    <Route path="/news/:slug" element={<NewsDetailPage />} />
-                    <Route path="/announcements" element={<AnnouncementsPage />} />
-                    <Route path="/media-about-us" element={<MediaAboutUsPage />} />
-                    <Route path="/appeals" element={<AppealsPage />} />
-                  </Route>
-
-                  {/* "UniversitySystems" Sidebar bilan ishlaydigan sahifalar */}
-                  <Route element={<MainLayout />}>
-                    <Route path="/university" element={<UniversityPage />} />
-                    <Route path="/information-services" element={<InformationServicesPage />} />
-                    <Route
-                      path="/organizational-structure"
-                      element={<OrganizationalStructurePage />}
-                    />
-                    <Route path="/activities" element={<ActivitiesPage />} />
-                    <Route path="/admission" element={<AdmissionPage />} />
-                    <Route path="/yashil-universitet" element={<YashilUniversitetPage />} />
-                    <Route path="/eco-active-students" element={<EcoActiveStudentsPage />} />
-                    <Route path="/photos/:id" element={<PhotoDetailPage />} />
-                    {/* Boshqa sahifalarni shu yerga qo'shish mumkin */}
-                  </Route>
-                  {/* 404 Catch-All Route - Eng oxirida bo'lishi shart */}
-                  {/* 404 Catch-All Route - Eng oxirida bo'lishi shart */}
-                  {/* 404 Catch-All Route - Eng oxirida bo'lishi shart */}
-                  <Route path="/server-error" element={<ServerError />} />
-                  <Route path="*" element={<NotFound />} />
-                </Route> {/* End of GlobalLayout route */}
+                {/* Any other top-level path (e.g. /news) -> Redirect to /uz/news */}
+                <Route path="*" element={<NavigateToUz />} />
               </Routes>
             </Suspense>
           </ErrorBoundary>

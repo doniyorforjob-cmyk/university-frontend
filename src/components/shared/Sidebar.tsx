@@ -21,12 +21,17 @@ const Sidebar = memo(() => {
   const informationService = useMemo(() => {
     // Find the navigation item whose title matches "Axborot xizmati" in any language
     return navItems.find(item => {
-      if (typeof item.title === 'string') {
-        return item.title === 'Axborot xizmati';
+      // Robust check using key (English title)
+      if (item.key === 'Information Service' || item.key === 'Information Services') {
+        return true;
       }
-      // title may be an object with locale keys (e.g., { uz: 'Axborot xizmati', en: 'Information Service' })
+      // Fallback: title check (existing logic)
+      if (typeof item.title === 'string') {
+        return item.title === 'Axborot xizmati' || item.title === 'Information Service' || item.title === 'Information Services' || item.title === 'Пресс-служба';
+      }
       if (item.title && typeof item.title === 'object') {
-        return Object.values(item.title).some(val => val === 'Axborot xizmati');
+        const values = Object.values(item.title) as string[];
+        return values.some(val => val === 'Axborot xizmati' || val === 'Information Service' || val === 'Information Services');
       }
       return false;
     });
@@ -96,7 +101,7 @@ const Sidebar = memo(() => {
             <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           <h3 className="text-lg font-bold text-white tracking-tight">
-            Axborot xizmati
+            {informationService.title}
           </h3>
         </div>
         <div className="bg-gray-50">
@@ -110,7 +115,7 @@ const Sidebar = memo(() => {
           {/* Sarlavha va kichik tugma – CHAPGA */}
           <div className="mb-4">
             <h4 className="text-md font-bold text-gray-800 mb-2">
-              Rektorga murojaat
+              {locale === 'uz' ? 'Rektorga murojaat' : locale === 'ru' ? 'Обращение к ректору' : 'Appeal to Rector'}
             </h4>
             <PrefetchLink
               to="/appeals"
@@ -118,7 +123,7 @@ const Sidebar = memo(() => {
               prefetchDelay={150}
               className="inline-block px-5 py-1.5 text-sm bg-primary text-white font-semibold rounded-md hover:bg-primary-dark transition-colors"
             >
-              Murojaat qilish
+              {locale === 'uz' ? 'Murojaat qilish' : locale === 'ru' ? 'Отправить' : 'Send appeal'}
             </PrefetchLink>
           </div>
 

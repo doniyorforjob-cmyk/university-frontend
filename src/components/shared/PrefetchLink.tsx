@@ -1,17 +1,15 @@
 import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { prefetchRoute } from '../../config/routesConfig';
+import { useLocale } from '@/contexts/LocaleContext';
 
-interface PrefetchLinkProps {
-  to: string;
+/**
+ * Custom LinkProps to support all Link attributes + custom prefetch props
+ */
+interface PrefetchLinkProps extends Omit<React.ComponentPropsWithoutRef<typeof Link>, 'to'> {
+  to: string | any;
   prefetch?: boolean;
   prefetchDelay?: number;
-  children: React.ReactNode;
-  className?: string;
-  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
-  onMouseEnter?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
-  onMouseLeave?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
-  onFocus?: (e: React.FocusEvent<HTMLAnchorElement>) => void;
 }
 
 /**
@@ -29,14 +27,42 @@ const PrefetchLink: React.FC<PrefetchLinkProps> = ({
   onFocus,
   ...props
 }) => {
+  const { locale } = useLocale();
+
+  // Helper to resolve localized path
+  const localizedTo = React.useMemo(() => {
+    // If 'to' is not a string (e.g., an object), return as is
+    if (typeof to !== 'string') return to;
+
+    // If external link or anchor, return as is
+    if (to.startsWith('http') || to.startsWith('#') || to.startsWith('mailto:')) return to;
+
+    // cleanTo removes leading slash
+    const cleanTo = to.startsWith('/') ? to.substring(1) : to;
+
+    // CASE 1: Root path requested
+    // If original 'to' was '/' (so cleanTo is empty) OR explicit 'home' logic
+    if (to === '/' || cleanTo === '') {
+      if (locale === 'uz') return '/';
+      return `/${locale}`;
+    }
+
+    // CASE 2: Inner pages
+    // Check if already prefixed
+    if (cleanTo.startsWith(`${locale}/`) || cleanTo === locale) return to;
+
+    // For inner pages, return prefixed path for ALL locales including UZ
+    return `/${locale}/${cleanTo}`;
+  }, [to, locale]);
+
   const handlePrefetch = useCallback(() => {
-    if (prefetch) {
+    if (prefetch && typeof localizedTo === 'string') {
       // Delay bilan prefetch qilish (hover va focus uchun)
       setTimeout(() => {
-        prefetchRoute(to);
+        prefetchRoute(localizedTo);
       }, prefetchDelay);
     }
-  }, [to, prefetch, prefetchDelay]);
+  }, [localizedTo, prefetch, prefetchDelay]);
 
   const handleMouseEnter = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
     handlePrefetch();
@@ -54,7 +80,7 @@ const PrefetchLink: React.FC<PrefetchLinkProps> = ({
 
   return (
     <Link
-      to={to}
+      to={localizedTo}
       onClick={onClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

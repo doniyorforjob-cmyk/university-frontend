@@ -530,7 +530,7 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
         </div>
 
         {showSidebar && (
-          <aside className="w-full lg:w-1/4">
+          <aside className="w-full lg:w-1/5">
             {sidebarContent}
           </aside>
         )}

@@ -1,7 +1,8 @@
 import apiClient from '../client';
 import { Post, PostDetail, PostCategory } from '../../types/post.types';
+import { getImageUrl } from '../../utils/apiUtils';
 
-export const getPosts = async (category?: PostCategory): Promise<Post[]> => {
+export const getPosts = async (category?: PostCategory, locale?: string): Promise<Post[]> => {
   try {
     const projectId = process.env.REACT_APP_PROJECT_ID;
     console.log("Using projectId:", projectId);
@@ -9,9 +10,12 @@ export const getPosts = async (category?: PostCategory): Promise<Post[]> => {
     if (category) {
       params['filter[category][eq]'] = category;
     }
+    if (locale) {
+      params['locale'] = locale;
+    }
 
     // Start localized and English fallback requests in parallel if current locale is not English
-    const currentLocale = params.locale || localStorage.getItem('locale') || 'en';
+    const currentLocale = locale || params.locale || localStorage.getItem('locale') || 'en';
 
     let data;
     if (currentLocale !== 'en') {
@@ -23,8 +27,31 @@ export const getPosts = async (category?: PostCategory): Promise<Post[]> => {
           })
         ]);
 
-        const dataLocalized = Array.isArray(resLocalized.data) ? resLocalized.data : resLocalized.data.data;
+        let dataLocalized = Array.isArray(resLocalized.data) ? resLocalized.data : resLocalized.data.data;
         const dataEnglish = Array.isArray(resEnglish.data) ? resEnglish.data : resEnglish.data.data;
+
+        // FALLBACK: Agar kategoriya bo'yicha o'zbekcha/ruscha ma'lumot topilmasa, filtersiz olib ko'rish
+        // Bu "uz dagi malumotlarni kursatmayapti" degan muammoni hal qiladi (ehtimol kategoriya sluglari mos emas)
+        if (!dataLocalized || dataLocalized.length === 0) {
+          try {
+            const fallbackParams = { ...params };
+            if (fallbackParams['filter[category][eq]']) {
+              console.warn(`No content for locale ${currentLocale} with category, trying unfiltered...`);
+              delete fallbackParams['filter[category][eq]'];
+
+              const resLocalizedUnfiltered = await apiClient.get(`/projects/${projectId}/content/news`, {
+                params: { ...fallbackParams, per_page: 50, locale: currentLocale }
+              });
+
+              const dataUnfiltered = Array.isArray(resLocalizedUnfiltered.data) ? resLocalizedUnfiltered.data : resLocalizedUnfiltered.data.data;
+              if (dataUnfiltered && dataUnfiltered.length > 0) {
+                dataLocalized = dataUnfiltered;
+              }
+            }
+          } catch (fallbackErr) {
+            console.warn("Unfiltered fallback failed:", fallbackErr);
+          }
+        }
 
         data = (dataLocalized && dataLocalized.length > 0) ? dataLocalized : dataEnglish;
       } catch (e) {
@@ -50,7 +77,14 @@ export const getPosts = async (category?: PostCategory): Promise<Post[]> => {
       id: entry.uuid || entry.id,
       slug: entry.fields?.slug || entry.slug,
       title: entry.fields?.title || entry.title,
-      image_url: (Array.isArray(entry.fields?.image) ? entry.fields.image[0]?.url : (entry.fields?.image?.url || '')) || '/images/logo.png',
+      image_url: getImageUrl(
+        (typeof entry.fields?.image === 'object' && !Array.isArray(entry.fields?.image) ? entry.fields.image.path || entry.fields.image.url : '') ||
+        (Array.isArray(entry.fields?.images) ? entry.fields.images[0]?.path : '') ||
+        (entry.fields?.images?.path || '') ||
+        (Array.isArray(entry.fields?.image) ? entry.fields.image[0]?.url : '') ||
+        (entry.fields?.image?.url || '') ||
+        (entry.image_url || entry.image || '')
+      ),
       description: entry.fields?.content ? entry.fields.content.substring(0, 150) + '...' : '',
       published_at: entry.created_at || entry.published_at,
       views: entry.fields?.views || 0,
@@ -105,13 +139,23 @@ export const getPostBySlug = async (slug: string): Promise<PostDetail | undefine
       id: entry.uuid || entry.id,
       slug: entry.fields?.slug || entry.slug,
       title: entry.fields?.title || entry.title,
-      image_url: (Array.isArray(entry.fields?.image) ? entry.fields.image[0]?.url : (entry.fields?.image?.url || '')) || '/images/logo.png',
+      image_url: getImageUrl(
+        (typeof entry.fields?.image === 'object' && !Array.isArray(entry.fields?.image) ? entry.fields.image.path || entry.fields.image.url : '') ||
+        (Array.isArray(entry.fields?.images) ? entry.fields.images[0]?.path : '') ||
+        (entry.fields?.images?.path || '') ||
+        (Array.isArray(entry.fields?.image) ? entry.fields.image[0]?.url : '') ||
+        (entry.fields?.image?.url || '') ||
+        (entry.image_url || entry.image || '')
+      ),
       description: entry.fields?.content ? entry.fields.content.substring(0, 150) + '...' : '',
       published_at: entry.created_at || entry.published_at,
       views: entry.fields?.views || 0,
       category: (entry.fields?.category || 'news') as PostCategory,
       content: entry.fields?.content || '',
-      author: { name: 'Matbuot xizmati' }
+      author: { name: 'Matbuot xizmati' },
+      gallery: Array.isArray(entry.fields?.gallery)
+        ? entry.fields.gallery.map((img: any) => getImageUrl(img.path || img.url))
+        : []
     };
   } catch (error) {
     console.error("News detail fetch error:", error);

@@ -91,7 +91,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                     transition={{ duration: 0.3, ease: 'easeInOut' }}
                     className="overflow-hidden h-full"
                   >
-                    <Link
+                    <PrefetchLink
                       to="/"
                       className="flex items-center h-full px-4 text-[#0E104B] bg-white hover:bg-gray-100 transition-colors duration-300 whitespace-nowrap"
                       title="Bosh sahifa"
@@ -111,7 +111,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                           d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
                         />
                       </svg>
-                    </Link>
+                    </PrefetchLink>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -298,9 +298,9 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
 
       {/* ==== MOBILE MENU ==== */}
       <div className="lg:hidden flex justify-between items-center h-16 px-4 sm:px-6 shadow-md bg-primary">
-        <Link to="/" className="text-white font-bold text-xl">
+        <PrefetchLink to="/" className="text-white font-bold text-xl">
           NAMDTU
-        </Link>
+        </PrefetchLink>
         <button
           onClick={toggleMobileMenu}
           className="inline-flex items-center justify-center p-2 rounded-md text-white focus:outline-none"

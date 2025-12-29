@@ -20,28 +20,23 @@ interface BreadcrumbsProps {
 }
 
 const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
-  const filteredItems = items.filter(item => item.label.toLowerCase() !== 'bosh sahifa');
+
 
   return (
     <Breadcrumb>
       <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink asChild>
-            <Link to="/" className="flex items-center">
-              <HomeIcon className="h-4 w-4 mr-1" />
-              Bosh sahifa
-            </Link>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        {filteredItems.map((item, index) => (
+        {items.map((item, index) => (
           <React.Fragment key={item.label}>
-            <BreadcrumbSeparator />
+            {index > 0 && <BreadcrumbSeparator />}
             <BreadcrumbItem>
-              {index === filteredItems.length - 1 ? (
+              {index === items.length - 1 ? (
                 <BreadcrumbPage>{item.label}</BreadcrumbPage>
               ) : (
                 <BreadcrumbLink asChild>
-                  <Link to={item.href || '#'}>{item.label}</Link>
+                  <Link to={item.href || '#'} className={index === 0 ? "flex items-center" : ""}>
+                    {index === 0 && <HomeIcon className="h-4 w-4 mr-1" />}
+                    {item.label}
+                  </Link>
                 </BreadcrumbLink>
               )}
             </BreadcrumbItem>

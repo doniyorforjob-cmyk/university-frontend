@@ -17,4 +17,5 @@ export interface PostDetail extends Post {
     name: string;
     avatar_url?: string;
   };
+  gallery?: string[];
 }

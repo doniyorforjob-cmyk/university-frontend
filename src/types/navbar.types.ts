@@ -1,6 +1,7 @@
 // src/types/navbar.ts
 
 export interface NavItem {
+  key?: string;
   title: string;
   href?: string;
   description?: string;

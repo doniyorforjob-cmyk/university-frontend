@@ -1,5 +1,6 @@
 import apiClient from '../client';
 import { Faculty } from '../../types/faculty.types';
+import { getImageUrl } from '../../utils/apiUtils';
 
 export const getFaculties = async (): Promise<Faculty[]> => {
     try {
@@ -14,8 +15,8 @@ export const getFaculties = async (): Promise<Faculty[]> => {
             id: entry.uuid || entry.id,
             name: entry.fields?.name || entry.name,
             shortDescription: entry.fields?.description || entry.description,
-            image: (Array.isArray(entry.fields?.icon) ? entry.fields.icon[0]?.url : (entry.fields?.icon?.url || '')) || '/images/logo.png',
-            iconImage: (Array.isArray(entry.fields?.icon) ? entry.fields.icon[0]?.url : (entry.fields?.icon?.url || '')) || '/images/logo.png',
+            image: getImageUrl(Array.isArray(entry.fields?.icon) ? entry.fields.icon[0]?.url : (entry.fields?.icon?.url || '')),
+            iconImage: getImageUrl(Array.isArray(entry.fields?.icon) ? entry.fields.icon[0]?.url : (entry.fields?.icon?.url || '')),
             color: entry.fields?.color || 'from-sky-500 to-indigo-500',
         }));
     } catch (error) {
