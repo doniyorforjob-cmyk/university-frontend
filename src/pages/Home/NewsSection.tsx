@@ -110,7 +110,7 @@ const NewsSection = () => {
             'data-aos-duration': AOS_CONFIG.defaultDuration,
           })}
         >
-          <PrefetchLink to={`/news/${item.slug}`} prefetch={true} className="block h-full">
+          <PrefetchLink to={`/news/${item.slug}`} state={{ post: item }} prefetch={true} className="block h-full">
             <AspectRatio ratio={1 / 1}>
               <OptimizedImage
                 className="w-full h-full object-cover"

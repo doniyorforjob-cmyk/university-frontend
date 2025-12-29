@@ -75,7 +75,8 @@ export const getPosts = async (category?: PostCategory, locale?: string): Promis
 
     return data.map((entry: any) => ({
       id: entry.uuid || entry.id,
-      slug: entry.fields?.slug || entry.slug,
+      // Slug bo'lmasa ID yoki UUID ishlatamiz, URL undefined bo'lib qolmasligi uchun
+      slug: entry.fields?.slug || entry.slug || entry.uuid || entry.id,
       title: entry.fields?.title || entry.title,
       image_url: getImageUrl(
         (typeof entry.fields?.image === 'object' && !Array.isArray(entry.fields?.image) ? entry.fields.image.path || entry.fields.image.url : '') ||
@@ -96,43 +97,72 @@ export const getPosts = async (category?: PostCategory, locale?: string): Promis
   }
 };
 
-export const getPostBySlug = async (slug: string): Promise<PostDetail | undefined> => {
+export const getPostBySlug = async (slug: string, locale?: string): Promise<PostDetail | undefined> => {
   try {
     const projectId = process.env.REACT_APP_PROJECT_ID;
     // Start localized and English fallback requests in parallel if current locale is not English
-    const currentLocale = localStorage.getItem('locale') || 'en';
+    const currentLocale = locale || localStorage.getItem('locale') || 'en';
+
+    // Slug yoki ID ekanligini aniqlash
+    const isUUID = slug.length > 20 && slug.includes('-');
+    const filterKey = isUUID ? 'filter[id][eq]' : 'filter[slug][eq]';
 
     let data;
     if (currentLocale !== 'en') {
       try {
-        const [resLocalized, resEnglish] = await Promise.all([
-          apiClient.get(`/projects/${projectId}/content/news`, {
-            params: { 'filter[slug][eq]': slug, with: 'image,gallery' }
-          }),
-          apiClient.get(`/projects/${projectId}/content/news`, {
-            params: { 'filter[slug][eq]': slug, with: 'image,gallery', locale: 'en' }
-          })
-        ]);
+        // 1. Avval joriy tilda so'rab ko'ramiz
+        const resLocalized = await apiClient.get(`/projects/${projectId}/content/news`, {
+          params: { [filterKey]: slug, with: 'image,gallery', locale: currentLocale }
+        });
 
         const dataLocalized = Array.isArray(resLocalized.data) ? resLocalized.data : resLocalized.data.data;
-        const dataEnglish = Array.isArray(resEnglish.data) ? resEnglish.data : resEnglish.data.data;
 
-        data = (dataLocalized && dataLocalized.length > 0) ? dataLocalized : dataEnglish;
+        // 2. Agar ma'lumot bo'lsa, darhol qaytaramiz (Ingliz tilini kutib o'tirmaymiz)
+        if (dataLocalized && dataLocalized.length > 0) {
+          data = dataLocalized;
+        } else {
+          // 3. Agar joriy tilda yo'q bo'lsa, Ingliz tilida so'raymiz (Fallback)
+          const resEnglish = await apiClient.get(`/projects/${projectId}/content/news`, {
+            params: { [filterKey]: slug, with: 'image,gallery', locale: 'en' }
+          });
+          data = Array.isArray(resEnglish.data) ? resEnglish.data : resEnglish.data.data;
+        }
       } catch (e) {
-        // Fallback to single request if parallel fails
-        const response = await apiClient.get(`/projects/${projectId}/content/news`, {
-          params: { 'filter[slug][eq]': slug, with: 'image,gallery' }
-        });
-        data = Array.isArray(response.data) ? response.data : response.data.data;
+        // Xatolik bo'lsa, ingliz tilini sinab ko'ramiz
+        try {
+          const resFallback = await apiClient.get(`/projects/${projectId}/content/news`, {
+            params: { [filterKey]: slug, with: 'image,gallery', locale: 'en' }
+          });
+          data = Array.isArray(resFallback.data) ? resFallback.data : resFallback.data.data;
+        } catch (err) {
+          console.error("Fallback fetch failed", err);
+          return undefined;
+        }
       }
     } else {
       const response = await apiClient.get(`/projects/${projectId}/content/news`, {
-        params: { 'filter[slug][eq]': slug, with: 'image,gallery' }
+        params: { [filterKey]: slug, with: 'image,gallery' }
       });
       data = Array.isArray(response.data) ? response.data : response.data.data;
     }
 
-    const entry = data[0];
+
+    // API filtrni inobatga olmasligi mumkin, shuning uchun client-side da ham filtrlaymiz
+    const entry = data.find((item: any) => {
+      const itemSlug = item.fields?.slug || item.slug;
+      const itemId = item.uuid || item.id;
+      // Debug uchun
+      // console.log(`Checking item slug: ${itemSlug} id: ${itemId} vs requested: ${slug}`);
+      return itemSlug === slug || itemId === slug;
+    });
+
+    if (!entry) {
+      console.warn(`Post not found for slug: ${slug} in locale: ${currentLocale}`);
+      // Agar aniq slug bo'yicha topilmasa, noto'g'ri ma'lumot ko'rsatmaslik uchun undefined qaytaramiz.
+      // Fallback data[0] bu yerda XATO edi.
+      return undefined;
+    }
+
     if (!entry) return undefined;
 
     return {

@@ -93,23 +93,51 @@ export const CACHE_KEYS = {
   stats: 'stats',
 } as const;
 
-export const CACHE_TIME = {
-  short: 30 * 1000, // 30 soniya
-  medium: 30 * 1000, // 30 soniya
-  long: 30 * 1000, // 30 soniya
+// ===== CACHE CONFIGURATION =====
+export const CACHE_CONFIG = {
+  // Default TTL in minutes (Butun loyiha uchun umumiy 30 soniya)
+  DEFAULT_TTL: 0.5,
+
+  // Specific TTLs in minutes
+  TTL: {
+    SHORT: 0.5,   // 30 soniya
+    MEDIUM: 0.5,    // Hamma joyda 30 soniya
+    LONG: 0.5,     // Hamma joyda 30 soniya
+    VERY_LONG: 0.5 // Hamma joyda 30 soniya
+  },
+
+  // Cache Keys Prefixes
+  KEYS: {
+    NEWS_DETAIL: 'news-detail',
+    NAVBAR: 'navbar-items-global',
+    SIDEBAR: 'sidebar',
+    SECTIONS: 'section',
+  },
+
+  // Component/Page specific configs
+  SIDEBAR: {
+    ttlMinutes: 0.5, // 30 soniya
+  },
+  NAVBAR: {
+    ttlMinutes: 0.5, // 30 soniya
+  },
+  NEWS_DETAIL: {
+    ttlMinutes: 0.5, // 30 soniya
+  },
+  SECTIONS: {
+    'hero': { ttlMinutes: 0.5 },
+    'stats': { ttlMinutes: 0.5 },
+    'news': { ttlMinutes: 0.5 },
+    'faculties': { ttlMinutes: 0.5 },
+    'video-gallery': { ttlMinutes: 0.5 },
+    'media-gallery': { ttlMinutes: 0.5 },
+    'interactive-services': { ttlMinutes: 0.5 },
+    'university-systems': { ttlMinutes: 0.5 },
+  }
 } as const;
 
-// ===== SECTION CACHE CONFIG =====
-export const SECTION_CACHE_CONFIG = {
-  'hero': { ttlMinutes: 0.5 },
-  'stats': { ttlMinutes: 0.5 },
-  'news': { ttlMinutes: 0.5 },
-  'faculties': { ttlMinutes: 0.5 },
-  'video-gallery': { ttlMinutes: 0.5 },
-  'media-gallery': { ttlMinutes: 0.5 },
-  'interactive-services': { ttlMinutes: 0.5 },
-  'university-systems': { ttlMinutes: 0.5 },
-} as const;
+// Backwards compatibility for existing imports (if any, though we will replace them)
+export const SECTION_CACHE_CONFIG = CACHE_CONFIG.SECTIONS;
 
 // ===== NEWS TABS =====
 export const NEWS_TABS = [

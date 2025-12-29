@@ -5,15 +5,16 @@ import OptimizedImage from './OptimizedImage';
 import { useCachedApi } from '../../hooks/useCachedApi';
 import { useLocale } from '../../contexts/LocaleContext';
 import PrefetchLink from './PrefetchLink';
+import { CACHE_CONFIG } from '../../config/constants';
 
 const Sidebar = memo(() => {
   const { locale } = useLocale();
   const location = useLocation();
 
   const { data: navItemsRaw, loading } = useCachedApi<NavItem[]>({
-    key: 'navbar-items-global',
+    key: CACHE_CONFIG.KEYS.NAVBAR,
     fetcher: () => fetchNavItems(),
-    ttlMinutes: 60,
+    ttlMinutes: CACHE_CONFIG.SIDEBAR.ttlMinutes,
     keepPreviousData: true
   });
 

@@ -1,6 +1,6 @@
 import { useCachedApi } from '../../../hooks/useCachedApi';
 import { HomeSectionType } from '../types';
-import { SECTION_CACHE_CONFIG } from '../../../config/constants';
+import { CACHE_CONFIG } from '../../../config/constants';
 import { useLocale } from '../../../contexts/LocaleContext';
 
 
@@ -19,7 +19,7 @@ export const useStandardSection = <T = any>(
 ) => {
   const { locale } = useLocale();
   const {
-    ttlMinutes = SECTION_CACHE_CONFIG[sectionType]?.ttlMinutes ?? 0.5, // Default from config
+    ttlMinutes = CACHE_CONFIG.SECTIONS[sectionType as keyof typeof CACHE_CONFIG.SECTIONS]?.ttlMinutes ?? CACHE_CONFIG.TTL.SHORT, // Default from config or SHORT
     enabled = true,
     transformData,
     refetchOnWindowFocus = false,

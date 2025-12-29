@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { getPosts } from '../../services/postService';
 import { Post } from '../../types/post.types';
@@ -30,6 +30,7 @@ const fetchNewsData = async (locale?: string): Promise<SectionItem[]> => {
 
 const NewsPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation(['common', 'pages']);
   const { setBannerData, setBreadcrumbsData, setSidebarType } = useGlobalLayout();
   const { locale } = useLocale();
@@ -76,8 +77,26 @@ const NewsPage: React.FC = () => {
 
 
   const handleItemClick = useCallback((item: SectionItem) => {
-    navigate(item.href);
-  }, [navigate]);
+    // URL dan tilni aniqlash (PrefetchLink dagi kabi xavfsiz usul)
+    const pathParts = location.pathname.split('/');
+    const firstSegment = pathParts[1];
+    const urlLocale = ['uz', 'ru', 'en'].includes(firstSegment) ? firstSegment : 'uz';
+
+    const cleanHref = item.href.startsWith('/') ? item.href : `/${item.href}`;
+
+    // Agar href allaqachon til bilan boshlangan bo'lsa (ehtimoldan yiroq, lekin bo'lishi mumkin), uni ishlatamiz
+    // Lekin bizning holatda fetchNewsData /news/slug qaytaradi.
+
+    let targetPath;
+    if (urlLocale === 'uz') {
+      // O'zbek tili uchun /uz prefixini ishlatish mantiqiyroq
+      targetPath = `/uz${cleanHref}`;
+    } else {
+      targetPath = `/${urlLocale}${cleanHref}`;
+    }
+
+    navigate(targetPath);
+  }, [navigate, location.pathname]);
 
   if (error) {
     return <ServerError />;

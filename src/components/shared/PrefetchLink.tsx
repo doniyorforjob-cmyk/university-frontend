@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { prefetchRoute } from '../../config/routesConfig';
-import { useLocale } from '@/contexts/LocaleContext';
 
 /**
  * Custom LinkProps to support all Link attributes + custom prefetch props
@@ -15,6 +14,10 @@ interface PrefetchLinkProps extends Omit<React.ComponentPropsWithoutRef<typeof L
 /**
  * Link komponenti bilan prefetching qo'llab-quvvatlashi
  * Hover qilganda sahifani oldindan yuklaydi
+ * 
+ * DIQQAT: Tilni aniqlashda Context (useLocale) dan foydalanmaydi, 
+ * to'g'ridan-to'g'ri URL (useLocation) dan oladi.
+ * Bu state yangilanishidagi kechikishlar tufayli noto'g'ri link generatsiyasini oldini oladi.
  */
 const PrefetchLink: React.FC<PrefetchLinkProps> = ({
   to,
@@ -27,7 +30,17 @@ const PrefetchLink: React.FC<PrefetchLinkProps> = ({
   onFocus,
   ...props
 }) => {
-  const { locale } = useLocale();
+  const location = useLocation();
+
+  // 1. URL dan joriy tilni aniqlash (State ga ishonmaymiz, URL har doim to'g'ri)
+  const currentLocale = React.useMemo(() => {
+    const pathParts = location.pathname.split('/');
+    const firstSegment = pathParts[1]; // [0] bo'sh satr
+    if (['uz', 'ru', 'en'].includes(firstSegment)) {
+      return firstSegment;
+    }
+    return 'uz'; // Default til (agar URL da prefiks bo'lmasa)
+  }, [location.pathname]);
 
   // Helper to resolve localized path
   const localizedTo = React.useMemo(() => {
@@ -37,10 +50,9 @@ const PrefetchLink: React.FC<PrefetchLinkProps> = ({
     // If external link or anchor, return as is
     if (to.startsWith('http') || to.startsWith('#') || to.startsWith('mailto:')) return to;
 
-    // 1. First, strip any existing locale prefix to avoid /en/uz/ duplication
+    // 2. Kiruvchi linkdan eski prefikslarni tozalash (masalan /en/news -> news)
     let cleanTo = to.startsWith('/') ? to.substring(1) : to;
 
-    // Check for common patterns like uz/, ru/, en/
     const localePrefixes = ['uz/', 'ru/', 'en/', 'uz', 'ru', 'en'];
     for (const prefix of localePrefixes) {
       if (cleanTo === prefix) {
@@ -54,19 +66,33 @@ const PrefetchLink: React.FC<PrefetchLinkProps> = ({
       }
     }
 
-    // CASE 1: Root path requested
+    // 3. Tozalangan linkka joriy til prefiksini qo'shish
+    // CASE 1: Bosh sahifa
     if (cleanTo === '') {
-      if (locale === 'uz') return '/';
-      return `/${locale}`;
+      if (currentLocale === 'uz') return '/';
+      return `/${currentLocale}`;
     }
 
-    // CASE 2: Inner pages - always prefix with current locale
-    return `/${locale}/${cleanTo}`;
-  }, [to, locale]);
+    // CASE 2: Ichki sahifalar
+    if (currentLocale === 'uz') {
+      // O'zbek tilida (Default) odatda prefiks bo'lmaydi, LEKIN...
+      // Agar loyiha arxitekturasi /uz/ ni talab qilmasa, shunday qoldiramiz.
+      // Agar oldingi kodda /uz/ ishlatilgan bo'lsa, uni qo'shamiz.
+      // Tekshiruv: Oldingi kodda `if (locale === 'uz') return '/';` va `/${locale}/${cleanTo}` ishlatilgan.
+      // Demak, uz tili uchun ham prefiks qo'shilayotgan bo'lishi mumkin?
+      // YO'Q. Oldingi kodga qaraymiz: `if (locale === 'uz') return '/';` - bu root uchun.
+      // `return /${locale}/${cleanTo};` - va bu boshqa sahifalar uchun.
+      // Demak, o'zbek tilida ham /uz/news bo'lishi kerak.
+
+      return `/uz/${cleanTo}`;
+    }
+
+    // Boshqa tillar
+    return `/${currentLocale}/${cleanTo}`;
+  }, [to, currentLocale]);
 
   const handlePrefetch = useCallback(() => {
     if (prefetch && typeof localizedTo === 'string') {
-      // Delay bilan prefetch qilish (hover va focus uchun)
       setTimeout(() => {
         prefetchRoute(localizedTo);
       }, prefetchDelay);
