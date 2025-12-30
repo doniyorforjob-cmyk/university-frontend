@@ -331,7 +331,10 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
             <div className="mb-2">
               <a
                 href={item.href}
-                onClick={handleClick}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleClick();
+                }}
                 className="inline-block cursor-pointer group"
               >
                 <h3

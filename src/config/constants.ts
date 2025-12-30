@@ -109,6 +109,7 @@ export const CACHE_CONFIG = {
   // Cache Keys Prefixes
   KEYS: {
     NEWS_DETAIL: 'news-detail',
+    ANNOUNCEMENT_DETAIL: 'announcement-detail',
     NAVBAR: 'navbar-items-global',
     SIDEBAR: 'sidebar',
     SECTIONS: 'section',
@@ -122,6 +123,9 @@ export const CACHE_CONFIG = {
     ttlMinutes: 0.5, // 30 soniya
   },
   NEWS_DETAIL: {
+    ttlMinutes: 0.5, // 30 soniya
+  },
+  ANNOUNCEMENT_DETAIL: {
     ttlMinutes: 0.5, // 30 soniya
   },
   SECTIONS: {

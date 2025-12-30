@@ -10,7 +10,7 @@ const PageLoader = () => (
 // Lazy loaded pages
 const HomePage = React.lazy(() => import('../pages/Home'));
 const NewsPage = React.lazy(() => import('../pages/News'));
-const NewsDetailPage = React.lazy(() => import('../pages/NewsDetail'));
+const GenericDetailPage = React.lazy(() => import('../pages/GenericDetail'));
 const AnnouncementsPage = React.lazy(() => import('../pages/Announcements'));
 const MediaAboutUsPage = React.lazy(() => import('../pages/MediaAboutUs'));
 const AppealsPage = React.lazy(() => import('../pages/Appeals'));
@@ -20,6 +20,10 @@ const ActivitiesPage = React.lazy(() => import('../pages/Activities'));
 const AdmissionPage = React.lazy(() => import('../pages/Admission'));
 const YashilUniversitetPage = React.lazy(() => import('../pages/YashilUniversitet'));
 const EcoActiveStudentsPage = React.lazy(() => import('../pages/EcoActiveStudents'));
+
+// Route wrappers
+const NewsDetailRoute = () => <GenericDetailPage type="news" />;
+const AnnouncementsDetailRoute = () => <GenericDetailPage type="announcement" />;
 
 // Route configuration with lazy loading
 export const routeConfig: any[] = [
@@ -33,7 +37,7 @@ export const routeConfig: any[] = [
   },
   {
     path: '/news/:slug',
-    element: <NewsDetailPage />,
+    element: <GenericDetailPage type="news" />,
   },
   {
     path: '/announcements',
@@ -85,7 +89,7 @@ export const prefetchRoute = (routePath: string) => {
   const routeMap: Record<string, () => Promise<any>> = {
     '/': () => import('../pages/Home'),
     '/news': () => import('../pages/News'),
-    '/news/:slug': () => import('../pages/NewsDetail'),
+    '/news/:slug': () => import('../pages/GenericDetail'),
     '/announcements': () => import('../pages/Announcements'),
     '/media-about-us': () => import('../pages/MediaAboutUs'),
     '/appeals': () => import('../pages/Appeals'),
@@ -110,7 +114,7 @@ export const getRouteComponent = (path: string): React.ComponentType | null => {
   const componentMap: Record<string, React.ComponentType> = {
     '/': HomePage,
     '/news': NewsPage,
-    '/news/:slug': NewsDetailPage,
+    '/news/:slug': NewsDetailRoute,
     '/announcements': AnnouncementsPage,
     '/media-about-us': MediaAboutUsPage,
     '/appeals': AppealsPage,

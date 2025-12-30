@@ -9,4 +9,5 @@ export { default as PrefetchLink } from './PrefetchLink';
 export { default as LoadingSpinner } from './LoadingSpinner';
 export { default as PageSkeleton } from './PageSkeleton';
 export { default as DownloadButton } from './DownloadLink';
+export { default as SocialShare } from './SocialShare';
 

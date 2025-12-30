@@ -3,59 +3,11 @@ import { motion } from 'framer-motion';
 import Container from '@/components/shared/Container';
 import Breadcrumbs from '@/components/shared/Breadcrumbs';
 import ContentBuilder, { ContentBlock } from '@/components/shared/ContentBuilder'; // Ensure ContentBuilder is imported
-import { FaFacebook, FaYoutube, FaTelegram, FaInstagram, FaPrint } from 'react-icons/fa';
 
-// Social sharing icons component
-const SocialShare: React.FC<{ title: string; url?: string }> = ({ title, url }) => {
-  const currentUrl = url || window.location.href;
-  const shareText = encodeURIComponent(`${title} - ${currentUrl}`);
+import { FaPrint } from 'react-icons/fa';
+import SocialShare from './SocialShare';
 
-  const socialLinks = [
-    {
-      name: 'Facebook',
-      icon: <FaFacebook className="w-5 h-5 text-blue-600" />,
-      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`
-    },
-    {
-      name: 'YouTube',
-      icon: <FaYoutube className="w-5 h-5 text-red-600" />,
-      url: `https://www.youtube.com/share?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(title)}`
-    },
-    {
-      name: 'Telegram',
-      icon: <FaTelegram className="w-5 h-5 text-blue-500" />,
-      url: `https://t.me/share/url?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(title)}`
-    },
-    {
-      name: 'Instagram',
-      icon: <FaInstagram className="w-5 h-5 text-pink-600" />,
-      url: `https://www.instagram.com/?url=${encodeURIComponent(currentUrl)}`
-    }
-  ];
 
-  return (
-    <div className="flex items-center space-x-3">
-      <span className="text-sm font-medium text-gray-600 flex items-center">
-        <span className="w-1 h-4 bg-secondary-500 mr-2"></span>
-        Ulashish:
-      </span>
-      <div className="flex space-x-2">
-        {socialLinks.map((social) => (
-          <a
-            key={social.name}
-            href={social.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-lg transition-colors duration-200"
-            title={`${social.name} da ulashish`}
-          >
-            {social.icon}
-          </a>
-        ))}
-      </div>
-    </div>
-  );
-};
 
 // Dynamic content component for page footer
 const PageFooter: React.FC<{ title: string }> = ({ title }) => {

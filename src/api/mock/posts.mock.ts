@@ -1,6 +1,5 @@
 import apiClient from '../client';
 import { Post, PostDetail, PostCategory } from '../../types/post.types';
-import { mockNews } from '../../data/news';
 
 // --- Soxta ma'lumotlar (Backend tayyor bo'lguncha ishlatish uchun) ---
 export const mockPosts: Post[] = [
@@ -128,7 +127,7 @@ export const mockPosts: Post[] = [
 ];
 
 export const mockNewsDetail: PostDetail = {
-     id: 1,
+    id: 1,
     slug: 'yangi-oquv-yili-tantanalari',
     title: 'Yangi o\'quv yili tantanalari!',
     image_url: 'https://via.placeholder.com/800x450.png/007bff/ffffff?text=Universitet',
@@ -144,44 +143,44 @@ export const mockNewsDetail: PostDetail = {
 
 // Postlarni olish (kategoriya bo'yicha filtr bilan)
 export const getPosts = async (category?: PostCategory): Promise<Post[]> => {
-  try {
-    // // Haqiqiy API chaqiruvi (Backend tayyor bo'lganda ishlatiladi)
-    // const response = await apiClient.get('/posts', { params: { category } });
-    // return response.data;
+    try {
+        // // Haqiqiy API chaqiruvi (Backend tayyor bo'lganda ishlatiladi)
+        // const response = await apiClient.get('/posts', { params: { category } });
+        // return response.data;
 
-    // Vaqtinchalik soxta ma'lumotlarni qaytarish
-    return new Promise(resolve => {
-      setTimeout(() => {
-        if (category) {
-          const filteredPosts = mockNews.filter(p => p.category === category);
-          resolve(filteredPosts.map(p => ({
-            id: p.id,
-            slug: p.slug,
-            title: p.title,
-            image_url: p.image_url,
-            description: p.description,
-            published_at: p.published_at,
-            views: p.views,
-            category: p.category,
-          })));
-        } else {
-          resolve(mockNews.map(p => ({
-            id: p.id,
-            slug: p.slug,
-            title: p.title,
-            image_url: p.image_url,
-            description: p.description,
-            published_at: p.published_at,
-            views: p.views,
-            category: p.category,
-          })));
-        }
-      }, 500);
-    });
-  } catch (error) {
-    console.error("Postlarni yuklashda xatolik:", error);
-    throw error;
-  }
+        // Vaqtinchalik soxta ma'lumotlarni qaytarish
+        return new Promise(resolve => {
+            setTimeout(() => {
+                if (category) {
+                    const filteredPosts = mockPosts.filter((p: Post) => p.category === category);
+                    resolve(filteredPosts.map((p: Post) => ({
+                        id: p.id,
+                        slug: p.slug,
+                        title: p.title,
+                        image_url: p.image_url,
+                        description: p.description,
+                        published_at: p.published_at,
+                        views: p.views,
+                        category: p.category,
+                    })));
+                } else {
+                    resolve(mockPosts.map((p: Post) => ({
+                        id: p.id,
+                        slug: p.slug,
+                        title: p.title,
+                        image_url: p.image_url,
+                        description: p.description,
+                        published_at: p.published_at,
+                        views: p.views,
+                        category: p.category,
+                    })));
+                }
+            }, 500);
+        });
+    } catch (error) {
+        console.error("Postlarni yuklashda xatolik:", error);
+        throw error;
+    }
 };
 
 // Bitta postni 'slug' orqali olish

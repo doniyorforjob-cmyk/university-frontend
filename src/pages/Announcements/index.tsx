@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { getAnnouncements } from '@/services/announcementService';
 import { Announcement } from '@/types/announcement.types';
@@ -27,8 +27,13 @@ const fetchAnnouncementsData = async (): Promise<SectionItem[]> => {
 
 const AnnouncementsPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { t, i18n } = useTranslation(['common', 'pages']);
-  const locale = i18n.language;
+
+  // URL dan to'g'ridan-to'g'ri locale ni olish (i18n.language emas!)
+  const pathSegments = location.pathname.split('/').filter(Boolean);
+  const urlLocale = ['uz', 'en', 'ru'].includes(pathSegments[0]) ? pathSegments[0] : 'uz';
+
   const { setBannerData, setBreadcrumbsData, setSidebarType } = useGlobalLayout();
   const { data: items, loading, error, refetch } = useStandardPage(
     'announcements',
@@ -52,8 +57,10 @@ const AnnouncementsPage: React.FC = () => {
 
 
   const handleItemClick = useCallback((item: SectionItem) => {
-    navigate(item.href);
-  }, [navigate]);
+    // URL dan olingan locale bilan navigatsiya qilish
+    const targetPath = urlLocale === 'uz' ? item.href : `/${urlLocale}${item.href}`;
+    navigate(targetPath);
+  }, [navigate, urlLocale]);
 
   if (error) {
     return (

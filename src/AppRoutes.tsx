@@ -6,7 +6,7 @@ import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
 // Page imports (lazy)
 const HomePage = React.lazy(() => import('./pages/Home'));
 const NewsPage = React.lazy(() => import('./pages/News'));
-const NewsDetailPage = React.lazy(() => import('./pages/NewsDetail'));
+
 const AnnouncementsPage = React.lazy(() => import('./pages/Announcements'));
 const MediaAboutUsPage = React.lazy(() => import('./pages/MediaAboutUs'));
 const AppealsPage = React.lazy(() => import('./pages/Appeals'));
@@ -19,6 +19,7 @@ const EcoActiveStudentsPage = React.lazy(() => import('./pages/EcoActiveStudents
 const UniversityPage = React.lazy(() => import('./pages/University'));
 const InformationServicesPage = React.lazy(() => import('./pages/InformationServices'));
 const PhotoDetailPage = React.lazy(() => import('./pages/PhotoDetail'));
+const GenericDetailPage = React.lazy(() => import('./pages/GenericDetail'));
 const ServerError = React.lazy(() => import('./pages/Error/ServerError'));
 const NotFound = React.lazy(() => import('./pages/Errors/NotFound'));
 
@@ -32,8 +33,9 @@ const AppRoutes = () => {
                 {/* "Axborot xizmati" uchun doimiy Sidebar bilan ishlaydigan sahifalar */}
                 <Route element={<MainLayout />}>
                     <Route path="news" element={<NewsPage />} />
-                    <Route path="news/:slug" element={<NewsDetailPage />} />
+                    <Route path="news/:slug" element={<GenericDetailPage type="news" />} />
                     <Route path="announcements" element={<AnnouncementsPage />} />
+                    <Route path="announcements/:slug" element={<GenericDetailPage type="announcement" />} />
                     <Route path="media-about-us" element={<MediaAboutUsPage />} />
                     <Route path="appeals" element={<AppealsPage />} />
                 </Route>

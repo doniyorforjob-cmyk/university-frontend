@@ -1,3 +1,4 @@
+import { CACHE_CONFIG } from '../config/constants';
 import { cacheManager } from '../utils/cacheManager';
 import { fetchNavItems } from './navbarService';
 import { homeApi } from './homeService';
@@ -16,7 +17,7 @@ export const prefetchService = {
         if (!cacheManager.has(key)) {
             try {
                 const navItems = await fetchNavItems();
-                cacheManager.set(key, navItems, 60); // 60 minutes
+                cacheManager.set(key, navItems, CACHE_CONFIG.NAVBAR.ttlMinutes);
             } catch (e) {
                 console.warn('Navbar prefetch failed', e);
             }
@@ -31,7 +32,7 @@ export const prefetchService = {
         if (!cacheManager.has(key)) {
             try {
                 const newsData = await homeApi.getNewsData();
-                cacheManager.set(key, newsData, 0.5);
+                cacheManager.set(key, newsData, CACHE_CONFIG.DEFAULT_TTL);
             } catch (e) {
                 console.warn('Home news prefetch failed', e);
             }
@@ -46,7 +47,7 @@ export const prefetchService = {
         if (!cacheManager.has(key)) {
             try {
                 const facultiesData = await homeApi.getFacultiesData();
-                cacheManager.set(key, facultiesData, 0.5);
+                cacheManager.set(key, facultiesData, CACHE_CONFIG.DEFAULT_TTL);
             } catch (e) {
                 console.warn('Faculties prefetch failed', e);
             }
@@ -73,7 +74,7 @@ export const prefetchService = {
                     category: 'Yangilik'
                 }));
 
-                cacheManager.set(key, mappedData, 0.5);
+                cacheManager.set(key, mappedData, CACHE_CONFIG.DEFAULT_TTL);
             } catch (e) {
                 console.warn('News page data prefetch failed', e);
             }

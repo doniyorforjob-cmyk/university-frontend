@@ -89,8 +89,7 @@ const NewsPage: React.FC = () => {
 
     let targetPath;
     if (urlLocale === 'uz') {
-      // O'zbek tili uchun /uz prefixini ishlatish mantiqiyroq
-      targetPath = `/uz${cleanHref}`;
+      targetPath = cleanHref;
     } else {
       targetPath = `/${urlLocale}${cleanHref}`;
     }

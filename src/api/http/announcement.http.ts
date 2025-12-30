@@ -28,20 +28,33 @@ export const getAnnouncements = async (): Promise<Announcement[]> => {
   }
 };
 
-export const getAnnouncementBySlug = async (slug: string): Promise<AnnouncementDetail | undefined> => {
+export const getAnnouncementBySlug = async (slug: string, locale?: string): Promise<AnnouncementDetail | undefined> => {
   try {
     const projectId = process.env.REACT_APP_PROJECT_ID;
+    const currentLocale = locale || localStorage.getItem('locale') || 'en';
+
     const response = await apiClient.get(`/projects/${projectId}/content/news`, {
       params: {
         'filter[slug][eq]': slug,
         'filter[category][eq]': 'announcements',
-        with: 'image,gallery'
+        with: 'image,gallery',
+        locale: currentLocale
       }
     });
 
     const data = Array.isArray(response.data) ? response.data : response.data.data;
-    const entry = data[0];
-    if (!entry) return undefined;
+
+    // API filtrni inobatga olmasligi mumkin, shuning uchun client-side da ham filtrlaymiz
+    const entry = data.find((item: any) => {
+      const itemSlug = item.fields?.slug || item.slug;
+      return itemSlug === slug;
+    });
+
+    if (!entry) {
+      console.warn(`Announcement not found for slug: ${slug} in locale: ${currentLocale}`);
+      return undefined;
+    }
+
 
     return {
       id: entry.uuid || entry.id,
