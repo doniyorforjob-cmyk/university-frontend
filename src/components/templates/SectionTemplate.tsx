@@ -382,7 +382,7 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
             <OptimizedImage
               src={item.image || '/images/logo.png'}
               alt={item.title}
-              className={`w-full h-full ${item.image === '/images/logo.png' ? 'object-contain p-8' : 'object-cover'}`}
+              className={`w-full h-full object-center ${item.image === '/images/logo.png' ? 'object-contain p-8' : 'object-cover'}`}
               width={400}
               height={225}
               lazy={true}

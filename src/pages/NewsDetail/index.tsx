@@ -16,7 +16,7 @@ const NewsDetailPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const state = location.state as { post?: NewsType };
-  const { setSidebarType } = useGlobalLayout();
+  const { setSidebarType, setBreadcrumbsData } = useGlobalLayout();
   const { locale } = useLocale();
   const { t } = useTranslation(['common', 'pages']);
 
@@ -36,10 +36,16 @@ const NewsDetailPage: React.FC = () => {
 
   useEffect(() => {
     setSidebarType('info');
+    // Global breadcrumblarni o'rnatish (Title olib tashlandi, faqat Home > News)
+    setBreadcrumbsData([
+      { label: t('home'), href: '/' },
+      { label: t('pages:news'), href: '/news' }
+    ]);
     return () => {
       setSidebarType(undefined);
+      setBreadcrumbsData(undefined);
     };
-  }, [setSidebarType]);
+  }, [setSidebarType, setBreadcrumbsData, t]);
 
   // Redirect logic if item not found
   useEffect(() => {
@@ -78,16 +84,12 @@ const NewsDetailPage: React.FC = () => {
       heroImageAlt={newsItem.title}
       content={newsItem.content}
       meta={meta}
-      breadcrumbs={[
-        { label: t('home'), href: '/' },
-        { label: t('pages:news'), href: '/news' },
-        { label: newsItem.title }
-      ]}
+      breadcrumbs={[]} // Local breadcrumbs endi ishlatilmaydi
       showMeta={true}
       showSocialShare={true}
       showPrintButton={true}
       showComments={false}
-      showSidebar={false}
+      showSidebar={false} // Global sidebar ishlatiladi (setSidebarType('info'))
       socialShare={{
         facebook: true,
         telegram: true,

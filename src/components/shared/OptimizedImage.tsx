@@ -76,24 +76,29 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   const hasSources = avifUrl !== src || webpUrl !== src;
 
   // Render content
-  const renderImage = () => (
-    <img
-      ref={imgRef}
-      src={src}
-      alt={alt}
-      width={width}
-      height={height}
-      loading={lazy ? 'lazy' : 'eager'}
-      onLoad={handleLoad}
-      onError={handleError}
-      className={`${className} w-full h-full object-cover transition-all duration-500 ${isLoaded ? 'opacity-100 blur-0' : 'opacity-0 blur-lg'
-        }`}
-      style={{
-        backgroundImage: !isLoaded ? `url(${getPlaceholder()})` : undefined,
-        backgroundSize: 'cover',
-      }}
-    />
-  );
+  const renderImage = () => {
+    // Agar tashqaridan object-fit klassi berilgan bo'lsa, default object-coverni ishlatmaymiz
+    const hasObjectFit = className.includes('object-');
+
+    return (
+      <img
+        ref={imgRef}
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        loading={lazy ? 'lazy' : 'eager'}
+        onLoad={handleLoad}
+        onError={handleError}
+        className={`${className} w-full h-full ${hasObjectFit ? '' : 'object-cover'} transition-all duration-500 ${isLoaded ? 'opacity-100 blur-0' : 'opacity-0 blur-lg'
+          }`}
+        style={{
+          backgroundImage: !isLoaded ? `url(${getPlaceholder()})` : undefined,
+          backgroundSize: 'cover',
+        }}
+      />
+    );
+  };
 
   // Xatolik bo'lganda - universitet logosini ko'rsatish
   if (hasError) {
@@ -122,10 +127,24 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
     );
   }
 
+  // Wrapper style ni hisoblash (inline style w-full ni buzmasligi uchun)
+  const isFullWidth = className.includes('w-full');
+  const isFullHeight = className.includes('h-full');
+
+  const wrapperStyle: React.CSSProperties = aspectRatio
+    ? {
+      aspectRatio: aspectRatio.toString(),
+      width: isFullWidth ? undefined : (width || '100%')
+    }
+    : {
+      width: isFullWidth ? undefined : width,
+      height: isFullHeight ? undefined : height
+    };
+
   return (
     <div
       className={`relative overflow-hidden ${className}`}
-      style={aspectRatio ? { aspectRatio: aspectRatio.toString(), width: width || '100%' } : { width, height }}
+      style={wrapperStyle}
     >
       {!isLoaded && (
         <div className="absolute inset-0 bg-gray-200 animate-pulse" />

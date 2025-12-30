@@ -185,9 +185,9 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
   return (
     <div className={`${className}`}>
       {/* Breadcrumbs */}
-      <Breadcrumbs items={breadcrumbs} />
+      {breadcrumbs && breadcrumbs.length > 0 && <Breadcrumbs items={breadcrumbs} />}
 
-      <div className="flex flex-col lg:flex-row gap-8 mt-4">
+      <div className={`flex flex-col lg:flex-row gap-8 ${breadcrumbs && breadcrumbs.length > 0 ? 'mt-4' : ''}`}>
         {/* Asosiy kontent */}
         <div className="w-full">
           <motion.div

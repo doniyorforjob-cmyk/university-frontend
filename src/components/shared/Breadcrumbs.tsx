@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import PrefetchLink from './PrefetchLink';
 import { HomeIcon } from '@heroicons/react/24/solid';
 import {
   Breadcrumb,
@@ -33,10 +33,10 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
                 <BreadcrumbPage>{item.label}</BreadcrumbPage>
               ) : (
                 <BreadcrumbLink asChild>
-                  <Link to={item.href || '#'} className={index === 0 ? "flex items-center" : ""}>
+                  <PrefetchLink to={item.href || '#'} className={index === 0 ? "flex items-center" : ""}>
                     {index === 0 && <HomeIcon className="h-4 w-4 mr-1" />}
                     {item.label}
-                  </Link>
+                  </PrefetchLink>
                 </BreadcrumbLink>
               )}
             </BreadcrumbItem>
