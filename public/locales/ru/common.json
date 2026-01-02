@@ -17,5 +17,24 @@
     "otherAnnouncements": "Другие объявления",
     "seeAllAnnouncements": "Все объявления",
     "universityArea": "Общая площадь университета",
-    "contact": "Контакты"
+    "contact": "Контакты",
+    "share": "Поделиться",
+    "print": "Печать",
+    "tags": "Теги",
+    "no_info": "Информация недоступна",
+    "related_materials": "Похожие материалы",
+    "copy_link": "Копировать",
+    "content_types": {
+        "news": "Новости",
+        "announcement": "Объявление",
+        "service": "Услуга",
+        "person": "Персона",
+        "info": "Информация"
+    },
+    "social": {
+        "facebook": "Facebook",
+        "twitter": "Twitter",
+        "telegram": "Telegram",
+        "linkedin": "LinkedIn"
+    }
 }

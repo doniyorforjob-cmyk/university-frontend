@@ -158,6 +158,15 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
             views: announcement.views,
             // Add other meta mapping if available
         } as DetailMeta;
+
+        // Map gallery if exists (assuming it might be in the API response even if not in strict type, or cast to any)
+        if ((data as any).gallery && Array.isArray((data as any).gallery)) {
+            templateProps.gallery = (data as any).gallery.map((imgUrl: string) => ({
+                src: imgUrl,
+                alt: announcement.title
+            }));
+        }
+
         templateProps.showSocialShare = true;
         templateProps.showSidebar = false; // Global sidebar used via context
     } else if (type === 'news') {
@@ -166,10 +175,17 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
         templateProps.heroImageAlt = news.title;
         templateProps.meta = {
             publishDate: news.published_at,
-            author: news.author?.name,
-            category: news.category,
             views: news.views
         } as DetailMeta;
+
+        // Map gallery
+        if (news.gallery && Array.isArray(news.gallery)) {
+            templateProps.gallery = news.gallery.map(imgUrl => ({
+                src: imgUrl,
+                alt: news.title
+            }));
+        }
+
         templateProps.showSocialShare = true;
         templateProps.showPrintButton = true;
         templateProps.showComments = false;

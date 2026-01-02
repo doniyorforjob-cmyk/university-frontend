@@ -17,5 +17,24 @@
     "otherAnnouncements": "Other Announcements",
     "seeAllAnnouncements": "View all announcements",
     "universityArea": "Total University Area",
-    "contact": "Contact"
+    "contact": "Contact",
+    "share": "Share",
+    "print": "Print",
+    "tags": "Tags",
+    "no_info": "Information not available",
+    "related_materials": "Related Materials",
+    "copy_link": "Copy",
+    "content_types": {
+        "news": "News",
+        "announcement": "Announcement",
+        "service": "Service",
+        "person": "Person",
+        "info": "Information"
+    },
+    "social": {
+        "facebook": "Facebook",
+        "twitter": "Twitter",
+        "telegram": "Telegram",
+        "linkedin": "LinkedIn"
+    }
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Share2,
     Facebook,
@@ -27,6 +28,7 @@ const SocialShare: React.FC<SocialShareProps> = ({
     options = { facebook: true, telegram: true, linkedin: true, copy: true },
     className = ''
 }) => {
+    const { t } = useTranslation('common');
     const currentUrl = url || (typeof window !== 'undefined' ? window.location.href : '');
     const shareTitle = title || '';
 
@@ -55,16 +57,16 @@ const SocialShare: React.FC<SocialShareProps> = ({
 
     return (
         <div className={`flex items-center gap-3 ${className}`}>
-            <span className="text-base text-[#242d3a] font-medium flex items-center gap-2 mr-2">
+            <span className="text-base text-gray-700 font-medium flex items-center gap-2 mr-2">
                 <Share2 size={20} className="text-blue-600" />
-                Ulashish:
+                {t('share', 'Ulashish')}:
             </span>
 
             {options.facebook && (
                 <button
                     onClick={() => handleShare('facebook')}
                     className="w-10 h-10 flex items-center justify-center bg-blue-50 text-blue-600 rounded-full hover:bg-blue-600 hover:text-white transition-all duration-300"
-                    title="Facebook"
+                    title={t('social.facebook', 'Facebook') as string}
                 >
                     <Facebook size={18} />
                 </button>
@@ -74,7 +76,7 @@ const SocialShare: React.FC<SocialShareProps> = ({
                 <button
                     onClick={() => handleShare('twitter')}
                     className="w-10 h-10 flex items-center justify-center bg-sky-50 text-sky-500 rounded-full hover:bg-sky-500 hover:text-white transition-all duration-300"
-                    title="Twitter"
+                    title={t('social.twitter', 'Twitter') as string}
                 >
                     <Twitter size={18} />
                 </button>
@@ -84,7 +86,7 @@ const SocialShare: React.FC<SocialShareProps> = ({
                 <button
                     onClick={() => handleShare('telegram')}
                     className="w-10 h-10 flex items-center justify-center bg-sky-50 text-sky-500 rounded-full hover:bg-sky-500 hover:text-white transition-all duration-300"
-                    title="Telegram"
+                    title={t('social.telegram', 'Telegram') as string}
                 >
                     <Send size={18} />
                 </button>
@@ -94,7 +96,7 @@ const SocialShare: React.FC<SocialShareProps> = ({
                 <button
                     onClick={() => handleShare('linkedin')}
                     className="w-10 h-10 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-full hover:bg-indigo-600 hover:text-white transition-all duration-300"
-                    title="LinkedIn"
+                    title={t('social.linkedin', 'LinkedIn') as string}
                 >
                     <Linkedin size={18} />
                 </button>
@@ -104,7 +106,7 @@ const SocialShare: React.FC<SocialShareProps> = ({
                 <button
                     onClick={() => handleShare('copy')}
                     className="w-10 h-10 flex items-center justify-center bg-gray-100 text-gray-600 rounded-full hover:bg-gray-600 hover:text-white transition-all duration-300"
-                    title="Nusxalash"
+                    title={t('copy_link', 'Nusxalash') as string}
                 >
                     <Copy size={18} />
                 </button>

@@ -107,7 +107,7 @@ const Sidebar = memo(() => {
               prefetchService.prefetchHomeNews();
             }
           }}
-          className={`block px-8 py-3 text-lg text-gray-800 transition-all duration-200 ${isActive
+          className={`block px-8 py-3 text-lg font-medium text-gray-800 transition-all duration-200 ${isActive
             ? 'bg-secondary/10 border-l-4 border-l-secondary pl-[31px]'
             : 'hover:bg-gray-50 border-l-4 border-l-transparent pl-[31px]'
             } ${!isLast ? 'border-b border-gray-300' : ''}`}

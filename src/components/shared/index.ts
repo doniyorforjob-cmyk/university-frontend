@@ -10,4 +10,5 @@ export { default as LoadingSpinner } from './LoadingSpinner';
 export { default as PageSkeleton } from './PageSkeleton';
 export { default as DownloadButton } from './DownloadLink';
 export { default as SocialShare } from './SocialShare';
+export { default as ImageCarousel } from './ImageCarousel';
 

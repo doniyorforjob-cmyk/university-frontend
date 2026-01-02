@@ -3,19 +3,20 @@ import { motion } from 'framer-motion';
 import Container from '@/components/shared/Container';
 import Breadcrumbs from '@/components/shared/Breadcrumbs';
 import ContentBuilder, { ContentBlock } from '@/components/shared/ContentBuilder';
-import { OptimizedImage } from '../shared';
+import { useTranslation } from 'react-i18next';
+import { OptimizedImage, ImageCarousel } from '../shared';
+import { DATE_FORMATS } from '@/config/constants';
 import {
   Calendar,
   Eye,
-  User,
   Printer,
+  FileText,
+  User,
   Tag,
   Clock,
-  FileText,
   Megaphone,
   Wrench,
-  Info,
-  Folder
+  Info
 } from 'lucide-react';
 import SocialShare from '../shared/SocialShare';
 
@@ -134,28 +135,41 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
   onRelatedClick,
   className = ''
 }) => {
+  const { t } = useTranslation('common');
 
 
 
-  // Print handler
+
   const handlePrint = () => {
     window.print();
     onPrint?.();
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+
+    return DATE_FORMATS.short
+      .replace('DD', day)
+      .replace('MM', month)
+      .replace('YYYY', year.toString());
   };
 
   // Content type bo'yicha icon va label olish
   const getTypeInfo = () => {
     switch (contentType) {
       case 'news':
-        return { icon: <FileText size={18} />, label: 'Yangilik' };
+        return { icon: <FileText size={18} />, label: t('content_types.news', 'Yangilik') };
       case 'announcement':
-        return { icon: <Megaphone size={18} />, label: 'E\'lon' };
+        return { icon: <Megaphone size={18} />, label: t('content_types.announcement', "E'lon") };
       case 'service':
-        return { icon: <Wrench size={18} />, label: 'Xizmat' };
+        return { icon: <Wrench size={18} />, label: t('content_types.service', 'Xizmat') };
       case 'person':
-        return { icon: <User size={18} />, label: 'Shaxs' };
+        return { icon: <User size={18} />, label: t('content_types.person', 'Shaxs') };
       default:
-        return { icon: <Info size={18} />, label: 'Ma\'lumot' };
+        return { icon: <Info size={18} />, label: t('content_types.info', "Ma'lumot") };
     }
   };
 
@@ -191,119 +205,93 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
         <div className="mb-6">
 
           {/* Title */}
-          <h1 className="text-[22px] md:text-[26px] font-medium leading-[1.4] text-[#010b1b] mb-4">
+          <h1 className="text-[22px] md:text-[26px] font-bold leading-[1.4] text-main mb-4">
             {title}
           </h1>
+          <div className="border-b border-dashed border-gray-300 mb-6"></div>
 
-          {/* Meta Badges (Avloniy Style) */}
+          {/* Meta Badges */}
           {showMeta && meta && (
-            <div className="flex flex-wrap items-center gap-3 mb-6">
+            <div className="flex w-full items-center justify-between mb-6">
               {meta.publishDate && (
-                <div className="flex items-center gap-2 bg-[#F2F4F9] border border-[#DFE4ED] text-[#010b1b] rounded-xl px-3 py-1.5 text-sm transition-colors hover:bg-gray-200 cursor-default">
-                  <Calendar size={16} className="text-[#555]" />
-                  <span>{new Date(meta.publishDate).toLocaleDateString('uz-UZ')}</span>
+                <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 text-gray-700 rounded-xl px-3 py-1.5 text-sm transition-colors hover:bg-gray-100 cursor-default">
+                  <Calendar size={16} className="text-[#555]" strokeWidth={2.5} />
+                  <span className="font-medium">{formatDate(meta.publishDate)}</span>
                 </div>
               )}
 
-              {meta.views && (
-                <div className="flex items-center gap-2 bg-[#F2F4F9] border border-[#DFE4ED] text-[#010b1b] rounded-xl px-3 py-1.5 text-sm transition-colors hover:bg-gray-200 cursor-default">
-                  <Eye size={16} className="text-[#555]" />
-                  <span>{meta.views.toLocaleString()}</span>
-                </div>
-              )}
-
-              {meta.author && (
-                <div className="flex items-center gap-2 bg-[#F2F4F9] border border-[#DFE4ED] text-[#010b1b] rounded-xl px-3 py-1.5 text-sm transition-colors hover:bg-gray-200 cursor-default">
-                  <User size={16} className="text-[#555]" />
-                  <span>{meta.author}</span>
-                </div>
-              )}
-
-              {meta.category && (
-                <div className="flex items-center gap-2 bg-[#F2F4F9] border border-[#DFE4ED] text-[#010b1b] rounded-xl px-3 py-1.5 text-sm transition-colors hover:bg-gray-200 cursor-default">
-                  <Folder size={16} className="text-[#555]" />
-                  <span>{meta.category}</span>
+              {meta.views !== undefined && (
+                <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 text-gray-700 rounded-xl px-3 py-1.5 text-sm transition-colors hover:bg-gray-100 cursor-default">
+                  <Eye size={16} className="text-[#555]" strokeWidth={2.5} />
+                  <span className="font-medium">{parseInt(String(meta.views), 10).toLocaleString()}</span>
                 </div>
               )}
             </div>
           )}
         </div>
 
-        {/* Hero Image */}
-        {heroImage && (
-          <div className="rounded-xl overflow-hidden mb-8 shadow-sm border border-gray-100">
-            <div className="aspect-video relative">
-              <OptimizedImage
-                src={heroImage}
-                alt={heroImageAlt || title}
-                className="w-full h-full object-cover"
-                lazy={false} // Priority load
-                width={900}
-              />
+        {/* Hero Carousel */}
+        {(() => {
+          // Combine hero image and gallery into a single array for the carousel
+          const carouselImages = [];
+
+          if (heroImage) {
+            carouselImages.push({
+              src: heroImage,
+              alt: heroImageAlt || title,
+            });
+          }
+
+          if (gallery && gallery.length > 0) {
+            gallery.forEach(img => {
+              // Avoid duplicates if hero image is also in gallery (simple check by src)
+              if (img.src !== heroImage) {
+                carouselImages.push(img);
+              }
+            });
+          }
+
+          return carouselImages.length > 0 ? (
+            <div className="mb-8">
+              <ImageCarousel images={carouselImages} />
             </div>
-          </div>
-        )}
+          ) : null;
+        })()}
 
 
         {/* Main content */}
-        <div className="prose prose-lg max-w-none text-[#242d3a] prose-headings:text-[#010b1b] prose-a:text-blue-600 prose-img:rounded-xl prose-strong:text-[#010b1b] leading-relaxed">
+        <div className="prose prose-lg max-w-none text-gray-700 prose-headings:text-main prose-a:text-blue-600 prose-img:rounded-xl prose-strong:text-main leading-relaxed">
           {contentBlocks ? (
             <ContentBuilder blocks={contentBlocks} />
           ) : content ? (
             <div dangerouslySetInnerHTML={{ __html: content }} />
           ) : (
-            <p className="text-gray-500 italic">Ma&apos;lumot mavjud emas</p>
+            <p className="text-gray-500 italic">{t('no_info', "Ma'lumot mavjud emas")}</p>
           )}
         </div>
 
-        {/* Gallery */}
-        {gallery && gallery.length > 0 && (
-          <div className="mt-10">
-            <h3 className="text-xl font-medium text-[#010b1b] mb-4 flex items-center gap-2">
-              <div className="w-1 h-6 bg-blue-600 rounded-full"></div>
-              Fotogalereya
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {gallery.map((image, index) => (
-                <div key={index} className="rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-gray-100 group">
-                  <div className="aspect-[4/3] overflow-hidden">
-                    <OptimizedImage
-                      src={image.src}
-                      alt={image.alt}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      lazy={true}
-                      width={400}
-                    />
-                  </div>
-                  {image.caption && (
-                    <div className="p-3 bg-gray-50 text-sm text-gray-600 border-t border-gray-100">
-                      {image.caption}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+
 
         {/* Tags */}
-        {meta?.tags && meta.tags.length > 0 && (
-          <div className="mt-8 pt-6 border-t border-dashed border-gray-200">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-gray-500 text-sm flex items-center gap-1 mr-2">
-                <Tag size={16} /> Teglar:
-              </span>
-              {meta.tags.map((tag, index) => (
-                <span
-                  key={index}
-                  className="bg-blue-50 text-blue-700 px-3 py-1 rounded-lg text-sm border border-blue-100 hover:bg-blue-100 transition-colors cursor-pointer"
-                >
-                  #{tag}
+        {
+          meta?.tags && meta.tags.length > 0 && (
+            <div className="mt-8 pt-6 border-t border-dashed border-gray-200">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-gray-500 text-sm flex items-center gap-1 mr-2">
+                  <Tag size={16} /> {t('tags', 'Teglar')}:
                 </span>
-              ))}
+                {meta.tags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="bg-blue-50 text-blue-700 px-3 py-1 rounded-lg text-sm border border-blue-100 hover:bg-blue-100 transition-colors cursor-pointer"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )
+        }
 
         {/* Divider for Share Section */}
         <div className="my-8 border-t border-dashed border-gray-200"></div>
@@ -323,66 +311,68 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
               className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors shadow-sm"
             >
               <Printer size={18} />
-              <span className="text-sm font-medium">Chop etish</span>
+              <span className="text-sm font-medium">{t('print', 'Chop etish')}</span>
             </button>
           )}
         </div>
 
-      </motion.div>
+      </motion.div >
 
       {/* Related items */}
-      {showRelated && relatedItems.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="mt-6"
-        >
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-1.5 h-8 bg-blue-600 rounded-full"></div>
-            <h3 className="text-2xl font-medium text-[#010b1b]">O&apos;xshash materiallar</h3>
-          </div>
+      {
+        showRelated && relatedItems.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="mt-6"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1.5 h-8 bg-blue-600 rounded-full"></div>
+              <h3 className="text-2xl font-medium text-main">{t('related_materials', "O'xshash materiallar")}</h3>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {relatedItems.slice(0, 4).map((item) => (
-              <div
-                key={item.id}
-                onClick={() => onRelatedClick?.(item)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    onRelatedClick?.(item);
-                  }
-                }}
-                role="button"
-                tabIndex={0}
-                className="group bg-white rounded-xl p-4 border border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer flex gap-4"
-              >
-                {item.image && (
-                  <div className="flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden relative">
-                    <OptimizedImage
-                      src={item.image}
-                      alt={item.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      width={96}
-                      height={96}
-                    />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {relatedItems.slice(0, 4).map((item) => (
+                <div
+                  key={item.id}
+                  onClick={() => onRelatedClick?.(item)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      onRelatedClick?.(item);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  className="group bg-white rounded-xl p-4 border border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer flex gap-4"
+                >
+                  {item.image && (
+                    <div className="flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden relative">
+                      <OptimizedImage
+                        src={item.image}
+                        alt={item.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        width={96}
+                        height={96}
+                      />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0 py-1">
+                    <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
+                      <Clock size={12} />
+                      {item.date && new Date(item.date).toLocaleDateString('uz-UZ')}
+                    </div>
+                    <h4 className="font-medium text-main line-clamp-2 group-hover:text-blue-600 transition-colors mb-2">
+                      {item.title}
+                    </h4>
                   </div>
-                )}
-                <div className="flex-1 min-w-0 py-1">
-                  <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
-                    <Clock size={12} />
-                    {item.date && new Date(item.date).toLocaleDateString('uz-UZ')}
-                  </div>
-                  <h4 className="font-medium text-[#010b1b] line-clamp-2 group-hover:text-blue-600 transition-colors mb-2">
-                    {item.title}
-                  </h4>
                 </div>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-      )}
-    </div>
+              ))}
+            </div>
+          </motion.div>
+        )
+      }
+    </div >
   );
 };
 

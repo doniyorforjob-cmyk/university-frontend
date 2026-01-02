@@ -17,5 +17,24 @@
     "otherAnnouncements": "Boshqa e'lonlar",
     "seeAllAnnouncements": "Barcha e'lonlarni ko'rish",
     "universityArea": "Universitetning umumiy maydoni",
-    "contact": "Aloqa uchun"
+    "contact": "Aloqa uchun",
+    "share": "Ulashish",
+    "print": "Chop etish",
+    "tags": "Teglar",
+    "no_info": "Ma'lumot mavjud emas",
+    "related_materials": "O'xshash materiallar",
+    "copy_link": "Nusxalash",
+    "content_types": {
+        "news": "Yangilik",
+        "announcement": "E'lon",
+        "service": "Xizmat",
+        "person": "Shaxs",
+        "info": "Ma'lumot"
+    },
+    "social": {
+        "facebook": "Facebook",
+        "twitter": "Twitter",
+        "telegram": "Telegram",
+        "linkedin": "LinkedIn"
+    }
 }
