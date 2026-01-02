@@ -58,9 +58,13 @@ const Footer: React.FC = () => {
               to="/"
               className="flex flex-col sm:flex-row sm:items-center mb-4 group transition-transform duration-300 hover:scale-105"
             >
-              <img src={settings?.logo || "/images/logo.png"} alt="Logo" className="h-20 w-20 sm:h-24 sm:w-24 mb-2 sm:mb-0 sm:mr-4 rounded-full transition-transform duration-300 group-hover:rotate-12 flex-shrink-0 object-cover" />
+              {settings?.logo ? (
+                <img src={settings.logo} alt={settings.siteName} className="h-20 w-20 sm:h-24 sm:w-24 mb-2 sm:mb-0 sm:mr-4 rounded-full transition-transform duration-300 group-hover:rotate-12 flex-shrink-0 object-cover" />
+              ) : (
+                <div className="h-20 w-20 sm:h-24 sm:w-24 mb-2 sm:mb-0 sm:mr-4 rounded-full bg-gray-700 animate-pulse flex-shrink-0" />
+              )}
               <span className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white text-center sm:text-left">
-                {settings?.siteName || "Namangan Davlat Texnika Universiteti"}
+                {settings?.siteName || ""}
               </span>
             </PrefetchLink>
 

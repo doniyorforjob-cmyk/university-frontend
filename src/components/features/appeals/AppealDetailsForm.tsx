@@ -24,14 +24,7 @@ export const AppealDetailsForm: React.FC<AppealDetailsFormProps> = ({ appealType
       animate={{ opacity: 1, y: 0 }}
       className="space-y-6"
     >
-      <div className="text-center mb-8">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Murojaat tafsilotlari
-        </h3>
-        <p className="text-gray-600">
-          Murojaatingizni batafsil tavsiflang
-        </p>
-      </div>
+
 
       {/* Title */}
       <div>
@@ -42,37 +35,12 @@ export const AppealDetailsForm: React.FC<AppealDetailsFormProps> = ({ appealType
           {...register('title')}
           type="text"
           id="title"
-          className={`block w-full px-3 py-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-primary focus:border-primary transition-colors ${
-            errors.title ? 'border-red-300 focus:ring-red-500' : 'border-gray-300'
-          }`}
+          className={`block w-full px-3 py-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-primary focus:border-primary transition-colors ${errors.title ? 'border-red-300 focus:ring-red-500' : 'border-gray-300'
+            }`}
           placeholder="Murojaat sarlavhasi"
         />
         {errors.title && (
           <p className="mt-1 text-sm text-red-600">{errors.title.message as string}</p>
-        )}
-      </div>
-
-      {/* Category */}
-      <div>
-        <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
-          Kategoriya *
-        </label>
-        <select
-          {...register('category')}
-          id="category"
-          className={`block w-full px-3 py-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-primary focus:border-primary transition-colors ${
-            errors.category ? 'border-red-300 focus:ring-red-500' : 'border-gray-300'
-          }`}
-        >
-          <option value="">Kategoriyani tanlang</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-        {errors.category && (
-          <p className="mt-1 text-sm text-red-600">{errors.category.message as string}</p>
         )}
       </div>
 
@@ -84,10 +52,9 @@ export const AppealDetailsForm: React.FC<AppealDetailsFormProps> = ({ appealType
         <textarea
           {...register('description')}
           id="description"
-          rows={6}
-          className={`block w-full px-3 py-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-primary focus:border-primary transition-colors ${
-            errors.description ? 'border-red-300 focus:ring-red-500' : 'border-gray-300'
-          }`}
+          rows={8}
+          className={`block w-full px-3 py-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-primary focus:border-primary transition-colors ${errors.description ? 'border-red-300 focus:ring-red-500' : 'border-gray-300'
+            }`}
           placeholder="Murojaatingizni batafsil tavsiflang..."
         />
         {errors.description && (
@@ -106,11 +73,10 @@ export const AppealDetailsForm: React.FC<AppealDetailsFormProps> = ({ appealType
               key={priority.value}
               type="button"
               onClick={() => setValue('priority', priority.value)}
-              className={`p-3 rounded-lg border-2 text-left transition-all ${
-                watch('priority') === priority.value
-                  ? 'border-primary bg-primary/5'
-                  : 'border-gray-200 hover:border-gray-300'
-              }`}
+              className={`p-3 rounded-lg border-2 text-left transition-all ${watch('priority') === priority.value
+                ? 'border-primary bg-primary/5'
+                : 'border-gray-200 hover:border-gray-300'
+                }`}
             >
               <div className="text-sm font-medium text-gray-900">
                 {priority.label}

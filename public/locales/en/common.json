@@ -36,5 +36,13 @@
         "twitter": "Twitter",
         "telegram": "Telegram",
         "linkedin": "LinkedIn"
-    }
+    },
+    "department_suffix": "department",
+    "read_article": "Read article",
+    "media_types": {
+        "online": "Uzbekistan Media",
+        "tv": "TV Channel",
+        "print": "Newspaper/Journal"
+    },
+    "error_title": "An error occurred"
 }

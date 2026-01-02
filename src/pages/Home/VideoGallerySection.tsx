@@ -5,6 +5,7 @@ import { useStandardSection } from './hooks/useStandardSection';
 import { homeApi, HomeMediaData } from '../../services/homeService';
 import { MediaGalleryHeader } from './components/SectionHeader';
 import MediaCard from './components/MediaCard';
+import { useSettingsStore } from '../../store/settingsStore';
 
 const formatDate = (dateString: string, language: string) => {
   const date = new Date(dateString);
@@ -20,6 +21,7 @@ const formatDate = (dateString: string, language: string) => {
 
 const MediaGallery: React.FC = () => {
   const { t, i18n } = useTranslation('common');
+  const { settings } = useSettingsStore();
   const [activeTab, setActiveTab] = useState<'photos' | 'videos'>('videos');
   const [activeVideo, setActiveVideo] = useState<number | null>(null);
 
@@ -128,9 +130,13 @@ const MediaGallery: React.FC = () => {
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center">
                       <div className="w-10 h-10 rounded flex items-center justify-center mr-3">
-                        <img src="/images/logo.png" alt="University Logo" className="w-full h-full object-contain p-1" />
+                        {settings?.logo ? (
+                          <img src={settings.logo} alt={settings.siteName} className="w-full h-full object-contain p-1 rounded-full" />
+                        ) : (
+                          <div className="w-full h-full bg-gray-100 animate-pulse rounded-full" />
+                        )}
                       </div>
-                      <span className="text-lg font-semibold text-gray-800">Namangan Davlat Texnika Universiteti</span>
+                      <span className="text-lg font-semibold text-gray-800">{settings?.siteName || ""}</span>
                     </div>
                     <span className="text-sm text-gray-600">{formatDate(data.videos[activeVideo].uploadDate, i18n.language)}</span>
                   </div>

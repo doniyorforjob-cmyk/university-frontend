@@ -1,24 +1,57 @@
 import axios from 'axios';
+import { cacheManager } from '../utils/cacheManager';
 
 const apiClient = axios.create({
   baseURL: process.env.REACT_APP_API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
     'project-id': process.env.REACT_APP_PROJECT_ID,
     'Accept': 'application/json',
   },
 });
 
+// Response cache interceptor
+apiClient.interceptors.response.use((response) => {
+  const { config, data, status } = response;
+
+  // Cache successful GET requests
+  if (config.method === 'get' && status === 200 && data) {
+    // Use the tagged cacheKey if available, otherwise fallback to URL
+    const cacheKey = (config as any)._cacheKey || axios.getUri(config);
+    // Auto-cache for 30 seconds
+    cacheManager.set(cacheKey, data, 0.5);
+  }
+
+  return response;
+});
+
 apiClient.interceptors.request.use(
   (config) => {
+    // Tagging logic for Global SWR
+    const pendingCacheKey = cacheManager.consumeNextRequestKey();
+    if (pendingCacheKey && config.method === 'get') {
+      (config as any)._cacheKey = pendingCacheKey;
+    }
+
+    const projectId = process.env.REACT_APP_PROJECT_ID;
     const userToken = localStorage.getItem('authToken');
     const globalToken = process.env.REACT_APP_API_TOKEN;
-    const locale = localStorage.getItem('locale') || 'en'; // Default to 'en' since backend has only English content
+    const locale = localStorage.getItem('locale') || 'en';
 
+    // ALWAYS ensure project-id is in the headers (important for POST)
+    if (projectId) {
+      config.headers['project-id'] = projectId;
+    }
+
+    // Always set Authorization if available
     if (userToken) {
       config.headers.Authorization = `Bearer ${userToken}`;
     } else if (globalToken) {
       config.headers.Authorization = `Bearer ${globalToken}`;
+    }
+
+    // For POST/PUT requests, ensure Content-Type is set if not already (Axios usually does this, but being explicit)
+    if (config.method !== 'get' && !config.headers['Content-Type'] && !(config.data instanceof FormData)) {
+      config.headers['Content-Type'] = 'application/json';
     }
 
     // Add locale parameter to all requests if not provided
@@ -31,40 +64,52 @@ apiClient.interceptors.request.use(
     }
 
     return config;
-    return config;
   },
   (error) => {
     return Promise.reject(error);
   }
 );
 
-// Retry logic configs
+// Retry and Error Logging Logic
 const MAX_RETRIES = 3;
-const RETRY_DELAY = 1000; // 1 second
+const RETRY_DELAY = 1000;
 
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const config = error.config;
 
-    // Agar config bo'lmasa yoki retry count tugagan bo'lsa
+    // DETAILED ERROR LOGGING for debugging
+    if (error.response) {
+      console.error('API Error Response:', {
+        url: config?.url,
+        method: config?.method,
+        status: error.response.status,
+        data: error.response.data,
+        headers: error.response.headers
+      });
+    } else if (error.request) {
+      console.error('API Error Request (No response):', error.request);
+    } else {
+      console.error('API Error Message:', error.message);
+    }
+
+    // Skip retry if config missing or retry count reached
     if (!config || config.__retryCount >= MAX_RETRIES) {
       return Promise.reject(error);
     }
 
-    // Faqat 5xx xatolar yoki tarmoq xatosi bo'lsa qayta urinib ko'rish
+    // Only retry on network errors or 5xx server errors
     if (error.response && error.response.status < 500) {
       return Promise.reject(error);
     }
 
-    // Retry countni oshirish
     config.__retryCount = (config.__retryCount || 0) + 1;
 
-    // Backoff delay
     const backoff = new Promise((resolve) => {
       setTimeout(() => {
         resolve(null);
-      }, RETRY_DELAY * config.__retryCount); // 1s, 2s, 3s
+      }, RETRY_DELAY * config.__retryCount);
     });
 
     await backoff;

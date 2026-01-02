@@ -1,6 +1,10 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { MediaArticle } from '@/types/media.types';
+import { useSettingsStore } from '@/store/settingsStore';
 import { CalendarDaysIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
+import { formatStandardDate, stripHtml } from '@/config/constants';
+import OptimizedImage from '@/components/shared/OptimizedImage';
 
 interface MediaMentionCardProps {
     article: MediaArticle;
@@ -8,56 +12,43 @@ interface MediaMentionCardProps {
 }
 
 const MediaMentionCard: React.FC<MediaMentionCardProps> = ({ article, isFeatured = false }) => {
-    const formattedDate = new Date(article.published_at).toLocaleDateString('uz-UZ', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-    });
+    const { t } = useTranslation(['common']);
+    const { settings } = useSettingsStore();
+    const formattedDate = formatStandardDate(article.published_at);
 
-    const typeLabels = {
-        online: "O'zbekiston OAV",
-        tv: "Telekanal",
-        print: "Gazeta/Jurnal"
+    const typeLabels: Record<string, string> = {
+        online: t('media_types.online', "O'zbekiston OAV"),
+        tv: t('media_types.tv', "Telekanal"),
+        print: t('media_types.print', "Gazeta/Jurnal")
     };
 
-    const typeColors = {
-        online: "bg-blue-100 text-blue-800",
-        tv: "bg-purple-100 text-purple-800",
-        print: "bg-orange-100 text-orange-800"
-    };
-
-    const sourceColors: Record<string, string> = {
-        "Kun.uz": "bg-[#1B2A4E] text-[#FFD700]",
-        "Daryo.uz": "bg-[#00A8E8] text-white",
-        "Gazeta.uz": "bg-[#717277] text-white",
-        "UZA": "bg-[#2ECC71] text-white",
-        "O'zbekiston 24": "bg-red-600 text-white"
-    };
-
-    const sourceStyle = sourceColors[article.source] || "bg-gray-800 text-white";
+    const sourceStyle = "bg-primary text-white";
 
     return (
         <article
             className={`group relative bg-white border border-gray-100 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${isFeatured ? 'lg:flex lg:gap-8 lg:items-center' : ''
                 }`}
         >
-            {/* Thumbnail */}
+            {/* Image */}
             <div className={`relative overflow-hidden ${isFeatured ? 'lg:w-1/2' : 'aspect-[16/10]'}`}>
-                <img
-                    src={article.thumbnail || 'https://via.placeholder.com/800x500?text=NamDTU'}
+                <OptimizedImage
+                    src={article.image || settings?.logo || ""}
                     alt={article.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    className={`w-full h-full transition-transform duration-700 group-hover:scale-105 ${(!article.image && !settings?.logo) ? 'object-contain p-4 bg-gray-50' : 'object-cover'}`}
+                    aspectRatio={isFeatured ? undefined : 16 / 10}
                 />
 
                 {/* Source Badge */}
-                <div className={`absolute top-4 left-4 font-bold px-3 py-1 rounded-lg text-sm shadow-lg ${sourceStyle}`}>
+                <div className={`absolute top-4 left-4 font-bold px-3 py-1 rounded-lg text-sm shadow-lg ${sourceStyle} z-10`}>
                     {article.source}
                 </div>
 
-                {/* Publication Type Badge (Floating on small card, hidden on featured if needed) */}
-                <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-2 py-0.5 rounded-md text-[10px] uppercase tracking-wider font-bold text-gray-600 border border-gray-100">
-                    {typeLabels[article.type]}
-                </div>
+                {/* Publication Type Badge */}
+                {article.type && (
+                    <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-2 py-0.5 rounded-md text-[10px] uppercase tracking-wider font-bold text-gray-600 border border-gray-100 z-10">
+                        {typeLabels[article.type]}
+                    </div>
+                )}
             </div>
 
             {/* Content */}
@@ -74,7 +65,7 @@ const MediaMentionCard: React.FC<MediaMentionCardProps> = ({ article, isFeatured
 
                 {article.excerpt && (
                     <p className={`text-gray-600 mb-6 ${isFeatured ? 'text-lg line-clamp-3' : 'text-sm line-clamp-2'}`}>
-                        {article.excerpt}
+                        {stripHtml(article.excerpt)}
                     </p>
                 )}
 
@@ -84,7 +75,7 @@ const MediaMentionCard: React.FC<MediaMentionCardProps> = ({ article, isFeatured
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-primary font-bold hover:gap-3 transition-all duration-300"
                 >
-                    <span>Maqolani o&apos;qish</span>
+                    <span>{t('read_article', "Maqolani o'qish")}</span>
                     <ArrowTopRightOnSquareIcon className="w-5 h-5" />
                 </a>
 

@@ -4,7 +4,7 @@ import Layout from '@/components/Layout';
 // MainLayout import removed (moved to AppRoutes)
 import GlobalLayout from '@/components/templates/GlobalLayout';
 import { ScrollToTop } from '@/components/shared';
-import { LocaleProvider } from '@/contexts/LocaleContext';
+import { LocaleProvider, useLocale } from '@/contexts/LocaleContext';
 // Error Pages & Components
 // NetworkError imported
 // NotFound moved to AppRoutes
@@ -15,6 +15,7 @@ import { useSettingsStore } from '@/store/settingsStore';
 
 import LocaleWrapper from '@/components/shared/LocaleWrapper';
 import AppRoutes from './AppRoutes';
+import { Toaster } from 'react-hot-toast';
 
 // Lazy load HomePage for root path
 const HomePage = React.lazy(() => import('./pages/Home'));
@@ -27,6 +28,7 @@ const NavigateToUz = () => {
 
 function App() {
   const location = useLocation();
+  const { locale } = useLocale();
   const { fetchSettings } = useSettingsStore();
 
   // Network Status Hook
@@ -46,53 +48,54 @@ function App() {
   }, []);
 
   React.useEffect(() => {
-    fetchSettings();
-  }, [fetchSettings]);
+    fetchSettings(locale);
+  }, [fetchSettings, locale]);
 
   // Home sahifa uchun fallbackni boshqacha qiling
   const isHome = location.pathname === '/';
 
   return (
-    <LocaleProvider>
-      <div className="min-h-screen text-gray-900">
-        {/* Network Error Overlay */}
-        {!isOnline && <NetworkError />}
+    <div className="min-h-screen text-gray-900">
+      {/* Network Error Overlay */}
+      {!isOnline && <NetworkError />}
 
-        <Layout>
-          <ErrorBoundary>
-            <Suspense fallback={isHome ? null : <GenericPageSkeleton showSidebar={true} showBanner={true} />}> {/* This fallback is for the initial load of the entire app */}
-              <Routes>
-                {/* Russian Locale */}
-                <Route path="ru/*" element={<LocaleWrapper lang="ru" />}>
-                  <Route path="*" element={<AppRoutes />} />
-                </Route>
+      <Layout>
+        <ErrorBoundary>
+          <Suspense fallback={isHome ? null : <GenericPageSkeleton showSidebar={true} showBanner={true} />}> {/* This fallback is for the initial load of the entire app */}
+            <Routes>
+              {/* Russian Locale */}
+              <Route path="ru/*" element={<LocaleWrapper lang="ru" />}>
+                <Route path="*" element={<AppRoutes />} />
+              </Route>
 
-                {/* English Locale */}
-                <Route path="en/*" element={<LocaleWrapper lang="en" />}>
-                  <Route path="*" element={<AppRoutes />} />
-                </Route>
+              {/* English Locale */}
+              <Route path="en/*" element={<LocaleWrapper lang="en" />}>
+                <Route path="*" element={<AppRoutes />} />
+              </Route>
 
-                {/* Uzbek Locale - Explicit for inner pages */}
-                <Route path="uz/*" element={<LocaleWrapper lang="uz" />}>
-                  <Route path="*" element={<AppRoutes />} />
-                </Route>
+              {/* Uzbek Locale - Explicit for inner pages */}
+              <Route path="uz/*" element={<LocaleWrapper lang="uz" />}>
+                <Route path="*" element={<AppRoutes />} />
+              </Route>
 
-                {/* Special Case: Root path is Uzbek Home Page */}
-                <Route path="/" element={<LocaleWrapper lang="uz" />}>
-                  <Route index element={<HomePage />} />
-                </Route>
+              {/* Special Case: Root path is Uzbek Home Page */}
+              <Route path="/" element={<LocaleWrapper lang="uz" />}>
+                <Route index element={<HomePage />} />
+              </Route>
 
-                {/* Any other top-level path (e.g. /news) -> Redirect to /uz/news */}
-                <Route path="*" element={<NavigateToUz />} />
-              </Routes>
-            </Suspense>
-          </ErrorBoundary>
-        </Layout>
+              {/* Any other top-level path (e.g. /news) -> Redirect to /uz/news */}
+              <Route path="*" element={<NavigateToUz />} />
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
+      </Layout>
 
-        {/* Global "Yuqoriga qaytish" tugmasi */}
-        <ScrollToTop />
-      </div>
-    </LocaleProvider>
+      {/* Global Toast Notifications */}
+      <Toaster position="top-right" reverseOrder={false} />
+
+      {/* Global "Yuqoriga qaytish" tugmasi */}
+      <ScrollToTop />
+    </div>
   );
 }
 

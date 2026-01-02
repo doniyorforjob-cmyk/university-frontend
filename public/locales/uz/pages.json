@@ -6,5 +6,29 @@
     "faculties": "Fakultetlar",
     "mediaResources": "Media resurslar",
     "photoGallery": "Fotogalareya",
-    "videoGallery": "Videogalareya"
+    "videoGallery": "Videogalareya",
+    "openLessons": "Ochiq darslar",
+    "mediaSubtitle": "Namangan davlat texnika universiteti faoliyati haqida mahalliy va xalqaro ommaviy axborot vositalarida yoritilgan eng so'nggi xabarlar.",
+    "latestCoverage": "Eng so'nggi ma'lumotlar",
+    "articlesArchive": "Maqolalar arxivi",
+    "leadership": "Rahbariyat va Bo'limlar",
+    "responsible": "Mas'ul",
+    "contactTitle": "Biz bilan bog'lanish",
+    "contactSubtitle": "Xabar qoldiring va biz tez orada siz bilan bog'lanamiz",
+    "fullName": "Ismingiz",
+    "phoneLabel": "Telefon raqamingiz (+998 ...)",
+    "message": "Xabaringiz",
+    "securityCode": "Xavfsizlik kodi",
+    "enterCode": "Kodni kiriting",
+    "codeValid": "Kod to'g'ri!",
+    "codeInvalid": "Kod noto'g'ri. Qayta urining.",
+    "sending": "Yuborilmoqda...",
+    "send": "Yuborish",
+    "back": "Orqaga",
+    "validation": {
+        "nameMin": "Ismingiz kamida 3 ta harf bo'lishi kerak",
+        "phoneMin": "Telefon raqami noto'g'ri",
+        "messageMin": "Xabar kamida 10 ta belgidan iborat bo'lishi kerak",
+        "codeLength": "Kod 6 ta raqamdan iborat"
+    }
 }

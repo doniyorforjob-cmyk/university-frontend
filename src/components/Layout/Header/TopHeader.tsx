@@ -1,6 +1,12 @@
 import React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+    FaTelegramPlane,
+    FaInstagram,
+    FaFacebookF,
+    FaYoutube
+} from 'react-icons/fa';
 import useClickOutside from '../../../hooks/useClickOutside';
 import { useSettingsStore } from '../../../store/settingsStore';
 import useFontSizeStore from '../../../store/fontSizeStore';
@@ -83,26 +89,31 @@ const TopHeader = () => {
                 {/* Ijtimoiy tarmoqlar havolalari - Settings API dan */}
                 <div className="flex-1 flex justify-center md:justify-start items-center pb-1">
                     <div className="flex items-center space-x-4">
-                        {settings?.socials?.map((link: any) => (
-                            <a
-                                key={link.name}
-                                href={link.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-white hover:text-secondary transition-colors"
-                                title={link.name}
-                            >
-                                {link.icon ? (
-                                    <img
-                                        src={link.icon}
-                                        alt={link.name}
-                                        className="h-5 w-5 object-contain filter brightness-0 invert"
-                                    />
-                                ) : (
-                                    <span className="text-sm font-medium">{link.name}</span>
-                                )}
-                            </a>
-                        ))}
+                        {settings?.socials?.map((link: any) => {
+                            const getIcon = (name: string) => {
+                                switch (name.toLowerCase()) {
+                                    case 'telegram': return <FaTelegramPlane className="h-4 w-4" />;
+                                    case 'instagram': return <FaInstagram className="h-4 w-4" />;
+                                    case 'facebook': return <FaFacebookF className="h-4 w-4" />;
+                                    case 'youtube': return <FaYoutube className="h-4 w-4" />;
+                                    default: return null;
+                                }
+                            };
+                            const icon = getIcon(link.name);
+
+                            return (
+                                <a
+                                    key={link.name}
+                                    href={link.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-white hover:text-secondary transition-colors p-1"
+                                    title={link.name}
+                                >
+                                    {icon || <span className="text-sm font-medium">{link.name}</span>}
+                                </a>
+                            );
+                        })}
                     </div>
                 </div>
 

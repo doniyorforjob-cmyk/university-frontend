@@ -16,7 +16,8 @@ import {
   Clock,
   Megaphone,
   Wrench,
-  Info
+  Info,
+  Building
 } from 'lucide-react';
 import SocialShare from '../shared/SocialShare';
 
@@ -39,6 +40,7 @@ export interface DetailMeta {
   status?: 'active' | 'archived' | 'draft';
   views?: number;
   lastUpdated?: string;
+  department?: string;
 }
 
 // O'xshash content
@@ -269,6 +271,15 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
             <p className="text-gray-500 italic">{t('no_info', "Ma'lumot mavjud emas")}</p>
           )}
         </div>
+
+        {meta?.department && (
+          <div className="mt-6 flex justify-end items-center gap-2 text-main-dark font-semibold">
+            <Building size={20} className="text-[#334155]" />
+            <span className="text-lg italic">
+              «{meta.department}» {t('department_suffix', 'kafedrasi')}
+            </span>
+          </div>
+        )}
 
 
 

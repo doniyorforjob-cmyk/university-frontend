@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import DownloadLink from '@/components/shared/DownloadLink';
+import { useSettingsStore } from '@/store/settingsStore';
 import { OptimizedImage } from '../shared';
 import CalendarViewSelector from '../shared/CalendarViewSelector';
 import CalendarHeader from '../shared/CalendarHeader';
@@ -15,6 +16,7 @@ import {
 } from '@/components/ui/pagination';
 import GenericPageSkeleton from '../shared/GenericPageSkeleton';
 import Container from '../shared/Container';
+import { formatStandardDate } from '@/config/constants';
 
 
 // Section turlari
@@ -119,6 +121,7 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
   className = '',
   children
 }) => {
+  const { settings } = useSettingsStore();
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<SectionFilters>({});
   const [searchQuery, setSearchQuery] = useState('');
@@ -178,7 +181,7 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
 
 
   // Filtr qo'llash
-  let filteredItems = items.filter(item => {
+  let filteredItems = (Array.isArray(items) ? items : []).filter(item => {
     // Sana filtri
     if (filters.dateRange) {
       const itemDate = item.date ? new Date(item.date) : null;
@@ -220,7 +223,7 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
     const sevenDaysAgo = new Date(todayEnd);
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    const additionalItems = items.filter(item => {
+    const additionalItems = (Array.isArray(items) ? items : []).filter(item => {
       const itemDate = item.date ? new Date(item.date) : null;
       if (!itemDate) return false;
 
@@ -268,18 +271,7 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
 
   // Sana formatini o'zgartiruvchi funksiya
   const formatDate = (dateString?: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    const months = [
-      'Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun',
-      'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'
-    ];
-    const day = date.getDate();
-    const month = months[date.getMonth()];
-    const year = date.getFullYear();
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${day} ${month} ${year} | ${hours}:${minutes}`;
+    return formatStandardDate(dateString);
   };
 
   // Layout klasslarini olish
@@ -313,9 +305,9 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
         >
           <div className="w-40 h-36 flex-shrink-0 bg-gray-50 rounded overflow-hidden">
             <OptimizedImage
-              src={item.image || '/images/logo.png'}
+              src={item.image || settings?.logo || ""}
               alt={item.title}
-              className={`w-full h-full ${item.image === '/images/logo.png' ? 'object-contain p-2' : 'object-cover'}`}
+              className={`w-full h-full ${(item.image === settings?.logo || !item.image) ? 'object-contain p-2' : 'object-cover'}`}
               width={160}
               height={144}
               lazy={true}
@@ -383,9 +375,9 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
         <div className="overflow-hidden relative block">
           <AspectRatio ratio={4 / 3} className="bg-gray-50">
             <OptimizedImage
-              src={item.image || '/images/logo.png'}
+              src={item.image || settings?.logo || ""}
               alt={item.title}
-              className={`w-full h-full object-center ${item.image === '/images/logo.png' ? 'object-contain p-8' : 'object-cover'}`}
+              className={`w-full h-full object-center ${(item.image === settings?.logo || !item.image) ? 'object-contain p-8' : 'object-cover'}`}
               width={400}
               height={225}
               lazy={true}

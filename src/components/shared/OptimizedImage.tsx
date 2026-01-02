@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useSettingsStore } from '../../store/settingsStore';
 import { useWebPSupport } from '../../hooks/useWebPSupport';
 import { getWebPUrl, getAvifUrl, createImageObserver, generateBlurPlaceholder } from '../../utils/imageOptimization';
 
@@ -31,6 +32,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   onLoad,
   onError,
 }) => {
+  const { settings } = useSettingsStore();
   const { supportsWebP, isLoading: webpLoading } = useWebPSupport();
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -108,9 +110,9 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
         style={aspectRatio ? { aspectRatio: aspectRatio.toString(), width: width || '100%' } : { width, height }}
       >
         <img
-          src="/images/logo.png"
-          alt="NDTU Logo"
-          className="absolute inset-0 m-auto w-1/2 h-1/2 object-contain opacity-50"
+          src={settings?.logo || ""}
+          alt=""
+          className="absolute inset-0 m-auto w-1/2 h-1/2 object-contain opacity-50 rounded-full"
         />
       </div>
     );

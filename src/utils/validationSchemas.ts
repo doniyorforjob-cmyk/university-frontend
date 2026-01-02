@@ -1,7 +1,7 @@
-                                                                                                                                                                                                                                                                                    /**
- * Validation Schemas for Forms
- * Using Zod for type-safe validation
- */
+/**
+* Validation Schemas for Forms
+* Using Zod for type-safe validation
+*/
 
 import { z } from 'zod';
 
@@ -16,25 +16,10 @@ export const appealFormSchema = z.object({
   appealType: createEnum(['ariza', 'taklif', 'shikoyat']),
 
   // Step 2: Personal Information
-  fullName: z
-    .string()
-    .min(2, 'Ism kamida 2 ta belgidan iborat bo\'lishi kerak')
-    .max(100, 'Ism juda uzun')
-    .regex(/^[a-zA-Z\s\u0400-\u04FF]+$/, 'Faqat harflar va bo\'sh joylardan iborat bo\'lishi kerak'),
-
-  phone: z
-    .string()
-    .regex(/^\+998\d{9}$/, 'Telefon raqami +998XXXXXXXXX formatida bo\'lishi kerak'),
-
-  email: z
-    .string()
-    .email('Email manzili noto\'g\'ri')
-    .max(100, 'Email juda uzun'),
-
-  address: z
-    .string()
-    .max(200, 'Manzil juda uzun')
-    .optional(),
+  fullName: z.string().optional(),
+  phone: z.string().optional(),
+  email: z.string().optional(),
+  address: z.string().optional(),
 
   // Step 3: Appeal Details
   title: z
@@ -44,13 +29,13 @@ export const appealFormSchema = z.object({
 
   description: z
     .string()
-    .min(20, 'Tavsif kamida 20 ta belgidan iborat bo\'lishi kerak')
+    .min(1, 'Tavsifni kiriting')
     .max(2000, 'Tavsif juda uzun'),
 
   category: z
     .string()
-    .min(1, 'Kategoriyani tanlang'),
-                                                                                      
+    .optional(),
+
   priority: createEnum(['low', 'medium', 'high', 'urgent']),
 
   // Step 4: Additional Information

@@ -36,5 +36,13 @@
         "twitter": "Twitter",
         "telegram": "Telegram",
         "linkedin": "LinkedIn"
-    }
+    },
+    "department_suffix": "кафедра",
+    "read_article": "Читать статью",
+    "media_types": {
+        "online": "СМИ Узбекистана",
+        "tv": "Телеканал",
+        "print": "Газета/Журнал"
+    },
+    "error_title": "Произошла ошибка"
 }

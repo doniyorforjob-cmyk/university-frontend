@@ -4,7 +4,6 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { appealFormSchema, AppealFormData } from '../../../utils/validationSchemas';
 import { AppealTypeSelector } from './AppealTypeSelector';
-import { PersonalInfoForm } from './PersonalInfoForm';
 import { AppealDetailsForm } from './AppealDetailsForm';
 import { FileUploadForm } from './FileUploadForm';
 import { PreviewForm } from './PreviewForm';
@@ -12,11 +11,10 @@ import { ProgressBar } from './ProgressBar';
 import { APPEAL_CATEGORIES } from '../../../types/appeal.types';
 
 const steps = [
-  { id: 1, title: 'Murojaat turi', description: 'Ariza, taklif yoki shikoyat' },
-  { id: 2, title: 'Shaxsiy ma\'lumotlar', description: 'Ism, telefon, email' },
-  { id: 3, title: 'Murojaat tafsilotlari', description: 'Sarlavha va tavsif' },
-  { id: 4, title: 'Fayl biriktirish', description: 'Hujjatlar va rasmlar' },
-  { id: 5, title: 'Ko\'rib chiqish', description: 'Tasdiqlash va yuborish' },
+  { id: 1, title: 'Murojaat turi', description: '' },
+  { id: 2, title: 'Murojaat tafsilotlari', description: '' },
+  { id: 3, title: 'Fayl biriktirish', description: '' },
+  { id: 4, title: 'Ko\'rib chiqish', description: '' },
 ];
 
 interface AppealWizardProps {
@@ -36,7 +34,7 @@ export const AppealWizard: React.FC<AppealWizardProps> = ({
     mode: 'onChange',
     defaultValues: {
       appealType: 'ariza',
-      fullName: '',
+      fullName: 'Anonymous', // Default values since field is hidden
       phone: '',
       email: '',
       address: '',
@@ -57,7 +55,16 @@ export const AppealWizard: React.FC<AppealWizardProps> = ({
   const watchedType = watch('appealType');
 
   const handleNext = async () => {
-    const isStepValid = await trigger();
+    const stepFields: Record<number, any[]> = {
+      1: ['appealType'],
+      2: ['title', 'description', 'priority'],
+      3: ['attachments', 'department', 'faculty'],
+      4: ['agreeToTerms', 'agreeToProcessing'],
+    };
+
+    const fieldsToValidate = stepFields[currentStep as keyof typeof stepFields];
+    const isStepValid = await trigger(fieldsToValidate);
+
     if (isStepValid) {
       setCurrentStep(prev => Math.min(prev + 1, steps.length));
     }
@@ -92,12 +99,10 @@ export const AppealWizard: React.FC<AppealWizardProps> = ({
       case 1:
         return <AppealTypeSelector onSelect={handleTypeSelect} />;
       case 2:
-        return <PersonalInfoForm />;
-      case 3:
         return <AppealDetailsForm appealType={watchedType} />;
-      case 4:
+      case 3:
         return <FileUploadForm />;
-      case 5:
+      case 4:
         return <PreviewForm onEdit={setCurrentStep} />;
       default:
         return null;
@@ -114,7 +119,7 @@ export const AppealWizard: React.FC<AppealWizardProps> = ({
 
       {/* Form */}
       <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(handleFinalSubmit)} className="mt-8">
+        <form onSubmit={handleSubmit(handleFinalSubmit)} className="mt-1">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentStep}
@@ -125,7 +130,7 @@ export const AppealWizard: React.FC<AppealWizardProps> = ({
               className="bg-white shadow-lg p-8"
             >
               {/* Step Header */}
-              <div className="mb-8">
+              <div className="mb-2">
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
                   {steps[currentStep - 1].title}
                 </h2>
@@ -145,11 +150,10 @@ export const AppealWizard: React.FC<AppealWizardProps> = ({
                   type="button"
                   onClick={handlePrev}
                   disabled={!canGoBack}
-                  className={`px-6 py-3 rounded-lg font-medium transition-all ${
-                    canGoBack
-                      ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      : 'bg-gray-50 text-gray-400 cursor-not-allowed'
-                  }`}
+                  className={`px-6 py-3 rounded-lg font-medium transition-all ${canGoBack
+                    ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-gray-50 text-gray-400 cursor-not-allowed'
+                    }`}
                 >
                   Ortga
                 </button>
@@ -158,24 +162,18 @@ export const AppealWizard: React.FC<AppealWizardProps> = ({
                   <button
                     type="button"
                     onClick={handleNext}
-                    disabled={!canProceed}
-                    className={`px-6 py-3 rounded-lg font-medium transition-all ${
-                      canProceed
-                        ? 'bg-primary text-white hover:bg-primary/90'
-                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    }`}
+                    className="px-6 py-3 rounded-lg font-medium transition-all bg-primary text-white hover:bg-primary/90"
                   >
                     Keyingi
                   </button>
                 ) : (
                   <button
                     type="submit"
-                    disabled={isSubmitting || !isValid}
-                    className={`px-8 py-3 rounded-lg font-medium transition-all ${
-                      isValid && !isSubmitting
-                        ? 'bg-green-600 text-white hover:bg-green-700'
-                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    }`}
+                    disabled={isSubmitting}
+                    className={`px-8 py-3 rounded-lg font-medium transition-all ${!isSubmitting
+                      ? 'bg-green-600 text-white hover:bg-green-700'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      }`}
                   >
                     {isSubmitting ? 'Yuborilmoqda...' : 'Yuborish'}
                   </button>

@@ -27,6 +27,19 @@ class CacheManager {
   private hits = 0;
   private misses = 0;
 
+  // Track the key for the current in-flight request to support global SWR
+  private currentRequestKey: string | null = null;
+
+  setNextRequestKey(key: string): void {
+    this.currentRequestKey = key;
+  }
+
+  consumeNextRequestKey(): string | null {
+    const key = this.currentRequestKey;
+    this.currentRequestKey = null;
+    return key;
+  }
+
   static getInstance(): CacheManager {
     if (!CacheManager.instance) {
       CacheManager.instance = new CacheManager();
@@ -107,8 +120,11 @@ class CacheManager {
           this.cache.set(key, parsed);
           this.hits++;
           return parsed.data;
+        } else if (parsed.version === this.VERSION) {
+          // Expired but same version - keep for SWR fallback if needed
+          // but don't count as hit for normal get
         } else {
-          // Expired, remove
+          // Incompatible version, remove
           localStorage.removeItem(this.getStorageKey(key));
         }
       }
@@ -117,6 +133,30 @@ class CacheManager {
     }
 
     this.misses++;
+    return null;
+  }
+
+  /**
+   * Returns data even if expired (Stale-While-Revalidate)
+   */
+  getStale(key: string): any | null {
+    // 1. Memory cache
+    const memoryItem = this.cache.get(key);
+    if (memoryItem) return memoryItem.data;
+
+    // 2. localStorage
+    try {
+      const stored = localStorage.getItem(this.getStorageKey(key));
+      if (stored) {
+        const parsed: CacheItem = JSON.parse(stored);
+        if (parsed.version === this.VERSION) {
+          return parsed.data;
+        }
+      }
+    } catch (error) {
+      // Ignore
+    }
+
     return null;
   }
 

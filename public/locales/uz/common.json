@@ -36,5 +36,13 @@
         "twitter": "Twitter",
         "telegram": "Telegram",
         "linkedin": "LinkedIn"
-    }
+    },
+    "department_suffix": "kafedrasi",
+    "read_article": "Maqolani o'qish",
+    "media_types": {
+        "online": "O'zbekiston OAV",
+        "tv": "Telekanal",
+        "print": "Gazeta/Jurnal"
+    },
+    "error_title": "Xatolik yuz berdi"
 }

@@ -27,9 +27,8 @@ export const AccordionBlock: React.FC<AccordionBlockProps> = ({ block, index }) 
             >
               <span className="font-semibold text-black">{item.question}</span>
               <svg
-                className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${
-                  openItem === itemIndex ? 'rotate-180' : ''
-                }`}
+                className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${openItem === itemIndex ? 'rotate-180' : ''
+                  }`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -39,7 +38,10 @@ export const AccordionBlock: React.FC<AccordionBlockProps> = ({ block, index }) 
             </button>
             {openItem === itemIndex && (
               <div className="px-6 py-4 bg-white border-t border-gray-200">
-                <p className="text-black">{item.answer}</p>
+                <div
+                  className="prose prose-sm max-w-none text-black"
+                  dangerouslySetInnerHTML={{ __html: item.answer }}
+                />
               </div>
             )}
           </div>

@@ -53,23 +53,15 @@ export const FileUploadForm: React.FC = () => {
       animate={{ opacity: 1, y: 0 }}
       className="space-y-6"
     >
-      <div className="text-center mb-8">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Fayl biriktirish
-        </h3>
-        <p className="text-gray-600">
-          Murojaatingizni tasdiqlovchi hujjatlarni yuklang
-        </p>
-      </div>
+
 
       {/* Dropzone */}
       <div
         {...getRootProps()}
-        className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
-          isDragActive
+        className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${isDragActive
             ? 'border-primary bg-primary/5'
             : 'border-gray-300 hover:border-gray-400'
-        }`}
+          }`}
       >
         <input {...getInputProps()} />
         <div className="space-y-4">

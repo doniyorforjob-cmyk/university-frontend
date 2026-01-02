@@ -3,22 +3,39 @@ import { motion } from 'framer-motion';
 import { CheckCircleIcon, ClockIcon, XCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 import { STATUS_LABELS, RESPONSE_TIME_ESTIMATES } from '../../types/appeal.types';
 
+import { getAppealStatusApi } from '@/api/http/appeals.http';
+
 interface AppealTrackingProps {
   trackingId: string;
   onNewAppeal: () => void;
 }
 
 export const AppealTracking: React.FC<AppealTrackingProps> = ({ trackingId, onNewAppeal }) => {
-  // Mock data - in real app this would come from API
-  const mockAppealData = {
-    id: trackingId,
-    status: 'processing' as const,
-    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-    title: 'Dars jadvali o\'zgarishi haqida',
-    type: 'taklif',
-    priority: 'medium' as const,
-    estimatedResponse: RESPONSE_TIME_ESTIMATES.medium,
-  };
+  const [loading, setLoading] = React.useState(true);
+  const [appealData, setAppealData] = React.useState<any>(null);
+  const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        setLoading(true);
+        const data = await getAppealStatusApi(trackingId);
+        if (data) {
+          setAppealData(data);
+        } else {
+          setError('Murojaat topilmadi. Tracking ID ni tekshiring.');
+        }
+      } catch (err) {
+        setError('Ma\'lumotlarni yuklashda xatolik yuz berdi.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (trackingId) {
+      fetchStatus();
+    }
+  }, [trackingId]);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -37,7 +54,8 @@ export const AppealTracking: React.FC<AppealTrackingProps> = ({ trackingId, onNe
     return STATUS_LABELS[status as keyof typeof STATUS_LABELS]?.color || 'bg-gray-100 text-gray-800';
   };
 
-  const formatDate = (date: Date) => {
+  const formatDateString = (dateStr: string) => {
+    const date = new Date(dateStr);
     return date.toLocaleDateString('uz-UZ', {
       year: 'numeric',
       month: 'long',
@@ -46,6 +64,40 @@ export const AppealTracking: React.FC<AppealTrackingProps> = ({ trackingId, onNe
       minute: '2-digit',
     });
   };
+
+  if (loading) {
+    return (
+      <div className="text-center py-20">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+        <p className="text-gray-500">Murojaat holati yuklanmoqda...</p>
+      </div>
+    );
+  }
+
+  if (error || !appealData) {
+    return (
+      <div className="text-center py-20 bg-red-50 rounded-2xl border border-red-100 max-w-2xl mx-auto">
+        <XCircleIcon className="w-16 h-16 text-red-500 mx-auto mb-4" />
+        <h3 className="text-xl font-bold text-red-900 mb-2">Xatolik!</h3>
+        <p className="text-red-700 mb-6">{error || 'Noma\'lum xatolik'}</p>
+        <button
+          onClick={onNewAppeal}
+          className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+        >
+          Ortga qaytish
+        </button>
+      </div>
+    );
+  }
+
+  // API dan kelgan data fields ichida bo'ladi
+  const fields = appealData.fields || {};
+  const status = fields.status || 'pending';
+  const type = fields.appealType || 'ariza';
+  const priority = fields.priority || 'medium';
+  const createdAt = appealData.created_at || appealData.published_at;
+  const title = fields.title || 'Sarlavhasiz';
+  const estimatedResponse = RESPONSE_TIME_ESTIMATES[priority as keyof typeof RESPONSE_TIME_ESTIMATES] || '3-5 ish kuni';
 
   return (
     <motion.div
@@ -82,9 +134,9 @@ export const AppealTracking: React.FC<AppealTrackingProps> = ({ trackingId, onNe
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-gray-900">Murojaat tafsilotlari</h3>
             <div className="flex items-center space-x-2">
-              {getStatusIcon(mockAppealData.status)}
-              <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(mockAppealData.status)}`}>
-                {STATUS_LABELS[mockAppealData.status].label}
+              {getStatusIcon(status)}
+              <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(status)}`}>
+                {STATUS_LABELS[status as keyof typeof STATUS_LABELS]?.label || status}
               </span>
             </div>
           </div>
@@ -116,21 +168,21 @@ export const AppealTracking: React.FC<AppealTrackingProps> = ({ trackingId, onNe
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Yuborilgan sana
               </label>
-              <p className="text-gray-900">{formatDate(mockAppealData.createdAt)}</p>
+              <p className="text-gray-900">{formatDateString(createdAt)}</p>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Murojaat turi
               </label>
-              <p className="text-gray-900 capitalize">{mockAppealData.type}</p>
+              <p className="text-gray-900 capitalize">{type}</p>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Muhimlik darajasi
               </label>
-              <p className="text-gray-900">{mockAppealData.priority}</p>
+              <p className="text-gray-900 uppercase font-medium">{priority}</p>
             </div>
           </div>
 
@@ -138,14 +190,14 @@ export const AppealTracking: React.FC<AppealTrackingProps> = ({ trackingId, onNe
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Sarlavha
             </label>
-            <p className="text-gray-900">{mockAppealData.title}</p>
+            <p className="text-gray-900 font-medium">{title}</p>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Taxminiy javob vaqti
             </label>
-            <p className="text-gray-900">{mockAppealData.estimatedResponse}</p>
+            <p className="text-gray-900">{estimatedResponse}</p>
           </div>
         </div>
       </motion.div>

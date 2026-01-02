@@ -10,13 +10,15 @@ import { CACHE_CONFIG } from '@/config/constants';
 
 // Services
 import { getAnnouncementBySlug } from '@/services/announcementService';
-import { getPostBySlug } from '@/services/postService'; // Future use
+import { getPostBySlug } from '@/services/postService';
+import { getOpenLessonBySlug } from '@/services/openLessonService';
 
 // Types
 import { AnnouncementDetail } from '@/types/announcement.types';
 import { PostDetail } from '@/types/post.types';
+import { OpenLessonDetail } from '@/types/open-lesson.types';
 
-export type PageType = 'announcement' | 'news' | 'service';
+export type PageType = 'announcement' | 'news' | 'service' | 'open-lesson';
 
 interface GenericDetailPageProps {
     type: PageType;
@@ -39,6 +41,8 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
             case 'news':
                 // Post service locale ni qabul qiladi
                 return () => getPostBySlug(slug, locale);
+            case 'open-lesson':
+                return () => getOpenLessonBySlug(slug, locale);
             default:
                 return null;
         }
@@ -51,6 +55,8 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
                 return `${CACHE_CONFIG.KEYS.ANNOUNCEMENT_DETAIL}-${slug}`;
             case 'news':
                 return `${CACHE_CONFIG.KEYS.NEWS_DETAIL}-${slug}`;
+            case 'open-lesson':
+                return `open-lesson-detail-${slug}`;
             default:
                 return `generic-detail-${slug}`;
         }
@@ -93,6 +99,11 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
                 breadcrumbLabel = t('pages:news');
                 parentHref = '/news';
                 break;
+            case 'open-lesson':
+                setSidebarType('info');
+                breadcrumbLabel = t('pages:openLessons');
+                parentHref = '/open-lessons';
+                break;
         }
 
         setBreadcrumbsData([
@@ -117,6 +128,9 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
                     break;
                 case 'news':
                     listPath = '/news';
+                    break;
+                case 'open-lesson':
+                    listPath = '/open-lessons';
                     break;
                 default:
                     listPath = '/';
@@ -195,6 +209,27 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
             telegram: true,
             copy: true
         };
+    } else if (type === 'open-lesson') {
+        const lesson = data as OpenLessonDetail;
+        templateProps.heroImage = lesson.image_url;
+        templateProps.heroImageAlt = lesson.title;
+        templateProps.meta = {
+            publishDate: lesson.lesson_date,
+            views: lesson.views,
+            department: lesson.department?.name
+        } as DetailMeta;
+
+        // Map gallery
+        if (lesson.gallery && Array.isArray(lesson.gallery)) {
+            templateProps.gallery = lesson.gallery.map(imgUrl => ({
+                src: imgUrl,
+                alt: lesson.title
+            }));
+        }
+
+        templateProps.showSocialShare = true;
+        templateProps.showPrintButton = true;
+        templateProps.showSidebar = false;
     }
 
     return (

@@ -9,7 +9,7 @@ interface PreviewFormProps {
 }
 
 export const PreviewForm: React.FC<PreviewFormProps> = ({ onEdit }) => {
-  const { watch } = useFormContext<AppealFormData>();
+  const { watch, register, formState: { errors } } = useFormContext<AppealFormData>();
   const formData = watch();
 
   const getPriorityLabel = (priority: string) => {
@@ -30,14 +30,7 @@ export const PreviewForm: React.FC<PreviewFormProps> = ({ onEdit }) => {
       animate={{ opacity: 1, y: 0 }}
       className="space-y-6"
     >
-      <div className="text-center mb-8">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Murojaatni tekshirish
-        </h3>
-        <p className="text-gray-600">
-          Malumotlarni tekshirib, yuborish tugmasini bosing
-        </p>
-      </div>
+
 
       {/* Appeal Type */}
       <div className="bg-gray-50 rounded-lg p-4">
@@ -56,39 +49,7 @@ export const PreviewForm: React.FC<PreviewFormProps> = ({ onEdit }) => {
         </div>
       </div>
 
-      {/* Personal Information */}
-      <div className="bg-gray-50 rounded-lg p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h4 className="text-sm font-medium text-gray-900">Shaxsiy malumotlar</h4>
-          <button
-            type="button"
-            onClick={() => onEdit(2)}
-            className="text-primary hover:text-primary/80 text-sm font-medium"
-          >
-            Ozgartirish
-          </button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-          <div>
-            <span className="font-medium text-gray-700">F.I.Sh:</span>
-            <p className="text-gray-900">{formData.fullName}</p>
-          </div>
-          <div>
-            <span className="font-medium text-gray-700">Telefon:</span>
-            <p className="text-gray-900">{formData.phone}</p>
-          </div>
-          <div>
-            <span className="font-medium text-gray-700">Email:</span>
-            <p className="text-gray-900">{formData.email}</p>
-          </div>
-          {formData.address && (
-            <div>
-              <span className="font-medium text-gray-700">Manzil:</span>
-              <p className="text-gray-900">{formData.address}</p>
-            </div>
-          )}
-        </div>
-      </div>
+
 
       {/* Appeal Details */}
       <div className="bg-gray-50 rounded-lg p-4">
@@ -96,7 +57,7 @@ export const PreviewForm: React.FC<PreviewFormProps> = ({ onEdit }) => {
           <h4 className="text-sm font-medium text-gray-900">Murojaat tafsilotlari</h4>
           <button
             type="button"
-            onClick={() => onEdit(3)}
+            onClick={() => onEdit(2)}
             className="text-primary hover:text-primary/80 text-sm font-medium"
           >
             Ozgartirish
@@ -106,10 +67,6 @@ export const PreviewForm: React.FC<PreviewFormProps> = ({ onEdit }) => {
           <div>
             <span className="font-medium text-gray-700">Sarlavha:</span>
             <p className="text-gray-900">{formData.title}</p>
-          </div>
-          <div>
-            <span className="font-medium text-gray-700">Kategoriya:</span>
-            <p className="text-gray-900">{formData.category}</p>
           </div>
           <div>
             <span className="font-medium text-gray-700">Muhimlik:</span>
@@ -147,7 +104,7 @@ export const PreviewForm: React.FC<PreviewFormProps> = ({ onEdit }) => {
             </h4>
             <button
               type="button"
-              onClick={() => onEdit(4)}
+              onClick={() => onEdit(3)}
               className="text-primary hover:text-primary/80 text-sm font-medium"
             >
               Ozgartirish
@@ -169,7 +126,40 @@ export const PreviewForm: React.FC<PreviewFormProps> = ({ onEdit }) => {
         </div>
       )}
 
-      {/* Terms and Conditions */}
+      {/* Terms and Conditions Confirmation */}
+      <div className="space-y-4 pt-4 border-t border-gray-200">
+        <div className="flex items-start space-x-3">
+          <input
+            {...register('agreeToTerms')}
+            type="checkbox"
+            id="agreeToTerms"
+            className="mt-1 h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+          />
+          <label htmlFor="agreeToTerms" className="text-sm text-gray-700">
+            Foydalanish shartlariga rozilik bildiraman *
+          </label>
+        </div>
+        {errors.agreeToTerms && (
+          <p className="text-xs text-red-600 ml-7">{errors.agreeToTerms.message as string}</p>
+        )}
+
+        <div className="flex items-start space-x-3">
+          <input
+            {...register('agreeToProcessing')}
+            type="checkbox"
+            id="agreeToProcessing"
+            className="mt-1 h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+          />
+          <label htmlFor="agreeToProcessing" className="text-sm text-gray-700">
+            Shaxsiy ma&apos;lumotlarni qayta ishlashga rozilik bildiraman *
+          </label>
+        </div>
+        {errors.agreeToProcessing && (
+          <p className="text-xs text-red-600 ml-7">{errors.agreeToProcessing.message as string}</p>
+        )}
+      </div>
+
+      {/* Info Box */}
       <div className="bg-yellow-50 rounded-lg p-4">
         <div className="flex items-start space-x-3">
           <div className="flex-shrink-0">

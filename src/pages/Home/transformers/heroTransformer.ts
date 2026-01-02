@@ -7,8 +7,8 @@ export const transformHeroData = (apiData: any): HomeHeroData => {
     : apiData?.carouselItems || apiData?.carousel_items || [];
 
   return {
-    title: apiData?.title || "Namangan davlat texnika universiteti",
-    subtitle: apiData?.subtitle || "Zamonaviy texnologiyalar va innovatsion yechimlar bilan kelajakni shakllantiruvchi yetakchi texnika ta'lim muassasasi.",
+    title: apiData?.title || "",
+    subtitle: apiData?.subtitle || "",
     backgroundVideo: apiData?.backgroundVideo,
     backgroundImage: apiData?.backgroundImage || "https://images.unsplash.com/photo-1562774053-701939374585?w=1920&h=1080&fit=crop",
     ctaButton: {

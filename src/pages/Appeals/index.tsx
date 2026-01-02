@@ -6,13 +6,15 @@ import { useStandardPage } from '@/hooks/useStandardPage';
 import { AppealWizard } from '../../components/features/appeals/AppealWizard';
 import { AppealFormData } from '../../utils/validationSchemas';
 import { AppealTracking } from './AppealTracking';
+import { TrackingModal } from '../../components/features/appeals/TrackingModal';
 import { FAQSection } from './FAQSection';
-import { ContactSection } from './ContactSection';
+import { submitAppealApi } from '@/api/http/appeals.http';
 
 const AppealsPage: React.FC = () => {
   const { setBannerData, setBreadcrumbsData, setSidebarType } = useGlobalLayout();
   const [showTracking, setShowTracking] = useState(false);
   const [trackingId, setTrackingId] = useState<string>('');
+  const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false);
 
   // Ma'lumotlarni yuklash (agar kerak bo'lsa, masalan FAQ yoki boshqa info)
   const { loading } = useStandardPage('appeals', async () => {
@@ -37,11 +39,12 @@ const AppealsPage: React.FC = () => {
 
   const handleAppealSubmit = async (data: AppealFormData) => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
       // Generate tracking ID
       const newTrackingId = `AP${Date.now().toString().slice(-8)}`;
+
+      // Real API call
+      await submitAppealApi(data, newTrackingId);
+
       setTrackingId(newTrackingId);
 
       // Show success message
@@ -53,9 +56,20 @@ const AppealsPage: React.FC = () => {
       // Switch to tracking view
       setShowTracking(true);
 
-      console.log('Appeal submitted:', { ...data, trackingId: newTrackingId });
-    } catch (error) {
-      toast.error('Xatolik yuz berdi. Qaytadan urinib ko\'ring.');
+      console.log('Appeal submitted successfully to Elmapi:', { ...data, trackingId: newTrackingId });
+    } catch (error: any) {
+      console.error('Submission error details:', {
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message
+      });
+
+      const serverMessage = error.response?.data?.message || error.response?.data?.error;
+      const errorMessage = serverMessage
+        ? `Xatolik: ${serverMessage}`
+        : `Tarmoq xatoligi (Status: ${error.response?.status || 'unknown'}). Qaytadan urinib ko'ring.`;
+
+      toast.error(errorMessage, { duration: 6000 });
       throw error;
     }
   };
@@ -63,6 +77,12 @@ const AppealsPage: React.FC = () => {
   const handleNewAppeal = () => {
     setShowTracking(false);
     setTrackingId('');
+  };
+
+  const handleTrackingSubmit = (id: string) => {
+    setTrackingId(id);
+    setShowTracking(true);
+    setIsTrackingModalOpen(false);
   };
 
   return (
@@ -104,7 +124,29 @@ const AppealsPage: React.FC = () => {
         showPagination={false}
         showSorting={false}
       >
-        <div className="space-y-12">
+        <div className="space-y-2">
+          {/* Toggle between Wizard and Tracking Search */}
+          {!showTracking && (
+            <div className="flex justify-center mb-2">
+              <div className="inline-flex p-1 bg-gray-100 rounded-xl">
+                <button
+                  onClick={() => setShowTracking(false)}
+                  className={`px-6 py-2 rounded-lg font-medium transition-all ${!showTracking ? 'bg-white shadow-sm text-primary' : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                  Yangi murojaat
+                </button>
+                <div className="relative group">
+                  <button
+                    onClick={() => setIsTrackingModalOpen(true)}
+                    className="px-6 py-2 rounded-lg font-medium text-gray-500 hover:text-gray-700 transition-all"
+                  >
+                    Murojaatni kuzatish
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {showTracking ? (
             <AppealTracking
               trackingId={trackingId}
@@ -116,11 +158,15 @@ const AppealsPage: React.FC = () => {
 
           {/* FAQ Section */}
           <FAQSection />
-
-          {/* Contact Information */}
-          <ContactSection />
         </div>
       </SectionTemplate>
+
+      {/* Tracking Modal */}
+      <TrackingModal
+        isOpen={isTrackingModalOpen}
+        onClose={() => setIsTrackingModalOpen(false)}
+        onSubmit={handleTrackingSubmit}
+      />
     </>
   );
 };

@@ -35,6 +35,7 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
         'Information Services': '/information-services',
         'Contact': '/contact',
         'Appeals': '/appeals',
+        'Applications, Suggestions and Complaints': '/appeals',
         'Media about us': '/media-about-us',
         'Information Service': '#', // Parent menu usually
         'Rectorate': '/organizational-structure',
@@ -54,7 +55,7 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
         key: item.title?.en,
         title: item.title, // Keep as object {uz, ru, en}
         description: item.description, // Keep as object {uz, ru, en}
-        href: backendUrl || mappedRoute,
+        href: mappedRoute !== '#' ? mappedRoute : (backendUrl || '#'),
         children: item.children?.map(transformItem) || []
       };
     };

@@ -1,35 +1,47 @@
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
-import DepartmentList from './components/DepartmentList';
+import SectionTemplate from '@/components/templates/SectionTemplate';
+import LeadershipList from './components/LeadershipList';
 import ContactForm from './components/ContactForm';
 import Container from '@/components/shared/Container';
 
 const ContactPage: React.FC = () => {
-  const { setBannerData, setBreadcrumbsData } = useGlobalLayout();
+  const { t } = useTranslation(['common', 'pages']);
+  const { setBreadcrumbsData } = useGlobalLayout();
 
   useEffect(() => {
-    setBannerData({
-      title: "Bog'lanish",
-      backgroundImage: "https://img.freepik.com/free-photo/view-3d-school-building_23-2151038198.jpg?t=st=1719480901~exp=1719484501~hmac=0924c8a1813354343e743845a74519e46d3b83e46b9a447c21a5a8c78b54853a&w=1380"
-    });
-
     setBreadcrumbsData([
-      { label: 'Bosh sahifa', href: '/' },
-      { label: "Bog'lanish" },
+      { label: t('home'), href: '/' },
+      { label: t('pages:contact') },
     ]);
 
     return () => {
-      setBannerData(undefined);
       setBreadcrumbsData(undefined);
     };
-  }, [setBannerData, setBreadcrumbsData]);
+  }, [setBreadcrumbsData, t]);
 
   return (
-    <Container className="py-12">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <DepartmentList />
-        <ContactForm />
-      </div>
+    <Container className="py-8">
+      <SectionTemplate
+        parentTitle={t('home')}
+        sectionTitle={t('pages:contact')}
+        sectionType="info"
+        items={[]}
+        showSearch={false}
+        showPagination={false}
+        showSorting={false}
+        showFilters={false}
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="order-2 lg:order-1">
+            <LeadershipList />
+          </div>
+          <div className="order-1 lg:order-2">
+            <ContactForm />
+          </div>
+        </div>
+      </SectionTemplate>
     </Container>
   );
 };

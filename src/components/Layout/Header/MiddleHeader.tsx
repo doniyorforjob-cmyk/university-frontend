@@ -2,16 +2,26 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Container from '../../shared/Container';
 import { useSettingsStore } from '../../../store/settingsStore';
+import { useLocale } from '../../../contexts/LocaleContext';
 import { PrefetchLink } from '../../shared';
+
+const translations = {
+    uz: { hotline: 'Ishonch telefoni', address: 'Manzil' },
+    ru: { hotline: 'Телефон доверия', address: 'Адрес' },
+    en: { hotline: 'Hotline', address: 'Address' }
+};
 
 const MiddleHeader: React.FC = () => {
     const { settings } = useSettingsStore();
+    const { locale } = useLocale();
+    const t = translations[locale as keyof typeof translations] || translations.uz;
+
     const phone = settings?.contacts?.primaryPhone || "";
     const phoneRaw = phone.replace(/[^0-9+]/g, '');
     const address = settings?.contacts?.address || "";
-    const logo = settings?.logo || "/images/logo.png";
-    const siteName = settings?.siteName || "Namangan Davlat Texnika Universiteti";
-    const siteDescription = settings?.siteDescription || "Rasmiy web sahifasi";
+    const logo = settings?.logo || "";
+    const siteName = settings?.siteName || "";
+    const siteDescription = settings?.siteDescription || "";
 
     return (
         <div className="bg-white py-6 header-middle">
@@ -20,7 +30,11 @@ const MiddleHeader: React.FC = () => {
                 <div className="hidden md:flex items-center justify-between">
                     {/* Chap tomon: Logotip va Universitet nomi */}
                     <PrefetchLink to="/" className="flex items-center">
-                        <img src={logo} alt="Logo" width="112" height="112" className="h-28 w-28 mr-4 rounded-full object-cover" />
+                        {logo ? (
+                            <img src={logo} alt={siteName} width="112" height="112" className="h-28 w-28 mr-4 rounded-full object-cover" />
+                        ) : (
+                            <div className="h-28 w-28 mr-4 rounded-full bg-gray-100 animate-pulse flex-shrink-0" />
+                        )}
                         <div>
                             <h1 className="text-4xl font-bold text-[#0E104B]">{siteName}</h1>
                             <p className="text-base text-gray-500">{siteDescription}</p>
@@ -49,7 +63,7 @@ const MiddleHeader: React.FC = () => {
                                     </svg>
                                 </div>
                                 <div>
-                                    <p className="text-sm font-semibold text-gray-600">Ishonch telefoni</p>
+                                    <p className="text-sm font-semibold text-gray-600">{t.hotline}</p>
                                     <a
                                         href={`tel:${phoneRaw}`}
                                         className="text-[#0E104B] font-bold hover:underline text-lg"
@@ -86,7 +100,7 @@ const MiddleHeader: React.FC = () => {
                                     </svg>
                                 </div>
                                 <div>
-                                    <p className="text-base font-semibold text-gray-600">Manzil</p>
+                                    <p className="text-base font-semibold text-gray-600">{t.address}</p>
                                     <p className="text-[#0E104B] font-bold text-lg max-w-xs">{address}</p>
                                 </div>
                             </div>
@@ -97,7 +111,11 @@ const MiddleHeader: React.FC = () => {
                 {/* Kichik ekranlar uchun layout */}
                 <div className="md:hidden">
                     <PrefetchLink to="/" className="flex items-center justify-center mb-4">
-                        <img src={logo} alt="Logo" width="80" height="80" className="h-20 w-20 mr-3 rounded-full object-cover" />
+                        {logo ? (
+                            <img src={logo} alt={siteName} width="80" height="80" className="h-20 w-20 mr-3 rounded-full object-cover" />
+                        ) : (
+                            <div className="h-20 w-20 mr-3 rounded-full bg-gray-100 animate-pulse flex-shrink-0" />
+                        )}
                         <div>
                             <h1 className="text-3xl font-bold text-[#0E104B] text-center">{siteName}</h1>
                             <p className="text-sm text-gray-500 text-center">{siteDescription}</p>
@@ -124,7 +142,7 @@ const MiddleHeader: React.FC = () => {
                                     </svg>
                                 </div>
                                 <div>
-                                    <p className="text-sm font-semibold text-gray-600">Ishonch telefoni</p>
+                                    <p className="text-sm font-semibold text-gray-600">{t.hotline}</p>
                                     <a
                                         href={`tel:${phoneRaw}`}
                                         className="text-[#0E104B] font-bold hover:underline"

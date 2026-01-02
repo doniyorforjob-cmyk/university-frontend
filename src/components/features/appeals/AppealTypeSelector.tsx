@@ -43,71 +43,64 @@ const appealTypes = [
 export const AppealTypeSelector: React.FC<AppealTypeSelectorProps> = ({ onSelect }) => {
   return (
     <div className="space-y-6 w-full">
-      <div className="text-center">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Murojaat turini tanlang
-        </h3>
-        <p className="text-gray-600">
-          Sizning murojaatingiz qaysi turga tegishli ekanligini aniqlang
-        </p>
-      </div>
+
 
       <div className="grid gap-4 md:grid-cols-3">
-      {appealTypes.map((type, index) => {
-        const Icon = type.icon;
+        {appealTypes.map((type, index) => {
+          const Icon = type.icon;
 
-        return (
-          <motion.button
-            key={type.id}
-            type="button"
-            onClick={() => {
-              console.log('Selected type:', type.id);
-              onSelect(type.id);
-            }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className={`p-6 rounded-xl border-2 transition-all duration-200 text-left group cursor-pointer ${type.color}`}
-          >
-            <div className="flex items-start space-x-4">
-              <div className={`p-3 rounded-lg bg-white shadow-sm ${type.iconColor}`}>
-                <Icon className="w-6 h-6" />
-              </div>
-              <div className="flex-1">
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">
-                  {type.title}
-                </h4>
-                <p className="text-sm text-gray-700 mb-3 leading-relaxed">
-                  {type.description}
-                </p>
-                <div className="space-y-1">
-                  <p className="text-xs font-medium text-gray-600">Misollar:</p>
-                  <div className="flex flex-wrap gap-1">
-                    {type.examples.map((example) => (
-                      <span
-                        key={example}
-                        className="inline-block px-2 py-1 text-xs bg-white/50 rounded-md text-gray-600"
-                      >
-                        {example}
-                      </span>
-                    ))}
+          return (
+            <motion.button
+              key={type.id}
+              type="button"
+              onClick={() => {
+                console.log('Selected type:', type.id);
+                onSelect(type.id);
+              }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className={`p-6 rounded-xl border-2 transition-all duration-200 text-left group cursor-pointer ${type.color}`}
+            >
+              <div className="flex items-start space-x-4">
+                <div className={`p-3 rounded-lg bg-white shadow-sm ${type.iconColor}`}>
+                  <Icon className="w-6 h-6" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                    {type.title}
+                  </h4>
+                  <p className="text-sm text-gray-700 mb-3 leading-relaxed">
+                    {type.description}
+                  </p>
+                  <div className="space-y-1">
+                    <p className="text-xs font-medium text-gray-600">Misollar:</p>
+                    <div className="flex flex-wrap gap-1">
+                      {type.examples.map((example) => (
+                        <span
+                          key={example}
+                          className="inline-block px-2 py-1 text-xs bg-white/50 rounded-md text-gray-600"
+                        >
+                          {example}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Hover indicator */}
-            <div className="mt-4 flex items-center text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity text-gray-700">
-              <span>Tanlash</span>
-              <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
-          </motion.button>
-        );
-      })}
+              {/* Hover indicator */}
+              <div className="mt-4 flex items-center text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity text-gray-700">
+                <span>Tanlash</span>
+                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </motion.button>
+          );
+        })}
       </div>
 
       <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200">

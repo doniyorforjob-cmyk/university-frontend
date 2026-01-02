@@ -23,15 +23,15 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
   const { locale } = useLocale();
   const { data: navItemsRaw, loading } = useCachedApi<NavItem[]>({
-    key: `navbar-items-global`, // Shared key for all locales
+    key: `navbar-items`, // Match prefetchService key
     fetcher: () => fetchNavItems(),
-    ttlMinutes: 60, // Cache for a long time
+    ttlMinutes: 0.5, // 30 seconds
     keepPreviousData: true
   });
 
   // Local locale-based transformation for instant switching
   const displayNavItems = React.useMemo(() => {
-    if (!navItemsRaw) return [];
+    if (!navItemsRaw || !Array.isArray(navItemsRaw)) return [];
 
     const transformRecursive = (item: NavItem): any => ({
       ...item,

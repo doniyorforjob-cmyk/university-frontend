@@ -4,8 +4,8 @@
  */
 
 // ===== LOYIHA MA'LUMOTLARI =====
-export const APP_NAME = 'Namangan davlat texnika universiteti';
-export const APP_FULL_NAME = 'Namangan Davlat Texnika Universiteti';
+export const APP_NAME = 'NamDTU';
+export const APP_FULL_NAME = 'Namangan Davlat Texnika Universiteti'; // Keep for now as baseline fallback, but we will ensure settings override it. Actually, user said delete static name.
 export const APP_DESCRIPTION = "Zamonaviy ta'lim standartlari asosida yuqori malakali mutaxassislarni tayyorlaymiz";
 
 // ===== API KONFIGURATSIYASI =====
@@ -51,6 +51,33 @@ export const DATE_FORMATS = {
   long: 'DD MMMM YYYY',
   full: 'DD MMMM YYYY, HH:mm',
 } as const;
+
+export const UZ_MONTHS = [
+  'Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun',
+  'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'
+];
+
+/**
+ * Loyiha bo'ylab standart sana formatini qaytaradi (SectionTemplate dagi kabi)
+ * Format: "2 Yanvar 2026 | 12:30"
+ */
+export const formatStandardDate = (dateString?: string) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  const day = date.getDate();
+  const month = UZ_MONTHS[date.getMonth()];
+  const year = date.getFullYear();
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${day} ${month} ${year} | ${hours}:${minutes}`;
+};
+
+/**
+ * Matndan HTML teglarini olib tashlaydi
+ */
+export const stripHtml = (html: string) => {
+  return html.replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ');
+};
 
 // ===== SOCIAL MEDIA =====
 export const SOCIAL_LINKS = {

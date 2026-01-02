@@ -19,6 +19,7 @@ const EcoActiveStudentsPage = React.lazy(() => import('./pages/EcoActiveStudents
 const UniversityPage = React.lazy(() => import('./pages/University'));
 const InformationServicesPage = React.lazy(() => import('./pages/InformationServices'));
 const PhotoDetailPage = React.lazy(() => import('./pages/PhotoDetail'));
+const OpenLessonsPage = React.lazy(() => import('./pages/OpenLessons'));
 const GenericDetailPage = React.lazy(() => import('./pages/GenericDetail'));
 const ServerError = React.lazy(() => import('./pages/Error/ServerError'));
 const NotFound = React.lazy(() => import('./pages/Errors/NotFound'));
@@ -38,6 +39,9 @@ const AppRoutes = () => {
                     <Route path="announcements/:slug" element={<GenericDetailPage type="announcement" />} />
                     <Route path="media-about-us" element={<MediaAboutUsPage />} />
                     <Route path="appeals" element={<AppealsPage />} />
+                    <Route path="applications-suggestions-and-complaints" element={<AppealsPage />} />
+                    <Route path="open-lessons" element={<OpenLessonsPage />} />
+                    <Route path="open-lessons/:slug" element={<GenericDetailPage type="open-lesson" />} />
                 </Route>
 
                 {/* "UniversitySystems" Sidebar bilan ishlaydigan sahifalar */}

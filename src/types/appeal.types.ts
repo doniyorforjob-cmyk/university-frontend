@@ -61,21 +61,6 @@ export interface FAQItem {
   tags: string[];
 }
 
-export interface ContactInfo {
-  phone: string;
-  email: string;
-  address: string;
-  workingHours: {
-    weekdays: string;
-    weekend: string;
-  };
-  socialLinks: {
-    telegram?: string;
-    facebook?: string;
-    instagram?: string;
-  };
-}
-
 // Appeal categories for different types
 export const APPEAL_CATEGORIES = {
   ariz: [

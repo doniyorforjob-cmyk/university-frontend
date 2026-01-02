@@ -35,8 +35,10 @@ export const useCachedApi = <T = any>({
   // Create a unique composite key that includes the locale
   const localeKey = key.includes(locale) ? key : `${key}_${locale}`;
 
-  const [data, setData] = useState<T | null>(() => cacheManager.get(localeKey));
-  const [loading, setLoading] = useState(() => enabled && !cacheManager.has(localeKey));
+  // SWR: Get stale data if available for immediate display
+  const [data, setData] = useState<T | null>(() => cacheManager.getStale(localeKey));
+  // Loading is true only if we have NO data at all (neither fresh nor stale)
+  const [loading, setLoading] = useState(() => enabled && !cacheManager.getStale(localeKey));
   const [error, setError] = useState<Error | null>(null);
 
   const ttl = ttlMinutes || config.defaultTtl;
@@ -91,8 +93,13 @@ export const useCachedApi = <T = any>({
   // Initial load and key change handling
   useEffect(() => {
     const cachedData = cacheManager.get(localeKey);
+    const staleData = cacheManager.getStale(localeKey);
+
     if (cachedData) {
       setData(cachedData);
+      setLoading(false);
+    } else if (staleData) {
+      setData(staleData);
       setLoading(false);
     } else {
       if (!keepPreviousData) {

@@ -13,8 +13,8 @@ export const faqApi = {
             return data.map((entry: any) => ({
                 id: entry.uuid || entry.id,
                 question: entry.fields?.question || entry.question,
-                answer: entry.fields?.answer || entry.answer,
-                category: entry.fields?.category || entry.category
+                answer: entry.fields?.answers || entry.fields?.answer || entry.answer,
+                category: entry.fields?.category || entry.category || 'general'
             }));
         } catch (error) {
             console.error('Error fetching FAQs from API:', error);

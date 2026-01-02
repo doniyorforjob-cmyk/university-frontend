@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getMediaArticles } from '../../services/mediaService';
 import { MediaArticle } from '../../types/media.types';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
@@ -6,6 +7,15 @@ import { useStandardPage } from '@/hooks/useStandardPage';
 import MediaMentionCard from './components/MediaMentionCard';
 import Container from '@/components/shared/Container';
 import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+  PaginationEllipsis
+} from '@/components/ui/pagination';
 
 // Media About Us ma'lumotlarini olish funksiyasi
 const fetchMediaData = async (): Promise<MediaArticle[]> => {
@@ -13,7 +23,10 @@ const fetchMediaData = async (): Promise<MediaArticle[]> => {
 };
 
 const MediaAboutUsPage: React.FC = () => {
+  const { t } = useTranslation(['common', 'pages']);
   const { setBreadcrumbsData, setSidebarType } = useGlobalLayout();
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const itemsPerPage = 5;
 
   const { data: items, loading, error } = useStandardPage(
     'media-about-us',
@@ -22,9 +35,9 @@ const MediaAboutUsPage: React.FC = () => {
 
   useEffect(() => {
     setBreadcrumbsData([
-      { label: 'Bosh sahifa', href: '/' },
-      { label: 'Axborot xizmati', href: '#' },
-      { label: 'OAV biz haqimizda' }
+      { label: t('home'), href: '/' },
+      { label: t('pages:infoService'), href: '#' },
+      { label: t('pages:mediaResources') }
     ]);
 
     setSidebarType('info');
@@ -33,7 +46,7 @@ const MediaAboutUsPage: React.FC = () => {
       setBreadcrumbsData(undefined);
       setSidebarType(undefined);
     };
-  }, [setBreadcrumbsData, setSidebarType]);
+  }, [setBreadcrumbsData, setSidebarType, t]);
 
   if (loading) {
     return <GenericPageSkeleton showSidebar={false} showBanner={false} layoutType="grid" gridItems={6} />;
@@ -43,8 +56,8 @@ const MediaAboutUsPage: React.FC = () => {
     return (
       <Container className="py-20 text-center">
         <div className="bg-red-50 text-red-600 p-8 rounded-2xl inline-block max-w-md border border-red-100">
-          <h2 className="text-2xl font-bold mb-2">Xatolik yuz berdi</h2>
-          <p>{error?.message || 'Ma\'lumotlarni yuklab bo\'lmadi'}</p>
+          <h2 className="text-2xl font-bold mb-2">{t('error_title', 'Xatolik yuz berdi')}</h2>
+          <p>{error?.message || t('no_info')}</p>
         </div>
       </Container>
     );
@@ -55,20 +68,33 @@ const MediaAboutUsPage: React.FC = () => {
     new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
   );
 
-  const featuredArticle = sortedArticles[0];
-  const remainingArticles = sortedArticles.slice(1);
+  // Pagination logic: Page 1 has 5 items, subsequent pages have 6 items
+  const totalItems = sortedArticles.length;
+  // Calculate total pages: Page 1 covers 5 items, remaining items covered by 6 per page
+  const totalPages = totalItems <= 5 ? 1 : 1 + Math.ceil((totalItems - 5) / 6);
+
+  let startIndex = 0;
+  let endIndex = 5;
+
+  if (currentPage > 1) {
+    startIndex = 5 + (currentPage - 2) * 6;
+    endIndex = startIndex + 6;
+  }
+
+  const currentItems = sortedArticles.slice(startIndex, endIndex);
+
+  // Featured is only for the first page
+  const featuredArticle = currentPage === 1 ? currentItems[0] : null;
+  const remainingArticles = currentPage === 1 ? currentItems.slice(1) : currentItems;
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
-    <div className="media-about-us-redesign py-8">
-      {/* Page Header */}
-      <div className="mb-12 border-b border-gray-100 pb-6">
-        <h1 className="text-3xl md:text-4xl font-black text-[#0E104B] mb-2 tracking-tight">
-          OAV biz haqimizda
-        </h1>
-        <p className="text-gray-500 max-w-2xl">
-          Namangan davlat texnika universiteti faoliyati haqida mahalliy va xalqaro ommaviy axborot vositalarida yoritilgan eng so&apos;nggi xabarlar.
-        </p>
-      </div>
+    <div className="media-about-us-redesign pb-8">
+
 
       {/* Featured Mention */}
       {featuredArticle && (
@@ -76,7 +102,7 @@ const MediaAboutUsPage: React.FC = () => {
           <div className="flex items-center gap-3 mb-6">
             <span className="w-2 h-2 bg-primary rounded-full animate-ping"></span>
             <h2 className="text-sm font-bold uppercase tracking-widest text-primary">
-              Eng so&apos;nggi coverage
+              {t('pages:latestCoverage')}
             </h2>
           </div>
           <MediaMentionCard article={featuredArticle} isFeatured={true} />
@@ -87,8 +113,9 @@ const MediaAboutUsPage: React.FC = () => {
       <section>
         <h2 className="text-xl font-bold text-gray-800 mb-8 flex items-center gap-3">
           <span className="w-8 h-[2px] bg-primary"></span>
-          Maqolalar arxivi
+          {t('pages:articlesArchive')}
         </h2>
+
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-8">
           {remainingArticles.map((article) => (
@@ -97,10 +124,58 @@ const MediaAboutUsPage: React.FC = () => {
         </div>
       </section>
 
+      {/* Pagination component */}
+      {totalPages > 1 && (
+        <div className="mt-16 flex justify-center">
+          <Pagination>
+            <PaginationContent>
+              {currentPage > 1 && (
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handlePageChange(currentPage - 1);
+                    }}
+                  />
+                </PaginationItem>
+              )}
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <PaginationItem key={page}>
+                  <PaginationLink
+                    href="#"
+                    isActive={currentPage === page}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handlePageChange(page);
+                    }}
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+
+              {currentPage < totalPages && (
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handlePageChange(currentPage + 1);
+                    }}
+                  />
+                </PaginationItem>
+              )}
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
+
       {/* No Data Fallback */}
       {(!items || items.length === 0) && (
         <div className="text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
-          <p className="text-gray-400 font-medium">Hozircha maqolalar mavjud emas.</p>
+          <p className="text-gray-400 font-medium">{t('no_info')}</p>
         </div>
       )}
     </div>

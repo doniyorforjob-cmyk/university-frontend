@@ -32,7 +32,14 @@ export const GlobalLayoutContext = React.createContext<GlobalLayoutContextType |
 export const useGlobalLayout = () => {
   const context = React.useContext(GlobalLayoutContext);
   if (context === undefined) {
-    throw new Error('useGlobalLayout must be used within a GlobalLayoutProvider');
+    // Return a mock context to prevent crash in fallback components
+    console.warn('useGlobalLayout used outside GlobalLayoutProvider. Returning mock.');
+    return {
+      setBannerData: () => { },
+      setBreadcrumbsData: () => { },
+      setSidebarType: () => { },
+      sidebarContent: undefined
+    };
   }
   return context;
 };

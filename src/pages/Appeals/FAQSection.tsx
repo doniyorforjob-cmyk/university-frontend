@@ -162,9 +162,10 @@ export const FAQSection: React.FC = () => {
                     transition={{ duration: 0.3 }}
                     className="overflow-hidden"
                   >
-                    <div className="px-6 pb-4 text-gray-700 leading-relaxed">
-                      {faq.answer}
-                    </div>
+                    <div
+                      className="px-6 pb-4 text-gray-700 leading-relaxed prose prose-sm max-w-none"
+                      dangerouslySetInnerHTML={{ __html: faq.answer }}
+                    />
                   </motion.div>
                 )}
               </AnimatePresence>
