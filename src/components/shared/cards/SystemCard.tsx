@@ -22,6 +22,17 @@ export const SystemCard = ({
   index = 0,
   variant = 'section'
 }: SystemCardProps) => {
+  // Check if it's an SVG string (starts with <svg)
+  const isSvgString = icon.trim().startsWith('<svg');
+  // Check if color is a hex code
+  const isHexColor = color.startsWith('#');
+
+  // If it's not hex and doesn't start with bg-, we might want to ensure it has bg- prefix if it's intended as a class
+  // But for safety with JIT, we rely on full classes or hex. 
+  // If user provides a hex, we use inline style.
+  const containerStyle = isHexColor ? { backgroundColor: color } : {};
+  const containerClass = `${!isHexColor ? color : ''} text-white ${variant === 'section' ? 'p-3' : 'p-2'} group-hover:scale-110 transition-transform duration-200`;
+
   const getIconComponent = (iconName: string) => {
     switch (iconName) {
       case 'BookOpen':
@@ -33,11 +44,12 @@ export const SystemCard = ({
       case 'Globe':
         return Globe;
       default:
+        // Default fall back
         return BookOpen;
     }
   };
 
-  const IconComponent = getIconComponent(icon);
+  const IconComponent = !isSvgString ? getIconComponent(icon) : null;
 
   const motionProps = {
     initial: { opacity: 0, y: 20 },
@@ -53,12 +65,24 @@ export const SystemCard = ({
   return (
     <motion.a
       href={href}
+      target="_blank"
+      rel="noopener noreferrer"
       {...motionProps}
       className={className}
     >
       <div className="flex items-start space-x-3">
-        <div className={`${color} text-white ${variant === 'section' ? 'p-3' : 'p-2'} group-hover:scale-110 transition-transform duration-200`}>
-          <IconComponent className={variant === 'section' ? "w-8 h-8" : "w-6 h-6"} />
+        <div
+          className={containerClass}
+          style={containerStyle}
+        >
+          {isSvgString ? (
+            <div
+              className={variant === 'section' ? "w-8 h-8" : "w-6 h-6"}
+              dangerouslySetInnerHTML={{ __html: icon }}
+            />
+          ) : (
+            IconComponent && <IconComponent className={variant === 'section' ? "w-8 h-8" : "w-6 h-6"} />
+          )}
         </div>
         <div className="flex-1">
           <h3 className={`font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-200 mb-2 ${variant === 'section' ? 'text-lg' : 'text-base'}`}>
@@ -71,7 +95,7 @@ export const SystemCard = ({
           </div>
         </div>
       </div>
-    </motion.a>
+    </motion.a >
   );
 };
 
@@ -132,6 +156,8 @@ export const SystemsContainer = ({
                 <a
                   key={link.id}
                   href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-blue-600 hover:text-blue-800 transition-colors duration-200 text-sm font-medium hover:underline"
                 >
                   → {link.title}
@@ -180,6 +206,8 @@ export const SystemsContainer = ({
               <a
                 key={link.id}
                 href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-blue-600 hover:text-blue-800 transition-colors duration-200 text-sm font-medium hover:underline"
               >
                 → {link.title}

@@ -1,33 +1,42 @@
 import { HomeHeroData } from '../../../services/homeService';
+import { getImageUrl } from '../../../utils/apiUtils';
 
 export const transformHeroData = (apiData: any): HomeHeroData => {
-  // Check if the API data itself is the array of items
-  const items = Array.isArray(apiData)
+  // Elmapi can return data directly as an array or wrapped in a data property
+  const rawItems = Array.isArray(apiData)
     ? apiData
-    : apiData?.carouselItems || apiData?.carousel_items || [];
+    : (Array.isArray(apiData?.data) ? apiData.data : (apiData?.data ? [apiData.data] : []));
 
   return {
-    title: apiData?.title || "",
-    subtitle: apiData?.subtitle || "",
-    backgroundVideo: apiData?.backgroundVideo,
-    backgroundImage: apiData?.backgroundImage || "https://images.unsplash.com/photo-1562774053-701939374585?w=1920&h=1080&fit=crop",
-    ctaButton: {
-      text: apiData?.ctaButton?.text || "Biz haqimizda",
-      link: apiData?.ctaButton?.link || "/about",
-      variant: apiData?.ctaButton?.variant || "primary"
-    },
-    overlay: {
-      opacity: apiData?.overlay?.opacity || 0.3,
-      color: apiData?.overlay?.color || "#000000"
-    },
-    carouselItems: items.map((item: any) => ({
-      id: item.id,
-      img: item.img || item.image || item.url,
-      title: item.title || item.name,
-      desc: item.desc || item.description,
-      sliderName: item.sliderName || item.name,
-      order: item.order,
-      enabled: item.enabled !== false, // Default to true if undefined
-    }))
+    carouselItems: rawItems.map((item: any) => {
+      const fields = item.fields || {};
+
+      // Extensive image extraction to cover all Elmapi variations
+      let imgPath = '';
+      if (Array.isArray(fields.image) && fields.image.length > 0) {
+        const firstImg = fields.image[0];
+        imgPath = firstImg.url || firstImg.path || (typeof firstImg === 'string' ? firstImg : '');
+      } else if (typeof fields.image === 'object' && fields.image !== null) {
+        imgPath = fields.image.url || fields.image.path;
+      } else {
+        imgPath = fields.image;
+      }
+
+      const title = fields.title || item.title || 'NamDTU';
+      const desc = fields.description || fields.content || item.description || '';
+
+      return {
+        id: item.uuid || item.id || Math.random().toString(),
+        img: getImageUrl(imgPath) || "https://images.unsplash.com/photo-1562774053-701939374585?w=1920&h=1080&fit=crop",
+        title: title,
+        desc: desc,
+        sliderName: title.substring(0, 20),
+        enabled: fields.enabled !== false,
+        createdAt: item.created_at || item.createdAt || ''
+      };
+    }).sort((a: any, b: any) => {
+      // Eng yangisi birinchi slide bo'lishi uchun teskari tartibda saralash
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    })
   };
 };

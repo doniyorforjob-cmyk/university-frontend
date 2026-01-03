@@ -23,7 +23,7 @@ import {
 export const useHomeSections = () => {
   // Individual section hooks with useStandardSection
   const heroSection = useStandardSection('hero',
-    () => homeApi.getHeroData(),
+    homeApi.getHeroData,
     {
       ttlMinutes: 0.5, // Hero less frequent updates
       transformData: transformHeroData
@@ -31,7 +31,7 @@ export const useHomeSections = () => {
   );
 
   const statsSection = useStandardSection('stats',
-    () => homeApi.getStatsData(),
+    homeApi.getStatsData,
     {
       ttlMinutes: 0.5,
       transformData: transformStatsData
@@ -39,40 +39,40 @@ export const useHomeSections = () => {
   );
 
   const newsSection = useStandardSection('news',
-    () => homeApi.getNewsData(),
+    homeApi.getNewsData,
     {
       ttlMinutes: 0.5 // News updates more frequently
     }
   );
 
   const facultiesSection = useStandardSection('faculties',
-    () => homeApi.getFacultiesData(),
+    homeApi.getFacultiesData,
     {
-      ttlMinutes: 0.5, // Faculty data rarely changes
+      ttlMinutes: 1, // Faculty data rarely changes
       transformData: transformFacultiesData
     }
   );
 
   const videoGallerySection = useStandardSection('video-gallery',
-    () => homeApi.getVideoGalleryData(),
+    homeApi.getVideoGalleryData,
     {
-      ttlMinutes: 0.5,
+      ttlMinutes: 5,
       transformData: transformVideoGalleryData
     }
   );
 
   const interactiveServicesSection = useStandardSection('interactive-services',
-    () => homeApi.getInteractiveServicesData(),
+    homeApi.getInteractiveServicesData,
     {
-      ttlMinutes: 0.5, // Services rarely change
+      ttlMinutes: 10, // Services rarely change
       transformData: transformInteractiveServicesData
     }
   );
 
   const universitySystemsSection = useStandardSection('university-systems',
-    () => homeApi.getUniversitySystemsData(),
+    homeApi.getUniversitySystemsData,
     {
-      ttlMinutes: 0.5, // Systems rarely change
+      ttlMinutes: 10, // Systems rarely change
       transformData: transformUniversitySystemsData
     }
   );

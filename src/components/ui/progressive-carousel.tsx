@@ -83,6 +83,10 @@ export const ProgressSlider: FC<ProgressSliderProps> = ({
   const [sliderValues, setSliderValues] = useState<string[]>([]);
 
   useEffect(() => {
+    setActive(activeSlider);
+  }, [activeSlider]);
+
+  useEffect(() => {
     const getChildren = React.Children.toArray(children).find(
       (child) => (child as React.ReactElement).type === SliderContent
     ) as React.ReactElement | undefined;

@@ -39,11 +39,13 @@ const DynamicSection: React.FC<{
 }> = ({ block, enableErrorBoundaries = true }) => {
   const Component = sectionRenderers[block.type as keyof typeof sectionRenderers];
 
-  // Agar component yo'q bo'lsa yoki data hali kelmagan bo'lsa, skeleton chiqsin
-  if (!Component || !block.data) {
-    return <SectionSkeleton sectionType={block.type as HomeSectionType} />;
+  // Component topilmagan bo'lsa hech narsa chiqmasin
+  if (!Component) {
+    return null;
   }
 
+  // Section o'zining loading holatini o'zi boshqarishi uchun data ni uzatamiz
+  // Skeleton ko'rinishi uchun Component ichida mantiq bo'lishi kerak
   const content = block.type === 'hero'
     ? <Component {...block.data} data={block.data} />
     : <Component {...block.data} />;

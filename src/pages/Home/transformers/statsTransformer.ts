@@ -1,59 +1,28 @@
-import { HomeStatsData } from '../../../services/homeService';
+import { HomeStatsData } from '../../../types/home.types';
 
 export const transformStatsData = (apiData: any): HomeStatsData => {
-  // Handle different API response formats
-  const stats = apiData.stats || apiData.data || apiData;
+  const rawItems = Array.isArray(apiData)
+    ? apiData
+    : (Array.isArray(apiData?.data) ? apiData.data : (apiData?.data ? [apiData.data] : []));
 
-  if (Array.isArray(stats)) {
+  const stats = rawItems.map((item: any) => {
+    const fields = item.fields || {};
     return {
-      stats: stats.map(stat => ({
-        id: stat.id || stat.key || Math.random(),
-        text: stat.text || stat.label || stat.title || '',
-        end: typeof stat.end === 'number' ? stat.end : parseInt(stat.value) || 0,
-        plus: stat.plus || stat.showPlus || false
-      }))
+      id: item.uuid || item.id || Math.random(),
+      text: fields.text || item.text || '',
+      end: Number(fields.end) || Number(item.end) || 0,
+      plus: fields.plus === true || item.plus === true,
+      order: Number(fields.order) || 0
     };
-  }
+  }).sort((a: any, b: any) => a.order - b.order);
 
-  // Handle object format
-  if (typeof stats === 'object') {
-    return {
-      stats: [
-        {
-          id: 1,
-          text: stats.studentsLabel || stats.students_text || "O'qituvchilar",
-          end: stats.teachers || stats.staff || 0,
-          plus: true
-        },
-        {
-          id: 2,
-          text: stats.teachersLabel || stats.teachers_text || "Talabalar",
-          end: stats.students || 0,
-          plus: true
-        },
-        {
-          id: 3,
-          text: stats.departmentsLabel || stats.departments_text || "Fakultetlar",
-          end: stats.departments || 0,
-          plus: false
-        },
-        {
-          id: 4,
-          text: stats.graduatesLabel || stats.graduates_text || "Bitiruvchilar",
-          end: stats.graduates || 0,
-          plus: true
-        }
-      ]
-    };
-  }
-
-  // Default fallback
   return {
-    stats: [
-      { id: 1, text: "O'qituvchilar", end: 150, plus: true },
-      { id: 2, text: "Talabalar", end: 5000, plus: true },
-      { id: 3, text: "Fakultetlar", end: 8, plus: false },
-      { id: 4, text: "Bitiruvchilar", end: 12000, plus: true },
-    ]
+    stats: stats,
+    // Universitet hududi haqidagi ma'lumot hozircha statik qoldiriladi
+    universityArea: {
+      area: 1500,
+      unit: 'ga',
+      image: "https://images.unsplash.com/photo-1564981797816-1043664bf78d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
+    }
   };
 };

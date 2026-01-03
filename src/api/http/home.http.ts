@@ -1,36 +1,56 @@
 import apiClient from '../client';
 import { HomeSectionBlock, HomeSectionType } from '../../pages/Home/types';
-import { HomeHeroData, HomeStatsData, HomeNewsData, HomeFacultiesData, HomeVideoGalleryData, HomeMediaData, HomeInteractiveServicesData, HomeUniversitySystemsData } from '../../types/home.types';
+import {
+  HomeHeroData,
+  HomeStatsData,
+  HomeNewsData,
+  HomeFacultiesData,
+  HomeVideoGalleryData,
+  HomeMediaData,
+  HomeInteractiveServicesData,
+  HomeUniversitySystemsData
+} from '../../types/home.types';
 import { getImageUrl } from '../../utils/apiUtils';
-
+import { transformStatsData } from '../../pages/Home/transformers/statsTransformer';
+import { transformNewsData } from '../../pages/Home/transformers/newsTransformer';
+import { transformInteractiveServicesData } from '../../pages/Home/transformers/interactiveServicesTransformer';
+import { TransformedUniversitySystemsData, transformUniversitySystemsData } from '../../pages/Home/transformers/universitySystemsTransformer';
 
 export const homeApi = {
   getHomeSections: async (): Promise<HomeSectionBlock[]> => {
     try {
-      const response = await apiClient.get('/home-sections');
+      const projectId = process.env.REACT_APP_PROJECT_ID;
+      const response = await apiClient.get('/home-sections').catch(() => ({ data: [] }));
       return response.data;
     } catch (error) {
       console.error('Error fetching home sections:', error);
-      throw error;
+      return [];
     }
   },
 
-  getHeroData: async (): Promise<HomeHeroData> => {
+  getHeroData: async (locale?: string): Promise<HomeHeroData> => {
     try {
-      const response = await apiClient.get('/hero');
-      console.log('Successfully fetched hero data from API:', response.data);
-      // The transformer is robust enough to handle different shapes.
-      return response.data;
+      const projectId = process.env.REACT_APP_PROJECT_ID;
+      const params: any = { with: 'image' };
+      if (locale) {
+        params.locale = locale;
+      }
+      const response = await apiClient.get(`/projects/${projectId}/content/hero`, {
+        params
+      });
+      const data = Array.isArray(response.data) ? response.data : response.data.data;
+      return data;
     } catch (error) {
-      console.error('Error fetching hero data from API:', error);
+      console.error('Error fetching hero data from Elmapi:', error);
       throw error;
     }
   },
 
   getStatsData: async (): Promise<HomeStatsData> => {
     try {
-      const response = await apiClient.get('/stats');
-      const data = Array.isArray(response.data) ? response.data[0] : response.data;
+      const projectId = process.env.REACT_APP_PROJECT_ID;
+      const response = await apiClient.get(`/projects/${projectId}/content/stats`);
+      const data = transformStatsData(response.data);
       return data;
     } catch (error) {
       console.error('Error fetching stats data:', error);
@@ -38,75 +58,16 @@ export const homeApi = {
     }
   },
 
-  getNewsData: async (): Promise<HomeNewsData> => {
+  getNewsData: async (locale?: string): Promise<HomeNewsData> => {
     try {
       const projectId = process.env.REACT_APP_PROJECT_ID;
-      const currentLocale = localStorage.getItem('locale') || 'en';
-
-      let allEntries;
-      if (currentLocale !== 'en') {
-        try {
-          const [resLocalized, resEnglish] = await Promise.all([
-            apiClient.get(`/projects/${projectId}/content/news`, {
-              params: { with: 'image', per_page: 12 }
-            }),
-            apiClient.get(`/projects/${projectId}/content/news`, {
-              params: { with: 'image', per_page: 12, locale: 'en' }
-            })
-          ]);
-
-          const dataLocalized = Array.isArray(resLocalized.data) ? resLocalized.data : resLocalized.data.data;
-          const dataEnglish = Array.isArray(resEnglish.data) ? resEnglish.data : resEnglish.data.data;
-
-          allEntries = (dataLocalized && dataLocalized.length > 0) ? dataLocalized : dataEnglish;
-        } catch (e) {
-          const response = await apiClient.get(`/projects/${projectId}/content/news`, {
-            params: { with: 'image', per_page: 12 }
-          });
-          allEntries = Array.isArray(response.data) ? response.data : response.data.data;
-        }
-      } else {
-        const response = await apiClient.get(`/projects/${projectId}/content/news`, {
-          params: { with: 'image', per_page: 12 }
-        });
-        allEntries = Array.isArray(response.data) ? response.data : response.data.data;
+      const params: any = { with: 'image', per_page: 30 };
+      if (locale) {
+        params.locale = locale;
       }
 
-      const mapEntry = (entry: any) => ({
-        id: entry.uuid || entry.id,
-        slug: entry.fields?.slug || entry.slug,
-        title: entry.fields?.title || entry.title || '',
-        image_url: getImageUrl(
-          (typeof entry.fields?.image === 'object' && !Array.isArray(entry.fields?.image) ? entry.fields.image.path || entry.fields.image.url : '') ||
-          (Array.isArray(entry.fields?.images) ? entry.fields.images[0]?.path : '') ||
-          (entry.fields?.images?.path || '') ||
-          (Array.isArray(entry.fields?.image) ? entry.fields.image[0]?.url : '') ||
-          (entry.fields?.image?.url || '') ||
-          (entry.image_url || entry.image || '')
-        ),
-        description: entry.fields?.content ? entry.fields.content.substring(0, 150) + '...' : '',
-        published_at: entry.fields?.date || entry.published_at || entry.created_at,
-        date: entry.fields?.date || entry.published_at || entry.created_at,
-      });
-
-      return {
-        news: allEntries
-          .filter((e: any) => e.category === 'news' || !e.category)
-          .slice(0, 12)
-          .map(mapEntry),
-        announcements: allEntries
-          .filter((e: any) => (e.fields?.category || e.category) === 'announcements')
-          .map((e: any) => ({ ...mapEntry(e), text: e.title })),
-        events: allEntries
-          .filter((e: any) => (e.fields?.category || e.category) === 'events')
-          .map(mapEntry),
-        corruption: allEntries
-          .filter((e: any) => e.category === 'corruption')
-          .map(mapEntry),
-        sport: allEntries
-          .filter((e: any) => e.category === 'sport')
-          .map(mapEntry),
-      };
+      const response = await apiClient.get(`/projects/${projectId}/content/news`, { params });
+      return transformNewsData(response.data);
     } catch (error) {
       console.error('Error fetching news data:', error);
       throw error;
@@ -121,7 +82,7 @@ export const homeApi = {
       });
       const data = Array.isArray(response.data) ? response.data : response.data.data;
       return {
-        faculties: data.map((entry: any) => ({
+        faculties: (data || []).map((entry: any) => ({
           id: entry.uuid || entry.id,
           name: entry.fields?.name || entry.name,
           color: entry.fields?.color || 'from-sky-500 to-indigo-500',
@@ -137,8 +98,9 @@ export const homeApi = {
 
   getVideoGalleryData: async (): Promise<HomeVideoGalleryData> => {
     try {
-      const response = await apiClient.get('/video-gallery');
-      const data = Array.isArray(response.data) ? response.data[0] : response.data;
+      const projectId = process.env.REACT_APP_PROJECT_ID;
+      const response = await apiClient.get(`/projects/${projectId}/content/video-gallery`);
+      const data = Array.isArray(response.data) ? response.data[0] : (response.data?.data?.[0] || response.data?.data || response.data);
       return data;
     } catch (error) {
       console.error('Error fetching video gallery data:', error);
@@ -148,8 +110,9 @@ export const homeApi = {
 
   getMediaData: async (): Promise<HomeMediaData> => {
     try {
-      const response = await apiClient.get('/media');
-      const data = Array.isArray(response.data) ? response.data[0] : response.data;
+      const projectId = process.env.REACT_APP_PROJECT_ID;
+      const response = await apiClient.get(`/projects/${projectId}/content/media`);
+      const data = Array.isArray(response.data) ? response.data[0] : (response.data?.data?.[0] || response.data?.data || response.data);
       return data;
     } catch (error) {
       console.error('Error fetching media data:', error);
@@ -157,22 +120,36 @@ export const homeApi = {
     }
   },
 
-  getInteractiveServicesData: async (): Promise<HomeInteractiveServicesData> => {
+  getInteractiveServicesData: async (locale?: string): Promise<HomeInteractiveServicesData> => {
     try {
-      const response = await apiClient.get('/interactive-services');
-      const data = Array.isArray(response.data) ? response.data[0] : response.data;
-      return data;
+      const projectId = process.env.REACT_APP_PROJECT_ID;
+      const params: any = {};
+      if (locale) {
+        params.locale = locale;
+      }
+      const response = await apiClient.get(`/projects/${projectId}/content/interactive-services`, { params });
+      return transformInteractiveServicesData(response.data);
     } catch (error) {
       console.error('Error fetching interactive services data:', error);
       throw error;
     }
   },
 
-  getUniversitySystemsData: async (): Promise<HomeUniversitySystemsData> => {
+  getUniversitySystemsData: async (locale?: string): Promise<TransformedUniversitySystemsData> => {
     try {
-      const response = await apiClient.get('/university-systems');
-      const data = Array.isArray(response.data) ? response.data[0] : response.data;
-      return data;
+      const projectId = process.env.REACT_APP_PROJECT_ID;
+      const params: any = {};
+
+      if (locale) {
+        params.locale = locale;
+      }
+
+      const [systemsResponse, quickLinksResponse] = await Promise.all([
+        apiClient.get(`/projects/${projectId}/content/university-systems`, { params }),
+        apiClient.get(`/projects/${projectId}/content/quick-links`, { params }).catch(() => ({ data: [] })) // Handle missing collection gracefully
+      ]);
+
+      return transformUniversitySystemsData(systemsResponse.data, quickLinksResponse.data);
     } catch (error) {
       console.error('Error fetching university systems data:', error);
       throw error;

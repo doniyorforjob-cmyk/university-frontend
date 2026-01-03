@@ -10,6 +10,8 @@ import {
   SliderWrapper,
 } from '@/components/ui/progressive-carousel';
 import { SectionSkeleton } from './components/SectionSkeleton';
+import { useLocale } from '@/contexts/LocaleContext';
+import { useGlobalCache } from '@/components/providers/CachedApiProvider';
 
 interface CarouselItem {
   id: string;
@@ -26,9 +28,15 @@ export default function HeroSection({ data: propData }: { data?: any } = {}) {
 
   // If propData is provided, use it directly, otherwise fetch
   const shouldFetch = !propData;
+  const { locale } = useLocale();
+  const { cacheManager } = useGlobalCache();
+
+  // Stabilize the fetcher specifically for the current locale
+  const fetcher = React.useMemo(() => () => homeApi.getHeroData(locale), [locale]);
+
   const { data, loading, isCached } = useStandardSection(
     'hero',
-    homeApi.getHeroData,
+    fetcher,
     {
       transformData: transformHeroData,
       enabled: shouldFetch
@@ -38,14 +46,41 @@ export default function HeroSection({ data: propData }: { data?: any } = {}) {
   // Use prop data if available, otherwise use fetched data
   const heroData = propData || data;
 
+  // Background prefetching for other locales
+  useEffect(() => {
+    if (!heroData || !shouldFetch) return;
+
+    const otherLocales = ['uz', 'ru', 'en'].filter(l => l !== locale);
+
+    otherLocales.forEach(async (targetLocale) => {
+      // Construct cache key matching useStandardSection logic: home-section-{type}-http-{locale}
+      const cacheKey = `home-section-hero-http-${targetLocale}`;
+
+      if (!cacheManager.has(cacheKey)) {
+        try {
+          const rawData = await homeApi.getHeroData(targetLocale);
+          // Manually transform data for consistency with useStandardSection
+          const transformedData = transformHeroData(rawData);
+          // Set to cache with same TTL as config (default 5 min or similar)
+          cacheManager.set(cacheKey, transformedData, 5);
+        } catch (e) {
+          console.warn(`Failed to prefetch hero for ${targetLocale}`, e);
+        }
+      }
+    });
+  }, [heroData, locale, cacheManager, shouldFetch]);
+
   // Debug
   console.log('HeroSection:', { propData: !!propData, fetchedData: !!data, heroData: !!heroData, shouldFetch });
 
   // Handle if heroData is the carouselItems array directly
   const carouselItems: CarouselItem[] = Array.isArray(heroData) ? heroData : heroData?.carouselItems || [];
+
+  // Filter enabled items but DO NOT re-sort by order.
+  // Reliance is on the transformer which sorts by createdAt (Newest First).
   const enabledItems = carouselItems
-    .filter((item: CarouselItem) => item.enabled !== false)
-    .sort((a: CarouselItem, b: CarouselItem) => (a.order || 0) - (b.order || 0));
+    .filter((item: CarouselItem) => item.enabled !== false);
+  // .sort(...) removed to enforce "Newest First" from transformer
 
   // Check if first image is loaded
   useEffect(() => {
@@ -76,7 +111,7 @@ export default function HeroSection({ data: propData }: { data?: any } = {}) {
           {enabledItems.map((item: CarouselItem, index: number) => (
             <SliderWrapper key={item.id} value={item.sliderName}>
               <img
-                className='w-full h-[55vh] md:h-[50vh] lg:h-[60vh] xl:h-[70vh] object-cover'
+                className='w-full h-[50vh] sm:h-[60vh] lg:h-[60vh] xl:h-[85vh] object-cover'
                 src={item.img}
                 alt={item.title}
               />
@@ -85,18 +120,18 @@ export default function HeroSection({ data: propData }: { data?: any } = {}) {
         </SliderContent>
 
         {firstImageLoaded && (
-          <SliderBtnGroup className='absolute bottom-0 h-fit dark:text-white text-black dark:bg-black/40 bg-white/40 backdrop-blur-md overflow-hidden grid grid-cols-2 md:grid-cols-4'>
+          <SliderBtnGroup className='absolute bottom-0 w-full h-fit dark:text-white text-black dark:bg-black/40 bg-white/40 backdrop-blur-md overflow-hidden grid grid-cols-2 md:grid-cols-4'>
             {enabledItems.map((item: CarouselItem, index: number) => (
               <SliderBtn
                 key={item.id}
                 value={item.sliderName}
-                className='text-left cursor-pointer p-3 border-r'
+                className='text-left cursor-pointer p-3 border-r border-white/20 last:border-r-0'
                 progressBarClass='dark:bg-black bg-white h-full'
               >
-                <h2 className='relative px-4 rounded-full w-fit dark:bg-secondary dark:text-white text-white bg-secondary mb-2 text-2xl'>
+                <h2 className='relative px-4 rounded-full w-fit dark:bg-secondary dark:text-white text-white bg-secondary mb-2 text-lg md:text-xl lg:text-xl xl:text-3xl truncate max-w-full'>
                   {item.title}
                 </h2>
-                <p className='text-lg font-medium line-clamp-2'>{item.desc}</p>
+                <p className='font-medium line-clamp-2 text-sm md:text-base lg:text-base xl:text-lg'>{item.desc}</p>
               </SliderBtn>
             ))}
           </SliderBtnGroup>

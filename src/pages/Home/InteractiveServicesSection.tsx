@@ -8,6 +8,7 @@ import { useStandardSection } from './hooks/useStandardSection';
 import { homeApi } from '../../services/homeService';
 import { getLocalized } from '../../utils/apiUtils';
 import { useLocale } from '../../contexts/LocaleContext';
+import { useGlobalCache } from '../../components/providers/CachedApiProvider';
 
 interface ServiceItem {
   id: number;
@@ -29,37 +30,80 @@ const svgMap: Record<string, string> = {
 const InteractiveServicesSection = () => {
   const { t } = useTranslation(['common', 'pages']);
   const { locale } = useLocale();
+  const { cacheManager } = useGlobalCache();
+
+  // 1. Stabilize Fetcher
+  const fetcher = React.useMemo(() => () => homeApi.getInteractiveServicesData(locale), [locale]);
 
   const { data, loading } = useStandardSection(
     'interactive-services',
-    homeApi.getInteractiveServicesData
+    fetcher
   );
+
+  // 2. Prefetching Logic
+  React.useEffect(() => {
+    if (!data) return;
+
+    const otherLocales = ['uz', 'ru', 'en'].filter(l => l !== locale);
+    const { transformInteractiveServicesData } = require('./transformers/interactiveServicesTransformer');
+
+    otherLocales.forEach(async (targetLocale) => {
+      const cacheKey = `home-section-interactive-services-http-${targetLocale}`;
+
+      if (!cacheManager.has(cacheKey)) {
+        try {
+          const rawData = await homeApi.getInteractiveServicesData(targetLocale);
+          // homeApi already transforms it, but if we called a raw endpoint we'd need to transform.
+          // In this specific implementation, homeApi.getInteractiveServicesData calls the transformer internally 
+          // (see previous step), so rawData IS the transformed data.
+          // Wait, actually homeApi.getInteractiveServicesData returns Promise<HomeInteractiveServicesData>.
+          // So we can just set it directly.
+          cacheManager.set(cacheKey, rawData, 5);
+        } catch (e) {
+          console.warn(`Failed to prefetch interactive-services for ${targetLocale}`, e);
+        }
+      }
+    });
+  }, [data, locale, cacheManager]);
 
   if (loading || !data) return null;
 
   const services = data.services as ServiceItem[];
+  // Original soft colors
   const cardColors = ['#4F99DD', '#2FA5AD', '#697FD7', '#329CC6'];
 
   return (
     <div className="pt-16">
       <SectionHeader
-        title={t('pages:interactiveServices')}
+        title={t('pages:interactiveServices', 'Interaktiv xizmatlar')}
         seeAllLink="/services"
-        seeAllText={t('common:seeAllServices')}
+        seeAllText={t('common:seeAllServices', 'Barcha xizmatlar')}
       />
       <Container>
         {services.length === 0 && (
           <div className="text-center py-8 text-gray-500">
-            Xizmatlar yuklanmoqda...
+            {t('common:loading', 'Yuklanmoqda...')}
           </div>
         )}
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {services.map((service: ServiceItem, index: number) => {
-            const svgHtml = service.icon.startsWith('<svg')
+          {services.map((service: any, index: number) => {
+            // Retrieve dynamic color or fallback
+            const backgroundColor = service.color && service.color.startsWith('#')
+              ? service.color
+              : cardColors[index % cardColors.length];
+
+            const rawSvg = service.icon.startsWith('<svg')
               ? service.icon
               : svgMap[service.icon] ||
               `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-16 h-16"><path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>`;
+
+            // Force SVG to be white (replacing stroke or fill if necessary, but mostly ensuring usage in context)
+            // A simple way is to replace typical color attributes or just rely on parent 'text-white' + 'stroke-current' / 'fill-current'
+            // But since these are arbitrary SVGs, we'll try to strictly inject white stroke/fill if they are hardcoded.
+            // Best approach: Replace "stroke="..."" into "stroke='white'" and "fill='...'" into "fill='white'" if needed.
+            // We rely on CSS classes to styling the SVG to avoid regex brittleness
+            const svgHtml = rawSvg;
 
             return (
               <Link to={service.href} key={service.id} className="group">
@@ -70,16 +114,16 @@ const InteractiveServicesSection = () => {
                     'data-aos-delay': `${index * AOS_CONFIG.staggerDelay}`,
                     'data-aos-duration': AOS_CONFIG.defaultDuration,
                   })}
-                  style={{ backgroundColor: cardColors[index % cardColors.length] }}
+                  style={{ backgroundColor }}
                 >
                   {/* Asosiy kontent */}
-                  <div className="flex items-center z-10">
-                    <div className="g-card-image mr-4 flex-shrink-0">
+                  <div className="flex items-center z-10 w-full">
+                    <div className="g-card-image mr-4 flex-shrink-0 text-white [&>svg]:w-16 [&>svg]:h-16 [&_path]:fill-none [&_path]:stroke-white [&_path]:stroke-[1.5]">
                       <div dangerouslySetInnerHTML={{ __html: svgHtml }} />
                     </div>
-                    <div className="g-card-info flex-1">
-                      <h4 className="text-white text-xl font-bold">{getLocalized(service.title, locale)}</h4>
-                      <span className="text-white text-lg line-clamp-2 opacity-90">
+                    <div className="g-card-info flex-1 min-w-0">
+                      <h4 className="text-white text-xl font-bold truncate pr-2">{getLocalized(service.title, locale)}</h4>
+                      <span className="text-white text-lg line-clamp-2 opacity-90 block">
                         {getLocalized(service.description, locale)}
                       </span>
                     </div>
@@ -88,7 +132,7 @@ const InteractiveServicesSection = () => {
                   {/* KATTA IKONKA — TEPADAN PASTGA CHIROYL HIRALASHUV, QORA SOYA YOʻQ */}
                   <div className="g-card-alpha absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none">
                     <div
-                      className="w-32 h-32 opacity-15"
+                      className="w-32 h-32 opacity-15 [&>svg]:w-32 [&>svg]:h-32 [&_path]:fill-none [&_path]:stroke-white [&_path]:stroke-1"
                       style={{
                         // Juda yumshoq, tabiiy soya — qora emas, kartaga mos
                         filter: 'drop-shadow(0 8px 20px rgba(0,0,0,0.18))',
@@ -98,7 +142,7 @@ const InteractiveServicesSection = () => {
                         maskSize: '100% 100%',
                       }}
                       dangerouslySetInnerHTML={{
-                        __html: svgHtml.replace('w-16 h-16', 'w-32 h-32'),
+                        __html: svgHtml,
                       }}
                     />
                   </div>

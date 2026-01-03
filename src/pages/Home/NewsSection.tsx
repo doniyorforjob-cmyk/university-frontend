@@ -12,6 +12,7 @@ import { OptimizedImage } from '../../components/shared';
 import { useTranslation } from 'react-i18next';
 import { AOS_CONFIG, NEWS_TABS } from '../../config/constants';
 import PrefetchLink from '../../components/shared/PrefetchLink';
+import { useGlobalCache } from '../../components/providers/CachedApiProvider';
 
 const AnnouncementsPreview = ({ announcements }: { announcements?: HomeNewsData['announcements'] }) => {
   const { t, i18n } = useTranslation(['common', 'pages']);
@@ -85,12 +86,36 @@ const formatDate = (dateString?: string, locale: string = 'uz', t: any = (s: any
 const NewsSection = () => {
   const { t, i18n } = useTranslation(['common', 'pages', 'components']);
   const locale = i18n.language;
+  const { cacheManager } = useGlobalCache();
 
-  // Yangi arxitektura: useStandardSection hook
+  // 1. Stabilize Fetcher
+  const fetcher = React.useMemo(() => () => homeApi.getNewsData(locale), [locale]);
+
+  // Yeni arxitektura: useStandardSection hook
   const { data, loading, isCached } = useStandardSection(
     'news',
-    homeApi.getNewsData
+    fetcher
   );
+
+  // 2. Prefetching Logic
+  React.useEffect(() => {
+    if (!data) return;
+
+    const otherLocales = ['uz', 'ru', 'en'].filter(l => l !== locale);
+
+    otherLocales.forEach(async (targetLocale) => {
+      const cacheKey = `home-section-news-http-${targetLocale}`;
+
+      if (!cacheManager.has(cacheKey)) {
+        try {
+          const rawData = await homeApi.getNewsData(targetLocale);
+          cacheManager.set(cacheKey, rawData, 5); // 5 minutes TTL for news
+        } catch (e) {
+          console.warn(`Failed to prefetch news for ${targetLocale}`, e);
+        }
+      }
+    });
+  }, [data, locale, cacheManager]);
 
   // Clean loading - arxitektura prinsipiga muvofiq
   if (loading || !data) {
