@@ -77,11 +77,16 @@ export interface HomeNewsData {
 
 export interface HomeFacultiesData {
   faculties: Array<{
-    id: number;
+    id: number | string;
     name: string;
+    description: string;
     image: string;
-    iconImage: string;
-    color: string;
+    icon: string;
+    departments: Array<{
+      id: number | string;
+      title: string;
+      image: string;
+    }>;
   }>;
 }
 
@@ -104,7 +109,7 @@ export interface HomeMediaData {
 }
 
 // Keep backward compatibility
-export interface HomeVideoGalleryData extends HomeMediaData {}
+export interface HomeVideoGalleryData extends HomeMediaData { }
 
 export interface HomeInteractiveServicesData {
   services: Array<{

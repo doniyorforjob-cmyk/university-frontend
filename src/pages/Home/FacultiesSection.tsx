@@ -5,153 +5,132 @@ import { homeApi, HomeFacultiesData } from '../../services/homeService';
 import { useStandardSection } from './hooks/useStandardSection';
 import SectionHeader from './components/SectionHeader';
 import { OptimizedImage } from '../../components/shared';
+import { Link } from 'react-router-dom';
+
+import { motion, AnimatePresence } from 'framer-motion';
 
 type Faculty = HomeFacultiesData['faculties'][0];
 
 const FacultiesSection: React.FC = () => {
   const { t } = useTranslation(['common', 'pages']);
-  const { data, loading } = useStandardSection('faculties', homeApi.getFacultiesData);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [progress, setProgress] = useState(0);
+  const { data, loading } = useStandardSection<HomeFacultiesData>('faculties', homeApi.getFacultiesData);
+  const [activeFacultyId, setActiveFacultyId] = useState<string | number | null>(null);
 
-  const facultiesData = data?.faculties || [];
-  const visibleCount = Math.min(facultiesData.length, 8);
+  const faculties = data?.faculties || [];
 
   useEffect(() => {
-    setProgress(0);
-  }, [currentImageIndex]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          setCurrentImageIndex((i) => (i + 1) % visibleCount);
-          return 0;
-        }
-        return prev + 1;
-      });
-    }, 40);
-    return () => clearInterval(interval);
-  }, [currentImageIndex, visibleCount]);
+    if (faculties.length > 0 && activeFacultyId === null) {
+      setActiveFacultyId(faculties[0].id);
+    }
+  }, [faculties, activeFacultyId]);
 
   if (loading || !data) return null;
 
-  const handleCardInteraction = (index: number) => {
-    if (index >= visibleCount) return;
-    setCurrentImageIndex(index);
-  };
+  const activeFaculty = faculties.find((f: Faculty) => f.id === activeFacultyId) || faculties[0];
+  const departments = activeFaculty?.departments || [];
 
   return (
-    <section className="pt-16">
+    <section className="py-12 md:py-20 lg:py-24 bg-gradient-to-b from-white to-blue-50/30">
       <Container>
         <SectionHeader
-          title={t('pages:faculties')}
-          seeAllLink="/organizational-structure"
-          seeAllText={t('common:seeAllFaculties')}
+          title={t('pages:faculties', 'Fakultetlar va kafedralar')}
+          seeAllLink="/faculties"
+          seeAllText={t('common:seeAll', 'Barcha fakultetlar')}
           noContainer={true}
-          className="mb-2"
+          className="mb-8 md:mb-12"
         />
-        <div className="grid lg:gap-10 xl:gap-0 lg:py-0 lg:grid-cols-12">
-          {/* KARTOCHKALAR */}
-          <div className="lg:col-span-5 grid grid-cols-2 grid-rows-4 gap-4 h-[600px]">
-            {facultiesData.slice(0, visibleCount).map((faculty: Faculty, index: number) => {
-              const isActive = index === currentImageIndex;
-              return (
-                <div
-                  key={index}
-                  onClick={() => handleCardInteraction(index)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      handleCardInteraction(index);
-                    }
-                  }}
-                  role="button"
-                  tabIndex={0}
-                  className={`
-                    group relative bg-white border border-gray-200
-                    cursor-pointer transition-all duration-300 transform
-                    hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400
-                    ${isActive ? 'z-20 border-blue-500 shadow-lg' : 'z-10 hover:border-blue-300'}
-                    rounded-none flex flex-col
-                  `}
-                  style={{
-                    pointerEvents: 'auto',
-                    zIndex: isActive ? 20 : 10,
-                  }}
-                >
-                  <div className="flex-1 flex flex-col justify-between p-5 min-h-0">
-                    <div className="flex justify-between items-start">
-                      <div
-                        className={`w-11 h-11 rounded-xl bg-gradient-to-br ${faculty.color} flex items-center justify-center shadow-md`}
-                      >
-                        <img
-                          src={faculty.iconImage}
-                          alt={faculty.name}
-                          className="w-7 h-7 object-contain"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            const fallback = document.createElement('div');
-                            fallback.className = 'w-7 h-7 flex items-center justify-center text-white text-lg font-bold';
-                            fallback.innerHTML = 'F';
-                            target.parentNode?.insertBefore(fallback, target);
-                          }}
-                        />
-                      </div>
-                      {isActive && (
-                        <div className="w-3 h-3 bg-cyan-400 rounded-full animate-pulse shadow-lg" />
-                      )}
-                    </div>
 
-                    <div className="mt-4">
-                      <h3 className="text-lg font-bold text-gray-900 group-hover:text-gray-950 transition-colors duration-300 leading-tight">
-                        {faculty.name}
-                      </h3>
-                    </div>
-
-                    <div className="mt-3">
-                      <div
-                        className={`bg-gray-200 rounded-full overflow-hidden transition-all duration-300 ${isActive ? 'h-2 shadow-md' : 'h-1'
-                          }`}
-                      >
-                        <div
-                          className={`h-full bg-gradient-to-r ${faculty.color} transition-all duration-[4000ms] ease-linear`}
-                          style={{
-                            width: isActive ? `${progress}%` : '0%',
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-stretch">
+          {/* LEFT: FACULTIES LIST */}
+          <div className="lg:col-span-4 flex flex-col space-y-2 md:space-y-3 max-h-[25rem] sm:max-h-[30rem] md:max-h-[35rem] lg:max-h-[40rem] xl:max-h-[45rem] 2xl:max-h-[50rem] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-transparent">
+            {faculties.map((faculty: Faculty) => (
+              <motion.div
+                key={faculty.id}
+                whileHover={{ x: 5 }}
+                transition={{ duration: 0.15 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setActiveFacultyId(faculty.id)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setActiveFacultyId(faculty.id);
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+                className={`flex items-center p-4 md:p-5 cursor-pointer transition-all duration-150 rounded-xl md:rounded-2xl group border ${activeFacultyId === faculty.id
+                  ? 'bg-primary text-white shadow-xl border-transparent scale-[1.01] md:scale-[1.02]'
+                  : 'bg-ghost-blue text-brand-dark shadow-sm border-blue-100/30'
+                  }`}
+              >
+                <div className={`mr-4 md:mr-5 transition-colors duration-150 ${activeFacultyId === faculty.id ? 'text-white' : 'text-brand-blue'
+                  } [&_svg]:w-8 [&_svg]:h-8 md:[&_svg]:w-10 md:[&_svg]:h-10`}>
+                  <div dangerouslySetInnerHTML={{ __html: faculty.icon }} />
                 </div>
-              );
-            })}
+                <h3 className="text-base md:text-lg font-bold leading-tight flex-1">
+                  {faculty.name}
+                </h3>
+              </motion.div>
+            ))}
           </div>
 
-          {/* CAROUSEL */}
-          <div className="lg:col-span-7 lg:flex relative ml-0 lg:ml-10 mt-8 lg:mt-0">
-            <div className="relative w-full h-[600px] overflow-hidden rounded-3xl shadow-2xl bg-white/15 backdrop-blur-lg border border-cyan-200/30">
-              {facultiesData.slice(0, visibleCount).map((faculty: Faculty, index: number) => (
-                <OptimizedImage
-                  key={index}
-                  src={faculty.image || `https://picsum.photos/seed/${faculty.id}/600/400`}
-                  alt={faculty.name}
-                  className={`
-                    absolute inset-0 w-full h-full object-contain rounded-3xl
-                    transition-opacity duration-1000 ease-in-out
-                    ${index === currentImageIndex ? 'opacity-100' : 'opacity-0'}
-                  `}
-                  width={600}
-                  height={400}
-                  lazy={true}
-                />
-              ))}
-            </div>
-          </div>
+          {/* RIGHT: DEPARTMENTS GRID */}
+          <motion.div
+            layout
+            className="lg:col-span-8 bg-ghost-blue rounded-3xl lg:rounded-[2.5rem] p-6 md:p-8 lg:p-10 border border-slate-200 shadow-sm min-h-[20rem] md:min-h-[30rem] lg:min-h-[38rem] relative overflow-hidden"
+          >
+            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-brand-blue/20 to-transparent opacity-50" />
+
+            <h2 className="text-xl md:text-2xl font-black text-brand-dark text-center mb-6 md:mb-8 tracking-tight">
+              Kafedralar
+            </h2>
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeFacultyId || 'empty'}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="max-h-[30rem] sm:max-h-[35rem] md:max-h-[40rem] lg:max-h-[45rem] xl:max-h-[50rem] 2xl:max-h-[55rem] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-transparent"
+              >
+                {departments.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 lg:gap-6 pb-4">
+                    {departments.map((dept: any) => (
+                      <Link
+                        key={dept.id}
+                        to={`/department/${dept.id}`}
+                        className="bg-white rounded-2xl md:rounded-[24px] overflow-hidden shadow-[0_4px_20px_-10px_rgba(0,0,0,0.1)] hover:shadow-md transition-all duration-300 group block"
+                      >
+                        <div className="h-40 md:h-44 overflow-hidden bg-gray-100">
+                          <OptimizedImage
+                            src={dept.image}
+                            alt={dept.title}
+                            className="w-full h-full object-cover"
+                            width={320}
+                            height={220}
+                          />
+                        </div>
+                        <div className="p-4 md:p-5">
+                          <h4 className="text-brand-dark font-extrabold text-center leading-snug text-base md:text-lg">
+                            {dept.title}
+                          </h4>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-[300px] md:h-[400px] text-blue-400">
+                    <div className="text-5xl md:text-6xl mb-4 opacity-20">📂</div>
+                    <p className="text-base md:text-lg font-medium">Bu fakultetda hozircha kafedralar yo&apos;q</p>
+                  </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </motion.div>
         </div>
       </Container>
-    </section>
+    </section >
   );
 };
 

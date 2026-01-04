@@ -74,22 +74,22 @@ export const homeApi = {
     }
   },
 
-  getFacultiesData: async (): Promise<HomeFacultiesData> => {
+  getFacultiesData: async (locale?: string): Promise<HomeFacultiesData> => {
     try {
       const projectId = process.env.REACT_APP_PROJECT_ID;
-      const response = await apiClient.get(`/projects/${projectId}/content/faculties`, {
-        params: { with: 'icon' }
-      });
-      const data = Array.isArray(response.data) ? response.data : response.data.data;
-      return {
-        faculties: (data || []).map((entry: any) => ({
-          id: entry.uuid || entry.id,
-          name: entry.fields?.name || entry.name,
-          color: entry.fields?.color || 'from-sky-500 to-indigo-500',
-          image: getImageUrl(Array.isArray(entry.fields?.icon) ? entry.fields.icon[0]?.url : (entry.fields?.icon?.url || '')),
-          iconImage: getImageUrl(Array.isArray(entry.fields?.icon) ? entry.fields.icon[0]?.url : (entry.fields?.icon?.url || '')),
-        }))
-      };
+      const params: any = { with: 'image' };
+      if (locale) params.locale = locale;
+
+      const [facultiesRes, departmentsRes] = await Promise.all([
+        apiClient.get(`/projects/${projectId}/content/faculties`, { params }),
+        apiClient.get(`/projects/${projectId}/content/departments`, { params: { ...params, with: 'image' } }).catch(() => ({ data: [] }))
+      ]);
+
+      const facultiesRaw = Array.isArray(facultiesRes.data) ? facultiesRes.data : facultiesRes.data.data;
+      const departmentsRaw = Array.isArray(departmentsRes.data) ? departmentsRes.data : departmentsRes.data.data;
+
+      const { transformFacultiesData } = require('../../pages/Home/transformers/facultiesTransformer');
+      return transformFacultiesData(facultiesRaw, departmentsRaw);
     } catch (error) {
       console.error('Error fetching faculties data:', error);
       throw error;

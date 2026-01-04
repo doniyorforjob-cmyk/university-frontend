@@ -84,6 +84,9 @@ module.exports = {
         'text-light': '#6b7280',
         danger: '#dc2626',
         surface: "#F1F4F6",
+        'ghost-blue': "#F1F5F9",
+        'brand-dark': '#002B7F',
+        'brand-blue': '#0047BA',
       },
 
       // === TIPOGRAFIYA ===

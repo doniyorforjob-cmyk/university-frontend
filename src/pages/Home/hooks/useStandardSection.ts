@@ -17,7 +17,7 @@ interface UseStandardSectionOptions {
 
 export const useStandardSection = <T = any>(
   sectionType: HomeSectionType,
-  fetcher: () => Promise<T>,
+  fetcher: (locale?: string) => Promise<T>,
   options: UseStandardSectionOptions = {}
 ) => {
   const { locale } = useLocale();
@@ -44,9 +44,9 @@ export const useStandardSection = <T = any>(
 
   // Stabilize the fetcher to prevent infinite reload loops
   const stabilizedFetcher = useMemo(() => async () => {
-    const rawData = await fetcher();
+    const rawData = await fetcher(locale);
     return transformData ? transformData(rawData) : rawData;
-  }, [fetcher, transformData]);
+  }, [fetcher, transformData, locale]);
 
   return useCachedApi({
     key: `home-section-${sectionType}-http-${locale}`,
