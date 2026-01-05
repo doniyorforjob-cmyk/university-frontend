@@ -16,6 +16,8 @@ import {
 } from '@/components/ui/pagination';
 import GenericPageSkeleton from '../shared/GenericPageSkeleton';
 import Container from '../shared/Container';
+import { useTranslation } from 'react-i18next';
+import EmptyState from '../shared/EmptyState';
 import { formatStandardDate } from '@/config/constants';
 
 
@@ -121,6 +123,7 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
   className = '',
   children
 }) => {
+  const { t } = useTranslation(['common', 'pages']);
   const { settings } = useSettingsStore();
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<SectionFilters>({});
@@ -494,9 +497,10 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
                 {currentItems.map(item => <motion.div key={item.id} variants={{ hidden: { y: 20, opacity: 0 }, visible: { y: 0, opacity: 1 } }}>{renderItem(item)}</motion.div>)}
               </motion.div>
             ) : (
-              <div className="text-center py-12 bg-white rounded-lg">
-                <p className="text-gray-500 text-lg">Hech narsa topilmadi</p>
-              </div>
+              <EmptyState
+                message={t('pages:noDataAvailable', 'Hech narsa topilmadi')}
+                className="min-h-[25rem]"
+              />
             )}
 
             {/* Pagination */}

@@ -4,6 +4,7 @@
     "news": "News",
     "interactiveServices": "Interactive Services",
     "faculties": "Faculties",
+    "departments": "Departments",
     "mediaResources": "Media Resources",
     "photoGallery": "Photo Gallery",
     "videoGallery": "Video Gallery",
@@ -25,6 +26,8 @@
     "sending": "Sending...",
     "send": "Send",
     "back": "Back",
+    "noDataAvailable": "No data available",
+    "noDepartmentsInFaculty": "There are no departments in this faculty yet",
     "validation": {
         "nameMin": "Name must be at least 3 characters",
         "phoneMin": "Invalid phone number",

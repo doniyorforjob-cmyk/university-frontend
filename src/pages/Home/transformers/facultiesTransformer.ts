@@ -2,8 +2,13 @@ import { HomeFacultiesData } from '../../../types/home.types';
 import { getImageUrl } from '../../../utils/apiUtils';
 
 export const transformFacultiesData = (facultiesData: any, departmentsData: any = []): HomeFacultiesData => {
+  console.log('Transforming faculties:', { facultiesData, departmentsData });
   const faculties = Array.isArray(facultiesData) ? facultiesData : (facultiesData?.data || []);
   const departments = Array.isArray(departmentsData) ? departmentsData : (departmentsData?.data || []);
+
+  if (faculties.length === 0) {
+    console.warn('Transformer: No faculties found in input data');
+  }
 
   return {
     faculties: faculties.map((facultyRaw: any) => {
@@ -22,18 +27,37 @@ export const transformFacultiesData = (facultiesData: any, departmentsData: any 
         })
         .map((deptRaw: any) => {
           const dFields = deptRaw.fields || {};
+
+          // Image extraction helper (local within map or we can move it up)
+          const extractDUrl = (imgField: any) => {
+            if (!imgField) return '';
+            if (typeof imgField === 'string') return imgField;
+            if (Array.isArray(imgField)) return imgField[0]?.url || imgField[0]?.path || '';
+            if (typeof imgField === 'object') return imgField.url || imgField.path || '';
+            return '';
+          };
+
           return {
             id: deptRaw.uuid || deptRaw.id,
             title: dFields.title || deptRaw.title || '',
-            image: getImageUrl(Array.isArray(dFields.image) ? dFields.image[0]?.url : (dFields.image?.url || ''))
+            image: getImageUrl(extractDUrl(dFields.image))
           };
         });
+
+      // Image extraction helper
+      const extractUrl = (imgField: any) => {
+        if (!imgField) return '';
+        if (typeof imgField === 'string') return imgField;
+        if (Array.isArray(imgField)) return imgField[0]?.url || imgField[0]?.path || '';
+        if (typeof imgField === 'object') return imgField.url || imgField.path || '';
+        return '';
+      };
 
       return {
         id: fId,
         name: fFields.title || fFields.name || facultyRaw.name || '',
         description: fFields.description || facultyRaw.description || '',
-        image: getImageUrl(Array.isArray(fFields.image) ? fFields.image[0]?.url : (fFields.image?.url || '')),
+        image: getImageUrl(extractUrl(fFields.image)),
         icon: fFields.icon || facultyRaw.icon || '',
         departments: facultyDepartments
       };

@@ -5,6 +5,7 @@ import { homeApi, HomeFacultiesData } from '../../services/homeService';
 import { useStandardSection } from './hooks/useStandardSection';
 import SectionHeader from './components/SectionHeader';
 import { OptimizedImage } from '../../components/shared';
+import EmptyState from '../../components/shared/EmptyState';
 import { Link } from 'react-router-dom';
 
 import { motion, AnimatePresence } from 'framer-motion';
@@ -16,6 +17,7 @@ const FacultiesSection: React.FC = () => {
   const { data, loading } = useStandardSection<HomeFacultiesData>('faculties', homeApi.getFacultiesData);
   const [activeFacultyId, setActiveFacultyId] = useState<string | number | null>(null);
 
+  console.log('FacultiesSection State:', { loading, hasData: !!data, facultiesCount: data?.faculties?.length });
   const faculties = data?.faculties || [];
 
   useEffect(() => {
@@ -26,11 +28,11 @@ const FacultiesSection: React.FC = () => {
 
   if (loading || !data) return null;
 
-  const activeFaculty = faculties.find((f: Faculty) => f.id === activeFacultyId) || faculties[0];
+  const activeFaculty = faculties.find((f: Faculty) => String(f.id) === String(activeFacultyId)) || faculties[0];
   const departments = activeFaculty?.departments || [];
 
   return (
-    <section className="py-12 md:py-20 lg:py-24 bg-gradient-to-b from-white to-blue-50/30">
+    <section className="py-8 md:py-12 lg:py-16 bg-gradient-to-b from-white to-blue-50/30">
       <Container>
         <SectionHeader
           title={t('pages:faculties', 'Fakultetlar va kafedralar')}
@@ -40,9 +42,9 @@ const FacultiesSection: React.FC = () => {
           className="mb-8 md:mb-12"
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-10 items-stretch">
           {/* LEFT: FACULTIES LIST */}
-          <div className="lg:col-span-4 flex flex-col space-y-2 md:space-y-3 max-h-[25rem] sm:max-h-[30rem] md:max-h-[35rem] lg:max-h-[40rem] xl:max-h-[45rem] 2xl:max-h-[50rem] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-transparent">
+          <div className="md:col-span-4 flex flex-col space-y-2 md:space-y-3 max-h-[34rem] overflow-y-auto pr-2 scrollbar-auto-hide">
             {faculties.map((faculty: Faculty) => (
               <motion.div
                 key={faculty.id}
@@ -58,16 +60,16 @@ const FacultiesSection: React.FC = () => {
                 }}
                 role="button"
                 tabIndex={0}
-                className={`flex items-center p-4 md:p-5 cursor-pointer transition-all duration-150 rounded-xl md:rounded-2xl group border ${activeFacultyId === faculty.id
-                  ? 'bg-primary text-white shadow-xl border-transparent scale-[1.01] md:scale-[1.02]'
+                className={`flex items-center p-3 sm:p-4 md:p-5 cursor-pointer transition-all duration-150 rounded-xl md:rounded-2xl group border ${activeFacultyId === faculty.id
+                  ? 'bg-primary text-white shadow-md border-transparent scale-[1.01] md:scale-[1.02]'
                   : 'bg-ghost-blue text-brand-dark shadow-sm border-blue-100/30'
                   }`}
               >
-                <div className={`mr-4 md:mr-5 transition-colors duration-150 ${activeFacultyId === faculty.id ? 'text-white' : 'text-brand-blue'
-                  } [&_svg]:w-8 [&_svg]:h-8 md:[&_svg]:w-10 md:[&_svg]:h-10`}>
+                <div className={`mr-3 sm:mr-4 md:mr-5 transition-colors duration-150 ${activeFacultyId === faculty.id ? 'text-white' : 'text-brand-blue'
+                  } [&_svg]:w-7 [&_svg]:h-7 sm:[&_svg]:w-8 sm:[&_svg]:h-8 md:[&_svg]:w-10 md:[&_svg]:h-10`}>
                   <div dangerouslySetInnerHTML={{ __html: faculty.icon }} />
                 </div>
-                <h3 className="text-base md:text-lg font-bold leading-tight flex-1">
+                <h3 className="text-sm sm:text-base md:text-lg font-bold leading-tight flex-1">
                   {faculty.name}
                 </h3>
               </motion.div>
@@ -77,12 +79,12 @@ const FacultiesSection: React.FC = () => {
           {/* RIGHT: DEPARTMENTS GRID */}
           <motion.div
             layout
-            className="lg:col-span-8 bg-ghost-blue rounded-3xl lg:rounded-[2.5rem] p-6 md:p-8 lg:p-10 border border-slate-200 shadow-sm min-h-[20rem] md:min-h-[30rem] lg:min-h-[38rem] relative overflow-hidden"
+            className="md:col-span-8 bg-ghost-blue rounded-3xl lg:rounded-[2.5rem] p-4 sm:p-6 md:p-8 lg:p-10 border border-slate-200 shadow-sm min-h-[20rem] md:min-h-[28rem] lg:min-h-[34rem] relative overflow-hidden"
           >
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-brand-blue/20 to-transparent opacity-50" />
 
-            <h2 className="text-xl md:text-2xl font-black text-brand-dark text-center mb-6 md:mb-8 tracking-tight">
-              Kafedralar
+            <h2 className="text-xl md:text-2xl 2xl:text-3xl font-black text-brand-dark text-center mb-6 md:mb-8 tracking-tight">
+              {t('pages:departments', 'Kafedralar')}
             </h2>
 
             <AnimatePresence mode="wait">
@@ -92,10 +94,10 @@ const FacultiesSection: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2, ease: "easeOut" }}
-                className="max-h-[30rem] sm:max-h-[35rem] md:max-h-[40rem] lg:max-h-[45rem] xl:max-h-[50rem] 2xl:max-h-[55rem] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-transparent"
+                className="max-h-[32rem] overflow-y-auto pr-2 scrollbar-auto-hide"
               >
                 {departments.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 lg:gap-6 pb-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-5 lg:gap-6 2xl:gap-8 pb-4">
                     {departments.map((dept: any) => (
                       <Link
                         key={dept.id}
@@ -120,10 +122,10 @@ const FacultiesSection: React.FC = () => {
                     ))}
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center h-[300px] md:h-[400px] text-blue-400">
-                    <div className="text-5xl md:text-6xl mb-4 opacity-20">📂</div>
-                    <p className="text-base md:text-lg font-medium">Bu fakultetda hozircha kafedralar yo&apos;q</p>
-                  </div>
+                  <EmptyState
+                    message={t('pages:noDepartmentsInFaculty', "Bu fakultetda hozircha kafedralar yo'q")}
+                    className="min-h-[22rem]"
+                  />
                 )}
               </motion.div>
             </AnimatePresence>

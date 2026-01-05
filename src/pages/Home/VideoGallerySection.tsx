@@ -6,6 +6,8 @@ import { homeApi, HomeMediaData } from '../../services/homeService';
 import { MediaGalleryHeader } from './components/SectionHeader';
 import MediaCard from './components/MediaCard';
 import { useSettingsStore } from '../../store/settingsStore';
+import { motion, AnimatePresence } from 'framer-motion';
+import { CalendarDaysIcon } from '@heroicons/react/24/outline';
 
 const formatDate = (dateString: string, language: string) => {
   const date = new Date(dateString);
@@ -25,47 +27,51 @@ const MediaGallery: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'photos' | 'videos'>('videos');
   const [activeVideo, setActiveVideo] = useState<number | null>(null);
 
+  // Assuming HomeFacultiesData and homeApi.getFacultiesData are defined elsewhere if this code is meant to be integrated.
+  // For now, adding the log as requested, but the useStandardSection for faculties is commented out
+  // as it conflicts with the existing data variable for media-gallery.
+  // const { data: facultiesData, loading: facultiesLoading } = useStandardSection<HomeFacultiesData>('faculties', homeApi.getFacultiesData);
+  // const [activeFacultyId, setActiveFacultyId] = useState<string | number | null>(null);
+  // console.log('FacultiesSection State:', { loading: facultiesLoading, hasData: !!facultiesData, facultiesCount: facultiesData?.faculties?.length });
+
   const { data, loading } = useStandardSection(
     'media-gallery',
     homeApi.getMediaData
   );
 
-  // Debug: log the data structure
-  console.log('MediaGallery data:', data);
-  console.log('MediaGallery data.photos:', data?.photos);
-  console.log('MediaGallery data.videos:', data?.videos);
+  console.log('MediaGallery State:', { loading, hasData: !!data, photosCount: data?.photos?.length, videosCount: data?.videos?.length });
 
   if (loading || !data) return null;
 
 
   const renderPhotoGallery = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 md:gap-8">
       {(data.photos || []).map((photo: HomeMediaData['photos'][0], index: number) => (
         <MediaCard
           key={photo.id}
           type="photo"
           title={photo.title}
-          thumbnail={photo.image}
-          date={formatDate(photo.uploadDate || new Date().toISOString(), i18n.language)}
-          views={736}
-          photos={6}
-          imageUrl={photo.image}
-          slug={photo.id}
+          thumbnail={photo.cover_image}
+          date={formatDate(photo.created_at, i18n.language)}
+          views={photo.views || 0}
+          photos={photo.gallery?.length || 0}
+          imageUrl={photo.cover_image}
+          slug={photo.id.toString()}
         />
       ))}
     </div>
   );
 
   const renderVideoGallery = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 md:gap-8">
       {(data.videos || []).map((video: HomeMediaData['videos'][0], index: number) => (
         <div key={video.id} onClick={() => setActiveVideo(index)} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setActiveVideo(index); }}>
           <MediaCard
             type="video"
             title={video.title}
             thumbnail={video.thumbnail}
-            date={formatDate(video.uploadDate, i18n.language)}
-            views={123}
+            date={formatDate(video.created_at, i18n.language)}
+            views={video.views || 0}
             videoId={video.id}
             embedUrl={`https://www.youtube.com/embed/${video.id}`}
           />
@@ -75,7 +81,7 @@ const MediaGallery: React.FC = () => {
   );
 
   return (
-    <div className="py-16">
+    <section className="py-12 md:py-20 lg:py-24 bg-gradient-to-b from-blue-50/30 to-white">
       <Container>
         {/* Media Gallery Header Component */}
         <MediaGalleryHeader
@@ -85,7 +91,7 @@ const MediaGallery: React.FC = () => {
         />
 
         {/* Tab Content */}
-        <div className="tab-content relative">
+        <div className="tab-content relative mt-8 md:mt-12">
           {activeTab === 'photos' && (
             <div className="animate-fade-in">
               {renderPhotoGallery()}
@@ -100,7 +106,17 @@ const MediaGallery: React.FC = () => {
 
         {/* Modal for Video Player */}
         {activeVideo !== null && activeTab === 'videos' && (
-          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4" onClick={() => setActiveVideo(null)} role="button" tabIndex={-1} onKeyDown={(e) => { if (e.key === 'Escape') setActiveVideo(null); }}>
+          <div
+            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setActiveVideo(null);
+            }}
+            role="button"
+            tabIndex={-1}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') setActiveVideo(null);
+            }}
+          >
             <div className="bg-white w-full max-w-6xl h-[60vh] overflow-hidden shadow-2xl relative">
               <button
                 onClick={() => setActiveVideo(null)}
@@ -138,7 +154,10 @@ const MediaGallery: React.FC = () => {
                       </div>
                       <span className="text-lg font-semibold text-gray-800">{settings?.siteName || ""}</span>
                     </div>
-                    <span className="text-sm text-gray-600">{formatDate(data.videos[activeVideo].uploadDate, i18n.language)}</span>
+                    <div className="flex items-center gap-1 text-sm text-gray-600">
+                      <CalendarDaysIcon className="w-4 h-4" />
+                      <span>{formatDate(data.videos[activeVideo].created_at, i18n.language)}</span>
+                    </div>
                   </div>
 
                   {/* Video title */}
@@ -165,7 +184,7 @@ const MediaGallery: React.FC = () => {
           </div>
         )}
       </Container>
-    </div>
+    </section>
   );
 };
 

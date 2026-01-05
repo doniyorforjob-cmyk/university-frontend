@@ -47,7 +47,7 @@ const UniversitySystemsSection: React.FC = () => {
   }
 
   return (
-    <section className="py-16 bg-accent">
+    <section className="py-8 md:py-12 bg-accent">
       <Container>
         <div className="lg:col-span-2">
           <SectionHeader

@@ -4,6 +4,7 @@
     "news": "Новости",
     "interactiveServices": "Интерактивные услуги",
     "faculties": "Факультеты",
+    "departments": "Кафедры",
     "mediaResources": "Медиа ресурсы",
     "photoGallery": "Фотогалерея",
     "videoGallery": "Видеогалерея",
@@ -25,6 +26,8 @@
     "sending": "Отправка...",
     "send": "Отправить",
     "back": "Назад",
+    "noDataAvailable": "Данные не найдены",
+    "noDepartmentsInFaculty": "На этом факультете пока нет кафедр",
     "validation": {
         "nameMin": "Имя должно содержать минимум 3 символа",
         "phoneMin": "Неверный номер телефона",

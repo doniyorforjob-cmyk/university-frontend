@@ -73,7 +73,7 @@ const InteractiveServicesSection = () => {
   const cardColors = ['#4F99DD', '#2FA5AD', '#697FD7', '#329CC6'];
 
   return (
-    <div className="pt-16">
+    <div className="pt-8 md:pt-12">
       <SectionHeader
         title={t('pages:interactiveServices', 'Interaktiv xizmatlar')}
         seeAllLink="/services"

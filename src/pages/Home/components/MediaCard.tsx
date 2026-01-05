@@ -35,53 +35,82 @@ const MediaCard: React.FC<MediaCardProps> = (props) => {
   const photos = !isVideo ? ((props as PhotoCardProps).photos ?? 0) : 0;
 
   const CardContent = () => (
-    <>
-      <div className="g-card-image relative overflow-hidden">
+    <div className="flex flex-col h-full">
+      <div className="g-card-image relative overflow-hidden rounded-2xl md:rounded-[2rem] shadow-sm group-hover:shadow-xl transition-all duration-500">
         <AspectRatio ratio={1}>
-          <img src={thumbnail} alt={title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+          <img
+            src={thumbnail}
+            alt={title}
+            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+          />
         </AspectRatio>
-        <div className="g-card-image-icon absolute top-4 left-4 bg-black/30 backdrop-blur-sm rounded p-2 z-20">
+
+        {/* Overlay Gradient for better readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+        {/* Floating Icon Badge */}
+        <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-md border border-white/30 rounded-xl p-2.5 z-20 shadow-lg transform group-hover:scale-110 transition-transform duration-500">
           {type === 'video' ? (
-            <SolidPlayIcon className="w-8 h-8 text-white" fill="currentColor" />
+            <SolidPlayIcon className="w-6 h-6 md:w-8 md:h-8 text-white drop-shadow-md" />
           ) : (
-            <SolidPhotoIcon className="w-8 h-8 text-white" fill="currentColor" />
+            <SolidPhotoIcon className="w-6 h-6 md:w-8 md:h-8 text-white drop-shadow-md" />
           )}
         </div>
-        <div className="absolute bottom-4 left-4 right-4 bg-black/30 backdrop-blur rounded p-2 z-10">
-          <div className="flex justify-between items-center text-secondary-500 w-full gap-2 font-bold text-sm md:text-base">
-            <span className="flex items-center gap-1">
-              <CalendarDaysIcon className="w-5 h-5" />
+
+        {/* Metadata Overlay - Glassmorphism */}
+        <div className="absolute bottom-4 left-4 right-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-3 z-10 shadow-xl transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+          <div className="flex justify-between items-center text-white w-full gap-2 font-medium text-xs md:text-sm">
+            <span className="flex items-center gap-1.5">
+              <CalendarDaysIcon className="w-4 h-4 opacity-80" />
               {date}
             </span>
-            <span className="flex items-center gap-1">
-              <EyeIcon className="w-5 h-5" />
-              {views}
-            </span>
-            {photos > 0 && (
-              <span className="flex items-center gap-1">
-                <PhotoIcon className="w-5 h-5" />
-                {photos}
+            <div className="flex items-center gap-3">
+              <span className="flex items-center gap-1.5">
+                <EyeIcon className="w-4 h-4 opacity-80" />
+                {views}
               </span>
-            )}
+              {photos > 0 && (
+                <span className="flex items-center gap-1.5 bg-white/20 px-2 py-0.5 rounded-lg">
+                  <PhotoIcon className="w-4 h-4" />
+                  {photos}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>
-      <div className="g-card-info mt-3">
-        <h3 className="text-lg font-bold text-[#0E104B] group-hover:text-primary transition-colors duration-300 line-clamp-2">{title}</h3>
+
+      <div className="g-card-info mt-4 px-1">
+        <h3 className="text-base md:text-lg font-bold text-brand-dark group-hover:text-primary transition-colors duration-300 line-clamp-2 leading-snug">
+          {title}
+        </h3>
       </div>
-    </>
+    </div>
   );
+
+  const containerClasses = `${className} hover:-translate-y-1 transition-transform duration-500`;
 
   if (type === 'photo' && (props as PhotoCardProps).slug) {
     return (
-      <Link to={`/photos/${(props as PhotoCardProps).slug}`} className={className}>
+      <Link to={`/photos/${(props as PhotoCardProps).slug}`} className={containerClasses}>
         <CardContent />
       </Link>
     );
   }
 
   return (
-    <div className={className}>
+    <div
+      className={containerClasses}
+      onClick={isVideo ? (props as any).onClick : undefined}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (isVideo && (props as any).onClick && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault();
+          (props as any).onClick();
+        }
+      }}
+    >
       <CardContent />
     </div>
   );

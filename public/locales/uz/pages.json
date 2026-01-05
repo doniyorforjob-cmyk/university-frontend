@@ -4,6 +4,7 @@
     "news": "Yangiliklar",
     "interactiveServices": "Interaktiv Xizmatlar",
     "faculties": "Fakultetlar",
+    "departments": "Kafedralar",
     "mediaResources": "Media resurslar",
     "photoGallery": "Fotogalareya",
     "videoGallery": "Videogalareya",
@@ -25,6 +26,8 @@
     "sending": "Yuborilmoqda...",
     "send": "Yuborish",
     "back": "Orqaga",
+    "noDataAvailable": "Ma'lumotlar topilmadi",
+    "noDepartmentsInFaculty": "Bu fakultetda hozircha kafedralar yo'q",
     "validation": {
         "nameMin": "Ismingiz kamida 3 ta harf bo'lishi kerak",
         "phoneMin": "Telefon raqami noto'g'ri",

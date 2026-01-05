@@ -16,6 +16,10 @@ import { transformNewsData } from '../../pages/Home/transformers/newsTransformer
 import { transformInteractiveServicesData } from '../../pages/Home/transformers/interactiveServicesTransformer';
 import { TransformedUniversitySystemsData, transformUniversitySystemsData } from '../../pages/Home/transformers/universitySystemsTransformer';
 
+import { transformVideoGalleryData } from '../../pages/Home/transformers/videoGalleryTransformer';
+
+import { transformFacultiesData } from '../../pages/Home/transformers/facultiesTransformer';
+
 export const homeApi = {
   getHomeSections: async (): Promise<HomeSectionBlock[]> => {
     try {
@@ -88,7 +92,6 @@ export const homeApi = {
       const facultiesRaw = Array.isArray(facultiesRes.data) ? facultiesRes.data : facultiesRes.data.data;
       const departmentsRaw = Array.isArray(departmentsRes.data) ? departmentsRes.data : departmentsRes.data.data;
 
-      const { transformFacultiesData } = require('../../pages/Home/transformers/facultiesTransformer');
       return transformFacultiesData(facultiesRaw, departmentsRaw);
     } catch (error) {
       console.error('Error fetching faculties data:', error);
@@ -100,8 +103,7 @@ export const homeApi = {
     try {
       const projectId = process.env.REACT_APP_PROJECT_ID;
       const response = await apiClient.get(`/projects/${projectId}/content/video-gallery`);
-      const data = Array.isArray(response.data) ? response.data[0] : (response.data?.data?.[0] || response.data?.data || response.data);
-      return data;
+      return transformVideoGalleryData(response.data);
     } catch (error) {
       console.error('Error fetching video gallery data:', error);
       throw error;
@@ -112,8 +114,7 @@ export const homeApi = {
     try {
       const projectId = process.env.REACT_APP_PROJECT_ID;
       const response = await apiClient.get(`/projects/${projectId}/content/media`);
-      const data = Array.isArray(response.data) ? response.data[0] : (response.data?.data?.[0] || response.data?.data || response.data);
-      return data;
+      return transformVideoGalleryData(response.data);
     } catch (error) {
       console.error('Error fetching media data:', error);
       throw error;

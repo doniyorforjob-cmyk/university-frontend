@@ -92,19 +92,22 @@ export interface HomeFacultiesData {
 
 export interface HomeMediaData {
   photos: Array<{
-    id: string;
+    id: string | number;
     title: string;
-    image: string;
-    category: string;
-    uploadDate: string;
+    cover_image: string;
+    gallery: string[];
+    created_at: string;
+    updated_at: string;
+    views?: number;
   }>;
   videos: Array<{
     id: string;
     title: string;
     description: string;
     thumbnail: string;
-    category: string;
-    uploadDate: string;
+    created_at: string;
+    updated_at: string;
+    views?: number;
   }>;
 }
 

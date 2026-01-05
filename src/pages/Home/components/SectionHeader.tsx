@@ -139,7 +139,7 @@ export const MediaGalleryHeader: React.FC<MediaGalleryHeaderProps> = ({
       <div className="flex items-center justify-start md:justify-center mb-4 md:mb-0">
         <div
           ref={tabContainerRef}
-          className="relative inline-flex rounded-lg border-gray-200 p-1"
+          className="relative inline-flex rounded-2xl bg-slate-100/50 p-1.5 border border-slate-200/60 backdrop-blur-sm"
           style={{
             backfaceVisibility: 'hidden',
             transform: 'translateZ(0)',
@@ -147,23 +147,22 @@ export const MediaGalleryHeader: React.FC<MediaGalleryHeaderProps> = ({
           }}
         >
           <div
-            className="absolute top-0 left-0 h-full bg-secondary rounded transition-all duration-300 ease-out"
+            className="absolute top-1.5 bottom-1.5 bg-white rounded-xl transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] shadow-sm"
             style={{
               left: activePosition.left,
               width: activePosition.width,
               transform: 'translateZ(0)',
               willChange: 'width, left, transform',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
             }}
           />
           <button
             ref={photoRef}
             role="tab"
-            className={`relative z-10 px-6 py-2 text-lg font-medium transition-colors duration-200 inline-flex items-center ${activeTab === 'photos' ? 'text-white font-bold' : 'text-gray-600 hover:text-gray-800'}`}
+            className={`relative z-10 px-5 md:px-8 py-2.5 text-base md:text-lg font-bold transition-all duration-300 inline-flex items-center rounded-xl ${activeTab === 'photos' ? 'text-primary' : 'text-slate-500 hover:text-slate-700'}`}
             onClick={() => handleTabChange('photos')}
             aria-selected={activeTab === 'photos'}
           >
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={`w-5 h-5 mr-2 transition-transform duration-300 ${activeTab === 'photos' ? 'scale-110' : 'opacity-70'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
             <span>{finalPhotoTabText}</span>
@@ -171,11 +170,11 @@ export const MediaGalleryHeader: React.FC<MediaGalleryHeaderProps> = ({
           <button
             ref={videoRef}
             role="tab"
-            className={`relative z-10 px-6 py-2 text-lg font-medium transition-colors duration-200 inline-flex items-center ${activeTab === 'videos' ? 'text-white font-bold' : 'text-gray-600 hover:text-gray-800'}`}
+            className={`relative z-10 px-5 md:px-8 py-2.5 text-base md:text-lg font-bold transition-all duration-300 inline-flex items-center rounded-xl ${activeTab === 'videos' ? 'text-primary' : 'text-slate-500 hover:text-slate-700'}`}
             onClick={() => handleTabChange('videos')}
             aria-selected={activeTab === 'videos'}
           >
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={`w-5 h-5 mr-2 transition-transform duration-300 ${activeTab === 'videos' ? 'scale-110' : 'opacity-70'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
             </svg>
             <span>{finalVideoTabText}</span>
@@ -183,19 +182,19 @@ export const MediaGalleryHeader: React.FC<MediaGalleryHeaderProps> = ({
         </div>
       </div>
       {/* Line for desktop between tabs and link */}
-      <div className="hidden md:flex flex-1 mx-8 h-px bg-gray-400"></div>
-      {/* Line for mobile between tabs and link */}
-      <div className="md:hidden h-px bg-gray-300 mb-4"></div>
+      <div className="hidden md:flex flex-1 mx-8 h-px bg-slate-200"></div>
+      {/* Line for mobile between title and tabs */}
+      <div className="md:hidden h-px bg-slate-200 mb-4"></div>
       {/* Link */}
       <PrefetchLink
         to="/gallery"
         prefetch={true}
         prefetchDelay={150}
-        className="self-start bg-secondary text-white px-4 py-2 inline-flex items-center text-lg font-semibold hover:bg-secondary-dark transition-colors group"
+        className="self-start inline-flex items-center gap-3 px-6 py-3 bg-white border border-slate-200 rounded-2xl text-slate-700 font-bold hover:bg-slate-50 hover:border-primary/30 hover:text-primary hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 group"
       >
-        <span className="mr-2">{finalSeeAllText}</span>
-        <div className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center transition-colors duration-300 group-hover:bg-primary">
-          <ChevronRightIcon className="w-6 h-6 group-hover:text-white" />
+        <span className="text-base md:text-lg">{finalSeeAllText}</span>
+        <div className="w-8 h-8 bg-slate-100 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-primary group-hover:text-white">
+          <ChevronRightIcon className="w-5 h-5" />
         </div>
       </PrefetchLink>
     </div>
