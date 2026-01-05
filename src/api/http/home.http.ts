@@ -113,8 +113,26 @@ export const homeApi = {
   getMediaData: async (): Promise<HomeMediaData> => {
     try {
       const projectId = process.env.REACT_APP_PROJECT_ID;
-      const response = await apiClient.get(`/projects/${projectId}/content/media`);
-      return transformVideoGalleryData(response.data);
+
+      // Fetch both collections concurrently
+      const [photosRes, videosRes] = await Promise.all([
+        apiClient.get(`/projects/${projectId}/content/photo-gallery`).catch(() => ({ data: [] })),
+        apiClient.get(`/projects/${projectId}/content/video-gallery`).catch(() => ({ data: [] }))
+      ]);
+
+      // Normalize and merge data for the transformer
+      const photosData = Array.isArray(photosRes.data) ? photosRes.data : (photosRes.data.data || []);
+      const videosData = Array.isArray(videosRes.data) ? videosRes.data : (videosRes.data.data || []);
+
+      console.log('[DEBUG] API - photo-gallery Raw:', photosData);
+      console.log('[DEBUG] API - video-gallery Raw:', videosData);
+
+      return transformVideoGalleryData({
+        data: {
+          photos: photosData,
+          videos: videosData
+        }
+      });
     } catch (error) {
       console.error('Error fetching media data:', error);
       throw error;

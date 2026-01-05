@@ -24,38 +24,125 @@ export const transformUniversitySystemsData = (
   systemsData: any,
   quickLinksData: any = []
 ): TransformedUniversitySystemsData => {
-  // Helper to process items
-  const processItems = (data: any) => {
-    const rawItems = Array.isArray(data)
-      ? data
-      : (Array.isArray(data?.data) ? data.data : (data?.data ? [data.data] : []));
+  // Combine all raw data sources into one pool
+  const rawSystems = Array.isArray(systemsData) ? systemsData : (systemsData?.data || []);
+  const rawQuickLinks = Array.isArray(quickLinksData) ? quickLinksData : (quickLinksData?.data || []);
 
-    return rawItems.map((item: any) => {
-      const fields = item.fields || {};
+  const allRawItems = [...rawSystems, ...rawQuickLinks];
 
-      // Icon can be an SVG string or a key name.
-      let iconValue = fields.icon || item.icon || 'BookOpen';
-      if (typeof iconValue === 'object') {
-        iconValue = iconValue.url || iconValue.path || 'BookOpen';
-      }
-
-      return {
-        id: item.uuid || item.id || Math.random(),
-        title: fields.title || item.title || '',
-        description: fields.description || item.description || '',
-        href: fields.url || fields.href || item.url || '#',
-        icon: iconValue,
-        color: fields.color || item.color || 'bg-blue-600',
-        createdAt: item.created_at || item.createdAt || new Date().toISOString()
-      };
-    }).sort((a: any, b: any) => {
-      // Sort: Newest First (Descending)
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    });
+  // Helper to extract category string from various formats
+  const extractCategory = (cat: any): string => {
+    if (!cat) return '';
+    if (typeof cat === 'string') return cat;
+    if (Array.isArray(cat)) return extractCategory(cat[0]);
+    if (typeof cat === 'object' && cat !== null) return cat.name || cat.title || cat.slug || cat.value || '';
+    return String(cat || '');
   };
 
-  const systems = processItems(systemsData);
-  const quickLinks = processItems(quickLinksData);
+  // Process all items
+  const processedItems = allRawItems.map((item: any) => {
+    const fields = item.fields || {};
+
+    // Icon handling
+    let iconValue = fields.icon || item.icon || 'BookOpen';
+    if (typeof iconValue === 'object' && iconValue !== null) {
+      iconValue = iconValue.url || iconValue.path || 'BookOpen';
+    }
+
+    // Category handling
+    const rawCat = fields.category || item.category || fields.tag || item.tag || '';
+    const normalizedCat = extractCategory(rawCat).toLowerCase().replace(/\s+/g, '').trim();
+
+    return {
+      id: String(item.uuid || item.id || Math.random()),
+      title: fields.title || item.title || '',
+      description: fields.description || item.description || '',
+      href: fields.url || fields.href || item.url || '#',
+      icon: iconValue,
+      color: fields.color || item.color || 'bg-blue-600',
+      category: normalizedCat,
+      createdAt: item.created_at || item.createdAt || new Date().toISOString()
+    };
+  });
+
+  // Separate by category
+  // 1. Deduplicate by string ID, Normalized Title, and Normalized URL
+  const uniqueItemsMap = new Map();
+  processedItems.forEach(item => {
+    // Keys to identify duplicates
+    // Normalize title: remove all non-alphanumeric, lowercase, fuzzy c/k
+    const titleKey = item.title.toLowerCase().replace(/[^a-z0-9]/g, '').replace(/c/g, 'k').trim();
+
+    // Normalize URL: remove protocol, www, and trailing slash
+    const urlKey = item.href.toLowerCase()
+      .replace(/^https?:\/\//, '')
+      .replace(/^www\./, '')
+      .replace(/\/$/, '')
+      .trim();
+
+    const existing = uniqueItemsMap.get(titleKey) ||
+      uniqueItemsMap.get(urlKey) ||
+      uniqueItemsMap.get(item.id);
+
+    if (existing) {
+      // Keep the "richer" item (one that has a description or better category)
+      const currentValue = (item.description?.length || 0) + (item.category ? 20 : 0);
+      const existingValue = (existing.description?.length || 0) + (existing.category ? 20 : 0);
+
+      if (currentValue > existingValue) {
+        uniqueItemsMap.set(titleKey, item);
+        uniqueItemsMap.set(urlKey, item);
+        uniqueItemsMap.set(item.id, item);
+      }
+    } else {
+      uniqueItemsMap.set(titleKey, item);
+      uniqueItemsMap.set(urlKey, item);
+      uniqueItemsMap.set(item.id, item);
+    }
+  });
+
+  // Convert map values to unique list (using Set for reference equality check)
+  const uniqueItems = Array.from(new Set(uniqueItemsMap.values()));
+
+  // 2. STRICT CATEGORIZATION LOGIC
+  const quickLinksPool: any[] = [];
+  const systemsPool: any[] = [];
+
+  uniqueItems.forEach(item => {
+    const isExplicitQuickLink = item.category.includes('quicklink') ||
+      item.category.includes('havola') ||
+      item.category === 'ql';
+
+    const isExplicitSystem = item.category === 'system' ||
+      item.category === 'systems';
+
+    // Decide where it goes (Exclusive)
+    if (isExplicitQuickLink) {
+      quickLinksPool.push(item);
+      console.log(`[Categorizer] Item "${item.title}" -> QUICKLINK (Explicit category match: "${item.category}")`);
+    } else if (isExplicitSystem) {
+      systemsPool.push(item);
+      console.log(`[Categorizer] Item "${item.title}" -> SYSTEM (Explicit category match: "${item.category}")`);
+    } else {
+      // Fallback: Decide based on content
+      // Links usually don't have descriptions
+      if (!item.description || item.description.length < 5) {
+        quickLinksPool.push(item);
+        console.log(`[Categorizer] Item "${item.title}" -> QUICKLINK (No description found)`);
+      } else {
+        systemsPool.push(item);
+        console.log(`[Categorizer] Item "${item.title}" -> SYSTEM (Fallback: has description)`);
+      }
+    }
+  });
+
+  const systems = systemsPool.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  const quickLinks = quickLinksPool.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+  console.log('--- Final University Systems Layout ---');
+  console.log('Systems (Cards):', systems.map(s => s.title));
+  console.log('Quick Links (Text):', quickLinks.map(ql => ql.title));
+  console.log('-----------------------------------------');
 
   return {
     title: 'Universitet Tizimlari',

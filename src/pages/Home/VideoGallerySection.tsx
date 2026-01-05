@@ -39,7 +39,14 @@ const MediaGallery: React.FC = () => {
     homeApi.getMediaData
   );
 
-  console.log('MediaGallery State:', { loading, hasData: !!data, photosCount: data?.photos?.length, videosCount: data?.videos?.length });
+  console.log('MediaGallery State:', {
+    loading,
+    hasData: !!data,
+    photosCount: data?.photos?.length,
+    videosCount: data?.videos?.length,
+    photoTitles: data?.photos?.map((p: any) => p.title),
+    videoTitles: data?.videos?.map((v: any) => v.title)
+  });
 
   if (loading || !data) return null;
 

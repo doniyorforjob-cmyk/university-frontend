@@ -23,9 +23,9 @@ export const SystemCard = ({
   variant = 'section'
 }: SystemCardProps) => {
   // Check if it's an SVG string (starts with <svg)
-  const isSvgString = icon.trim().startsWith('<svg');
+  const isSvgString = typeof icon === 'string' ? icon.trim().startsWith('<svg') : false;
   // Check if color is a hex code
-  const isHexColor = color.startsWith('#');
+  const isHexColor = typeof color === 'string' && color.startsWith('#');
 
   // If it's not hex and doesn't start with bg-, we might want to ensure it has bg- prefix if it's intended as a class
   // But for safety with JIT, we rely on full classes or hex. 
@@ -49,7 +49,7 @@ export const SystemCard = ({
     }
   };
 
-  const IconComponent = !isSvgString ? getIconComponent(icon) : null;
+  const IconComponent = !isSvgString && typeof icon === 'string' ? getIconComponent(icon) : null;
 
   const motionProps = {
     initial: { opacity: 0, y: 20 },
@@ -109,11 +109,15 @@ interface SystemsContainerProps {
 
 export const SystemsContainer = ({
   title,
-  systems,
-  quickLinks,
+  systems = [],
+  quickLinks = [],
   variant = 'section',
   showQuickLinks = true
 }: SystemsContainerProps) => {
+  console.log('SystemsContainer rendering with:', {
+    systemsCount: systems.length,
+    quickLinksCount: quickLinks.length
+  });
   if (variant === 'sidebar') {
     return (
       <motion.div
