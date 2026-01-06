@@ -31,6 +31,7 @@ export interface GlobalSettings {
     logo?: string;
     siteName?: string;
     siteDescription?: string;
+    mission?: string;
     contacts: ContactSettings;
     socials: SocialLink[];
     footer: FooterSettings;

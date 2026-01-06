@@ -33,5 +33,16 @@
         "phoneMin": "Telefon raqami noto'g'ri",
         "messageMin": "Xabar kamida 10 ta belgidan iborat bo'lishi kerak",
         "codeLength": "Kod 6 ta raqamdan iborat"
+    },
+    "emptyResources": {
+        "photos": "fotolavhalar",
+        "videos": "videolavhalar",
+        "news": "yangiliklar",
+        "announcements": "e'lonlar",
+        "services": "xizmatlar",
+        "departments": "kafedralar",
+        "info": "ma'lumotlar",
+        "systems": "tizimlar",
+        "faculties": "fakultetlar"
     }
 }

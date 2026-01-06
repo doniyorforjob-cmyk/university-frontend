@@ -7,6 +7,8 @@ import SectionHeader from './components/SectionHeader';
 import { OptimizedImage } from '../../components/shared';
 import EmptyState from '../../components/shared/EmptyState';
 import { Link } from 'react-router-dom';
+import { transformFacultiesData } from './transformers/facultiesTransformer';
+import { FacultyCard } from '../../components/shared/cards/FacultyCard';
 
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -14,10 +16,13 @@ type Faculty = HomeFacultiesData['faculties'][0];
 
 const FacultiesSection: React.FC = () => {
   const { t } = useTranslation(['common', 'pages']);
-  const { data, loading } = useStandardSection<HomeFacultiesData>('faculties', homeApi.getFacultiesData);
+  const { data, loading } = useStandardSection<HomeFacultiesData>(
+    'faculties',
+    homeApi.getFacultiesData,
+    { transformData: transformFacultiesData }
+  );
   const [activeFacultyId, setActiveFacultyId] = useState<string | number | null>(null);
 
-  console.log('FacultiesSection State:', { loading, hasData: !!data, facultiesCount: data?.faculties?.length });
   const faculties = data?.faculties || [];
 
   useEffect(() => {
@@ -45,35 +50,24 @@ const FacultiesSection: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-10 items-stretch">
           {/* LEFT: FACULTIES LIST */}
           <div className="md:col-span-4 flex flex-col space-y-2 md:space-y-3 max-h-[34rem] overflow-y-auto pr-2 scrollbar-auto-hide">
-            {faculties.map((faculty: Faculty) => (
-              <motion.div
-                key={faculty.id}
-                whileHover={{ x: 5 }}
-                transition={{ duration: 0.15 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => setActiveFacultyId(faculty.id)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    setActiveFacultyId(faculty.id);
-                  }
-                }}
-                role="button"
-                tabIndex={0}
-                className={`flex items-center p-3 sm:p-4 md:p-5 cursor-pointer transition-all duration-150 rounded-xl md:rounded-2xl group border ${activeFacultyId === faculty.id
-                  ? 'bg-primary text-white shadow-md border-transparent scale-[1.01] md:scale-[1.02]'
-                  : 'bg-ghost-blue text-brand-dark shadow-sm border-blue-100/30'
-                  }`}
-              >
-                <div className={`mr-3 sm:mr-4 md:mr-5 transition-colors duration-150 ${activeFacultyId === faculty.id ? 'text-white' : 'text-brand-blue'
-                  } [&_svg]:w-7 [&_svg]:h-7 sm:[&_svg]:w-8 sm:[&_svg]:h-8 md:[&_svg]:w-10 md:[&_svg]:h-10`}>
-                  <div dangerouslySetInnerHTML={{ __html: faculty.icon }} />
-                </div>
-                <h3 className="text-sm sm:text-base md:text-lg font-bold leading-tight flex-1">
-                  {faculty.name}
-                </h3>
-              </motion.div>
-            ))}
+            {faculties.length > 0 ? (
+              faculties.map((faculty: Faculty) => (
+                <FacultyCard
+                  key={faculty.id}
+                  id={faculty.id}
+                  name={faculty.name}
+                  icon={faculty.icon}
+                  isActive={activeFacultyId === faculty.id}
+                  onClick={() => setActiveFacultyId(faculty.id)}
+                  variant="list-item"
+                />
+              ))
+            ) : (
+              <EmptyState
+                resourceKey="faculties"
+                className="min-h-[20rem]"
+              />
+            )}
           </div>
 
           {/* RIGHT: DEPARTMENTS GRID */}
@@ -123,7 +117,7 @@ const FacultiesSection: React.FC = () => {
                   </div>
                 ) : (
                   <EmptyState
-                    message={t('pages:noDepartmentsInFaculty', "Bu fakultetda hozircha kafedralar yo'q")}
+                    resourceKey="departments"
                     className="min-h-[22rem]"
                   />
                 )}

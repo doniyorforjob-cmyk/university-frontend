@@ -71,7 +71,6 @@ export default function HeroSection({ data: propData }: { data?: any } = {}) {
   }, [heroData, locale, cacheManager, shouldFetch]);
 
   // Debug
-  console.log('HeroSection:', { propData: !!propData, fetchedData: !!data, heroData: !!heroData, shouldFetch });
 
   // Handle if heroData is the carouselItems array directly
   const carouselItems: CarouselItem[] = Array.isArray(heroData) ? heroData : heroData?.carouselItems || [];
@@ -99,10 +98,9 @@ export default function HeroSection({ data: propData }: { data?: any } = {}) {
     return <SectionSkeleton sectionType="hero" />;
   }
 
-  console.log('HeroSection rendering with', enabledItems.length, 'items');
 
   return (
-    <section className="relative min-h-[60vh] overflow-hidden">
+    <section className="relative overflow-hidden">
       <ProgressSlider
         vertical={false}
         activeSlider={enabledItems.length > 0 ? enabledItems[0].sliderName : ''}
@@ -111,7 +109,7 @@ export default function HeroSection({ data: propData }: { data?: any } = {}) {
           {enabledItems.map((item: CarouselItem, index: number) => (
             <SliderWrapper key={item.id} value={item.sliderName}>
               <img
-                className='w-full h-[50vh] sm:h-[60vh] lg:h-[60vh] xl:h-[85vh] object-cover'
+                className='w-full h-[50vh] sm:h-[60vh] lg:h-[60vh] xl:h-[76vh] 2xl:h-[72vh] object-cover block'
                 src={item.img}
                 alt={item.title}
               />
@@ -125,13 +123,13 @@ export default function HeroSection({ data: propData }: { data?: any } = {}) {
               <SliderBtn
                 key={item.id}
                 value={item.sliderName}
-                className='text-left cursor-pointer p-3 border-r border-white/20 last:border-r-0'
+                className='text-left cursor-pointer p-3 xl:p-2 border-r border-white/20 last:border-r-0'
                 progressBarClass='dark:bg-black bg-white h-full'
               >
-                <h2 className='relative px-4 rounded-full w-fit dark:bg-secondary dark:text-white text-white bg-secondary mb-2 text-lg md:text-xl lg:text-xl xl:text-3xl truncate max-w-full'>
+                <h2 className='relative px-4 rounded-full w-fit dark:bg-secondary dark:text-white text-white bg-secondary mb-2 text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-lg truncate max-w-full'>
                   {item.title}
                 </h2>
-                <p className='font-medium line-clamp-2 text-sm md:text-base lg:text-base xl:text-lg'>{item.desc}</p>
+                <p className='font-medium line-clamp-2 text-sm md:text-base lg:text-base xl:text-base 2xl:text-sm'>{item.desc}</p>
               </SliderBtn>
             ))}
           </SliderBtnGroup>

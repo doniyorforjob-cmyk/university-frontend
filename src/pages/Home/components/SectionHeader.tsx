@@ -190,11 +190,18 @@ export const MediaGalleryHeader: React.FC<MediaGalleryHeaderProps> = ({
         to="/gallery"
         prefetch={true}
         prefetchDelay={150}
-        className="self-start inline-flex items-center gap-3 px-6 py-3 bg-white border border-slate-200 rounded-2xl text-slate-700 font-bold hover:bg-slate-50 hover:border-primary/30 hover:text-primary hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 group"
+        className="bg-secondary text-white px-4 py-2 inline-flex items-center text-lg font-semibold hover:bg-secondary-dark transition-colors group"
       >
-        <span className="text-base md:text-lg">{finalSeeAllText}</span>
-        <div className="w-8 h-8 bg-slate-100 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-primary group-hover:text-white">
-          <ChevronRightIcon className="w-5 h-5" />
+        <span className="mr-2">{finalSeeAllText}</span>
+        <div
+          className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center transition-colors duration-300 group-hover:bg-primary"
+          style={{
+            backfaceVisibility: 'hidden',
+            transform: 'translateZ(0)',
+            willChange: 'background-color, transform',
+          }}
+        >
+          <ChevronRightIcon className="w-6 h-6" />
         </div>
       </PrefetchLink>
     </div>

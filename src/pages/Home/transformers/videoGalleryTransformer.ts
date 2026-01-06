@@ -16,7 +16,6 @@ const getYoutubeThumbnail = (videoId: string): string => {
 };
 
 export const transformVideoGalleryData = (apiData: any): HomeMediaData => {
-  console.log('Transforming media data:', apiData);
   if (!apiData) return { videos: [], photos: [] };
 
   const rawItems = Array.isArray(apiData) ? apiData : (Array.isArray(apiData.data) ? apiData.data : []);
@@ -40,8 +39,6 @@ export const transformVideoGalleryData = (apiData: any): HomeMediaData => {
   const finalVideos = Array.isArray(rawVideos) ? rawVideos : [];
   const finalPhotos = Array.isArray(rawPhotos) ? rawPhotos : [];
 
-  console.log('[DEBUG] Transformer - Final Videos Count:', finalVideos.length);
-  console.log('[DEBUG] Transformer - Final Photos Count:', finalPhotos.length);
 
   const videos = finalVideos
     .map((video: any) => {
@@ -86,13 +83,16 @@ export const transformVideoGalleryData = (apiData: any): HomeMediaData => {
     .map((photo: any) => {
       if (!photo) return null;
       const fields = photo.fields || {};
-      console.log(`[DEBUG] Transformer - Processing Photo Item:`, { id: photo.id, fields: Object.keys(fields) });
 
-      const rawCover = fields['cover-image'] || fields.cover_image || photo.cover_image || photo['cover-image'] || fields.image || photo.image || fields.photo || photo.photo || fields.picture || photo.picture || fields.file || photo.file || photo.url || '';
+      let rawCover = fields['cover-image'] || fields.cover_image || photo.cover_image || photo['cover-image'] || fields.image || photo.image || fields.photo || photo.photo || fields.picture || photo.picture || fields.file || photo.file || photo.url || '';
+
+      // If rawCover is an array (common in some API responses), take the first item
+      if (Array.isArray(rawCover) && rawCover.length > 0) {
+        rawCover = rawCover[0];
+      }
+
       const coverPath = typeof rawCover === 'object' && rawCover !== null ? (rawCover.url || rawCover.path) : rawCover;
 
-      console.log(`[DEBUG] Transformer - Photo "${fields.title || photo.title || 'Untitled'}" rawCover:`, rawCover);
-      console.log(`[DEBUG] Transformer - Photo "${fields.title || photo.title || 'Untitled'}" coverPath:`, coverPath);
 
       const rawGallery = fields.gallery || photo.gallery || fields.images || photo.images || fields.photos || photo.photos || [];
       const gallery = Array.isArray(rawGallery)
@@ -103,7 +103,6 @@ export const transformVideoGalleryData = (apiData: any): HomeMediaData => {
         : [];
 
       const finalCover = getImageUrl(coverPath);
-      console.log(`[DEBUG] Transformer - Photo "${fields.title || photo.title || 'Untitled'}" finalCover:`, finalCover);
 
       if (finalCover.includes('logo.png')) {
         console.warn(`[DEBUG] Transformer - Photo "${fields.title || photo.title || 'Untitled'}" rejected: Falling back to logo (no real image found).`);
@@ -122,13 +121,10 @@ export const transformVideoGalleryData = (apiData: any): HomeMediaData => {
     .filter((p: any): p is any => {
       const isValid = p !== null && p.id && !p.cover_image.includes('logo.png');
       if (!isValid && p) {
-        console.log(`[DEBUG] Transformer - Item "${p.title}" filtered out. Reason: ${!p.id ? 'No ID' : 'Missing cover image'}`);
       }
       return isValid;
     });
 
-  console.log('[DEBUG] Transformer - Final Processed Photos:', photos.map(p => p.title));
-  console.log('[DEBUG] Transformer - Final Processed Videos:', videos.map(v => v.title));
 
   return {
     videos: videos,

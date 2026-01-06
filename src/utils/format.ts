@@ -2,6 +2,8 @@
  * Formatting Utilities
  * Sana, raqam, matn formatlash funksiyalari
  */
+import { MONTHS, DEFAULT_LOCALE } from '../constants/dateConstants';
+
 
 /**
  * Sanani formatlash
@@ -15,14 +17,14 @@ export const formatDate = (
   options?: Intl.DateTimeFormatOptions
 ): string => {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
-  
+
   const defaultOptions: Intl.DateTimeFormatOptions = {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
     ...options,
   };
-  
+
   return dateObj.toLocaleDateString(locale, defaultOptions);
 };
 
@@ -49,12 +51,12 @@ export const formatRelativeTime = (date: string | Date): string => {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - dateObj.getTime()) / 1000);
-  
+
   if (diffInSeconds < 60) return 'Hozirgina';
   if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} daqiqa oldin`;
   if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} soat oldin`;
   if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} kun oldin`;
-  
+
   return formatDate(dateObj);
 };
 
@@ -98,11 +100,11 @@ export const formatPercent = (
  */
 export const formatPhone = (phone: string): string => {
   const cleaned = phone.replace(/\D/g, '');
-  
+
   if (cleaned.startsWith('998') && cleaned.length === 12) {
     return `+${cleaned.slice(0, 3)} ${cleaned.slice(3, 5)} ${cleaned.slice(5, 8)} ${cleaned.slice(8, 10)} ${cleaned.slice(10)}`;
   }
-  
+
   return phone;
 };
 
@@ -157,11 +159,44 @@ export const capitalizeWords = (text: string): string => {
  */
 export const formatFileSize = (bytes: number): string => {
   if (bytes === 0) return '0 Bytes';
-  
+
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  
+
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
 };
 
+/**
+ * Qisqa sana formati (kun-oy, masalan: 5-Yan)
+ * @param date - Sana
+ * @param locale - Til
+ */
+export const formatShortDate = (
+  date: string | Date,
+  locale: string = DEFAULT_LOCALE
+): string => {
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  const day = dateObj.getDate();
+
+  const currentLang = ['uz', 'en', 'ru'].includes(locale) ? locale : DEFAULT_LOCALE;
+  const monthName = MONTHS[currentLang][dateObj.getMonth()];
+
+  return `${day}-${monthName}`;
+};
+
+
+/**
+ * HTML teglarini olib tashlash
+ */
+export const stripHtml = (html: string): string => {
+  if (!html) return '';
+  return html
+    .replace(/<[^>]*>?/gm, '') // Teglarni o'chirish
+    .replace(/&nbsp;/g, ' ')   // Bo'shliqlarni to'g'rilash
+    .replace(/&quot;/g, '"')   // Qo'shtirnoqlarni to'g'rilash
+    .replace(/&lsquo;|&rsquo;/g, "'") // Bir tirnoqlarni to'g'rilash
+    .replace(/&ldquo;|&rdquo;/g, '"') // Qo'sh tirnoqlarni to'g'rilash
+    .replace(/&ndash;|&mdash;/g, '-') // Chiziqlarni to'g'rilash
+    .replace(/&hellip;/g, '...');      // Uch nuqtani to'g'rilash
+};

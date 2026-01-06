@@ -26,30 +26,28 @@ type PhotoCardProps = BaseMediaCardProps & {
 
 type MediaCardProps = VideoCardProps | PhotoCardProps;
 
-const MediaCard: React.FC<MediaCardProps> = (props) => {
-  const { type, title, thumbnail, date, views } = props;
+type CardContentProps = MediaCardProps & {
+  photosCount: number;
+};
 
-  const isVideo = type === 'video';
-
-  const className = `g-card _1 _1-2 group cursor-pointer`;
-  const photos = !isVideo ? ((props as PhotoCardProps).photos ?? 0) : 0;
-
-  const CardContent = () => (
+const CardContent: React.FC<CardContentProps> = (props) => {
+  const { type, title, thumbnail, date, views, photosCount } = props;
+  return (
     <div className="flex flex-col h-full">
-      <div className="g-card-image relative overflow-hidden rounded-2xl md:rounded-[2rem] shadow-sm group-hover:shadow-xl transition-all duration-500">
+      <div className="g-card-image relative overflow-hidden rounded-2xl md:rounded-[2rem] shadow-sm transition-all duration-300">
         <AspectRatio ratio={1}>
           <img
             src={thumbnail}
             alt={title}
-            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+            className="h-full w-full object-cover transition-transform duration-500 ease-out"
           />
         </AspectRatio>
 
-        {/* Overlay Gradient for better readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        {/* Overlay for better readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-100 transition-opacity duration-300" />
 
         {/* Floating Icon Badge */}
-        <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-md border border-white/30 rounded-xl p-2.5 z-20 shadow-lg transform group-hover:scale-110 transition-transform duration-500">
+        <div className="absolute top-4 left-4 bg-[#5a5a5a]/60 backdrop-blur-md border border-white/10 rounded-2xl p-3 z-20 shadow-lg">
           {type === 'video' ? (
             <SolidPlayIcon className="w-6 h-6 md:w-8 md:h-8 text-white drop-shadow-md" />
           ) : (
@@ -58,21 +56,21 @@ const MediaCard: React.FC<MediaCardProps> = (props) => {
         </div>
 
         {/* Metadata Overlay - Glassmorphism */}
-        <div className="absolute bottom-4 left-4 right-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-3 z-10 shadow-xl transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-          <div className="flex justify-between items-center text-white w-full gap-2 font-medium text-xs md:text-sm">
-            <span className="flex items-center gap-1.5">
-              <CalendarDaysIcon className="w-4 h-4 opacity-80" />
+        <div className="absolute bottom-4 left-4 right-4 bg-[#5a5a5a]/60 backdrop-blur-md border border-white/10 rounded-2xl p-3 z-10 shadow-md">
+          <div className="flex justify-between items-center text-[#FFE082] w-full gap-2 font-bold text-base md:text-lg px-2">
+            <span className="flex items-center gap-2">
+              <CalendarDaysIcon className="w-5 h-5 md:w-6 md:h-6 stroke-[2]" />
               {date}
             </span>
-            <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1.5">
-                <EyeIcon className="w-4 h-4 opacity-80" />
+            <div className="flex items-center gap-4">
+              <span className="flex items-center gap-2">
+                <EyeIcon className="w-5 h-5 md:w-6 md:h-6 stroke-[2]" />
                 {views}
               </span>
-              {photos > 0 && (
-                <span className="flex items-center gap-1.5 bg-white/20 px-2 py-0.5 rounded-lg">
-                  <PhotoIcon className="w-4 h-4" />
-                  {photos}
+              {photosCount > 0 && (
+                <span className="flex items-center gap-2 text-[#FFE082]">
+                  <PhotoIcon className="w-5 h-5 md:w-6 md:h-6 stroke-[2]" />
+                  {photosCount}
                 </span>
               )}
             </div>
@@ -81,19 +79,28 @@ const MediaCard: React.FC<MediaCardProps> = (props) => {
       </div>
 
       <div className="g-card-info mt-4 px-1">
-        <h3 className="text-base md:text-lg font-bold text-brand-dark group-hover:text-primary transition-colors duration-300 line-clamp-2 leading-snug">
+        <h3 className="text-lg md:text-xl font-black text-gray-900 line-clamp-2 leading-tight">
           {title}
         </h3>
       </div>
     </div>
   );
+};
 
-  const containerClasses = `${className} hover:-translate-y-1 transition-transform duration-500`;
+const MediaCard: React.FC<MediaCardProps> = (props) => {
+  const { type } = props;
+  const isVideo = type === 'video';
+
+  const className = `g-card group cursor-pointer`;
+  const photosCount = !isVideo ? ((props as PhotoCardProps).photos ?? 0) : 0;
+  const containerClasses = `${className} transition-all duration-300`;
+
+  const commonProps = { ...props, photosCount };
 
   if (type === 'photo' && (props as PhotoCardProps).slug) {
     return (
       <Link to={`/photos/${(props as PhotoCardProps).slug}`} className={containerClasses}>
-        <CardContent />
+        <CardContent {...commonProps} />
       </Link>
     );
   }
@@ -111,7 +118,7 @@ const MediaCard: React.FC<MediaCardProps> = (props) => {
         }
       }}
     >
-      <CardContent />
+      <CardContent {...commonProps} />
     </div>
   );
 };

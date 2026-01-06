@@ -498,7 +498,7 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
               </motion.div>
             ) : (
               <EmptyState
-                message={t('pages:noDataAvailable', 'Hech narsa topilmadi')}
+                resourceKey={sectionType as any}
                 className="min-h-[25rem]"
               />
             )}

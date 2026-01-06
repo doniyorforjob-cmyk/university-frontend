@@ -12,15 +12,17 @@ import { getLocalized } from '../../utils/apiUtils';
 import { useLocale } from '../../contexts/LocaleContext';
 
 import { MapIcon } from '@heroicons/react/24/outline';
+import { transformStatsData } from './transformers/universityStatsTransformer';
 
 const Stats = () => {
   const { t } = useTranslation('common');
   const { locale } = useLocale();
 
   // Yangi arxitektura: useStandardSection hook
-  const { data, loading, isCached } = useStandardSection(
+  const { data, loading, isCached, error } = useStandardSection(
     'stats',
-    homeApi.getStatsData
+    homeApi.getStatsData,
+    { transformData: transformStatsData }
   );
 
   const { ref, inView } = useInView({ threshold: 0.3, triggerOnce: true });
@@ -31,7 +33,7 @@ const Stats = () => {
   }, [inView]);
 
   // Clean loading - arxitektura prinsipiga muvofiq
-  if (loading || !data) {
+  if (loading || !data || !data.stats || error) {
     return null; // Section butunlay yashirin, loading ko'rsatilmaydi
   }
 
@@ -39,7 +41,9 @@ const Stats = () => {
     <section ref={ref} className="py-16 bg-accent">
       <Container>
         <SectionHeader
-          title={t('common:Biz Raqamlarda')}
+          title={t('Biz Raqamlarda')}
+          seeAllLink="/statistics"
+          seeAllText={t('seeAll')}
           noContainer={true}
         />
 
@@ -51,12 +55,12 @@ const Stats = () => {
               {/* Rasm — aniq ko‘rinadigan, tez yuklanadigan */}
               <div className="w-full h-48">
                 <img
-                  src="https://images.unsplash.com/photo-1564981797816-1043664bf78d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
-                  alt="Namangan Davlat Universiteti"
+                  src={data.universityArea?.image || "https://images.unsplash.com/photo-1564981797816-1043664bf78d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"}
+                  alt="Namangan Davlat Texnika Universiteti"
                   className="w-full h-full object-cover"
                   loading="lazy"
                   onError={(e) => {
-                    e.currentTarget.src = "https://via.placeholder.com/800x400/1e40af/ffffff?text=NAMDU";
+                    e.currentTarget.src = "https://via.placeholder.com/800x400/1e40af/ffffff?text=NAMDTU";
                   }}
                 />
               </div>
@@ -67,10 +71,10 @@ const Stats = () => {
                   <MapIcon className="w-6 h-6 text-green-600" />
                 </div>
                 <p className="text-sm font-medium text-gray-700 text-center">
-                  {t('common:universityArea')}
+                  {data.universityArea?.text ? getLocalized(data.universityArea.text, locale) : t('universityArea')}
                 </p>
                 <p className="text-3xl font-bold text-green-600 mt-1">
-                  {data.universityArea?.area || 1500} <span className="text-xl font-normal text-green-700">{data.universityArea?.unit || 'm²'}</span>
+                  {data.universityArea?.area} <span className="text-xl font-normal text-green-700">{data.universityArea?.unit}</span>
                 </p>
               </div>
             </div>
@@ -95,9 +99,9 @@ const Stats = () => {
                       <p className="text-lg md:text-xl font-medium text-primary leading-tight mb-2">
                         {getLocalized(item.text, locale)}
                       </p>
-                      <div className={`text-3xl md:text-4xl font-bold ${colors[index] || 'text-gray-600'}`}>
+                      <div className={`flex items-center justify-center text-3xl md:text-4xl font-bold ${colors[index] || 'text-gray-600'}`}>
                         {animate ? <CountUp end={item.end} duration={2.8} separator="," /> : '0'}
-                        {item.plus && <span className="text-xl text-gray-600">+</span>}
+                        {item.plus && <span className="text-xl md:text-2xl ml-1 mt-1 inline-block">+</span>}
                       </div>
                     </div>
                   );

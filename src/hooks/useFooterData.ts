@@ -1,10 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
+import { useCachedApi } from './useCachedApi';
 import { fetchFooterData } from '../services/footerService';
 import { FooterData } from '../types/footer.types';
 
 export const useFooterData = () => {
-  return useQuery<FooterData, Error>({
-    queryKey: ['footerData'],
-    queryFn: fetchFooterData,
+  return useCachedApi<FooterData>({
+    key: 'footer-data-http',
+    fetcher: fetchFooterData,
+    ttlMinutes: 30
   });
 };

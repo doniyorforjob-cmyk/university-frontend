@@ -33,5 +33,16 @@
         "phoneMin": "Invalid phone number",
         "messageMin": "Message must be at least 10 characters",
         "codeLength": "Code must be 6 digits"
+    },
+    "emptyResources": {
+        "photos": "photos",
+        "videos": "videos",
+        "news": "news",
+        "announcements": "announcements",
+        "services": "services",
+        "departments": "departments",
+        "info": "information",
+        "systems": "systems",
+        "faculties": "faculties"
     }
 }

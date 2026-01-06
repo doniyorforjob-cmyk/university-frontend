@@ -28,8 +28,8 @@ export interface HomeHeroData {
 
 export interface HomeStatsData {
   stats: Array<{
-    id: number;
-    text: string;
+    id: number | string;
+    text: string | Record<string, string>;
     end: number;
     plus?: boolean;
   }>;
@@ -37,6 +37,7 @@ export interface HomeStatsData {
     area: number;
     unit: string;
     image: string;
+    text?: string | Record<string, string>;
   };
 }
 

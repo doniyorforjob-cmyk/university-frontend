@@ -24,9 +24,13 @@ export const transformUniversitySystemsData = (
   systemsData: any,
   quickLinksData: any = []
 ): TransformedUniversitySystemsData => {
+  // If systemsData contains both systems and quickLinks (new combined API response shape)
+  const systemsRaw = (systemsData?.systems !== undefined) ? systemsData.systems : systemsData;
+  const quickLinksRaw = (systemsData?.quickLinks !== undefined) ? systemsData.quickLinks : quickLinksData;
+
   // Combine all raw data sources into one pool
-  const rawSystems = Array.isArray(systemsData) ? systemsData : (systemsData?.data || []);
-  const rawQuickLinks = Array.isArray(quickLinksData) ? quickLinksData : (quickLinksData?.data || []);
+  const rawSystems = Array.isArray(systemsRaw) ? systemsRaw : (systemsRaw?.data || []);
+  const rawQuickLinks = Array.isArray(quickLinksRaw) ? quickLinksRaw : (quickLinksRaw?.data || []);
 
   const allRawItems = [...rawSystems, ...rawQuickLinks];
 
@@ -119,19 +123,15 @@ export const transformUniversitySystemsData = (
     // Decide where it goes (Exclusive)
     if (isExplicitQuickLink) {
       quickLinksPool.push(item);
-      console.log(`[Categorizer] Item "${item.title}" -> QUICKLINK (Explicit category match: "${item.category}")`);
     } else if (isExplicitSystem) {
       systemsPool.push(item);
-      console.log(`[Categorizer] Item "${item.title}" -> SYSTEM (Explicit category match: "${item.category}")`);
     } else {
       // Fallback: Decide based on content
       // Links usually don't have descriptions
       if (!item.description || item.description.length < 5) {
         quickLinksPool.push(item);
-        console.log(`[Categorizer] Item "${item.title}" -> QUICKLINK (No description found)`);
       } else {
         systemsPool.push(item);
-        console.log(`[Categorizer] Item "${item.title}" -> SYSTEM (Fallback: has description)`);
       }
     }
   });
@@ -139,10 +139,6 @@ export const transformUniversitySystemsData = (
   const systems = systemsPool.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   const quickLinks = quickLinksPool.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
-  console.log('--- Final University Systems Layout ---');
-  console.log('Systems (Cards):', systems.map(s => s.title));
-  console.log('Quick Links (Text):', quickLinks.map(ql => ql.title));
-  console.log('-----------------------------------------');
 
   return {
     title: 'Universitet Tizimlari',

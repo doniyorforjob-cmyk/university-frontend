@@ -25,6 +25,7 @@ export const settingsApi = {
             return {
                 siteName: fields.sitename || 'NamDTU',
                 siteDescription: fields.sitedescription || '',
+                mission: fields.mission || '',
                 logo: fields.logo?.[0]?.url || '',
                 contacts: {
                     primaryPhone: cleanPhone(fields.primaryphone) || '+998 69 227 00 00',
@@ -47,7 +48,7 @@ export const settingsApi = {
                 ],
                 footer: {
                     copyright: fields.footercopyright || '© 2026 Namangan davlat texnika universiteti',
-                    mission: fields.footermission || '',
+                    mission: fields.mission || fields.footermission || '',
                     quickLinks: []
                 }
             };

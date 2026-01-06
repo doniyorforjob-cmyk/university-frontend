@@ -21,6 +21,7 @@ const InformationServicesPage = React.lazy(() => import('./pages/InformationServ
 const PhotoDetailPage = React.lazy(() => import('./pages/PhotoDetail'));
 const OpenLessonsPage = React.lazy(() => import('./pages/OpenLessons'));
 const GenericDetailPage = React.lazy(() => import('./pages/GenericDetail'));
+const FacultiesPage = React.lazy(() => import('./pages/Faculties'));
 const ServerError = React.lazy(() => import('./pages/Error/ServerError'));
 const NotFound = React.lazy(() => import('./pages/Errors/NotFound'));
 
@@ -50,6 +51,8 @@ const AppRoutes = () => {
                     <Route path="information-services" element={<InformationServicesPage />} />
                     <Route path="organizational-structure" element={<OrganizationalStructurePage />} />
                     <Route path="activities" element={<ActivitiesPage />} />
+                    {/* <Route path="departments" element={<GenericDetailPage type="department" />} /> */}
+                    <Route path="faculties" element={<FacultiesPage />} />
                     <Route path="admission" element={<AdmissionPage />} />
                     <Route path="yashil-universitet" element={<YashilUniversitetPage />} />
                     <Route path="eco-active-students" element={<EcoActiveStudentsPage />} />

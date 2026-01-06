@@ -8,17 +8,11 @@ import MediaCard from './components/MediaCard';
 import { useSettingsStore } from '../../store/settingsStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CalendarDaysIcon } from '@heroicons/react/24/outline';
+import { formatShortDate } from '../../utils/format';
+import EmptyState from '../../components/shared/EmptyState';
+import { PhotoIcon, FilmIcon } from '@heroicons/react/24/outline';
+import { transformVideoGalleryData } from './transformers/videoGalleryTransformer';
 
-const formatDate = (dateString: string, language: string) => {
-  const date = new Date(dateString);
-
-  const time = date.toLocaleTimeString(language, {
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-
-  return `${time} ${date.toLocaleDateString(language, { day: 'numeric', month: 'short' })}`;
-};
 
 
 const MediaGallery: React.FC = () => {
@@ -27,65 +21,74 @@ const MediaGallery: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'photos' | 'videos'>('videos');
   const [activeVideo, setActiveVideo] = useState<number | null>(null);
 
-  // Assuming HomeFacultiesData and homeApi.getFacultiesData are defined elsewhere if this code is meant to be integrated.
-  // For now, adding the log as requested, but the useStandardSection for faculties is commented out
-  // as it conflicts with the existing data variable for media-gallery.
-  // const { data: facultiesData, loading: facultiesLoading } = useStandardSection<HomeFacultiesData>('faculties', homeApi.getFacultiesData);
-  // const [activeFacultyId, setActiveFacultyId] = useState<string | number | null>(null);
-  // console.log('FacultiesSection State:', { loading: facultiesLoading, hasData: !!facultiesData, facultiesCount: facultiesData?.faculties?.length });
-
   const { data, loading } = useStandardSection(
     'media-gallery',
-    homeApi.getMediaData
+    homeApi.getMediaData,
+    { transformData: transformVideoGalleryData }
   );
-
-  console.log('MediaGallery State:', {
-    loading,
-    hasData: !!data,
-    photosCount: data?.photos?.length,
-    videosCount: data?.videos?.length,
-    photoTitles: data?.photos?.map((p: any) => p.title),
-    videoTitles: data?.videos?.map((v: any) => v.title)
-  });
 
   if (loading || !data) return null;
 
-
-  const renderPhotoGallery = () => (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 md:gap-8">
-      {(data.photos || []).map((photo: HomeMediaData['photos'][0], index: number) => (
-        <MediaCard
-          key={photo.id}
-          type="photo"
-          title={photo.title}
-          thumbnail={photo.cover_image}
-          date={formatDate(photo.created_at, i18n.language)}
-          views={photo.views || 0}
-          photos={photo.gallery?.length || 0}
-          imageUrl={photo.cover_image}
-          slug={photo.id.toString()}
+  const renderPhotoGallery = () => {
+    const photos = data.photos || [];
+    if (photos.length === 0) {
+      return (
+        <EmptyState
+          resourceKey="photos"
+          icon={<PhotoIcon className="w-12 h-12 text-slate-300" />}
+          className="min-h-[300px]"
         />
-      ))}
-    </div>
-  );
-
-  const renderVideoGallery = () => (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 md:gap-8">
-      {(data.videos || []).map((video: HomeMediaData['videos'][0], index: number) => (
-        <div key={video.id} onClick={() => setActiveVideo(index)} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setActiveVideo(index); }}>
+      );
+    }
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 md:gap-8">
+        {photos.map((photo: HomeMediaData['photos'][0], index: number) => (
           <MediaCard
-            type="video"
-            title={video.title}
-            thumbnail={video.thumbnail}
-            date={formatDate(video.created_at, i18n.language)}
-            views={video.views || 0}
-            videoId={video.id}
-            embedUrl={`https://www.youtube.com/embed/${video.id}`}
+            key={photo.id}
+            type="photo"
+            title={photo.title}
+            thumbnail={photo.cover_image}
+            date={formatShortDate(photo.created_at, i18n.language)}
+            views={photo.views || 0}
+            photos={photo.gallery?.length || 0}
+            imageUrl={photo.cover_image}
+            slug={photo.id.toString()}
           />
-        </div>
-      ))}
-    </div>
-  );
+        ))}
+      </div>
+    );
+  };
+
+  const renderVideoGallery = () => {
+    const videos = data.videos || [];
+    if (videos.length === 0) {
+      return (
+        <EmptyState
+          resourceKey="videos"
+          icon={<FilmIcon className="w-12 h-12 text-slate-300" />}
+          className="min-h-[300px]"
+        />
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 md:gap-8">
+        {videos.map((video: HomeMediaData['videos'][0], index: number) => (
+          <div key={video.id} onClick={() => setActiveVideo(index)} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setActiveVideo(index); }}>
+            <MediaCard
+              type="video"
+              title={video.title}
+              thumbnail={video.thumbnail}
+              date={formatShortDate(video.created_at, i18n.language)}
+              views={video.views || 0}
+              videoId={video.id}
+              embedUrl={`https://www.youtube.com/embed/${video.id}`}
+            />
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <section className="py-12 md:py-20 lg:py-24 bg-gradient-to-b from-blue-50/30 to-white">
@@ -163,7 +166,7 @@ const MediaGallery: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-1 text-sm text-gray-600">
                       <CalendarDaysIcon className="w-4 h-4" />
-                      <span>{formatDate(data.videos[activeVideo].created_at, i18n.language)}</span>
+                      <span>{formatShortDate(data.videos[activeVideo].created_at, i18n.language)}</span>
                     </div>
                   </div>
 

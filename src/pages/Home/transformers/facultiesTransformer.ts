@@ -2,9 +2,12 @@ import { HomeFacultiesData } from '../../../types/home.types';
 import { getImageUrl } from '../../../utils/apiUtils';
 
 export const transformFacultiesData = (facultiesData: any, departmentsData: any = []): HomeFacultiesData => {
-  console.log('Transforming faculties:', { facultiesData, departmentsData });
-  const faculties = Array.isArray(facultiesData) ? facultiesData : (facultiesData?.data || []);
-  const departments = Array.isArray(departmentsData) ? departmentsData : (departmentsData?.data || []);
+  // If facultiesData contains both faculties and departments (new combined API response shape)
+  const facultiesRaw = (facultiesData?.faculties !== undefined) ? facultiesData.faculties : facultiesData;
+  const departmentsRaw = (facultiesData?.departments !== undefined) ? facultiesData.departments : departmentsData;
+
+  const faculties = Array.isArray(facultiesRaw) ? facultiesRaw : (facultiesRaw?.data || []);
+  const departments = Array.isArray(departmentsRaw) ? departmentsRaw : (departmentsRaw?.data || []);
 
   if (faculties.length === 0) {
     console.warn('Transformer: No faculties found in input data');

@@ -44,5 +44,6 @@
         "tv": "Телеканал",
         "print": "Газета/Журнал"
     },
-    "error_title": "Произошла ошибка"
+    "error_title": "Произошла ошибка",
+    "noDataWithResource": "Пока {{resource}} отсутствуют"
 }

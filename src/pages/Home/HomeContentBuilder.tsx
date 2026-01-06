@@ -70,6 +70,7 @@ const HomeContentBuilder: React.FC<HomeContentBuilderProps> = ({
     .filter(section => section.enabled)
     .sort((a, b) => a.order - b.order);
 
+
   const getContainerClasses = () => {
     const baseClasses = 'home-content-builder';
 

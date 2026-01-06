@@ -36,12 +36,17 @@ const prefetchData = async () => {
   const { prefetchService } = await import('./services/prefetchService');
 
   // Parallel prefetch using the new service
-  await Promise.all([
+  await Promise.allSettled([
     prefetchService.prefetchNavbar(),
     prefetchService.prefetchSettings(),
     prefetchService.prefetchHomeNews(),
     prefetchService.prefetchFaculties(),
-    prefetchService.prefetchNewsPage()
+    prefetchService.prefetchNewsPage(),
+    prefetchService.prefetchStats(),
+    prefetchService.prefetchMedia(),
+    prefetchService.prefetchInteractiveServices(),
+    prefetchService.prefetchUniversitySystems(),
+    prefetchService.prefetchFooter(),
   ]);
 };
 prefetchData();

@@ -8,6 +8,8 @@ import { SystemsContainer } from '../../components/shared/cards';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from '../../contexts/LocaleContext';
 import { useGlobalCache } from '../../components/providers/CachedApiProvider';
+import EmptyState from '../../components/shared/EmptyState';
+import { GlobeAltIcon } from '@heroicons/react/24/outline';
 
 const UniversitySystemsSection: React.FC = () => {
   const { t } = useTranslation('common');
@@ -19,7 +21,8 @@ const UniversitySystemsSection: React.FC = () => {
 
   const { data, loading } = useStandardSection<TransformedUniversitySystemsData>(
     'university-systems',
-    fetcher
+    fetcher,
+    { transformData: transformUniversitySystemsData }
   );
 
   // 2. Prefetching Logic
@@ -46,6 +49,8 @@ const UniversitySystemsSection: React.FC = () => {
     return null; // Or a skeleton loader
   }
 
+  const hasContent = data.systems.length > 0 || data.quickLinks.length > 0;
+
   return (
     <section className="py-8 md:py-12 bg-accent">
       <Container>
@@ -58,11 +63,18 @@ const UniversitySystemsSection: React.FC = () => {
           />
         </div>
 
-        <SystemsContainer
-          systems={data.systems}
-          quickLinks={data.quickLinks}
-          variant="section"
-        />
+        {!hasContent ? (
+          <EmptyState
+            resourceKey="systems"
+            icon={<GlobeAltIcon className="w-16 h-16" />}
+          />
+        ) : (
+          <SystemsContainer
+            systems={data.systems}
+            quickLinks={data.quickLinks}
+            variant="section"
+          />
+        )}
       </Container>
     </section>
   );

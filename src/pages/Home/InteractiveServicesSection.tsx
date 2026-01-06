@@ -9,6 +9,9 @@ import { homeApi } from '../../services/homeService';
 import { getLocalized } from '../../utils/apiUtils';
 import { useLocale } from '../../contexts/LocaleContext';
 import { useGlobalCache } from '../../components/providers/CachedApiProvider';
+import EmptyState from '../../components/shared/EmptyState';
+import { ComputerDesktopIcon } from '@heroicons/react/24/outline';
+import { transformInteractiveServicesData } from './transformers/interactiveServicesTransformer';
 
 interface ServiceItem {
   id: number;
@@ -37,7 +40,8 @@ const InteractiveServicesSection = () => {
 
   const { data, loading } = useStandardSection(
     'interactive-services',
-    fetcher
+    fetcher,
+    { transformData: transformInteractiveServicesData }
   );
 
   // 2. Prefetching Logic
@@ -81,9 +85,10 @@ const InteractiveServicesSection = () => {
       />
       <Container>
         {services.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
-            {t('common:loading', 'Yuklanmoqda...')}
-          </div>
+          <EmptyState
+            resourceKey="services"
+            icon={<ComputerDesktopIcon className="w-16 h-16" />}
+          />
         )}
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">

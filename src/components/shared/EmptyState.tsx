@@ -1,9 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 interface EmptyStateProps {
-    title?: string;
-    message: string;
+    title?: React.ReactNode;
+    message?: React.ReactNode;
+    resourceKey?: 'photos' | 'videos' | 'news' | 'announcements' | 'services' | 'departments' | 'info' | 'systems' | 'faculties';
     icon?: React.ReactNode;
     className?: string; // Users should provide height classes here if needed (e.g., h-64, h-full, etc.)
 }
@@ -15,9 +17,17 @@ interface EmptyStateProps {
 const EmptyState: React.FC<EmptyStateProps> = ({
     title,
     message,
+    resourceKey,
     icon,
     className = "min-h-[20rem]" // Default responsive minimum height using rem instead of px
 }) => {
+    const { t } = useTranslation(['common', 'pages']);
+
+    const displayTitle = title || t('pages:noDataAvailable');
+    const displayMessage = resourceKey
+        ? t('common:noDataWithResource', { resource: t(`pages:emptyResources.${resourceKey}`) })
+        : (message || t('pages:noDataAvailable'));
+
     return (
         <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -42,14 +52,12 @@ const EmptyState: React.FC<EmptyStateProps> = ({
                 )}
             </div>
 
-            {title && (
-                <h3 className="text-lg font-bold text-slate-600 mb-1">
-                    {title}
-                </h3>
-            )}
+            <h3 className="text-lg font-bold text-slate-600 mb-1">
+                {displayTitle}
+            </h3>
 
             <p className="text-slate-400 max-w-xs mx-auto leading-relaxed">
-                {message}
+                {displayMessage}
             </p>
         </motion.div>
     );

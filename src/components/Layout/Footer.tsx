@@ -25,7 +25,7 @@ import { useTranslation } from 'react-i18next';
 const Footer: React.FC = () => {
   const { t } = useTranslation('common');
   const currentYear = new Date().getFullYear();
-  const { data, isLoading: footerLoading, error } = useFooterData();
+  const { data, loading: footerLoading, error } = useFooterData();
   const { settings, isLoading: settingsLoading } = useSettingsStore();
   const { locale } = useLocale();
 
@@ -41,13 +41,14 @@ const Footer: React.FC = () => {
   }
 
   // Fallback data if API fails
-  const contactInfo = data?.contactInfo || {
-    address: { text: '', url: '' },
-    phone: { number: '', tel: '' },
-    email: { address: '', mailto: '' }
+  const contactInfo = settings?.contacts || {
+    address: '',
+    primaryPhone: '',
+    email: ''
   };
-  const socialLinks = data?.socialLinks || [];
+  const socialLinks = settings?.socials || [];
   const linkGroups = data?.linkGroups || [];
+  const copyrightText = (data as any)?.copyright || settings?.footer?.copyright || `© ${currentYear} ${settings?.siteName || "Namangan Davlat Texnika Universiteti"}.`;
 
   return (
     <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-t border-gray-700">
@@ -64,17 +65,16 @@ const Footer: React.FC = () => {
                 <div className="h-20 w-20 sm:h-24 sm:w-24 mb-2 sm:mb-0 sm:mr-4 rounded-full bg-gray-700 animate-pulse flex-shrink-0" />
               )}
               <span className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white text-center sm:text-left">
-                {settings?.siteName || ""}
+                {settings?.siteName || "NamDTU"}
               </span>
             </PrefetchLink>
 
             <p className="max-w-xs mt-4 text-base text-gray-300 leading-relaxed">
-              {settings?.footer?.mission || settings?.siteDescription || ""}
+              {settings?.mission || settings?.siteDescription || ""}
             </p>
 
             <div className="flex mt-8 space-x-4">
-              {/* Use settings.socials first (consistent with Header), fallback to footer API socials */}
-              {(settings?.socials?.length ? settings.socials : socialLinks).map((link: any) => (
+              {socialLinks.map((link: any) => (
                 <a
                   key={link.name || link.id}
                   href={link.url || link.href}
@@ -100,79 +100,85 @@ const Footer: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 gap-8 lg:col-span-2 sm:grid-cols-2 lg:grid-cols-4">
-            <div>
-              <div className="flex items-center mb-4">
-                <span className="w-1 h-5 bg-secondary-500 mr-3"></span>
-                <p className="font-medium text-lg text-white">{t('common:contact')}</p>
-              </div>
-              <ul className="flex flex-col space-y-3 text-base text-gray-300">
-                <li className="flex items-start group">
-                  <MapPinIcon className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0 text-gray-400 transition-colors duration-300 group-hover:text-white" />
-                  <a
-                    href={settings?.contacts?.googleMapsUrl || contactInfo.address.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-white hover:bg-gray-700/50 px-2 py-1 transition-all duration-300 focus:outline-none focus:text-white focus:bg-gray-700/50 -ml-2"
-                  >
-                    {settings?.contacts?.address || contactInfo.address.text}
-                  </a>
-                </li>
-                <li className="flex items-center group">
-                  <PhoneIcon className="h-5 w-5 mr-2 flex-shrink-0 text-gray-400 transition-colors duration-300 group-hover:text-white" />
-                  <a
-                    href={`tel:${settings?.contacts?.primaryPhone?.replace(/[^0-9+]/g, '') || contactInfo.phone.tel}`}
-                    className="hover:text-white hover:bg-gray-700/50 px-2 py-1 transition-all duration-300 focus:outline-none focus:text-white focus:bg-gray-700/50 -ml-2"
-                  >
-                    {settings?.contacts?.primaryPhone || contactInfo.phone.number}
-                  </a>
-                </li>
-                <li className="flex items-center group">
-                  <EnvelopeIcon className="h-5 w-5 mr-2 flex-shrink-0 text-gray-400 transition-colors duration-300 group-hover:text-white" />
-                  <a
-                    href={`mailto:${settings?.contacts?.email || contactInfo.email.address}`}
-                    className="hover:text-white hover:bg-gray-700/50 px-2 py-1 transition-all duration-300 focus:outline-none focus:text-white focus:bg-gray-700/50 -ml-2"
-                  >
-                    {settings?.contacts?.email || contactInfo.email.address}
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            {linkGroups.map((group) => (
-              <div key={group.id}>
+            {(settings?.contacts?.primaryPhone || settings?.contacts?.email || settings?.contacts?.address) && (
+              <div>
                 <div className="flex items-center mb-4">
                   <span className="w-1 h-5 bg-secondary-500 mr-3"></span>
-                  <p className="font-medium text-lg text-white">{getLocalized(group.title, locale)}</p>
+                  <p className="font-medium text-lg text-white">{t('common:contact')}</p>
                 </div>
-                <nav className="flex flex-col space-y-2 text-base text-gray-300">
-                  {group.links.map((link) => (
-                    <PrefetchLink
-                      key={link.id}
-                      to={link.url}
-                      prefetch={true}
-                      prefetchDelay={150}
-                      onMouseEnter={async () => {
-                        const { prefetchService } = await import('../../services/prefetchService');
-                        if (link.url === '/news') {
-                          prefetchService.prefetchNewsPage();
-                        } else if (link.url === '/') {
-                          prefetchService.prefetchHomeNews();
-                        }
-                      }}
-                      className="hover:text-white hover:bg-gray-700/50 hover:translate-x-1 px-2 py-1 transition-all duration-300 focus:outline-none focus:text-white focus:bg-gray-700/50 focus:translate-x-1 inline-block -ml-2"
-                    >
-                      {getLocalized(link.text, locale)}
-                    </PrefetchLink>
-                  ))}
-                </nav>
+                <ul className="flex flex-col space-y-3 text-base text-gray-300">
+                  {settings?.contacts?.address && (
+                    <li className="flex items-start group">
+                      <MapPinIcon className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0 text-gray-400 transition-colors duration-300 group-hover:text-white" />
+                      <a
+                        href={settings?.contacts?.googleMapsUrl || "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-white hover:bg-gray-700/50 px-2 py-1 transition-all duration-300 focus:outline-none focus:text-white focus:bg-gray-700/50 -ml-2"
+                      >
+                        {settings?.contacts?.address}
+                      </a>
+                    </li>
+                  )}
+                  {settings?.contacts?.primaryPhone && (
+                    <li className="flex items-center group">
+                      <PhoneIcon className="h-5 w-5 mr-2 flex-shrink-0 text-gray-400 transition-colors duration-300 group-hover:text-white" />
+                      <a
+                        href={`tel:${settings?.contacts?.primaryPhone?.replace(/[^0-9+]/g, '') || ""}`}
+                        className="hover:text-white hover:bg-gray-700/50 px-2 py-1 transition-all duration-300 focus:outline-none focus:text-white focus:bg-gray-700/50 -ml-2"
+                      >
+                        {settings?.contacts?.primaryPhone}
+                      </a>
+                    </li>
+                  )}
+                  {settings?.contacts?.email && (
+                    <li className="flex items-center group">
+                      <EnvelopeIcon className="h-5 w-5 mr-2 flex-shrink-0 text-gray-400 transition-colors duration-300 group-hover:text-white" />
+                      <a
+                        href={`mailto:${settings?.contacts?.email || ""}`}
+                        className="hover:text-white hover:bg-gray-700/50 px-2 py-1 transition-all duration-300 focus:outline-none focus:text-white focus:bg-gray-700/50 -ml-2"
+                      >
+                        {settings?.contacts?.email}
+                      </a>
+                    </li>
+                  )}
+                </ul>
               </div>
-            ))}
+            )}
+
+            {linkGroups
+              .filter(group => {
+                const groupTitle = getLocalized(group.title, locale);
+                const contactTitle = t('common:contact');
+                // Filter out if it's explicitly "Aloqa uchun" or matches translation
+                return groupTitle !== contactTitle && group.title !== 'Aloqa uchun';
+              })
+              .map((group) => (
+                <div key={group.id}>
+                  <div className="flex items-center mb-4">
+                    <span className="w-1 h-5 bg-secondary-500 mr-3"></span>
+                    <p className="font-medium text-lg text-white">{getLocalized(group.title, locale)}</p>
+                  </div>
+                  <nav className="flex flex-col space-y-2 text-base text-gray-300">
+                    {group.links.map((link) => (
+                      <PrefetchLink
+                        key={link.id}
+                        to={link.url}
+                        prefetch={true}
+                        className="hover:text-white hover:bg-gray-700/50 hover:translate-x-1 px-2 py-1 transition-all duration-300 focus:outline-none focus:text-white focus:bg-gray-700/50 focus:translate-x-1 inline-block -ml-2"
+                      >
+                        {getLocalized(link.text, locale)}
+                      </PrefetchLink>
+                    ))}
+                  </nav>
+                </div>
+              ))}
           </div>
         </div>
 
         <div className="mt-12 pt-8 border-t border-gray-700">
           <p className="text-sm text-gray-400 text-center">
-            {settings?.footer?.copyright || `© ${currentYear} ${settings?.siteName || "Namangan Davlat Texnika Universiteti"}.`}
+            {copyrightText}
           </p>
         </div>
       </Container>

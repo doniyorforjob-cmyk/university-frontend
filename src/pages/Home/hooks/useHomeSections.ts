@@ -4,7 +4,7 @@ import { useStandardSection } from './useStandardSection';
 import { homeApi } from '../../../services/homeService';
 import { generateDefaultSections } from '../HomeSectionTemplate';
 import { transformHeroData } from '../transformers/heroTransformer';
-import { transformStatsData } from '../transformers/statsTransformer';
+import { transformStatsData } from '../transformers/universityStatsTransformer';
 import { transformNewsData } from '../transformers/newsTransformer';
 import { transformFacultiesData } from '../transformers/facultiesTransformer';
 import { transformVideoGalleryData } from '../transformers/videoGalleryTransformer';
@@ -41,7 +41,8 @@ export const useHomeSections = () => {
   const newsSection = useStandardSection('news',
     homeApi.getNewsData,
     {
-      ttlMinutes: 0.5 // News updates more frequently
+      ttlMinutes: 0.5, // News updates more frequently
+      transformData: transformNewsData
     }
   );
 
@@ -133,5 +134,6 @@ export const useHomeSections = () => {
     faculties: facultiesSection,
     videoGallery: videoGallerySection,
     interactiveServices: interactiveServicesSection,
+    universitySystems: universitySystemsSection,
   };
 };

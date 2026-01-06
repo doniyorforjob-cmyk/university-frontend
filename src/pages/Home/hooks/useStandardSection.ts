@@ -33,7 +33,6 @@ export const useStandardSection = <T = any>(
 
   // Stabilize callbacks to prevent infinite re-render loops in useCachedApi
   const handleSuccess = useCallback((data: any) => {
-    console.log(`${sectionType} section ma'lumotlari yuklandi`);
     userOnSuccess?.(data);
   }, [sectionType, userOnSuccess]);
 

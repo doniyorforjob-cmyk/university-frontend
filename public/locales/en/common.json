@@ -44,5 +44,6 @@
         "tv": "TV Channel",
         "print": "Newspaper/Journal"
     },
-    "error_title": "An error occurred"
+    "error_title": "An error occurred",
+    "noDataWithResource": "There are no {{resource}} yet"
 }
