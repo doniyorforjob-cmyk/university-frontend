@@ -12,7 +12,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
     // 3. Shrift o'lchami o'zgarganda `html` elementiga qo'llaniladi
     useEffect(() => {
-        document.documentElement.style.fontSize = `${fontSize}px`;
+        if (fontSize) {
+            document.documentElement.style.fontSize = `${fontSize}px`;
+        } else {
+            // Agar null bo'lsa (default), CSS dagi responsive o'lchamlarni ishlatish uchun tozalaymiz
+            document.documentElement.style.removeProperty('font-size');
+        }
     }, [fontSize]);
 
     return (

@@ -186,10 +186,11 @@ export const homeApi = {
         params.locale = locale;
       }
 
-      const [systemsResponse, quickLinksResponse] = await Promise.all([
-        apiClient.get(`/projects/${projectId}/content/university-systems`, { params }),
-        apiClient.get(`/projects/${projectId}/content/quick-links`, { params }).catch(() => ({ data: [] })) // Handle missing collection gracefully
-      ]);
+      const systemsResponse = await apiClient.get(`/projects/${projectId}/content/university-systems`, { params });
+
+      // Quick links are now part of university-systems collection (category: 'quick links')
+      // No need to call a separate endpoint that returns 404.
+      const quickLinksResponse = { data: [] };
 
       return { systems: systemsResponse.data, quickLinks: quickLinksResponse.data };
     } catch (error) {

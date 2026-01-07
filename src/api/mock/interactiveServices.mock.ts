@@ -1,6 +1,6 @@
 import { Service } from '../../types/service.types';
 
-const mockServices: Service[] = [
+export const mockServices: Service[] = [
   {
     id: 1,
     title: 'Elektron Kutubxona',

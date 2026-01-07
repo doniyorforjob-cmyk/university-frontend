@@ -92,7 +92,7 @@ module.exports = {
       // === TIPOGRAFIYA ===
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['Montserrat', 'Inter', 'sans-serif'],
+        display: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
       },
       fontSize: {
         // Fluid typography scale

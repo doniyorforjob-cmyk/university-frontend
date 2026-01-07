@@ -1,7 +1,7 @@
 /* src/index.css */
 
 /* 1. Google Fonts — Inter (asosiy) + Montserrat (sarlavhalar) */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 /* 2. Tailwind CSS directives */
 @tailwind base;
@@ -95,24 +95,48 @@
 @layer base {
 
   /* BODY RANGI: #f7f7f7 */
-  body {
-    background-color: #f7f7f7 !important;
-    color: #212121;
-    margin: 0;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
-    width: 100%;
-  }
+  @layer base {
+    html {
+      /* Mobile: Standard size */
+      font-size: 16px;
+    }
 
-  /* HTML ham to'liq kenglikda bo'lishi kerak */
-  html {
-    overflow-x: hidden;
-    overflow-y: scroll;
-    width: 100%;
+    @media (min-width: 768px) {
+      html {
+        /* Desktop: Scaled up (one full step larger) */
+        font-size: 17px;
+      }
+    }
   }
 }
+
+body {
+  background-color: #f7f7f7 !important;
+  color: #212121;
+  margin: 0;
+  font-family: theme('fontFamily.sans');
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* HTML ham to'liq kenglikda bo'lishi kerak */
+html {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: theme('fontFamily.display');
+}
+
 
 /* 4. Custom Styles */
 code {
@@ -178,6 +202,7 @@ code {
 
 /* 6. Custom Utilities */
 @layer utilities {
+
   /* Scrollbar only visible on hover */
   .scrollbar-auto-hide {
     scrollbar-width: thin;

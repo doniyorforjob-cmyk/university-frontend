@@ -1,17 +1,17 @@
-import {create} from 'zustand';
+import { create } from 'zustand';
 
 interface FontSizeState {
-  fontSize: number;
+  fontSize: number | null; // null means "use CSS default"
   increaseFontSize: () => void;
   decreaseFontSize: () => void;
   resetFontSize: () => void;
 }
 
 const useFontSizeStore = create<FontSizeState>((set) => ({
-  fontSize: 15, // Standart shrift o'lchami
-  increaseFontSize: () => set({ fontSize: 19 }), // Katta shrift o'lchami
-  decreaseFontSize: () => set({ fontSize: 13 }), // Kichik shrift o'lchami
-  resetFontSize: () => set({ fontSize: 15 }), // Standart o'lchamga qaytarish
+  fontSize: null, // Default: let CSS handle it (16px/18px)
+  increaseFontSize: () => set((state) => ({ fontSize: (state.fontSize || 16) + 2 })),
+  decreaseFontSize: () => set((state) => ({ fontSize: (state.fontSize || 16) - 2 })),
+  resetFontSize: () => set({ fontSize: null }),
 }));
 
 export default useFontSizeStore;
