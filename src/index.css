@@ -172,14 +172,14 @@ code {
   .header-middle {
     height: auto !important;
     /* Mobile: auto height */
-    min-height: 13rem;
-    /* Mobile: reduced for better spacing */
+    min-height: 6rem;
+    /* Mobile: fixed excess empty space */
   }
 
   @media (min-width: 768px) {
     .header-middle {
-      height: 10rem !important;
-      /* Desktop: fixed 160px */
+      height: auto !important;
+      /* Desktop: use auto height for perfect padding-based symmetry */
       min-height: unset;
     }
   }

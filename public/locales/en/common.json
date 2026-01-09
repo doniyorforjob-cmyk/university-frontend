@@ -45,5 +45,7 @@
         "print": "Newspaper/Journal"
     },
     "error_title": "An error occurred",
-    "noDataWithResource": "There are no {{resource}} yet"
+    "noDataWithResource": "There are no {{resource}} yet",
+    "universityName": "Namangan State\nTechnical\nUniversity",
+    "officialWebsite": "Official Website"
 }

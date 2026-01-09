@@ -45,5 +45,7 @@
         "print": "Газета/Журнал"
     },
     "error_title": "Произошла ошибка",
-    "noDataWithResource": "Пока {{resource}} отсутствуют"
+    "noDataWithResource": "Пока {{resource}} отсутствуют",
+    "universityName": "Наманганский государственный\nтехнический\nуниверситет",
+    "officialWebsite": "Официальный веб-сайт"
 }

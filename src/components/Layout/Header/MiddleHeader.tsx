@@ -1,54 +1,50 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Container from '../../shared/Container';
 import { useSettingsStore } from '../../../store/settingsStore';
-import { useLocale } from '../../../contexts/LocaleContext';
 import { PrefetchLink } from '../../shared';
-
-const translations = {
-    uz: { hotline: 'Ishonch telefoni', address: 'Manzil' },
-    ru: { hotline: 'Телефон доверия', address: 'Адрес' },
-    en: { hotline: 'Hotline', address: 'Address' }
-};
 
 const MiddleHeader: React.FC = () => {
     const { settings } = useSettingsStore();
-    const { locale } = useLocale();
-    const t = translations[locale as keyof typeof translations] || translations.uz;
+    const { t, i18n } = useTranslation('common');
 
     const phone = settings?.contacts?.primaryPhone || "";
     const phoneRaw = phone.replace(/[^0-9+]/g, '');
     const address = settings?.contacts?.address || "";
     const logo = settings?.logo || "";
-    const siteName = settings?.siteName || "";
-    const siteDescription = settings?.siteDescription || "";
 
     return (
-        <div className="bg-white py-6 header-middle">
+        <div className="bg-white py-3 lg:py-5 border-b border-gray-100 header-middle transition-colors">
             <Container>
                 {/* Katta ekranlar uchun layout */}
                 <div className="hidden md:flex items-center justify-between">
                     {/* Chap tomon: Logotip va Universitet nomi */}
-                    <PrefetchLink to="/" className="flex items-center">
-                        {logo ? (
-                            <img src={logo} alt={siteName} width="112" height="112" className="h-28 w-28 mr-4 rounded-full object-cover" />
-                        ) : (
-                            <div className="h-28 w-28 mr-4 rounded-full bg-gray-100 animate-pulse flex-shrink-0" />
-                        )}
-                        <div>
-                            <h1 className="text-4xl font-bold text-[#0E104B]">{siteName}</h1>
-                            <p className="text-base text-gray-500">{siteDescription}</p>
+                    <PrefetchLink to="/" className="flex items-center gap-1.5 lg:gap-2 group">
+                        <div className="flex-shrink-0">
+                            {logo ? (
+                                <img src={logo} alt="Logo" className="h-20 w-20 lg:h-24 lg:w-24 object-contain" />
+                            ) : (
+                                <img src="/images/logo.png" alt="Logo" className="h-20 w-20 lg:h-24 lg:w-24 object-contain" />
+                            )}
+                        </div>
+                        <div className="flex flex-col justify-center h-20 lg:h-24">
+                            <h1 className="text-lg lg:text-[1.35rem] 2xl:text-[1.5rem] font-bold text-[#0E104B] leading-[1.05] tracking-tight whitespace-pre-line">
+                                {t('universityName')}
+                            </h1>
+                            <p className="text-[9px] lg:text-[11px] text-slate-400 font-bold mt-1 uppercase tracking-wider">
+                                {t('officialWebsite')}
+                            </p>
                         </div>
                     </PrefetchLink>
 
                     {/* O'ng tomon: Kontakt ma'lumotlari */}
-                    <div className="flex items-center space-x-6">
+                    <div className="flex items-center space-x-8">
                         {/* Telefon raqami */}
                         {phone && (
                             <div className="flex items-center">
-                                <div className="bg-primary/10 p-3 rounded-full mr-3">
+                                <div className="bg-primary/5 p-3 rounded-full mr-3 border border-primary/10">
                                     <svg
-                                        className="h-6 w-6 text-[#0E104B]"
+                                        className="h-5 w-5 text-[#0E104B]"
                                         fill="none"
                                         stroke="currentColor"
                                         viewBox="0 0 24 24"
@@ -63,10 +59,10 @@ const MiddleHeader: React.FC = () => {
                                     </svg>
                                 </div>
                                 <div>
-                                    <p className="text-sm font-semibold text-gray-600">{t.hotline}</p>
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.1em] mb-0.5">{t('contact')}</p>
                                     <a
                                         href={`tel:${phoneRaw}`}
-                                        className="text-[#0E104B] font-bold hover:underline text-lg"
+                                        className="text-[#0E104B] font-extrabold hover:text-[#0047BA] transition-colors text-base lg:text-lg"
                                     >
                                         {phone}
                                     </a>
@@ -76,10 +72,10 @@ const MiddleHeader: React.FC = () => {
 
                         {/* Manzil */}
                         {address && (
-                            <div className="flex items-center">
-                                <div className="bg-primary/10 p-3 rounded-full mr-3">
+                            <div className="hidden xl:flex items-center">
+                                <div className="bg-primary/5 p-3 rounded-full mr-3 border border-primary/10">
                                     <svg
-                                        className="h-6 w-6 text-[#0E104B]"
+                                        className="h-5 w-5 text-[#0E104B]"
                                         fill="none"
                                         stroke="currentColor"
                                         viewBox="0 0 24 24"
@@ -100,8 +96,8 @@ const MiddleHeader: React.FC = () => {
                                     </svg>
                                 </div>
                                 <div>
-                                    <p className="text-base font-semibold text-gray-600">{t.address}</p>
-                                    <p className="text-[#0E104B] font-bold text-lg max-w-xs">{address}</p>
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.1em] mb-0.5">{t('address')}</p>
+                                    <p className="text-[#0E104B] font-extrabold text-base lg:text-lg max-w-[220px] line-clamp-1">{address}</p>
                                 </div>
                             </div>
                         )}
@@ -109,25 +105,32 @@ const MiddleHeader: React.FC = () => {
                 </div>
 
                 {/* Kichik ekranlar uchun layout */}
-                <div className="md:hidden">
-                    <PrefetchLink to="/" className="flex items-center justify-center mb-4">
-                        {logo ? (
-                            <img src={logo} alt={siteName} width="80" height="80" className="h-20 w-20 mr-3 rounded-full object-cover" />
-                        ) : (
-                            <div className="h-20 w-20 mr-3 rounded-full bg-gray-100 animate-pulse flex-shrink-0" />
-                        )}
-                        <div>
-                            <h1 className="text-3xl font-bold text-[#0E104B] text-center">{siteName}</h1>
-                            <p className="text-sm text-gray-500 text-center">{siteDescription}</p>
-                        </div>
-                    </PrefetchLink>
-                    <div className="flex items-center justify-center space-x-4">
-                        {/* Telefon raqami */}
+                <div className="md:hidden space-y-5 py-4">
+                    <div className="flex flex-col items-center">
+                        <PrefetchLink to="/" className="flex flex-col items-center text-center gap-3">
+                            <div className="flex-shrink-0">
+                                {logo ? (
+                                    <img src={logo} alt="Logo" className="h-20 w-20 object-contain" />
+                                ) : (
+                                    <img src="/images/logo.png" alt="Logo" className="h-20 w-20 object-contain" />
+                                )}
+                            </div>
+                            <div className="flex flex-col items-center">
+                                <h1 className="text-lg font-bold text-[#0E104B] leading-tight whitespace-pre-line">
+                                    {t('universityName')}
+                                </h1>
+                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">
+                                    {t('officialWebsite')}
+                                </p>
+                            </div>
+                        </PrefetchLink>
+
+                        {/* Mobile Phone Link Plain */}
                         {phone && (
-                            <div className="flex items-center text-base">
-                                <div className="bg-primary/10 p-3 rounded-full mr-3">
+                            <div className="flex items-center justify-center gap-2 mt-4 text-[#0E104B] font-bold">
+                                <div className="bg-primary/10 p-1.5 rounded-full">
                                     <svg
-                                        className="h-6 w-6 text-[#0E104B]"
+                                        className="h-4 w-4 text-primary"
                                         fill="none"
                                         stroke="currentColor"
                                         viewBox="0 0 24 24"
@@ -141,15 +144,9 @@ const MiddleHeader: React.FC = () => {
                                         ></path>
                                     </svg>
                                 </div>
-                                <div>
-                                    <p className="text-sm font-semibold text-gray-600">{t.hotline}</p>
-                                    <a
-                                        href={`tel:${phoneRaw}`}
-                                        className="text-[#0E104B] font-bold hover:underline"
-                                    >
-                                        {phone}
-                                    </a>
-                                </div>
+                                <a href={`tel:${phoneRaw}`} className="text-sm underline underline-offset-4 decoration-primary/20">
+                                    {phone}
+                                </a>
                             </div>
                         )}
                     </div>
