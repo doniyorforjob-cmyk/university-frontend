@@ -148,16 +148,18 @@ const TopHeader = () => {
                             </button>
                             {isLangDropdownOpen && (
                                 <div className="absolute right-0 mt-2 w-28 rounded-md bg-white py-1 shadow-xl ring-1 ring-black ring-opacity-5 z-50">
-                                    {Object.keys(languageOptions).map((lng) => (
-                                        <button
-                                            key={lng}
-                                            onClick={() => handleLanguageChange(lng)}
-                                            className="flex items-center w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100"
-                                        >
-                                            <img src={languageOptions[lng as keyof typeof languageOptions].flag} width="20" alt={languageOptions[lng as keyof typeof languageOptions].name} className="mr-2" />
-                                            <span>{languageOptions[lng as keyof typeof languageOptions].name}</span>
-                                        </button>
-                                    ))}
+                                    {Object.keys(languageOptions)
+                                        .filter((lng) => lng !== currentLanguage)
+                                        .map((lng) => (
+                                            <button
+                                                key={lng}
+                                                onClick={() => handleLanguageChange(lng)}
+                                                className="flex items-center w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100"
+                                            >
+                                                <img src={languageOptions[lng as keyof typeof languageOptions].flag} width="20" alt={languageOptions[lng as keyof typeof languageOptions].name} className="mr-2" />
+                                                <span>{languageOptions[lng as keyof typeof languageOptions].name}</span>
+                                            </button>
+                                        ))}
                                 </div>
                             )}
                         </div>

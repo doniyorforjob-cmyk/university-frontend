@@ -57,16 +57,20 @@ const Footer: React.FC = () => {
           <div>
             <PrefetchLink
               to="/"
-              className="flex flex-col sm:flex-row sm:items-center mb-4 group transition-transform duration-300 hover:scale-105"
+              className="flex items-center gap-3 mb-6 group transition-colors"
             >
-              {settings?.logo ? (
-                <img src={settings.logo} alt={settings.siteName} className="h-20 w-20 sm:h-24 sm:w-24 mb-2 sm:mb-0 sm:mr-4 rounded-full transition-transform duration-300 group-hover:rotate-12 flex-shrink-0 object-cover" />
-              ) : (
-                <div className="h-20 w-20 sm:h-24 sm:w-24 mb-2 sm:mb-0 sm:mr-4 rounded-full bg-gray-700 animate-pulse flex-shrink-0" />
-              )}
-              <span className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white text-center sm:text-left">
-                {settings?.siteName || "NamDTU"}
-              </span>
+              <div className="flex-shrink-0">
+                {settings?.logo ? (
+                  <img src={settings.logo} alt="Logo" className="h-20 w-20 sm:h-24 sm:w-24 object-contain rounded-full" />
+                ) : (
+                  <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-full bg-gray-700 animate-pulse" />
+                )}
+              </div>
+              <div className="flex flex-col justify-center h-20 sm:h-24">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white leading-[1.05] tracking-tight whitespace-pre-line">
+                  {t('universityName')}
+                </h1>
+              </div>
             </PrefetchLink>
 
             <p className="max-w-xs mt-4 text-base text-gray-300 leading-relaxed">

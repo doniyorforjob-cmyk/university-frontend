@@ -47,5 +47,6 @@
     "error_title": "An error occurred",
     "noDataWithResource": "There are no {{resource}} yet",
     "universityName": "Namangan State\nTechnical\nUniversity",
-    "officialWebsite": "Official Website"
+    "officialWebsite": "Official Website",
+    "address": "Address"
 }
