@@ -16,34 +16,19 @@ const UniversitySystemsSection: React.FC = () => {
   const { locale } = useLocale(); // Assuming useLocale is available here (imported below)
   const { cacheManager } = useGlobalCache();
 
-  // 1. Stabilize Fetcher
-  const fetcher = React.useMemo(() => () => homeApi.getUniversitySystemsData(locale), [locale]);
-
   const { data, loading } = useStandardSection<TransformedUniversitySystemsData>(
     'university-systems',
-    fetcher,
+    homeApi.getUniversitySystemsData,
     { transformData: transformUniversitySystemsData }
   );
 
   // 2. Prefetching Logic
-  React.useEffect(() => {
-    if (!data) return;
-
-    const otherLocales = ['uz', 'ru', 'en'].filter(l => l !== locale);
-
-    otherLocales.forEach(async (targetLocale) => {
-      const cacheKey = `home-section-university-systems-http-${targetLocale}`;
-
-      if (!cacheManager.has(cacheKey)) {
-        try {
-          const rawData = await homeApi.getUniversitySystemsData(targetLocale);
-          cacheManager.set(cacheKey, rawData, 5); // 5 minutes TTL
-        } catch (e) {
-          console.warn(`Failed to prefetch university-systems for ${targetLocale}`, e);
-        }
-      }
-    });
-  }, [data, locale, cacheManager]);
+  // 2. Prefetching Logic - Disabled (Cache Pollution Risk)
+  // React.useEffect(() => {
+  //   if (!data) return;
+  //   const otherLocales = ['uz', 'ru', 'en'].filter(l => l !== locale);
+  //   otherLocales.forEach(async (targetLocale) => { ... });
+  // }, [data, locale, cacheManager]);
 
   if (loading || !data) {
     return null; // Or a skeleton loader

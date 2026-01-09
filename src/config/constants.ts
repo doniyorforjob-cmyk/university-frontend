@@ -135,11 +135,11 @@ export const CACHE_CONFIG = {
 
   // Cache Keys Prefixes
   KEYS: {
-    NEWS_DETAIL: 'news-detail',
-    ANNOUNCEMENT_DETAIL: 'announcement-detail',
-    NAVBAR: 'navbar-items-global',
-    SIDEBAR: 'sidebar',
-    SECTIONS: 'section',
+    NEWS_DETAIL: 'news-detail_v5',
+    ANNOUNCEMENT_DETAIL: 'announcement-detail_v5',
+    NAVBAR: 'navbar-items-global_v5',
+    SIDEBAR: 'sidebar_v5',
+    SECTIONS: 'section_v5',
   },
 
   // Component/Page specific configs
@@ -173,10 +173,8 @@ export const SECTION_CACHE_CONFIG = CACHE_CONFIG.SECTIONS;
 // ===== NEWS TABS =====
 export const NEWS_TABS = [
   { id: 'news', label: 'Yangiliklar' },
-  { id: 'announcements', label: 'E`lonlar' },
   { id: 'corruption', label: 'Korrupsiyaga qarshi kurashish' },
   { id: 'events', label: 'Tadbirlar' },
-  { id: 'sport', label: 'Sport' },
 ] as const;
 
 // ===== AOS ANIMATSIYASI =====

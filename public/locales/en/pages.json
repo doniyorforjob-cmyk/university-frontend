@@ -44,5 +44,14 @@
         "info": "information",
         "systems": "systems",
         "faculties": "faculties"
+    },
+    "home": {
+        "tabs": {
+            "news": "News",
+            "announcements": "Announcements",
+            "corruption": "Anti-Corruption",
+            "events": "Events",
+            "sport": "Sport"
+        }
     }
 }

@@ -1,10 +1,10 @@
 import apiClient from '../client';
 import { FooterData } from '../../types/footer.types';
 
-export const fetchFooterData = async (): Promise<FooterData> => {
+export const fetchFooterData = async (locale?: string): Promise<FooterData> => {
   try {
     const projectId = process.env.REACT_APP_PROJECT_ID;
-    const response = await apiClient.get(`/projects/${projectId}/content/footer`);
+    const response = await apiClient.get(`/projects/${projectId}/content/footer`, { params: { locale } });
 
     // ElmaPi returns an array or object wrapping the data
     const apiData = Array.isArray(response.data) ? response.data[0] : (response.data.data?.[0] || response.data);

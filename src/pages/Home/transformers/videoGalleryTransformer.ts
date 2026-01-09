@@ -15,7 +15,7 @@ const getYoutubeThumbnail = (videoId: string): string => {
   return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
 };
 
-export const transformVideoGalleryData = (apiData: any): HomeMediaData => {
+export const transformVideoGalleryData = (apiData: any, locale: string = 'uz'): HomeMediaData => {
   if (!apiData) return { videos: [], photos: [] };
 
   const rawItems = Array.isArray(apiData) ? apiData : (Array.isArray(apiData.data) ? apiData.data : []);
@@ -69,8 +69,8 @@ export const transformVideoGalleryData = (apiData: any): HomeMediaData => {
 
       return {
         id: videoId,
-        title: getLocalized(fields.title || video.title || '', 'uz'),
-        description: getLocalized(fields.description || video.description || video.content || '', 'uz'),
+        title: getLocalized(fields.title || video.title || '', locale),
+        description: getLocalized(fields.description || video.description || video.content || '', locale),
         thumbnail: thumbnailPath ? (thumbnailPath.startsWith('http') ? thumbnailPath : getImageUrl(thumbnailPath)) : '',
         created_at: String(video.created_at || fields.created_at || video.uploadDate || new Date().toISOString()),
         updated_at: String(video.updated_at || fields.updated_at || video.created_at || new Date().toISOString()),
@@ -110,7 +110,7 @@ export const transformVideoGalleryData = (apiData: any): HomeMediaData => {
 
       return {
         id: String(photo.id || fields.id || photo.uuid || photo.slug || Math.random()),
-        title: getLocalized(fields.title || photo.title || '', 'uz'),
+        title: getLocalized(fields.title || photo.title || '', locale),
         cover_image: finalCover,
         gallery: gallery,
         created_at: String(photo.created_at || fields.created_at || photo.uploadDate || new Date().toISOString()),

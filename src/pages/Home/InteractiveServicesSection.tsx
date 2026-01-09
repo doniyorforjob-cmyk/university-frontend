@@ -35,44 +35,23 @@ const InteractiveServicesSection = () => {
   const { locale } = useLocale();
   const { cacheManager } = useGlobalCache();
 
-  // 1. Stabilize Fetcher
-  const fetcher = React.useMemo(() => () => homeApi.getInteractiveServicesData(locale), [locale]);
-
   const { data, loading } = useStandardSection(
     'interactive-services',
-    fetcher,
+    homeApi.getInteractiveServicesData,
     { transformData: transformInteractiveServicesData }
   );
 
   // 2. Prefetching Logic
-  React.useEffect(() => {
-    if (!data) return;
-
-    const otherLocales = ['uz', 'ru', 'en'].filter(l => l !== locale);
-    const { transformInteractiveServicesData } = require('./transformers/interactiveServicesTransformer');
-
-    otherLocales.forEach(async (targetLocale) => {
-      const cacheKey = `home-section-interactive-services-http-${targetLocale}`;
-
-      if (!cacheManager.has(cacheKey)) {
-        try {
-          const rawData = await homeApi.getInteractiveServicesData(targetLocale);
-          // homeApi already transforms it, but if we called a raw endpoint we'd need to transform.
-          // In this specific implementation, homeApi.getInteractiveServicesData calls the transformer internally 
-          // (see previous step), so rawData IS the transformed data.
-          // Wait, actually homeApi.getInteractiveServicesData returns Promise<HomeInteractiveServicesData>.
-          // So we can just set it directly.
-          cacheManager.set(cacheKey, rawData, 5);
-        } catch (e) {
-          console.warn(`Failed to prefetch interactive-services for ${targetLocale}`, e);
-        }
-      }
-    });
-  }, [data, locale, cacheManager]);
+  // 2. Prefetching Logic - Disabled to prevent cache pollution (wrong locale data)
+  // React.useEffect(() => {
+  //   if (!data) return;
+  //   const otherLocales = ['uz', 'ru', 'en'].filter(l => l !== locale);
+  //   otherLocales.forEach(async (targetLocale) => { ... });
+  // }, [data, locale, cacheManager]);
 
   if (loading || !data) return null;
 
-  const services = data.services as ServiceItem[];
+  const services = (data?.services || []) as ServiceItem[];
   // Original soft colors
   const cardColors = ['#4F99DD', '#2FA5AD', '#697FD7', '#329CC6'];
 

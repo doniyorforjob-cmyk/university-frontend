@@ -99,35 +99,20 @@ const NewsSection = () => {
   const locale = i18n.language;
   const { cacheManager } = useGlobalCache();
 
-  // 1. Stabilize Fetcher
-  const fetcher = React.useMemo(() => () => homeApi.getNewsData(locale), [locale]);
-
+  // 1. Stabilize Fetcher - Direct reference ensures useStandardSection handles locale consistently
   // Yeni arxitektura: useStandardSection hook
   const { data, loading, isCached } = useStandardSection(
     'news',
-    fetcher,
+    homeApi.getNewsData,
     { transformData: transformNewsData }
   );
 
-  // 2. Prefetching Logic
-  React.useEffect(() => {
-    if (!data) return;
-
-    const otherLocales = ['uz', 'ru', 'en'].filter(l => l !== locale);
-
-    otherLocales.forEach(async (targetLocale) => {
-      const cacheKey = `home-section-news-http-${targetLocale}`;
-
-      if (!cacheManager.has(cacheKey)) {
-        try {
-          const rawData = await homeApi.getNewsData(targetLocale);
-          cacheManager.set(cacheKey, rawData, 5); // 5 minutes TTL for news
-        } catch (e) {
-          console.warn(`Failed to prefetch news for ${targetLocale}`, e);
-        }
-      }
-    });
-  }, [data, locale, cacheManager]);
+  // 2. Prefetching Logic - Disabled temporarily due to cache pollution issues
+  // React.useEffect(() => {
+  //   if (!data || loading) return;
+  //   const prefetchOtherLocales = async () => { ... };
+  //   prefetchOtherLocales();
+  // }, [data, loading, locale, cacheManager]);
 
   // Clean loading - arxitektura prinsipiga muvofiq
   if (loading || !data) {
@@ -191,6 +176,7 @@ const NewsSection = () => {
   // Tabs array
   const tabs = NEWS_TABS.map(tab => ({
     ...tab,
+    label: t(`pages:home.tabs.${tab.id}`) || tab.label, // Dynamic translation
     content: renderGrid((data as any)[tab.id] || [])
   }));
 
@@ -220,4 +206,3 @@ const NewsSection = () => {
 };
 
 export default NewsSection;
-

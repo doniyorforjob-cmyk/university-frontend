@@ -20,10 +20,50 @@ import { transformVideoGalleryData } from '../../pages/Home/transformers/videoGa
 
 import { transformFacultiesData } from '../../pages/Home/transformers/facultiesTransformer';
 
+// Helper to fetch data with fallback to 'uz' locale if empty (count < 1)
+const fetchWithFallback = async (endpoint: string, params: any = {}, locale?: string) => {
+  const projectId = process.env.REACT_APP_PROJECT_ID;
+  const requestParams = { ...params };
+
+  if (locale) {
+    requestParams.locale = locale;
+  }
+
+  try {
+    const response = await apiClient.get(`/projects/${projectId}/content/${endpoint}`, { params: requestParams });
+    const data = Array.isArray(response.data) ? response.data : (response.data?.data || []);
+
+    // Strict Fallback: Only if data is COMPLETELY empty
+    if (data.length === 0 && locale && locale !== 'uz') {
+      const fallbackParams = { ...params, locale: 'uz' };
+      const fallbackResponse = await apiClient.get(`/projects/${projectId}/content/${endpoint}`, { params: fallbackParams });
+      const fallbackData = Array.isArray(fallbackResponse.data) ? fallbackResponse.data : (fallbackResponse.data?.data || []);
+
+      if (fallbackData.length > 0) {
+        return fallbackData;
+      }
+    }
+
+    return data;
+  } catch (error) {
+    console.warn(`Error fetching ${endpoint} (with fallback logic):`, error);
+    // If original request fails, try fallback 'uz' immediately just in case
+    if (locale && locale !== 'uz') {
+      try {
+        const fallbackParams = { ...params, locale: 'uz' };
+        const fallbackResponse = await apiClient.get(`/projects/${projectId}/content/${endpoint}`, { params: fallbackParams });
+        return Array.isArray(fallbackResponse.data) ? fallbackResponse.data : (fallbackResponse.data?.data || []);
+      } catch (fallbackError) {
+        throw error; // If fallback also fails, throw original or new error
+      }
+    }
+    throw error;
+  }
+};
+
 export const homeApi = {
   getHomeSections: async (): Promise<HomeSectionBlock[]> => {
     try {
-      const projectId = process.env.REACT_APP_PROJECT_ID;
       const response = await apiClient.get('/home-sections').catch(() => ({ data: [] }));
       return response.data;
     } catch (error) {
@@ -33,65 +73,27 @@ export const homeApi = {
   },
 
   getHeroData: async (locale?: string): Promise<any> => {
-    try {
-      const projectId = process.env.REACT_APP_PROJECT_ID;
-      const params: any = { with: 'image' };
-      if (locale) {
-        params.locale = locale;
-      }
-      const response = await apiClient.get(`/projects/${projectId}/content/hero`, {
-        params
-      });
-      const data = Array.isArray(response.data) ? response.data : response.data.data;
-      return data;
-    } catch (error) {
-      console.error('Error fetching hero data from Elmapi:', error);
-      throw error;
-    }
+    return fetchWithFallback('hero', { with: 'image' }, locale);
   },
 
-  getStatsData: async (): Promise<any> => {
-    try {
-      const projectId = process.env.REACT_APP_PROJECT_ID;
-      const response = await apiClient.get(`/projects/${projectId}/content/stats`);
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching stats data:', error);
-      throw error;
-    }
+  getStatsData: async (locale?: string): Promise<any> => {
+    // Restore locale parameter and use fallback (only checks for empty)
+    return fetchWithFallback('stats', {}, locale);
   },
 
   getNewsData: async (locale?: string): Promise<any> => {
-    try {
-      const projectId = process.env.REACT_APP_PROJECT_ID;
-      const params: any = { with: 'image', per_page: 30 };
-      if (locale) {
-        params.locale = locale;
-      }
-
-      const response = await apiClient.get(`/projects/${projectId}/content/news`, { params });
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching news data:', error);
-      throw error;
-    }
+    return fetchWithFallback('news', { with: 'image', per_page: 30 }, locale);
   },
 
   getFacultiesData: async (locale?: string): Promise<any> => {
     try {
-      const projectId = process.env.REACT_APP_PROJECT_ID;
-      const params: any = { with: 'image' };
-      if (locale) params.locale = locale;
-
+      // Use fallback logic for both faculties and departments
       const [facultiesRes, departmentsRes] = await Promise.all([
-        apiClient.get(`/projects/${projectId}/content/faculties`, { params }),
-        apiClient.get(`/projects/${projectId}/content/departments`, { params: { ...params, with: 'image' } }).catch(() => ({ data: [] }))
+        fetchWithFallback('faculties', { with: 'image' }, locale),
+        fetchWithFallback('departments', { with: 'image' }, locale)
       ]);
 
-      const facultiesRaw = Array.isArray(facultiesRes.data) ? facultiesRes.data : facultiesRes.data.data;
-      const departmentsRaw = Array.isArray(departmentsRes.data) ? departmentsRes.data : departmentsRes.data.data;
-
-      return { faculties: facultiesRaw, departments: departmentsRaw };
+      return { faculties: facultiesRes, departments: departmentsRes };
     } catch (error) {
       console.error('Error fetching faculties data:', error);
       throw error;
@@ -109,18 +111,18 @@ export const homeApi = {
     }
   },
 
-  getMediaData: async (): Promise<any> => {
+  getMediaData: async (locale?: string): Promise<any> => {
     try {
       const projectId = process.env.REACT_APP_PROJECT_ID;
+      const params = { with: 'image', locale };
 
-      // Slugs to try for photo gallery
+      // Slugs to try for photo gallery (User requested logic retained)
       const photoSlugs = ['photos-gallery', 'photo-gallery', 'photo-gallery', 'photogallery', 'photos', 'gallery', 'media-photos', 'fotogallery', 'fotogalereya'];
-
 
       // Fetch collections
       const results = await Promise.all([
         ...photoSlugs.map(slug =>
-          apiClient.get(`/projects/${projectId}/content/${slug}`, { params: { with: 'image' } })
+          apiClient.get(`/projects/${projectId}/content/${slug}`, { params })
             .then(res => {
               return { slug, data: res.data };
             })
@@ -128,13 +130,12 @@ export const homeApi = {
               return { slug, data: null };
             })
         ),
-        apiClient.get(`/projects/${projectId}/content/video-gallery`, { params: { with: 'image' } })
+        apiClient.get(`/projects/${projectId}/content/video-gallery`, { params })
           .then(res => ({ slug: 'video-gallery', data: res.data }))
           .catch(() => ({ slug: 'video-gallery', data: null }))
       ]);
 
       let photosData: any[] = [];
-      let activePhotoSlug = '';
 
       // Find first successful photo gallery response with data
       for (let i = 0; i < photoSlugs.length; i++) {
@@ -143,7 +144,6 @@ export const homeApi = {
           const data = Array.isArray(res.data) ? res.data : (res.data.data || []);
           if (data.length > 0) {
             photosData = data;
-            activePhotoSlug = res.slug;
             break;
           }
         }
@@ -163,36 +163,15 @@ export const homeApi = {
   },
 
   getInteractiveServicesData: async (locale?: string): Promise<any> => {
-    try {
-      const projectId = process.env.REACT_APP_PROJECT_ID;
-      const params: any = {};
-      if (locale) {
-        params.locale = locale;
-      }
-      const response = await apiClient.get(`/projects/${projectId}/content/interactive-services`, { params });
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching interactive services data:', error);
-      throw error;
-    }
+    return fetchWithFallback('interactive-services', {}, locale);
   },
 
   getUniversitySystemsData: async (locale?: string): Promise<any> => {
     try {
-      const projectId = process.env.REACT_APP_PROJECT_ID;
-      const params: any = {};
-
-      if (locale) {
-        params.locale = locale;
-      }
-
-      const systemsResponse = await apiClient.get(`/projects/${projectId}/content/university-systems`, { params });
-
+      const systemsData = await fetchWithFallback('university-systems', {}, locale);
       // Quick links are now part of university-systems collection (category: 'quick links')
-      // No need to call a separate endpoint that returns 404.
       const quickLinksResponse = { data: [] };
-
-      return { systems: systemsResponse.data, quickLinks: quickLinksResponse.data };
+      return { systems: systemsData, quickLinks: [] };
     } catch (error) {
       console.error('Error fetching university systems data:', error);
       throw error;

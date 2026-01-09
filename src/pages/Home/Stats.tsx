@@ -74,7 +74,7 @@ const Stats = () => {
                   {data.universityArea?.text ? getLocalized(data.universityArea.text, locale) : t('universityArea')}
                 </p>
                 <p className="text-3xl font-bold text-green-600 mt-1">
-                  {data.universityArea?.area} <span className="text-xl font-normal text-green-700">{data.universityArea?.unit}</span>
+                  {data.universityArea?.area?.toLocaleString('en-US') || '0'} <span className="text-xl font-normal text-green-700">{data.universityArea?.unit}</span>
                 </p>
               </div>
             </div>

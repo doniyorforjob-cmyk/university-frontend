@@ -44,5 +44,14 @@
         "info": "ma'lumotlar",
         "systems": "tizimlar",
         "faculties": "fakultetlar"
+    },
+    "home": {
+        "tabs": {
+            "news": "Yangiliklar",
+            "announcements": "E'lonlar",
+            "corruption": "Korrupsiyaga qarshi kurashish",
+            "events": "Tadbirlar",
+            "sport": "Sport"
+        }
     }
 }

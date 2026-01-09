@@ -12,6 +12,7 @@ import { formatShortDate } from '../../utils/format';
 import EmptyState from '../../components/shared/EmptyState';
 import { PhotoIcon, FilmIcon } from '@heroicons/react/24/outline';
 import { transformVideoGalleryData } from './transformers/videoGalleryTransformer';
+import { useLocale } from '../../contexts/LocaleContext';
 
 
 
@@ -21,10 +22,19 @@ const MediaGallery: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'photos' | 'videos'>('videos');
   const [activeVideo, setActiveVideo] = useState<number | null>(null);
 
+  // Ensure we get the correct locale from context to pass to transformer
+  const { locale } = useLocale();
+
+  // Create a memoized transformer that curries the locale
+  const transformer = React.useCallback(
+    (rawData: any) => transformVideoGalleryData(rawData, locale),
+    [locale]
+  );
+
   const { data, loading } = useStandardSection(
     'media-gallery',
     homeApi.getMediaData,
-    { transformData: transformVideoGalleryData }
+    { transformData: transformer }
   );
 
   if (loading || !data) return null;

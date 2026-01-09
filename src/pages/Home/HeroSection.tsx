@@ -31,12 +31,9 @@ export default function HeroSection({ data: propData }: { data?: any } = {}) {
   const { locale } = useLocale();
   const { cacheManager } = useGlobalCache();
 
-  // Stabilize the fetcher specifically for the current locale
-  const fetcher = React.useMemo(() => () => homeApi.getHeroData(locale), [locale]);
-
   const { data, loading, isCached } = useStandardSection(
     'hero',
-    fetcher,
+    homeApi.getHeroData,
     {
       transformData: transformHeroData,
       enabled: shouldFetch
@@ -47,28 +44,12 @@ export default function HeroSection({ data: propData }: { data?: any } = {}) {
   const heroData = propData || data;
 
   // Background prefetching for other locales
-  useEffect(() => {
-    if (!heroData || !shouldFetch) return;
-
-    const otherLocales = ['uz', 'ru', 'en'].filter(l => l !== locale);
-
-    otherLocales.forEach(async (targetLocale) => {
-      // Construct cache key matching useStandardSection logic: home-section-{type}-http-{locale}
-      const cacheKey = `home-section-hero-http-${targetLocale}`;
-
-      if (!cacheManager.has(cacheKey)) {
-        try {
-          const rawData = await homeApi.getHeroData(targetLocale);
-          // Manually transform data for consistency with useStandardSection
-          const transformedData = transformHeroData(rawData);
-          // Set to cache with same TTL as config (default 5 min or similar)
-          cacheManager.set(cacheKey, transformedData, 5);
-        } catch (e) {
-          console.warn(`Failed to prefetch hero for ${targetLocale}`, e);
-        }
-      }
-    });
-  }, [heroData, locale, cacheManager, shouldFetch]);
+  // Background prefetching - Disabled (Cache Pollution Risk)
+  // useEffect(() => {
+  //   if (!heroData || !shouldFetch) return;
+  //   const otherLocales = ['uz', 'ru', 'en'].filter(l => l !== locale);
+  //   otherLocales.forEach(async (targetLocale) => { ... });
+  // }, [heroData, locale, cacheManager, shouldFetch]);
 
   // Debug
 

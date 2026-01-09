@@ -35,7 +35,7 @@ apiClient.interceptors.request.use(
     const projectId = process.env.REACT_APP_PROJECT_ID;
     const userToken = localStorage.getItem('authToken');
     const globalToken = process.env.REACT_APP_API_TOKEN;
-    const locale = localStorage.getItem('locale') || 'en';
+    const locale = localStorage.getItem('locale') || 'uz';
 
     // ALWAYS ensure project-id is in the headers (important for POST)
     if (projectId) {

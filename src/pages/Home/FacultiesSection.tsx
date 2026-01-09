@@ -26,8 +26,14 @@ const FacultiesSection: React.FC = () => {
   const faculties = data?.faculties || [];
 
   useEffect(() => {
-    if (faculties.length > 0 && activeFacultyId === null) {
-      setActiveFacultyId(faculties[0].id);
+    if (faculties.length > 0) {
+      // If no active ID, or if the current active ID is not in the list (e.g. after language switch),
+      // default to the first faculty.
+      const currentExists = activeFacultyId && faculties.some((f: Faculty) => String(f.id) === String(activeFacultyId));
+
+      if (!activeFacultyId || !currentExists) {
+        setActiveFacultyId(faculties[0].id);
+      }
     }
   }, [faculties, activeFacultyId]);
 

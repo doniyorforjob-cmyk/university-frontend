@@ -41,12 +41,13 @@ export const transformNewsData = (apiData: any): HomeNewsData => {
     return new Date(b.published_at).getTime() - new Date(a.published_at).getTime();
   });
 
-  // 4. Categorize
+  // 4. Categorize - Since API doesn't provide categories, put everything in 'news'
+  // Users can manually categorize in the backend later
   return {
-    news: allEntries.filter((e: any) => e.category === 'news' || !e.category),
-    announcements: allEntries.filter((e: any) => e.category === 'announcements'),
-    events: allEntries.filter((e: any) => e.category === 'events'),
-    corruption: allEntries.filter((e: any) => e.category === 'corruption'),
-    sport: allEntries.filter((e: any) => e.category === 'sport')
+    news: allEntries.map((e: any) => ({ ...e, date: e.published_at })),
+    announcements: [], // Empty for now - can be populated when backend adds category support
+    events: [],
+    corruption: [],
+    sport: []
   };
 };

@@ -1,5 +1,3 @@
-import { HomeUniversitySystemsData } from '../../../types/home.types';
-
 // Type for the data after transformation, ready for the component
 export interface TransformedUniversitySystemsData {
   title: string;
