@@ -1,9 +1,11 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { homeApi } from '../../services/homeService';
 import { useStandardSection } from '../../pages/Home/hooks/useStandardSection';
 import { SystemsContainer } from './cards';
 
 const UniversitySystems = React.memo(() => {
+  const { t } = useTranslation(['common', 'pages']);
   const { data, loading } = useStandardSection(
     'university-systems',
     homeApi.getUniversitySystemsData
@@ -26,7 +28,7 @@ const UniversitySystems = React.memo(() => {
 
   return (
     <SystemsContainer
-      title="Universitet tizimlari"
+      title={t('pages:universitySystems') as string}
       systems={data.systems}
       quickLinks={data.quickLinks}
       variant="sidebar"

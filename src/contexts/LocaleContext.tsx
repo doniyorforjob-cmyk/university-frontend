@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
+import i18n from '../i18n';
 
 export type Locale = 'uz' | 'ru' | 'en';
 
@@ -54,6 +55,9 @@ export const LocaleProvider: React.FC<LocaleProviderProps> = ({ children }) => {
     // Save locale to localStorage whenever it changes
     useEffect(() => {
         localStorage.setItem('locale', locale);
+        if (i18n.language !== locale) {
+            i18n.changeLanguage(locale);
+        }
     }, [locale]);
 
     const setLocale = (newLocale: Locale) => {

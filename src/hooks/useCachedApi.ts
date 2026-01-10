@@ -13,6 +13,7 @@ interface UseCachedApiOptions {
   refetchOnWindowFocus?: boolean;
   refetchInterval?: number;
   keepPreviousData?: boolean;
+  revalidateThresholdMinutes?: number; // Background revalidation threshold
 }
 
 const inflightRequests = new Map<string, Promise<any>>();
@@ -26,7 +27,8 @@ export const useCachedApi = <T = any>({
   onError,
   refetchOnWindowFocus = false,
   refetchInterval,
-  keepPreviousData = false
+  keepPreviousData = false,
+  revalidateThresholdMinutes = 0.166 // Default: revalidate if older than 10 seconds
 }: UseCachedApiOptions) => {
 
   const { cacheManager, config } = useGlobalCache();
@@ -45,18 +47,26 @@ export const useCachedApi = <T = any>({
 
   const fetchData = useCallback(async (force = false) => {
     try {
-      // Check cache first (unless forcing refresh)
-      if (!force) {
-        const cachedData = cacheManager.get(localeKey);
-        if (cachedData) {
-          setData(cachedData);
-          setLoading(false);
-          onSuccess?.(cachedData);
-          return;
-        }
+      // Check cache validity
+      const item = cacheManager.getItem(localeKey);
+      const isExpired = !item || item.expiresAt <= Date.now();
+      // Handle missing timestamp (legacy items) by treating them as stale
+      const isStale = item && (!item.timestamp || (Date.now() - item.timestamp > revalidateThresholdMinutes * 60 * 1000));
+
+      // SWR Logic: If we have fresh enough data, just return
+      if (!force && item && !isExpired && !isStale) {
+        setData(item.data);
+        setLoading(false);
+        onSuccess?.(item.data);
+        return;
       }
 
-      setLoading(true);
+      // If we have stale data but within TTL, we fetch in background silently
+      // Loading state only for cases where we have NO data or it's hard EXPIRED
+      if (isExpired || !item) {
+        setLoading(true);
+      }
+
       setError(null);
 
       // Fetch fresh data (with deduplication)
@@ -77,7 +87,7 @@ export const useCachedApi = <T = any>({
       } else {
         // Reuse existing request
         const freshData = await requestPromise;
-        setData(freshData);
+        setData(freshData); // Update even if we were stale
         onSuccess?.(freshData);
       }
 
@@ -88,7 +98,7 @@ export const useCachedApi = <T = any>({
     } finally {
       setLoading(false);
     }
-  }, [localeKey, fetcher, ttl, enabled, cacheManager, onSuccess, onError]);
+  }, [localeKey, fetcher, ttl, revalidateThresholdMinutes, onSuccess, onError]);
 
   // Initial load and key change handling
   useEffect(() => {

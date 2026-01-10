@@ -46,9 +46,9 @@ const FacultiesSection: React.FC = () => {
     <section className="py-8 md:py-12 lg:py-16 bg-gradient-to-b from-white to-blue-50/30">
       <Container>
         <SectionHeader
-          title={t('pages:faculties', 'Fakultetlar va kafedralar')}
+          title={t('pages:faculties')}
           seeAllLink="/faculties"
-          seeAllText={t('common:seeAll', 'Barcha fakultetlar')}
+          seeAllText={t('common:seeAllFaculties')}
           noContainer={true}
           className="mb-8 md:mb-12"
         />
@@ -97,7 +97,7 @@ const FacultiesSection: React.FC = () => {
                 className="max-h-[32rem] overflow-y-auto pr-2 scrollbar-auto-hide"
               >
                 {departments.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-5 lg:gap-6 2xl:gap-8 pb-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 lg:gap-6 2xl:gap-8 pb-4">
                     {departments.map((dept: any) => (
                       <Link
                         key={dept.id}

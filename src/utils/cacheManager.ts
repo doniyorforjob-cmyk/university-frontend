@@ -140,9 +140,17 @@ class CacheManager {
    * Returns data even if expired (Stale-While-Revalidate)
    */
   getStale(key: string): any | null {
+    const item = this.getItem(key);
+    return item ? item.data : null;
+  }
+
+  /**
+   * Returns full cache item metadata
+   */
+  getItem(key: string): CacheItem | null {
     // 1. Memory cache
     const memoryItem = this.cache.get(key);
-    if (memoryItem) return memoryItem.data;
+    if (memoryItem) return memoryItem;
 
     // 2. localStorage
     try {
@@ -150,7 +158,9 @@ class CacheManager {
       if (stored) {
         const parsed: CacheItem = JSON.parse(stored);
         if (parsed.version === this.VERSION) {
-          return parsed.data;
+          // Restore to memory cache
+          this.cache.set(key, parsed);
+          return parsed;
         }
       }
     } catch (error) {

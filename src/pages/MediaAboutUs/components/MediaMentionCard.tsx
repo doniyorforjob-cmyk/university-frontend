@@ -52,13 +52,13 @@ const MediaMentionCard: React.FC<MediaMentionCardProps> = ({ article, isFeatured
             </div>
 
             {/* Content */}
-            <div className={`p-6 ${isFeatured ? 'lg:w-1/2 lg:p-10' : ''}`}>
+            <div className={`p-4 md:p-6 ${isFeatured ? 'lg:w-1/2 lg:p-10' : ''}`}>
                 <div className="flex items-center gap-2 text-gray-500 text-xs mb-3">
                     <CalendarDaysIcon className="w-4 h-4" />
                     <span>{formattedDate}</span>
                 </div>
 
-                <h3 className={`font-bold text-gray-900 group-hover:text-primary transition-colors duration-300 leading-snug mb-3 ${isFeatured ? 'text-2xl lg:text-3xl' : 'text-xl line-clamp-2'
+                <h3 className={`font-bold text-gray-900 group-hover:text-primary transition-colors duration-300 leading-snug mb-3 ${isFeatured ? 'text-2xl lg:text-3xl' : 'text-lg md:text-xl line-clamp-2'
                     }`}>
                     {article.title}
                 </h3>

@@ -15,7 +15,7 @@ import { MapIcon } from '@heroicons/react/24/outline';
 import { transformStatsData } from './transformers/universityStatsTransformer';
 
 const Stats = () => {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation(['common', 'pages']);
   const { locale } = useLocale();
 
   // Yangi arxitektura: useStandardSection hook
@@ -41,7 +41,7 @@ const Stats = () => {
     <section ref={ref} className="py-16 bg-accent">
       <Container>
         <SectionHeader
-          title={t('Biz Raqamlarda')}
+          title={t('pages:weInNumbers') as string}
           seeAllLink="/statistics"
           seeAllText={t('seeAll')}
           noContainer={true}

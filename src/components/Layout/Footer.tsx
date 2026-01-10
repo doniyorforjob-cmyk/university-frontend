@@ -49,6 +49,30 @@ const Footer: React.FC = () => {
   const socialLinks = settings?.socials || [];
   const linkGroups = data?.linkGroups || [];
   const copyrightText = (data as any)?.copyright || settings?.footer?.copyright || `© ${currentYear} ${settings?.siteName || "Namangan Davlat Texnika Universiteti"}.`;
+  const siteNameRaw: string = settings?.siteName || (t('universityName') as string) || '';
+
+  // Professional balanced splitter that ensures 3 lines
+  const getBrandingLines = (text: string): string[] => {
+    if (!text) return [];
+    if (text.includes('\n')) return text.split('\n');
+    const words = text.split(' ');
+    if (words.length <= 1) return [text];
+    if (words.length === 2) return [words[0], words[1]];
+    if (words.length === 3) return [words[0], words[1], words[2]];
+    if (words.length === 4) {
+      return [`${words[0]} ${words[1]}`, words[2], words[3]];
+    }
+    const total = words.length;
+    const part1 = Math.ceil(total / 3);
+    const part2 = Math.ceil((total - part1) / 2);
+    return [
+      words.slice(0, part1).join(' '),
+      words.slice(part1, part1 + part2).join(' '),
+      words.slice(part1 + part2).join(' ')
+    ];
+  };
+
+  const brandingLines = getBrandingLines(siteNameRaw);
 
   return (
     <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-t border-gray-700">
@@ -66,9 +90,11 @@ const Footer: React.FC = () => {
                   <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-full bg-gray-700 animate-pulse" />
                 )}
               </div>
-              <div className="flex flex-col justify-center h-20 sm:h-24">
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white leading-[1.05] tracking-tight whitespace-pre-line">
-                  {t('universityName')}
+              <div className="flex flex-col justify-center h-20 sm:h-24 lg:max-w-[300px] xl:max-w-[350px]">
+                <h1 className="text-lg lg:text-[1.3rem] 2xl:text-[1.5rem] font-bold text-white leading-[1.1] tracking-tight">
+                  {brandingLines.map((line, idx) => (
+                    <span key={idx} className="block">{line}</span>
+                  ))}
                 </h1>
               </div>
             </PrefetchLink>

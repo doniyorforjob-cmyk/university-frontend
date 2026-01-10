@@ -13,6 +13,38 @@ const MiddleHeader: React.FC = () => {
     const address = settings?.contacts?.address || "";
     const logo = settings?.logo || "";
 
+    const universityTitle: string = settings?.siteName || (t('universityName') as string) || '';
+
+    // Professional balanced splitter that ensures 3 lines
+    const getBrandingLines = (text: string): string[] => {
+        if (!text) return [];
+        // If it already has explicit line breaks (from localization), use them
+        if (text.includes('\n')) return text.split('\n');
+
+        const words = text.split(' ');
+        if (words.length <= 1) return [text];
+        if (words.length === 2) return [words[0], words[1]];
+        if (words.length === 3) return [words[0], words[1], words[2]];
+
+        // Handle 4 words (2-1-1 split for Professional Branding)
+        if (words.length === 4) {
+            return [`${words[0]} ${words[1]}`, words[2], words[3]];
+        }
+
+        // Generic split into 3 parts for > 4 words
+        const total = words.length;
+        const part1 = Math.ceil(total / 3);
+        const part2 = Math.ceil((total - part1) / 2);
+
+        return [
+            words.slice(0, part1).join(' '),
+            words.slice(part1, part1 + part2).join(' '),
+            words.slice(part1 + part2).join(' ')
+        ];
+    };
+
+    const brandingLines = getBrandingLines(universityTitle);
+
     return (
         <div className="bg-white py-3 lg:py-5 border-b border-gray-100 header-middle transition-colors">
             <Container>
@@ -28,10 +60,12 @@ const MiddleHeader: React.FC = () => {
                             )}
                         </div>
                         <div className="flex flex-col justify-center h-20 lg:h-24">
-                            <h1 className="text-lg lg:text-[1.35rem] 2xl:text-[1.5rem] font-bold text-[#0E104B] leading-[1.05] tracking-tight whitespace-pre-line">
-                                {t('universityName')}
+                            <h1 className="text-lg lg:text-[1.35rem] 2xl:text-[1.5rem] font-bold text-[#0E104B] leading-[1.1] tracking-tight">
+                                {brandingLines.map((line, idx) => (
+                                    <span key={idx} className="block whitespace-nowrap">{line}</span>
+                                ))}
                             </h1>
-                            <p className="text-[9px] lg:text-[11px] text-slate-400 font-bold mt-1 uppercase tracking-wider">
+                            <p className="text-[10px] lg:text-[12px] text-slate-400 font-bold mt-1 tracking-wide">
                                 {t('officialWebsite')}
                             </p>
                         </div>
@@ -72,7 +106,7 @@ const MiddleHeader: React.FC = () => {
 
                         {/* Manzil */}
                         {address && (
-                            <div className="hidden xl:flex items-center">
+                            <div className="hidden lg:flex items-center">
                                 <div className="bg-primary/5 p-3 rounded-full mr-3 border border-primary/10">
                                     <svg
                                         className="h-5 w-5 text-[#0E104B]"
@@ -116,10 +150,12 @@ const MiddleHeader: React.FC = () => {
                                 )}
                             </div>
                             <div className="flex flex-col items-center">
-                                <h1 className="text-lg font-bold text-[#0E104B] leading-tight whitespace-pre-line">
-                                    {t('universityName')}
+                                <h1 className="text-lg font-bold text-[#0E104B] leading-tight text-center">
+                                    {brandingLines.map((line, idx) => (
+                                        <span key={idx} className="block whitespace-nowrap">{line}</span>
+                                    ))}
                                 </h1>
-                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">
+                                <p className="text-[11px] text-slate-400 font-bold tracking-wide mt-1">
                                     {t('officialWebsite')}
                                 </p>
                             </div>

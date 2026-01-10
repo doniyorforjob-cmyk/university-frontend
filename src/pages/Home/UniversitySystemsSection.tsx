@@ -12,7 +12,7 @@ import EmptyState from '../../components/shared/EmptyState';
 import { GlobeAltIcon } from '@heroicons/react/24/outline';
 
 const UniversitySystemsSection: React.FC = () => {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation(['common', 'pages']);
   const { locale } = useLocale(); // Assuming useLocale is available here (imported below)
   const { cacheManager } = useGlobalCache();
 
@@ -41,9 +41,9 @@ const UniversitySystemsSection: React.FC = () => {
       <Container>
         <div className="lg:col-span-2">
           <SectionHeader
-            title={t('universitySystems', 'Universitet tizimlari')}
+            title={t('pages:universitySystems') as string}
             seeAllLink="/university-systems"
-            seeAllText={t('seeAllUniversitySystems', 'Barcha tizimlar')}
+            seeAllText={t('common:seeAllUniversitySystems', 'Barcha tizimlar')}
             noContainer={true}
           />
         </div>

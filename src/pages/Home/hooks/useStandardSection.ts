@@ -13,6 +13,7 @@ interface UseStandardSectionOptions {
   onError?: (error: Error) => void;
   refetchOnWindowFocus?: boolean;
   refetchInterval?: number;
+  revalidateThresholdMinutes?: number;
 }
 
 export const useStandardSection = <T = any>(
@@ -28,7 +29,8 @@ export const useStandardSection = <T = any>(
     onSuccess: userOnSuccess,
     onError: userOnError,
     refetchOnWindowFocus = false,
-    refetchInterval
+    refetchInterval,
+    revalidateThresholdMinutes
   } = options;
 
   // Stabilize callbacks to prevent infinite re-render loops in useCachedApi
@@ -54,6 +56,7 @@ export const useStandardSection = <T = any>(
     enabled,
     refetchOnWindowFocus,
     refetchInterval,
+    revalidateThresholdMinutes,
     onSuccess: handleSuccess,
     onError: handleError
   });

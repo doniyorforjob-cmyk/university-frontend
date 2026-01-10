@@ -58,9 +58,9 @@ const InteractiveServicesSection = () => {
   return (
     <div className="pt-8 md:pt-12">
       <SectionHeader
-        title={t('pages:interactiveServices', 'Interaktiv xizmatlar')}
+        title={t('pages:interactiveServices')}
         seeAllLink="/services"
-        seeAllText={t('common:seeAllServices', 'Barcha xizmatlar')}
+        seeAllText={t('common:seeAllServices')}
       />
       <Container>
         {services.length === 0 && (

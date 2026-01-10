@@ -39,6 +39,7 @@ const prefetchData = async () => {
   await Promise.allSettled([
     prefetchService.prefetchNavbar(),
     prefetchService.prefetchSettings(),
+    prefetchService.prefetchHero(),
     prefetchService.prefetchHomeNews(),
     prefetchService.prefetchFaculties(),
     prefetchService.prefetchNewsPage(),

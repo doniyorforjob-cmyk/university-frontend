@@ -51,8 +51,8 @@ const MediaGallery: React.FC = () => {
       );
     }
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 md:gap-8">
-        {photos.map((photo: HomeMediaData['photos'][0], index: number) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+        {photos.slice(0, 4).map((photo: HomeMediaData['photos'][0], index: number) => (
           <MediaCard
             key={photo.id}
             type="photo"
@@ -82,8 +82,8 @@ const MediaGallery: React.FC = () => {
     }
 
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 md:gap-8">
-        {videos.map((video: HomeMediaData['videos'][0], index: number) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+        {videos.slice(0, 4).map((video: HomeMediaData['videos'][0], index: number) => (
           <div key={video.id} onClick={() => setActiveVideo(index)} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setActiveVideo(index); }}>
             <MediaCard
               type="video"

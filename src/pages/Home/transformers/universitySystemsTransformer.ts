@@ -139,8 +139,8 @@ export const transformUniversitySystemsData = (
 
 
   return {
-    title: 'Universitet Tizimlari',
-    subtitle: 'Barcha ta\'lim tizimlari',
+    title: 'universitySystems',
+    subtitle: 'universitySystemsSubtitle',
     systems: systems,
     quickLinks: quickLinks
   };

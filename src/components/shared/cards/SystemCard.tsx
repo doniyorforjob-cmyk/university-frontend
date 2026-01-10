@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ExternalLink, BookOpen, Users, Award, Globe } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface SystemCardProps {
   id: string | number;
@@ -22,6 +23,7 @@ export const SystemCard = ({
   index = 0,
   variant = 'section'
 }: SystemCardProps) => {
+  const { t } = useTranslation('common');
   // Check if it's an SVG string (starts with <svg)
   const isSvgString = typeof icon === 'string' ? icon.trim().startsWith('<svg') : false;
   // Check if color is a hex code
@@ -90,7 +92,7 @@ export const SystemCard = ({
           </h3>
           <p className={variant === 'section' ? "text-base text-gray-600 mb-3" : "text-sm text-gray-600 mb-3"}>{description}</p>
           <div className={`flex items-center text-blue-600 ${variant === 'section' ? 'text-base' : 'text-sm'} font-medium group-hover:text-blue-700`}>
-            <span>Kirish</span>
+            <span>{t('enter')}</span>
             <ExternalLink className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" />
           </div>
         </div>
@@ -114,6 +116,7 @@ export const SystemsContainer = ({
   variant = 'section',
   showQuickLinks = true
 }: SystemsContainerProps) => {
+  const { t } = useTranslation('common');
   console.log('SystemsContainer rendering with:', {
     systemsCount: systems.length,
     quickLinksCount: quickLinks.length
@@ -154,7 +157,7 @@ export const SystemsContainer = ({
             transition={{ duration: 0.6, delay: 0.4 }}
             className="mt-6 pt-6 border-t border-gray-200"
           >
-            <h3 className="font-semibold text-gray-900 mb-4 text-lg">Tezkor havolalar</h3>
+            <h3 className="font-semibold text-gray-900 mb-4 text-lg">{t('quickLinks')}</h3>
             <div className="flex flex-wrap gap-3">
               {quickLinks.map((link: any) => (
                 <a
@@ -204,7 +207,7 @@ export const SystemsContainer = ({
           transition={{ duration: 0.6, delay: 0.4 }}
           className="bg-white p-6 shadow-sm border border-gray-200"
         >
-          <h3 className="font-semibold text-gray-900 mb-4 text-lg">Tezkor havolalar</h3>
+          <h3 className="font-semibold text-gray-900 mb-4 text-lg">{t('quickLinks')}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {quickLinks.map((link: any) => (
               <a

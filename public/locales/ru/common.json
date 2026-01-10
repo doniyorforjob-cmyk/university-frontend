@@ -12,8 +12,8 @@
     "seeAllFaculties": "Все",
     "seeAllUniversitySystems": "Все",
     "seeAllMedia": "Все",
-    "Biz Raqamlarda": "Мы в цифрах",
-    "Universitet tizimlari": "Системы университета",
+    "quickLinks": "Быстрые ссылки",
+    "enter": "Войти",
     "otherAnnouncements": "Другие объявления",
     "seeAllAnnouncements": "Все объявления",
     "universityArea": "Общая площадь университета",
@@ -46,7 +46,7 @@
     },
     "error_title": "Произошла ошибка",
     "noDataWithResource": "Пока {{resource}} отсутствуют",
-    "universityName": "Наманганский государственный\nтехнический\nуниверситет",
+    "universityName": "Наманганский\nгосударственный\nтехнический университет",
     "officialWebsite": "Официальный веб-сайт",
     "address": "Адрес"
 }

@@ -27,29 +27,31 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
 
         // 2. Check global cache manager (localStorage/prefetch)
         const cacheKey = `global-settings-${locale}`;
-        const cachedData = cacheManager.getStale(cacheKey) as GlobalSettings | null;
-        if (!force && cachedData) {
+        const cacheItem = cacheManager.getItem(cacheKey);
+
+        if (!force && cacheItem) {
             set((state) => ({
-                settings: cachedData,
-                settingsCache: { ...state.settingsCache, [locale]: cachedData },
+                settings: cacheItem.data,
+                settingsCache: { ...state.settingsCache, [locale]: cacheItem.data },
                 error: null
             }));
 
-            // SWR Logic:
-            // If cache is fresh (not expired), we don't need to re-fetch.
-            // cacheManager.has(key) returns true only if key exists AND is not expired.
-            if (cacheManager.has(cacheKey)) {
+            // Proactive Revalidation Logic (SWR):
+            // If data is fresh (e.g., less than 20 seconds old), we don't need to re-fetch
+            const REVALIDATE_THRESHOLD = 20 * 1000; // 20 seconds
+            const isFresh = (Date.now() - cacheItem.timestamp) < REVALIDATE_THRESHOLD;
+
+            if (isFresh && !force) {
                 return;
             }
-            // If we are here, data is stale (expired but still in localStorage/memory).
-            // We continue to fetch in background to update it.
+            // Otherwise, we continue to fetch in background to update the state
         }
 
         // Only set loading if we don't have any data to show (Silent SWR)
-        if (!cachedData && !currentStore.settings) {
+        if (!cacheItem && !currentStore.settings) {
             set({ isLoading: true, error: null });
         } else {
-            set({ error: null }); // Clear potential errors if we have data
+            set({ error: null });
         }
 
         try {

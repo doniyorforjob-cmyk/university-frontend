@@ -9,105 +9,149 @@ import { transformStatsData } from '../pages/Home/transformers/universityStatsTr
 import { transformInteractiveServicesData } from '../pages/Home/transformers/interactiveServicesTransformer';
 import { transformUniversitySystemsData } from '../pages/Home/transformers/universitySystemsTransformer';
 import { transformVideoGalleryData } from '../pages/Home/transformers/videoGalleryTransformer';
+import { transformFacultiesData } from '../pages/Home/transformers/facultiesTransformer';
+import { transformNewsData } from '../pages/Home/transformers/newsTransformer';
+import { transformHeroData } from '../pages/Home/transformers/heroTransformer';
+
+const STALE_THRESHOLD = 2 * 1000; // 2 seconds (Aggressive for manual refresh)
 
 /**
  * Prefetch Service
- * Markazlashgan ma'lumotlarni oldindan yuklash xizmati
+ * Markazlashgan ma'lumotlarni barcha tillarda (uz, ru, en) oldindan yuklash xizmati.
+ * Bu tildan-tilga o'tganda ma'lumotlarning darhol (kutishlarsiz) chiqishini ta'minlaydi.
  */
 export const prefetchService = {
     /**
-     * Navigation Menu
+     * Navigation Menu (Barcha tillar uchun)
      */
     prefetchNavbar: async () => {
-        const locale = localStorage.getItem('locale') || 'uz';
-        const key = `navbar-items_${locale}`; // Match useCachedApi: key_locale
-        if (!cacheManager.has(key)) {
-            try {
-                const navItems = await fetchNavItems();
-                // 30 Seconds (= 0.5 mins) as requested
-                cacheManager.set(key, navItems, 0.5);
-            } catch (e) {
-                console.warn('Navbar prefetch failed', e);
+        const locales = ['uz', 'ru', 'en'];
+        for (const locale of locales) {
+            const key = `navbar-items_${locale}`;
+            const item = cacheManager.getItem(key);
+            const isStale = !item || !item.timestamp || (Date.now() - item.timestamp > STALE_THRESHOLD);
+
+            if (isStale) {
+                try {
+                    const navItems = await fetchNavItems(locale);
+                    cacheManager.set(key, navItems, 5); // 5 mins
+                } catch (e) {
+                    console.warn(`Navbar prefetch failed for ${locale}`, e);
+                }
             }
         }
     },
 
     /**
-     * Home News (Featured)
+     * Hero Section (Barcha tillar uchun)
+     */
+    prefetchHero: async () => {
+        const locales = ['uz', 'ru', 'en'];
+        for (const locale of locales) {
+            const key = `home-section-hero-http-${locale}_v6`;
+            const item = cacheManager.getItem(key);
+            const isStale = !item || !item.timestamp || (Date.now() - item.timestamp > STALE_THRESHOLD);
+
+            if (isStale) {
+                try {
+                    const rawData = await homeApi.getHeroData(locale);
+                    const transformed = transformHeroData(rawData);
+                    cacheManager.set(key, transformed, 15);
+                } catch (e) {
+                    console.warn(`Hero prefetch failed for ${locale}`, e);
+                }
+            }
+        }
+    },
+
+    /**
+     * Home News (Barcha tillar uchun)
      */
     prefetchHomeNews: async () => {
-        if (!cacheManager.has('home-news')) {
-            try {
-                const { news } = await homeApi.getNewsData();
-                const mappedNews = news.map((item: any) => ({
-                    id: item.id,
-                    title: item.title,
-                    description: item.description,
-                    date: item.published_at,
-                    image: item.image_url,
-                    href: `/news/${item.slug}`,
-                    category: 'Yangilik'
-                }));
-                cacheManager.set('home-news', mappedNews, 0.5);
-            } catch (e) {
-                console.warn('Home news prefetch failed', e);
+        const locales = ['uz', 'ru', 'en'];
+        for (const locale of locales) {
+            const key = `home-section-news-http-${locale}_v6`;
+            const item = cacheManager.getItem(key);
+            const isStale = !item || !item.timestamp || (Date.now() - item.timestamp > STALE_THRESHOLD);
+
+            if (isStale) {
+                try {
+                    const rawData = await homeApi.getNewsData(locale);
+                    const transformed = transformNewsData(rawData);
+                    cacheManager.set(key, transformed, 15);
+                } catch (e) {
+                    console.warn(`Home news prefetch failed for ${locale}`, e);
+                }
             }
         }
     },
 
     /**
-     * Faculties
+     * Faculties (Barcha tillar uchun)
      */
     prefetchFaculties: async () => {
-        if (!cacheManager.has('faculties-all')) {
-            try {
-                const { faculties } = await homeApi.getFacultiesData();
-                cacheManager.set('faculties-all', faculties, 0.5);
-            } catch (e) {
-                console.warn('Faculties prefetch failed', e);
+        const locales = ['uz', 'ru', 'en'];
+        for (const locale of locales) {
+            const key = `home-section-faculties-http-${locale}_v6`;
+            const item = cacheManager.getItem(key);
+            const isStale = !item || !item.timestamp || (Date.now() - item.timestamp > STALE_THRESHOLD);
+
+            if (isStale) {
+                try {
+                    const rawData = await homeApi.getFacultiesData(locale);
+                    const transformed = transformFacultiesData(rawData);
+                    cacheManager.set(key, transformed, 15);
+                } catch (e) {
+                    console.warn(`Faculties prefetch failed for ${locale}`, e);
+                }
             }
         }
     },
 
     /**
-     * News Page Data (Optimization for clicking "News" link)
+     * News Page Data (Barcha tillar uchun)
      */
     prefetchNewsPage: async () => {
-        const locale = localStorage.getItem('locale') || 'uz';
-        const key = `news-data-${locale}`;
-        if (!cacheManager.has(key)) {
-            try {
-                // ... logic same as ...
-                // Note: imported from postService but we need simple logic here or duplicate?
-                // Actually prefetchService calls getPosts.
-                const data = await getPosts('news', locale);
-                const mappedData = data.map((post: any) => ({
-                    id: post.id.toString(),
-                    title: post.title,
-                    description: post.description || '',
-                    date: post.published_at,
-                    image: post.image_url,
-                    href: `/news/${post.slug}`,
-                    category: 'Yangilik'
-                }));
-                cacheManager.set(key, mappedData, 0.5);
-            } catch (e) {
-                console.warn('News page data prefetch failed', e);
+        const locales = ['uz', 'ru', 'en'];
+        for (const locale of locales) {
+            const key = `news-data-${locale}`;
+            const item = cacheManager.getItem(key);
+            const isStale = !item || !item.timestamp || (Date.now() - item.timestamp > STALE_THRESHOLD);
+
+            if (isStale) {
+                try {
+                    const data = await getPosts('news', locale);
+                    const mappedData = data.map((post: any) => ({
+                        id: post.id.toString(),
+                        title: post.title,
+                        description: post.description || '',
+                        date: post.published_at,
+                        image: post.image_url,
+                        href: `/news/${post.slug}`,
+                        category: 'Yangilik'
+                    }));
+                    cacheManager.set(key, mappedData, 15);
+                } catch (e) {
+                    console.warn(`News page data prefetch failed for ${locale}`, e);
+                }
             }
         }
     },
 
     /**
-     * Global sozlamalarni prefetch qilish
+     * Global sozlamalar (Barcha tillar uchun)
      */
     prefetchSettings: async () => {
         const locales = ['uz', 'ru', 'en'];
         for (const locale of locales) {
             const key = `global-settings-${locale}`;
-            if (!cacheManager.has(key)) {
+            const item = cacheManager.getItem(key);
+            const isStale = !item || !item.timestamp || (Date.now() - item.timestamp > STALE_THRESHOLD);
+
+            if (!item || isStale) {
                 try {
                     const settingsData = await settingsApi.getSettings(locale);
-                    cacheManager.set(key, settingsData, 30); // 30 mins TTL for settings
+                    cacheManager.set(key, settingsData, 30);
                 } catch (e) {
                     console.warn(`Settings prefetch failed for ${locale}`, e);
                 }
@@ -116,15 +160,18 @@ export const prefetchService = {
     },
 
     /**
-     * Home Section: Stats
+     * Home Section: Stats (Barcha tillar uchun)
      */
     prefetchStats: async () => {
         const locales = ['uz', 'ru', 'en'];
         for (const locale of locales) {
-            const key = `home-section-stats-http-${locale}`;
-            if (!cacheManager.has(key)) {
+            const key = `home-section-stats-http-${locale}_v6`;
+            const item = cacheManager.getItem(key);
+            const isStale = !item || !item.timestamp || (Date.now() - item.timestamp > STALE_THRESHOLD);
+
+            if (isStale) {
                 try {
-                    const rawData = await homeApi.getStatsData(); // Note: Stats API might not be localized yet, but key is.
+                    const rawData = await homeApi.getStatsData(locale);
                     const transformed = transformStatsData(rawData);
                     cacheManager.set(key, transformed, 15);
                 } catch (e) {
@@ -135,15 +182,18 @@ export const prefetchService = {
     },
 
     /**
-     * Home Section: Media Gallery
+     * Home Section: Media Gallery (Barcha tillar uchun)
      */
     prefetchMedia: async () => {
         const locales = ['uz', 'ru', 'en'];
         for (const locale of locales) {
-            const key = `home-section-media-gallery-http-${locale}`;
-            if (!cacheManager.has(key)) {
+            const key = `home-section-video-gallery-http-${locale}_v6`;
+            const item = cacheManager.getItem(key);
+            const isStale = item && (Date.now() - item.timestamp > STALE_THRESHOLD);
+
+            if (!item || isStale) {
                 try {
-                    const rawData = await homeApi.getMediaData();
+                    const rawData = await homeApi.getMediaData(locale);
                     const transformed = transformVideoGalleryData(rawData);
                     cacheManager.set(key, transformed, 15);
                 } catch (e) {
@@ -154,13 +204,16 @@ export const prefetchService = {
     },
 
     /**
-     * Home Section: Interactive Services
+     * Home Section: Interactive Services (Barcha tillar uchun)
      */
     prefetchInteractiveServices: async () => {
         const locales = ['uz', 'ru', 'en'];
         for (const locale of locales) {
-            const key = `home-section-interactive-services-http-${locale}`;
-            if (!cacheManager.has(key)) {
+            const key = `home-section-interactive-services-http-${locale}_v6`;
+            const item = cacheManager.getItem(key);
+            const isStale = item && (Date.now() - item.timestamp > STALE_THRESHOLD);
+
+            if (!item || isStale) {
                 try {
                     const rawData = await homeApi.getInteractiveServicesData(locale);
                     const transformed = transformInteractiveServicesData(rawData);
@@ -173,13 +226,16 @@ export const prefetchService = {
     },
 
     /**
-     * Home Section: University Systems
+     * Home Section: University Systems (Barcha tillar uchun)
      */
     prefetchUniversitySystems: async () => {
         const locales = ['uz', 'ru', 'en'];
         for (const locale of locales) {
-            const key = `home-section-university-systems-http-${locale}`;
-            if (!cacheManager.has(key)) {
+            const key = `home-section-university-systems-http-${locale}_v6`;
+            const item = cacheManager.getItem(key);
+            const isStale = item && (Date.now() - item.timestamp > STALE_THRESHOLD);
+
+            if (!item || isStale) {
                 try {
                     const rawData = await homeApi.getUniversitySystemsData(locale);
                     const transformed = transformUniversitySystemsData(rawData);
@@ -192,15 +248,18 @@ export const prefetchService = {
     },
 
     /**
-     * Footer Data
+     * Footer Data (Barcha tillar uchun)
      */
     prefetchFooter: async () => {
         const locales = ['uz', 'ru', 'en'];
         for (const locale of locales) {
-            const key = `footer-data-http_${locale}`; // useCachedApi appends _locale
-            if (!cacheManager.has(key)) {
+            const key = `footer-data-http-${locale}`;
+            const item = cacheManager.getItem(key);
+            const isStale = item && (Date.now() - item.timestamp > STALE_THRESHOLD);
+
+            if (!item || isStale) {
                 try {
-                    const data = await fetchFooterData();
+                    const data = await fetchFooterData(locale);
                     cacheManager.set(key, data, 30);
                 } catch (e) {
                     console.warn(`Footer prefetch failed for ${locale}`, e);

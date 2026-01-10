@@ -9,20 +9,7 @@ const apiClient = axios.create({
   },
 });
 
-// Response cache interceptor
-apiClient.interceptors.response.use((response) => {
-  const { config, data, status } = response;
-
-  // Cache successful GET requests
-  if (config.method === 'get' && status === 200 && data) {
-    // Use the tagged cacheKey if available, otherwise fallback to URL
-    const cacheKey = (config as any)._cacheKey || axios.getUri(config);
-    // Auto-cache for 30 seconds
-    cacheManager.set(cacheKey, data, 0.5);
-  }
-
-  return response;
-});
+// Response interceptors are handled below in the retry/logging section
 
 apiClient.interceptors.request.use(
   (config) => {
