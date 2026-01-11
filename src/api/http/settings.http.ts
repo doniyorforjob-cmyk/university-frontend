@@ -50,7 +50,10 @@ export const settingsApi = {
                     copyright: fields.footercopyright || '© 2026 Namangan davlat texnika universiteti',
                     mission: fields.mission || fields.footermission || '',
                     quickLinks: []
-                }
+                },
+                corruptionUrl: typeof fields.corruption === 'object'
+                    ? (fields.corruption.url || fields.corruption.path || '#')
+                    : (fields.corruption || '#')
             };
         } catch (error) {
             console.error('Error fetching global settings from API:', error);

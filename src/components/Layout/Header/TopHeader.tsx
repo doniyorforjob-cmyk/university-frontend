@@ -5,7 +5,8 @@ import {
     FaTelegramPlane,
     FaInstagram,
     FaFacebookF,
-    FaYoutube
+    FaYoutube,
+    FaShieldAlt
 } from 'react-icons/fa';
 import useClickOutside from '../../../hooks/useClickOutside';
 import { useSettingsStore } from '../../../store/settingsStore';
@@ -16,13 +17,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useLocale } from '../../../contexts/LocaleContext';
 
 const languageOptions = {
-    uz: { name: "O'z", flag: "https://flagcdn.com/w20/uz.png" },
-    ru: { name: "Рус", flag: "https://flagcdn.com/w20/ru.png" },
-    en: { name: "Eng", flag: "https://flagcdn.com/w20/gb.png" },
+    uz: { name: "O'zbek", short: "UZ", flag: "https://flagcdn.com/w20/uz.png" },
+    ru: { name: "Русский", short: "RU", flag: "https://flagcdn.com/w20/ru.png" },
+    en: { name: "English", short: "EN", flag: "https://flagcdn.com/w20/gb.png" },
 };
 
 const TopHeader = () => {
-    const { i18n } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { locale, setLocale } = useLocale();
     const navigate = useNavigate();
     const location = useLocation();
@@ -84,18 +85,18 @@ const TopHeader = () => {
     const currentLangDetails = languageOptions[currentLanguage] || languageOptions.uz;
 
     return (
-        <div className="bg-primary border-b border-secondary/50 h-16 header-top">
-            <Container className="h-full flex flex-col md:flex-row items-center justify-between gap-2 md:gap-4">
-                {/* Ijtimoiy tarmoqlar havolalari - Settings API dan */}
-                <div className="flex-1 flex justify-center md:justify-start items-center pb-1">
-                    <div className="flex items-center space-x-4">
+        <div className="bg-primary border-b border-secondary/50 header-top flex items-center">
+            <Container className="flex flex-row items-center justify-between gap-2 px-2 sm:px-4 w-full py-3 md:py-0">
+                {/* Ijtimoiy tarmoqlar (Chapdan) */}
+                <div className="flex-1 flex items-center justify-start">
+                    <div className="flex items-center space-x-2.5 md:space-x-4">
                         {settings?.socials?.map((link: any) => {
                             const getIcon = (name: string) => {
                                 switch (name.toLowerCase()) {
-                                    case 'telegram': return <FaTelegramPlane className="h-4 w-4" />;
-                                    case 'instagram': return <FaInstagram className="h-4 w-4" />;
-                                    case 'facebook': return <FaFacebookF className="h-4 w-4" />;
-                                    case 'youtube': return <FaYoutube className="h-4 w-4" />;
+                                    case 'telegram': return <FaTelegramPlane className="h-5 w-5" />;
+                                    case 'instagram': return <FaInstagram className="h-5 w-5" />;
+                                    case 'facebook': return <FaFacebookF className="h-5 w-5" />;
+                                    case 'youtube': return <FaYoutube className="h-5 w-5" />;
                                     default: return null;
                                 }
                             };
@@ -107,57 +108,66 @@ const TopHeader = () => {
                                     href={link.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-white hover:text-secondary transition-colors p-1"
+                                    className="text-white hover:text-secondary transition-colors inline-flex items-center"
                                     title={link.name}
                                 >
-                                    {icon || <span className="text-sm font-medium">{link.name}</span>}
+                                    {icon || <span className="text-[12px] font-medium">{link.name}</span>}
                                 </a>
                             );
                         })}
                     </div>
                 </div>
 
-                {/* Markazga joylashtirilgan shrift o'lchami va tema tugmalari */}
-                <div className="flex justify-center items-center w-full md:w-auto">
-                    <div className="flex items-center space-x-1 bg-black/20 border border-secondary/50 rounded-lg p-1">
-                        <button onClick={toggleTheme} className="text-white hover:bg-black/20 transition-colors font-bold text-base px-2 py-0.5 rounded-md">
-                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                {/* Markazda Accessibility (Center) */}
+                <div className="flex items-center justify-center flex-shrink-0 mx-1">
+                    <div className="flex items-center space-x-1 md:space-x-1 bg-black/20 border border-secondary/50 rounded-lg p-1 md:p-1.5">
+                        <button onClick={toggleTheme} className="text-white hover:bg-black/20 transition-colors font-bold text-[13px] md:text-base px-2 md:px-2.5 py-1 rounded-md inline-flex items-center">
+                            <svg className="w-4 md:w-4.5 h-4 md:h-4.5" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
                             </svg>
                         </button>
                         <div className="w-px h-4 bg-secondary/50 mx-1"></div>
-                        <button onClick={decreaseFontSize} className="text-white hover:bg-black/20 transition-colors font-bold text-base px-2 py-0.5 rounded-md">A-</button>
-                        <button onClick={resetFontSize} className="text-white hover:bg-black/20 transition-colors font-bold text-base px-2 py-0.5 rounded-md">A</button>
-                        <button onClick={increaseFontSize} className="text-white hover:bg-black/20 transition-colors font-bold text-lg px-2 py-0.5 rounded-md">A+</button>
+                        <button onClick={decreaseFontSize} className="text-white hover:bg-black/20 transition-colors font-bold text-[13px] md:text-base px-2 md:px-2.5 py-1 rounded-md">A-</button>
+                        <button onClick={resetFontSize} className="text-white hover:bg-black/20 transition-colors font-bold text-[13px] md:text-base px-2 md:px-2.5 py-1 rounded-md">A</button>
+                        <button onClick={increaseFontSize} className="text-white hover:bg-black/20 transition-colors font-bold text-[15px] md:text-lg px-2 md:px-2.5 py-1 rounded-md">A+</button>
                     </div>
                 </div>
 
-                {/* O'ng tomondagi kontent (tezkor havolalar va til o'zgartirish) */}
-                <div className="flex-1 flex justify-center md:justify-end items-center mt-1 md:mt-0">
-                    <div className="flex flex-wrap justify-center items-center gap-x-4 md:gap-x-6">
-                        {/* Quick links - Desktop va Mobile uchun moslangan */}
+                {/* O'ng tomon (Corruption va Lang) */}
+                <div className="flex-1 flex items-center justify-end">
+                    <div className="flex items-center gap-2.5 md:gap-6">
+                        {settings?.corruptionUrl && (
+                            <a
+                                href={settings.corruptionUrl}
+                                className="flex items-center text-white hover:text-secondary transition-colors text-[13px] font-medium"
+                            >
+                                <FaShieldAlt className="h-5 w-5 text-red-100" />
+                                <span className="hidden lg:inline ml-2">{t('fightCorruption')}</span>
+                            </a>
+                        )}
 
-                        {/* Language selector - har doim ko'rinadi */}
-                        <div className="relative" ref={langDropdownRef}>
-                            <button onClick={() => setLangDropdownOpen(!isLangDropdownOpen)} className="flex items-center focus:outline-none text-white hover:text-secondary">
-                                <img src={currentLangDetails.flag} width="20" alt={currentLangDetails.name} className="mr-2" />
-                                <span>{currentLangDetails.name}</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3 ml-1">
+                        <div className="w-px h-4 bg-secondary/50"></div>
+
+                        <div className="relative flex items-center" ref={langDropdownRef}>
+                            <button onClick={() => setLangDropdownOpen(!isLangDropdownOpen)} className="flex items-center focus:outline-none text-white hover:text-secondary text-[13px] font-bold">
+                                <img src={currentLangDetails.flag} width="18" alt={currentLangDetails.name} className="mr-2" />
+                                <span>{currentLangDetails.short}</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3 h-3 ml-1">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                                 </svg>
                             </button>
                             {isLangDropdownOpen && (
-                                <div className="absolute right-0 mt-2 w-28 rounded-md bg-white py-1 shadow-xl ring-1 ring-black ring-opacity-5 z-50">
+                                <div className="absolute right-0 top-full mt-2 w-24 rounded-md bg-white py-1 shadow-xl ring-1 ring-black ring-opacity-5 z-50">
                                     {Object.keys(languageOptions)
                                         .filter((lng) => lng !== currentLanguage)
                                         .map((lng) => (
                                             <button
                                                 key={lng}
                                                 onClick={() => handleLanguageChange(lng)}
-                                                className="flex items-center w-full text-left px-4 py-2 text-base text-gray-700 hover:bg-gray-100"
+                                                className="flex items-center w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                             >
-                                                <img src={languageOptions[lng as keyof typeof languageOptions].flag} width="20" alt={languageOptions[lng as keyof typeof languageOptions].name} className="mr-2" />
-                                                <span>{languageOptions[lng as keyof typeof languageOptions].name}</span>
+                                                <img src={languageOptions[lng as keyof typeof languageOptions].flag} width="18" alt={languageOptions[lng as keyof typeof languageOptions].short} className="mr-2" />
+                                                <span className="font-bold">{languageOptions[lng as keyof typeof languageOptions].short}</span>
                                             </button>
                                         ))}
                                 </div>

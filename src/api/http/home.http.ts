@@ -73,7 +73,19 @@ export const homeApi = {
   },
 
   getHeroData: async (locale?: string): Promise<any> => {
-    return fetchWithFallback('hero', { with: 'image' }, locale);
+    try {
+      const [heroData, linksData] = await Promise.all([
+        fetchWithFallback('hero', { with: 'image' }, locale),
+        fetchWithFallback('hero-links', { with: 'image' }, locale).catch(err => {
+          console.warn('Failed to fetch hero-links, using empty array', err);
+          return [];
+        })
+      ]);
+      return { hero: heroData, links: linksData };
+    } catch (error) {
+      console.error('Error fetching hero data:', error);
+      throw error;
+    }
   },
 
   getStatsData: async (locale?: string): Promise<any> => {

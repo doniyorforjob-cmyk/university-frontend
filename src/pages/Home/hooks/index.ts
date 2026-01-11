@@ -1,2 +1,3 @@
-export * from './useHomeSections';
-export * from './useSectionData';
+export { useHomeSections } from './useHomeSections';
+
+export { useStandardSection } from './useStandardSection';

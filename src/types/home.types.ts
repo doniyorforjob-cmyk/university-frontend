@@ -2,9 +2,9 @@
 export interface CarouselItem {
   id: string;
   img: string;
+  video?: string;
   title: string;
   desc: string;
-  sliderName: string;
   order?: number;
   enabled?: boolean;
 }
@@ -23,7 +23,14 @@ export interface HomeHeroData {
     opacity: number;
     color: string;
   };
-  carouselItems?: CarouselItem[];
+  items?: CarouselItem[];
+  actionLinks?: {
+    id: string | number;
+    title: string;
+    url: string;
+    icon: string;
+    isExternal: boolean;
+  }[];
 }
 
 export interface HomeStatsData {

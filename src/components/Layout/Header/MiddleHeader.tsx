@@ -139,50 +139,77 @@ const MiddleHeader: React.FC = () => {
                 </div>
 
                 {/* Kichik ekranlar uchun layout */}
-                <div className="md:hidden space-y-5 py-4">
-                    <div className="flex flex-col items-center">
-                        <PrefetchLink to="/" className="flex flex-col items-center text-center gap-3">
-                            <div className="flex-shrink-0">
-                                {logo ? (
-                                    <img src={logo} alt="Logo" className="h-20 w-20 object-contain" />
-                                ) : (
-                                    <img src="/images/logo.png" alt="Logo" className="h-20 w-20 object-contain" />
-                                )}
-                            </div>
-                            <div className="flex flex-col items-center">
-                                <h1 className="text-lg font-bold text-[#0E104B] leading-tight text-center">
-                                    {brandingLines.map((line, idx) => (
-                                        <span key={idx} className="block whitespace-nowrap">{line}</span>
-                                    ))}
-                                </h1>
-                                <p className="text-[11px] text-slate-400 font-bold tracking-wide mt-1">
-                                    {t('officialWebsite')}
-                                </p>
-                            </div>
-                        </PrefetchLink>
+                <div className="md:hidden flex items-center justify-between py-5 gap-4">
+                    {/* Chap tomon: Logotip va Universitet nomi */}
+                    <PrefetchLink to="/" className="flex items-center gap-4 min-w-0 flex-1">
+                        <div className="flex-shrink-0 flex items-center">
+                            {logo ? (
+                                <img src={logo} alt="Logo" className="h-20 w-20 object-contain" />
+                            ) : (
+                                <img src="/images/logo.png" alt="Logo" className="h-20 w-20 object-contain" />
+                            )}
+                        </div>
+                        <div className="flex flex-col justify-center min-w-0">
+                            <h1 className="text-[18px] font-bold text-[#0E104B] leading-[1.05] uppercase">
+                                {brandingLines.map((line, idx) => (
+                                    <span key={idx} className="block whitespace-nowrap">{line}</span>
+                                ))}
+                            </h1>
+                            <p className="text-[12px] text-slate-400 font-bold tracking-tight mt-1.5">
+                                {t('officialWebsite')}
+                            </p>
+                        </div>
+                    </PrefetchLink>
 
-                        {/* Mobile Phone Link Plain */}
+                    {/* O'ng tomon: Kontakt ma'lumotlari (ustma-ust) */}
+                    <div className="flex flex-col justify-center items-end gap-3 flex-shrink-0 max-w-[180px]">
+                        {/* Telefon raqami */}
                         {phone && (
-                            <div className="flex items-center justify-center gap-2 mt-4 text-[#0E104B] font-bold">
-                                <div className="bg-primary/10 p-1.5 rounded-full">
+                            <a href={`tel:${phoneRaw}`} className="flex items-center gap-2 text-[#0E104B] font-extrabold text-[15px] hover:text-secondary group">
+                                <span className="whitespace-nowrap">{phone}</span>
+                                <div className="bg-primary/5 p-2 rounded-full group-hover:bg-primary/10 transition-colors flex items-center justify-center">
                                     <svg
-                                        className="h-4 w-4 text-primary"
+                                        className="h-5 w-5 text-[#0E104B]"
                                         fill="none"
                                         stroke="currentColor"
                                         viewBox="0 0 24 24"
-                                        xmlns="http://www.w3.org/2000/svg"
                                     >
                                         <path
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
-                                            strokeWidth="2"
+                                            strokeWidth="2.5"
                                             d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                                        ></path>
+                                        />
                                     </svg>
                                 </div>
-                                <a href={`tel:${phoneRaw}`} className="text-sm underline underline-offset-4 decoration-primary/20">
-                                    {phone}
-                                </a>
+                            </a>
+                        )}
+
+                        {/* Manzil */}
+                        {address && (
+                            <div className="flex items-center gap-2 text-[#0E104B] font-bold text-[15px] text-right">
+                                <span className="line-clamp-2 leading-tight">{address}</span>
+                                <div className="bg-primary/5 p-2 rounded-full flex items-center justify-center">
+                                    <svg
+                                        className="h-5 w-5 text-[#0E104B]"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2.5"
+                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                        />
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2.5"
+                                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                                        />
+                                    </svg>
+                                </div>
                             </div>
                         )}
                     </div>

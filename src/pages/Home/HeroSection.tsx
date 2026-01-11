@@ -1,121 +1,120 @@
 import React, { useState, useEffect } from "react";
-import { useStandardSection } from './hooks/useStandardSection';
+import { useStandardSection } from './hooks';
 import { transformHeroData } from './transformers/heroTransformer';
 import { homeApi } from '../../services/homeService';
-import {
-  SliderBtnGroup,
-  ProgressSlider,
-  SliderBtn,
-  SliderContent,
-  SliderWrapper,
-} from '@/components/ui/progressive-carousel';
 import { SectionSkeleton } from './components/SectionSkeleton';
+import HeroActionCards from './components/HeroActionCards';
 import { useLocale } from '@/contexts/LocaleContext';
-import { useGlobalCache } from '@/components/providers/CachedApiProvider';
-
-interface CarouselItem {
-  id: string;
-  img: string;
-  title: string;
-  desc: string;
-  sliderName: string;
-  order?: number;
-  enabled?: boolean;
-}
+import { CarouselItem } from '@/types/home.types';
 
 export default function HeroSection({ data: propData }: { data?: any } = {}) {
   const [firstImageLoaded, setFirstImageLoaded] = useState(false);
 
   // If propData is provided, use it directly, otherwise fetch
   const shouldFetch = !propData;
-  const { locale } = useLocale();
-  const { cacheManager } = useGlobalCache();
 
-  const { data, loading, isCached } = useStandardSection(
+  const { data, loading } = useStandardSection(
     'hero',
     homeApi.getHeroData,
     {
       transformData: transformHeroData,
-      enabled: shouldFetch
+      enabled: shouldFetch,
+      revalidateThresholdMinutes: 0
     }
   );
 
   // Use prop data if available, otherwise use fetched data
   const heroData = propData || data;
 
-  // Background prefetching for other locales
-  // Background prefetching - Disabled (Cache Pollution Risk)
-  // useEffect(() => {
-  //   if (!heroData || !shouldFetch) return;
-  //   const otherLocales = ['uz', 'ru', 'en'].filter(l => l !== locale);
-  //   otherLocales.forEach(async (targetLocale) => { ... });
-  // }, [heroData, locale, cacheManager, shouldFetch]);
-
-  // Debug
-
-  // Handle if heroData is the carouselItems array directly
-  const carouselItems: CarouselItem[] = Array.isArray(heroData) ? heroData : heroData?.carouselItems || [];
-
-  // Filter enabled items but DO NOT re-sort by order.
-  // Reliance is on the transformer which sorts by createdAt (Newest First).
-  const enabledItems = carouselItems
-    .filter((item: CarouselItem) => item.enabled !== false);
-  // .sort(...) removed to enforce "Newest First" from transformer
+  const items: CarouselItem[] = Array.isArray(heroData) ? heroData : heroData?.items || [];
+  const enabledItems = items.filter((item: CarouselItem) => item.enabled !== false);
+  const activeItem = enabledItems.length > 0 ? enabledItems[0] : null;
 
   // Check if first image is loaded
   useEffect(() => {
-    if (enabledItems.length > 0) {
-      const firstItem = enabledItems[0];
+    if (activeItem) {
       const img = new Image();
       img.onload = () => setFirstImageLoaded(true);
-      img.src = firstItem.img;
+      img.src = activeItem.img;
     } else {
       setFirstImageLoaded(false);
     }
-  }, [enabledItems]);
+  }, [activeItem]);
 
   // Loading state - show skeleton until data is loaded
   if ((shouldFetch && loading) || !heroData) {
     return <SectionSkeleton sectionType="hero" />;
   }
 
+  // Hardcoded action links based on the design image
+  // hardcoded action links removed
+  const actionLinks = heroData.actionLinks || [];
+
+  if (!activeItem) return null;
 
   return (
-    <section className="relative overflow-hidden">
-      <ProgressSlider
-        vertical={false}
-        activeSlider={enabledItems.length > 0 ? enabledItems[0].sliderName : ''}
-      >
-        <SliderContent>
-          {enabledItems.map((item: CarouselItem, index: number) => (
-            <SliderWrapper key={item.id} value={item.sliderName}>
-              <img
-                className='w-full h-[50vh] sm:h-[60vh] lg:h-[60vh] xl:h-[76vh] 2xl:h-[72vh] object-cover block'
-                src={item.img}
-                alt={item.title}
-              />
-            </SliderWrapper>
-          ))}
-        </SliderContent>
+    <section className="relative w-full h-[500px] md:h-[600px] lg:h-[70vh] xl:h-[75vh] overflow-hidden flex flex-col justify-end">
+      {/* Background Layer */}
+      <div className="absolute inset-0 z-0">
+        {/* Overlay for better text visibility */}
+        <div className="absolute inset-0 bg-black/60 z-10" />
 
-        {firstImageLoaded && (
-          <SliderBtnGroup className='absolute bottom-0 w-full h-fit dark:text-white text-black dark:bg-black/40 bg-white/40 backdrop-blur-md overflow-hidden grid grid-cols-2 md:grid-cols-4'>
-            {enabledItems.map((item: CarouselItem, index: number) => (
-              <SliderBtn
-                key={item.id}
-                value={item.sliderName}
-                className='text-left cursor-pointer p-3 xl:p-2 border-r border-white/20 last:border-r-0'
-                progressBarClass='dark:bg-black bg-white h-full'
-              >
-                <h2 className='relative px-4 rounded-full w-fit dark:bg-secondary dark:text-white text-white bg-secondary mb-2 text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-lg truncate max-w-full'>
-                  {item.title}
-                </h2>
-                <p className='font-medium line-clamp-2 text-sm md:text-base lg:text-base xl:text-base 2xl:text-sm'>{item.desc}</p>
-              </SliderBtn>
-            ))}
-          </SliderBtnGroup>
+        {activeItem.video ? (
+          <video
+            className="w-full h-full object-cover"
+            src={activeItem.video}
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster={activeItem.img}
+          />
+        ) : activeItem.img ? (
+          <img
+            className="w-full h-full object-cover"
+            src={activeItem.img}
+            alt={activeItem.title}
+          />
+        ) : (
+          <div className="absolute inset-0 w-full h-full bg-[#111]" />
         )}
-      </ProgressSlider>
+      </div>
+
+      {/* Content Layer */}
+      <div className="relative z-20 w-full mb-10 lg:mb-16">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
+
+            {/* Empty Space / Left Side - Title Area */}
+            <div className="lg:col-span-12">
+              <h1 className="text-white text-2xl md:text-3xl lg:text-4xl font-bold leading-tight mb-8 animate-fade-in-up max-w-4xl">
+                {activeItem.title}
+              </h1>
+
+              {/* Dynamic Timeline aligned with Action Cards */}
+              <div className={`hidden md:grid w-full grid-cols-${Math.max(1, actionLinks.length)} relative mt-12`}>
+                <div className="absolute left-0 -top-8 italic text-white/90 text-xl font-light col-span-full">
+                  {activeItem.desc}
+                </div>
+
+                {actionLinks.map((_: any, idx: number) => (
+                  <div key={idx} className="flex items-center w-full relative pr-4">
+                    <span className="w-3 h-3 rounded-full border-2 border-white bg-transparent flex-shrink-0 z-10" />
+                    <div className="h-[2px] border-t-2 border-dashed border-white/40 flex-grow ml-2" />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right Side / Extra Info? - Currently mostly empty in design, but Action Cards are below everything */}
+          </div>
+
+          {/* Action Cards Integrated at the bottom - INSIDE CONTAINER */}
+          <div className="mt-8">
+            <HeroActionCards links={actionLinks} />
+          </div>
+        </div>
+      </div>
     </section>
   );
 }

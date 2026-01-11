@@ -35,4 +35,5 @@ export interface GlobalSettings {
     contacts: ContactSettings;
     socials: SocialLink[];
     footer: FooterSettings;
+    corruptionUrl?: string;
 }
