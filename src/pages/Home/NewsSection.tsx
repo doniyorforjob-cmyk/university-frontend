@@ -37,7 +37,7 @@ const AnnouncementsPreview = ({ announcements }: { announcements?: HomeNewsData[
               return (
                 <li key={item.id}>
                   <PrefetchLink
-                    to={`/announcements/${item.id}`}
+                    to={`/announcements/${item.slug}`}
                     prefetch={true}
                     className="group flex items-center p-3 bg-white hover:bg-gray-50 transition-all duration-300 border border-gray-200"
                   >

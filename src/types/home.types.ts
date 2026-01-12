@@ -62,6 +62,7 @@ export interface HomeNewsData {
     text: string;
     description: string;
     date: string;
+    slug: string;
   }>;
   events: Array<{
     id: number;
