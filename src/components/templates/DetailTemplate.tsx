@@ -59,8 +59,8 @@ export interface SocialShareConfig {
   facebook?: boolean;
   twitter?: boolean;
   telegram?: boolean;
+  instagram?: boolean;
   linkedin?: boolean;
-  copy?: boolean;
 }
 
 // Props interfeysi
@@ -129,7 +129,7 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
   showSocialShare = true,
   showPrintButton = true,
   showComments = false,
-  socialShare = { facebook: true, telegram: true, copy: true },
+  socialShare = { facebook: true, telegram: true, instagram: true },
   showSidebar = true,
   sidebarContent,
   onShare,

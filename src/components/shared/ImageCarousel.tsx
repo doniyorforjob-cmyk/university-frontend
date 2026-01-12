@@ -69,7 +69,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({
                             key={index}
                             className="relative flex-[0_0_100%] min-w-0" // Slide
                         >
-                            <div className="aspect-video relative w-full h-full">
+                            <div className="aspect-[16/10] relative w-full overflow-hidden">
                                 <OptimizedImage
                                     src={image.src}
                                     alt={image.alt}

@@ -24,9 +24,11 @@ apiClient.interceptors.request.use(
     const globalToken = process.env.REACT_APP_API_TOKEN;
     const locale = localStorage.getItem('locale') || 'uz';
 
-    // ALWAYS ensure project-id is in the headers (important for POST)
+    // ALWAYS ensure project-id is in the headers
     if (projectId) {
       config.headers['project-id'] = projectId;
+      // Some backends might look for Project-Id or X-Project-Id, adding standard variants just in case
+      config.headers['Project-Id'] = projectId;
     }
 
     // Always set Authorization if available

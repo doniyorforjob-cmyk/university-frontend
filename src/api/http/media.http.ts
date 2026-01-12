@@ -19,7 +19,7 @@ export const getMediaArticles = async (): Promise<MediaArticle[]> => {
       slug: entry.fields?.slug || entry.slug,
       title: entry.fields?.title || entry.title,
       excerpt: entry.fields?.content || entry.fields?.excerpt || '',
-      image: (Array.isArray(entry.fields?.image) ? entry.fields.image[0]?.url : (entry.fields?.image?.url || '')) || '/images/logo.png',
+      image: (Array.isArray(entry.fields?.image) ? entry.fields.image[0]?.url || entry.fields.image[0]?.thumbnail_url : (entry.fields?.image?.url || entry.fields?.image?.thumbnail_url || '')) || '/images/logo.png',
       published_at: entry.fields?.published_at || entry.published_at || entry.created_at,
       source: entry.fields?.sources || entry.fields?.source || 'OAV',
       url: entry.fields?.url || '#',

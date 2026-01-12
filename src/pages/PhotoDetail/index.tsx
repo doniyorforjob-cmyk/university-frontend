@@ -96,7 +96,7 @@ const PhotoDetailPage: React.FC = () => {
             socialShare={{
                 facebook: true,
                 telegram: true,
-                copy: true
+                instagram: true
             }}
         />
     );

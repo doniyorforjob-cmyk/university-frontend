@@ -60,6 +60,14 @@ export const homeApiMock = {
         return simulateApiCall({ data: mockPosts });
     },
 
+    getEventsData: async (locale?: string) => {
+        return simulateApiCall({ data: [] });
+    },
+
+    getCombinedNewsData: async (locale?: string) => {
+        return simulateApiCall({ news: { data: mockPosts }, events: { data: [] } });
+    },
+
     getFacultiesData: async (locale?: string) => {
         return simulateApiCall({ faculties: facultiesData, departments: [] });
     },

@@ -84,11 +84,11 @@ const Footer: React.FC = () => {
               className="flex items-center gap-3 mb-6 group transition-colors"
             >
               <div className="flex-shrink-0">
-                {settings?.logo ? (
-                  <img src={settings.logo} alt="Logo" className="h-20 w-20 sm:h-24 sm:w-24 object-contain rounded-full" />
-                ) : (
-                  <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-full bg-gray-700 animate-pulse" />
-                )}
+                <img
+                  src={settings?.logo || "/images/logo.png"}
+                  alt="Logo"
+                  className="h-20 w-20 sm:h-24 sm:w-24 object-contain rounded-full bg-white p-1"
+                />
               </div>
               <div className="flex flex-col justify-center h-20 sm:h-24 lg:max-w-[300px] xl:max-w-[350px]">
                 <h1 className="text-lg lg:text-[1.3rem] 2xl:text-[1.5rem] font-bold text-white leading-[1.1] tracking-tight">

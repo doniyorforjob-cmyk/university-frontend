@@ -21,7 +21,7 @@ import { transformVideoGalleryData } from '../../pages/Home/transformers/videoGa
 import { transformFacultiesData } from '../../pages/Home/transformers/facultiesTransformer';
 
 // Helper to fetch data with fallback to 'uz' locale if empty (count < 1)
-const fetchWithFallback = async (endpoint: string, params: any = {}, locale?: string) => {
+const fetchWithFallback = async (endpoint: string, params: any = {}, locale?: string, disableFallback: boolean = false) => {
   const projectId = process.env.REACT_APP_PROJECT_ID;
   const requestParams = { ...params };
 
@@ -33,8 +33,8 @@ const fetchWithFallback = async (endpoint: string, params: any = {}, locale?: st
     const response = await apiClient.get(`/projects/${projectId}/content/${endpoint}`, { params: requestParams });
     const data = Array.isArray(response.data) ? response.data : (response.data?.data || []);
 
-    // Strict Fallback: Only if data is COMPLETELY empty
-    if (data.length === 0 && locale && locale !== 'uz') {
+    // Strict Fallback: Only if data is COMPLETELY empty and fallback is not disabled
+    if (data.length === 0 && locale && locale !== 'uz' && !disableFallback) {
       const fallbackParams = { ...params, locale: 'uz' };
       const fallbackResponse = await apiClient.get(`/projects/${projectId}/content/${endpoint}`, { params: fallbackParams });
       const fallbackData = Array.isArray(fallbackResponse.data) ? fallbackResponse.data : (fallbackResponse.data?.data || []);
@@ -47,8 +47,8 @@ const fetchWithFallback = async (endpoint: string, params: any = {}, locale?: st
     return data;
   } catch (error) {
     console.warn(`Error fetching ${endpoint} (with fallback logic):`, error);
-    // If original request fails, try fallback 'uz' immediately just in case
-    if (locale && locale !== 'uz') {
+    // If original request fails, try fallback 'uz' immediately just in case (if not disabled)
+    if (locale && locale !== 'uz' && !disableFallback) {
       try {
         const fallbackParams = { ...params, locale: 'uz' };
         const fallbackResponse = await apiClient.get(`/projects/${projectId}/content/${endpoint}`, { params: fallbackParams });
@@ -94,7 +94,29 @@ export const homeApi = {
   },
 
   getNewsData: async (locale?: string): Promise<any> => {
-    return fetchWithFallback('news', { with: 'image', per_page: 30 }, locale);
+    return fetchWithFallback('news', { with: 'image', per_page: 30 }, locale, true);
+  },
+
+  getEventsData: async (locale?: string): Promise<any> => {
+    return fetchWithFallback('events', { with: 'image,gallery', per_page: 30 }, locale, true);
+  },
+
+  getAnnouncementsData: async (locale?: string): Promise<any> => {
+    return fetchWithFallback('announcements', { with: 'image', per_page: 30 }, locale, true);
+  },
+
+  getCombinedNewsData: async (locale?: string): Promise<any> => {
+    try {
+      const [news, events, announcements] = await Promise.all([
+        fetchWithFallback('news', { with: 'image', per_page: 30 }, locale, true),
+        fetchWithFallback('events', { with: 'image,gallery', per_page: 30 }, locale, true),
+        fetchWithFallback('announcements', { with: 'image', per_page: 30 }, locale, true)
+      ]);
+      return { news, events, announcements };
+    } catch (error) {
+      console.error('Error fetching combined news data:', error);
+      throw error;
+    }
   },
 
   getFacultiesData: async (locale?: string): Promise<any> => {

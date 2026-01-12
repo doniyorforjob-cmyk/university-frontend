@@ -18,7 +18,7 @@ const UniversitySystemsSection: React.FC = () => {
 
   const { data, loading } = useStandardSection<TransformedUniversitySystemsData>(
     'university-systems',
-    homeApi.getUniversitySystemsData,
+    homeApi.getUniversitySystemsData as any,
     { transformData: transformUniversitySystemsData }
   );
 

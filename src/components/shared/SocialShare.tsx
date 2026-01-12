@@ -5,9 +5,10 @@ import {
     Facebook,
     Send,
     Linkedin,
-    Copy,
+    Instagram,
     Twitter
 } from 'lucide-react';
+import { useSettingsStore } from '@/store/settingsStore';
 
 export interface SocialShareProps {
     title?: string;
@@ -15,9 +16,9 @@ export interface SocialShareProps {
     options?: {
         facebook?: boolean;
         telegram?: boolean;
+        instagram?: boolean;
         linkedin?: boolean;
         twitter?: boolean;
-        copy?: boolean;
     };
     className?: string;
 }
@@ -25,14 +26,28 @@ export interface SocialShareProps {
 const SocialShare: React.FC<SocialShareProps> = ({
     title,
     url,
-    options = { facebook: true, telegram: true, linkedin: true, copy: true },
+    options = { facebook: true, telegram: true, instagram: true, linkedin: true },
     className = ''
 }) => {
     const { t } = useTranslation('common');
+    const socials = useSettingsStore(s => s.settings?.socials);
     const currentUrl = url || (typeof window !== 'undefined' ? window.location.href : '');
     const shareTitle = title || '';
 
+    const getSocialUrl = (platform: string) => {
+        const item = socials?.find(s => s.name.toLowerCase() === platform.toLowerCase());
+        return item?.url;
+    };
+
     const handleShare = (platform: string) => {
+        const profileUrl = getSocialUrl(platform);
+
+        if (profileUrl) {
+            window.open(profileUrl, '_blank');
+            return;
+        }
+
+        // Fallback to sharing current page if no specific profile URL in settings
         if (!currentUrl) return;
 
         switch (platform) {
@@ -48,9 +63,9 @@ const SocialShare: React.FC<SocialShareProps> = ({
             case 'linkedin':
                 window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl)}`, '_blank');
                 break;
-            case 'copy':
-                navigator.clipboard.writeText(currentUrl);
-                // Toast notification could be added here
+            case 'instagram':
+                // Instagram doesn't support direct URL sharing through a simple web link easily,
+                // but we usually link to the profile if specifically requested.
                 break;
         }
     };
@@ -102,13 +117,13 @@ const SocialShare: React.FC<SocialShareProps> = ({
                 </button>
             )}
 
-            {options.copy && (
+            {options.instagram && (
                 <button
-                    onClick={() => handleShare('copy')}
-                    className="w-10 h-10 flex items-center justify-center bg-gray-100 text-gray-600 rounded-full hover:bg-gray-600 hover:text-white transition-all duration-300"
-                    title={t('copy_link', 'Nusxalash') as string}
+                    onClick={() => handleShare('instagram')}
+                    className="w-10 h-10 flex items-center justify-center bg-pink-50 text-pink-600 rounded-full hover:bg-pink-600 hover:text-white transition-all duration-300"
+                    title={t('social.instagram', 'Instagram') as string}
                 >
-                    <Copy size={18} />
+                    <Instagram size={18} />
                 </button>
             )}
         </div>

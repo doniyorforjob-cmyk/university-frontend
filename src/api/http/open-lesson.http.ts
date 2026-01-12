@@ -14,16 +14,19 @@ export const getOpenLessons = async (): Promise<OpenLesson[]> => {
 
         if (!Array.isArray(data)) return [];
 
-        return data.map((entry: any) => ({
-            id: entry.uuid || entry.id,
-            slug: entry.fields?.slug || entry.slug,
-            title: entry.fields?.title || entry.title,
-            teacher_name: entry.fields?.teacher_name || '',
-            lesson_date: entry.fields?.lesson_date || entry.published_at || entry.created_at,
-            description: entry.fields?.description || '',
-            image_url: (Array.isArray(entry.fields?.image) ? entry.fields.image[0]?.url : (entry.fields?.image?.url || '')) || '/images/logo.png',
-            views: entry.fields?.views || 0,
-        }));
+        return data.map((entry: any) => {
+            const imageObj = Array.isArray(entry.fields?.image) ? entry.fields.image[0] : entry.fields?.image;
+            return {
+                id: entry.uuid || entry.id,
+                slug: entry.fields?.slug || entry.slug,
+                title: entry.fields?.title || entry.title,
+                teacher_name: entry.fields?.teacher_name || '',
+                lesson_date: entry.fields?.lesson_date || entry.published_at || entry.created_at,
+                description: entry.fields?.description || '',
+                image_url: (imageObj?.url || imageObj?.thumbnail_url || imageObj?.path) || '/images/logo.png',
+                views: entry.fields?.views || 0,
+            };
+        });
     } catch (error) {
         console.error("Open lessons fetch error:", error);
         return [];
@@ -69,6 +72,8 @@ export const getOpenLessonBySlug = async (slug: string, locale?: string): Promis
             }
         }
 
+        const imageObj = Array.isArray(entry.fields?.image) ? entry.fields.image[0] : entry.fields?.image;
+
         return {
             id: entry.uuid || entry.id,
             slug: entry.fields?.slug || entry.slug,
@@ -76,12 +81,12 @@ export const getOpenLessonBySlug = async (slug: string, locale?: string): Promis
             teacher_name: entry.fields?.teacher_name || '',
             lesson_date: entry.fields?.lesson_date || entry.published_at || entry.created_at,
             description: entry.fields?.description || '',
-            image_url: (Array.isArray(entry.fields?.image) ? entry.fields.image[0]?.url : (entry.fields?.image?.url || '')) || '/images/logo.png',
+            image_url: (imageObj?.url || imageObj?.thumbnail_url || imageObj?.path) || '/images/logo.png',
             views: entry.fields?.views || 0,
             content: entry.fields?.content || '',
             department: departmentInfo,
             gallery: Array.isArray(entry.fields?.gallery)
-                ? entry.fields.gallery.map((img: any) => img.url)
+                ? entry.fields.gallery.map((img: any) => img.url || img.thumbnail_url || img.path)
                 : undefined,
             attachments: Array.isArray(entry.fields?.attachments)
                 ? entry.fields.attachments.map((file: any) => ({

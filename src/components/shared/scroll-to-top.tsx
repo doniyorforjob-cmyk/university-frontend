@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronUpIcon } from '@heroicons/react/24/outline';
+import { useLocation } from 'react-router-dom';
 
 /**
- * Global "Yuqoriga qaytish" tugmasi
- * Foydalanuvchi sahifani pastga scroll qilganda paydo bo'ladi
+ * Global "Yuqoriga qaytish" tugmasi va Avtomatik scroll reset
+ * 1. Foydalanuvchi sahifani pastga scroll qilganda tugma paydo bo'ladi
+ * 2. Sahifa o'zgarganda (pathname) avtomatik eng yuqoriga o'tadi
  */
 const ScrollToTop: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const { pathname } = useLocation();
 
-  // Scroll holatini kuzatish
+  // 1. Sahifa o'zgarganda avtomatik yuqoriga chiqish
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  // 2. Scroll holatini kuzatish (tugma uchun)
   useEffect(() => {
     const toggleVisibility = () => {
       // 300px dan ko'proq scroll qilganda ko'rsatish

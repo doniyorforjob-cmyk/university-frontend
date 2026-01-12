@@ -2,25 +2,35 @@ import { HomeNewsData } from '../../../types/home.types';
 import { getImageUrl } from '../../../utils/apiUtils';
 
 export const transformNewsData = (apiData: any): HomeNewsData => {
-  // 1. Normalize Response
-  const rawItems = Array.isArray(apiData)
-    ? apiData
-    : (Array.isArray(apiData?.data) ? apiData.data : (apiData?.data ? [apiData.data] : []));
-
-  // 2. Map Fields
-  const allEntries = rawItems.map((item: any) => {
+  const transformItem = (item: any, defaultCategory: string = 'news') => {
     const fields = item.fields || {};
 
-    // Determine category (default to 'news' if not set)
-    const category = (fields.category || item.category || 'news').toLowerCase();
+    // Collect all potential category sources
+    const candidates = [
+      fields.category,
+      item.category,
+      ...(Array.isArray(fields.categories) ? fields.categories : [fields.categories]),
+      ...(Array.isArray(item.categories) ? item.categories : [item.categories])
+    ].filter(Boolean)
+      .map(c => String(c).toLowerCase().replace(/\s+/g, '-'));
 
-    // Map image safely
+    // Check for corruption tags specifically
+    const corruptionTags = ['corruption', 'korrupsiya', 'korrupsiyaga-qarshi-kurashish'];
+    const isCorruption = candidates.some(c => corruptionTags.includes(c));
+
+    // Determine final category
+    let category = defaultCategory;
+    if (isCorruption) {
+      category = 'korrupsiyaga-qarshi-kurashish'; // Normalized standard
+    } else if (candidates.length > 0) {
+      category = candidates[0];
+    }
+
+    const imageObj = Array.isArray(fields.image) ? fields.image[0] : (fields.image || {});
     const imageUrl = getImageUrl(
-      (typeof fields.image === 'object' && !Array.isArray(fields.image) ? fields.image.path || fields.image.url : '') ||
+      (imageObj?.url || imageObj?.thumbnail_url || imageObj?.path) ||
       (Array.isArray(fields.images) ? fields.images[0]?.path : '') ||
       (fields.images?.path || '') ||
-      (Array.isArray(fields.image) ? fields.image[0]?.url : '') ||
-      (fields.image?.url || '') ||
       (item.image_url || item.image || '')
     );
 
@@ -29,25 +39,52 @@ export const transformNewsData = (apiData: any): HomeNewsData => {
       slug: fields.slug || item.slug || '',
       title: fields.title || item.title || '',
       description: fields.description || fields.content || item.description || '',
-      // Content can be truncated in UI, but good to have full here or handle truncated version
       image_url: imageUrl,
       published_at: fields.published_at || fields.date || item.published_at || item.created_at || new Date().toISOString(),
       category: category,
-      // For specific fields like 'text' in announcements, we map title to it
       text: fields.title || item.title || ''
     };
-  }).sort((a: any, b: any) => {
-    // 3. Sort: Newest First
-    return new Date(b.published_at).getTime() - new Date(a.published_at).getTime();
-  });
+  };
 
-  // 4. Categorize - Since API doesn't provide categories, put everything in 'news'
-  // Users can manually categorize in the backend later
+  const normalize = (data: any) => {
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data?.data)) return data.data;
+    if (data?.data) return [data.data];
+    return [];
+  };
+
+  const sortFn = (a: any, b: any) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime();
+
+  // Handle combined data object { news: ..., events: ..., announcements: ... }
+  if (apiData && !Array.isArray(apiData) && (apiData.news || apiData.events || apiData.announcements)) {
+    const newsItems = normalize(apiData.news).map((item: any) => transformItem(item, 'news'));
+    const eventItems = normalize(apiData.events).map((item: any) => transformItem(item, 'events'));
+    const dedicatedAnnouncements = normalize(apiData.announcements).map((item: any) => transformItem(item, 'announcement'));
+
+    // Combined announcements
+    const allAnnouncements = [
+      ...newsItems.filter((item: any) => item.category === 'announcement'),
+      ...dedicatedAnnouncements
+    ].sort(sortFn);
+
+    return {
+      news: newsItems.filter((item: any) => item.category === 'news').sort(sortFn).map((e: any) => ({ ...e, date: e.published_at })),
+      announcements: allAnnouncements.map((e: any) => ({ ...e, date: e.published_at })),
+      events: eventItems.sort(sortFn).map((e: any) => ({ ...e, date: e.published_at })),
+      corruption: newsItems.filter((item: any) => ['corruption', 'korrupsiya', 'korrupsiyaga-qarshi-kurashish'].includes(item.category)).map((e: any) => ({ ...e, date: e.published_at })),
+      sport: newsItems.filter((item: any) => item.category === 'sport').map((e: any) => ({ ...e, date: e.published_at }))
+    };
+  }
+
+  // Fallback for single array or nested data property
+  const rawItems = normalize(apiData);
+  const allEntries = rawItems.map((item: any) => transformItem(item)).sort(sortFn);
+
   return {
-    news: allEntries.map((e: any) => ({ ...e, date: e.published_at })),
-    announcements: [], // Empty for now - can be populated when backend adds category support
-    events: [],
-    corruption: [],
-    sport: []
+    news: allEntries.filter((item: any) => item.category === 'news').map((e: any) => ({ ...e, date: e.published_at })),
+    announcements: allEntries.filter((item: any) => item.category === 'announcement').map((e: any) => ({ ...e, date: e.published_at })),
+    events: allEntries.filter((item: any) => item.category === 'events').map((e: any) => ({ ...e, date: e.published_at })),
+    corruption: allEntries.filter((item: any) => ['corruption', 'korrupsiya', 'korrupsiyaga-qarshi-kurashish'].includes(item.category)).map((e: any) => ({ ...e, date: e.published_at })),
+    sport: allEntries.filter((item: any) => item.category === 'sport').map((e: any) => ({ ...e, date: e.published_at }))
   };
 };

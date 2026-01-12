@@ -43,6 +43,7 @@ const AppRoutes = () => {
                     <Route path="applications-suggestions-and-complaints" element={<AppealsPage />} />
                     <Route path="open-lessons" element={<OpenLessonsPage />} />
                     <Route path="open-lessons/:slug" element={<GenericDetailPage type="open-lesson" />} />
+                    <Route path="events/:slug" element={<GenericDetailPage type="event" />} />
                 </Route>
 
                 {/* "UniversitySystems" Sidebar bilan ishlaydigan sahifalar */}

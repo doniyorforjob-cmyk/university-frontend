@@ -73,24 +73,31 @@ export const getPosts = async (category?: PostCategory, locale?: string): Promis
       data = Array.isArray(fallbackRes.data) ? fallbackRes.data : fallbackRes.data.data;
     }
 
-    return data.map((entry: any) => ({
-      id: entry.uuid || entry.id,
-      // Slug bo'lmasa ID yoki UUID ishlatamiz, URL undefined bo'lib qolmasligi uchun
-      slug: entry.fields?.slug || entry.slug || entry.uuid || entry.id,
-      title: entry.fields?.title || entry.title,
-      image_url: getImageUrl(
-        (typeof entry.fields?.image === 'object' && !Array.isArray(entry.fields?.image) ? entry.fields.image.path || entry.fields.image.url : '') ||
-        (Array.isArray(entry.fields?.images) ? entry.fields.images[0]?.path : '') ||
-        (entry.fields?.images?.path || '') ||
-        (Array.isArray(entry.fields?.image) ? entry.fields.image[0]?.url : '') ||
-        (entry.fields?.image?.url || '') ||
-        (entry.image_url || entry.image || '')
-      ),
-      description: entry.fields?.content ? entry.fields.content.substring(0, 150) + '...' : '',
-      published_at: entry.created_at || entry.published_at,
-      views: entry.fields?.views || 0,
-      category: (entry.fields?.category || 'news') as PostCategory,
-    }));
+    return data.map((entry: any) => {
+      // Logic for safer image extraction
+      const imgField = entry.fields?.image;
+      const imgsField = entry.fields?.images;
+
+      const primaryImage = (Array.isArray(imgField) ? imgField[0] : imgField) || {};
+      const secondaryImage = (Array.isArray(imgsField) ? imgsField[0] : imgsField) || {};
+
+      const finalImageUrl =
+        (primaryImage?.url || primaryImage?.thumbnail_url || primaryImage?.path) ||
+        (secondaryImage?.url || secondaryImage?.thumbnail_url || secondaryImage?.path) ||
+        (entry.image_url || entry.image || '');
+
+      return {
+        id: entry.uuid || entry.id,
+        // Slug bo'lmasa ID yoki UUID ishlatamiz, URL undefined bo'lib qolmasligi uchun
+        slug: entry.fields?.slug || entry.slug || entry.uuid || entry.id,
+        title: entry.fields?.title || entry.title,
+        image_url: getImageUrl(finalImageUrl),
+        description: entry.fields?.content ? entry.fields.content.substring(0, 150) + '...' : '',
+        published_at: entry.created_at || entry.published_at,
+        views: entry.fields?.views || 0,
+        category: (entry.fields?.category || 'news') as PostCategory,
+      };
+    });
   } catch (error) {
     console.error("News fetch error:", error);
     return [];
@@ -165,26 +172,22 @@ export const getPostBySlug = async (slug: string, locale?: string): Promise<Post
 
     if (!entry) return undefined;
 
+    const fields = entry.fields || {};
+    const imageObj = Array.isArray(fields.image) ? fields.image[0] : fields.image;
+
     return {
       id: entry.uuid || entry.id,
-      slug: entry.fields?.slug || entry.slug,
-      title: entry.fields?.title || entry.title,
-      image_url: getImageUrl(
-        (typeof entry.fields?.image === 'object' && !Array.isArray(entry.fields?.image) ? entry.fields.image.path || entry.fields.image.url : '') ||
-        (Array.isArray(entry.fields?.images) ? entry.fields.images[0]?.path : '') ||
-        (entry.fields?.images?.path || '') ||
-        (Array.isArray(entry.fields?.image) ? entry.fields.image[0]?.url : '') ||
-        (entry.fields?.image?.url || '') ||
-        (entry.image_url || entry.image || '')
-      ),
-      description: entry.fields?.content ? entry.fields.content.substring(0, 150) + '...' : '',
+      slug: fields.slug || entry.slug,
+      title: fields.title || entry.title,
+      image_url: getImageUrl(imageObj?.url || imageObj?.thumbnail_url || imageObj?.path || '/images/logo.png'),
+      description: fields.content ? fields.content.substring(0, 150) + '...' : '',
       published_at: entry.created_at || entry.published_at,
-      views: entry.fields?.views || 0,
-      category: (entry.fields?.category || 'news') as PostCategory,
-      content: entry.fields?.content || '',
+      views: fields.views || 0,
+      category: (fields.category || 'news') as PostCategory,
+      content: fields.content || '',
       author: { name: 'Matbuot xizmati' },
-      gallery: Array.isArray(entry.fields?.gallery)
-        ? entry.fields.gallery.map((img: any) => getImageUrl(img.path || img.url))
+      gallery: Array.isArray(fields.gallery)
+        ? fields.gallery.map((img: any) => getImageUrl(img.url || img.thumbnail_url || img.path))
         : []
     };
   } catch (error) {

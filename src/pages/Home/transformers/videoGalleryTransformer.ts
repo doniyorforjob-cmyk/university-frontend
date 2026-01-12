@@ -60,7 +60,7 @@ export const transformVideoGalleryData = (apiData: any, locale: string = 'uz'): 
       // Thumbnail handling: Priority is manual thumbnail > YouTube auto-thumbnail
       const rawThumbnail = fields.thumbnail || video.thumbnail || video.thumbnail_url || video.image;
       let thumbnailPath = typeof rawThumbnail === 'object' && rawThumbnail !== null
-        ? (rawThumbnail.url || rawThumbnail.path)
+        ? (rawThumbnail.url || rawThumbnail.thumbnail_url || rawThumbnail.path)
         : rawThumbnail;
 
       if (!thumbnailPath && videoId) {
@@ -91,13 +91,13 @@ export const transformVideoGalleryData = (apiData: any, locale: string = 'uz'): 
         rawCover = rawCover[0];
       }
 
-      const coverPath = typeof rawCover === 'object' && rawCover !== null ? (rawCover.url || rawCover.path) : rawCover;
+      const coverPath = typeof rawCover === 'object' && rawCover !== null ? (rawCover.url || rawCover.thumbnail_url || rawCover.path) : rawCover;
 
 
       const rawGallery = fields.gallery || photo.gallery || fields.images || photo.images || fields.photos || photo.photos || [];
       const gallery = Array.isArray(rawGallery)
         ? rawGallery.map((img: any) => {
-          const path = typeof img === 'string' ? img : (img.url || img.path);
+          const path = typeof img === 'string' ? img : (img.url || img.thumbnail_url || img.path);
           return getImageUrl(path);
         })
         : [];

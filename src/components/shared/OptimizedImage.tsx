@@ -102,17 +102,25 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
     );
   };
 
+  // Wrapper style ni hisoblash (inline style w-full ni buzmasligi uchun)
+  const isFullWidth = className.includes('w-full');
+  const isFullHeight = className.includes('h-full');
+
   // Xatolik bo'lganda - universitet logosini ko'rsatish
   if (hasError) {
+    const errorStyle: React.CSSProperties = aspectRatio
+      ? { aspectRatio: aspectRatio.toString(), width: isFullWidth ? undefined : (width || '100%') }
+      : { width: isFullWidth ? undefined : width, height: isFullHeight ? undefined : height };
+
     return (
       <div
         className={`relative bg-gray-50 flex items-center justify-center ${className}`}
-        style={aspectRatio ? { aspectRatio: aspectRatio.toString(), width: width || '100%' } : { width, height }}
+        style={errorStyle}
       >
         <img
-          src={settings?.logo || ""}
+          src={settings?.logo || "/images/logo.png"}
           alt=""
-          className="absolute inset-0 m-auto w-1/2 h-1/2 object-contain opacity-50 rounded-full"
+          className="w-1/2 h-1/2 object-contain"
         />
       </div>
     );
@@ -128,10 +136,6 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
       />
     );
   }
-
-  // Wrapper style ni hisoblash (inline style w-full ni buzmasligi uchun)
-  const isFullWidth = className.includes('w-full');
-  const isFullHeight = className.includes('h-full');
 
   const wrapperStyle: React.CSSProperties = aspectRatio
     ? {

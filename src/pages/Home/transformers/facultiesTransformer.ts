@@ -35,8 +35,8 @@ export const transformFacultiesData = (facultiesData: any, departmentsData: any 
           const extractDUrl = (imgField: any) => {
             if (!imgField) return '';
             if (typeof imgField === 'string') return imgField;
-            if (Array.isArray(imgField)) return imgField[0]?.url || imgField[0]?.path || '';
-            if (typeof imgField === 'object') return imgField.url || imgField.path || '';
+            if (Array.isArray(imgField)) return imgField[0]?.url || imgField[0]?.thumbnail_url || imgField[0]?.path || '';
+            if (typeof imgField === 'object') return imgField.url || imgField.thumbnail_url || imgField.path || '';
             return '';
           };
 
@@ -51,8 +51,8 @@ export const transformFacultiesData = (facultiesData: any, departmentsData: any 
       const extractUrl = (imgField: any) => {
         if (!imgField) return '';
         if (typeof imgField === 'string') return imgField;
-        if (Array.isArray(imgField)) return imgField[0]?.url || imgField[0]?.path || '';
-        if (typeof imgField === 'object') return imgField.url || imgField.path || '';
+        if (Array.isArray(imgField)) return imgField[0]?.url || imgField[0]?.thumbnail_url || imgField[0]?.path || '';
+        if (typeof imgField === 'object') return imgField.url || imgField.thumbnail_url || imgField.path || '';
         return '';
       };
 
