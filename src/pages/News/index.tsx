@@ -22,7 +22,8 @@ const fetchNewsData = async (locale?: string): Promise<SectionItem[]> => {
     date: post.published_at,
     image: post.image_url,
     href: `/news/${post.slug}`,
-    category: 'Yangilik'
+    category: 'Yangilik',
+    gallery: post.gallery || []
   }));
 
   return sectionItems;
@@ -114,6 +115,7 @@ const NewsPage: React.FC = () => {
       showSearch={false}
       showPagination={true}
       showSorting={true}
+      featuredFirst={true}
       onItemClick={handleItemClick}
     />
   );

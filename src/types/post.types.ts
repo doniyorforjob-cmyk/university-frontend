@@ -9,6 +9,7 @@ export interface Post {
   views: number;
   category: PostCategory;
   description?: string;
+  gallery?: string[];
 }
 
 export interface PostDetail extends Post {

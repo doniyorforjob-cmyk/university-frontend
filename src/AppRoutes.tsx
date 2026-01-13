@@ -23,6 +23,7 @@ const OpenLessonsPage = React.lazy(() => import('./pages/OpenLessons'));
 const GenericDetailPage = React.lazy(() => import('./pages/GenericDetail'));
 const FacultiesPage = React.lazy(() => import('./pages/Faculties'));
 const CorruptionPage = React.lazy(() => import('./pages/Corruption'));
+const FAQPage = React.lazy(() => import('./pages/FAQ'));
 const ServerError = React.lazy(() => import('./pages/Error/ServerError'));
 const NotFound = React.lazy(() => import('./pages/Errors/NotFound'));
 
@@ -46,6 +47,7 @@ const AppRoutes = () => {
                     <Route path="open-lessons/:slug" element={<GenericDetailPage type="open-lesson" />} />
                     <Route path="corruption" element={<CorruptionPage />} />
                     <Route path="corruption/:slug" element={<GenericDetailPage type="corruption" />} />
+                    <Route path="faq" element={<FAQPage />} />
                     <Route path="events/:slug" element={<GenericDetailPage type="event" />} />
                 </Route>
 

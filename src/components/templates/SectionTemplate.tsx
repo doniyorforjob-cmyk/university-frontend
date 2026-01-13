@@ -41,6 +41,7 @@ export interface SectionItem {
   href: string;
   fileUrl?: string;
   fileName?: string;
+  gallery?: string[];
 }
 
 // Filter interfeysi
@@ -93,6 +94,9 @@ interface SectionTemplateProps {
   onCalendarViewChange?: (view: string) => void;
   onDateChange?: (date: Date) => void;
 
+  // Featured layout
+  featuredFirst?: boolean;
+
   className?: string;
   children?: React.ReactNode;
 }
@@ -120,6 +124,7 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
   displayDate = new Date(),
   onCalendarViewChange,
   onDateChange,
+  featuredFirst = false,
   className = '',
   children
 }) => {
@@ -401,27 +406,18 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
             </span>
             <div className="flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.022 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
               </svg>
-              <span>{item.views || 0}</span>
+              <span>{((item.image ? 1 : 0) + ((item as any).gallery?.length || 0))}</span>
             </div>
           </div>
 
           {/* Sarlavha */}
-          <h3 className="text-lg font-bold mb-3 flex-grow group-hover:text-blue-600 transition-colors line-clamp-3">
+          <h3 className="text-lg font-bold mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
             {item.title}
           </h3>
 
-          {/* Batafsil tugmasi */}
-          <div className="mt-auto flex justify-end">
-            <span className="inline-flex items-center text-blue-600 group-hover:text-blue-800 font-medium text-sm">
-              Batafsil
-              <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </span>
-          </div>
+
         </div>
       </div>
     );
@@ -494,7 +490,15 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
                 animate="visible"
                 variants={{ visible: { transition: { staggerChildren: 0.05 } } }}
               >
-                {currentItems.map(item => <motion.div key={item.id} variants={{ hidden: { y: 20, opacity: 0 }, visible: { y: 0, opacity: 1 } }}>{renderItem(item)}</motion.div>)}
+                {currentItems.map((item, index) => (
+                  <motion.div
+                    key={item.id}
+                    className={featuredFirst && index === 0 ? 'lg:col-span-2 lg:row-span-2' : ''}
+                    variants={{ hidden: { y: 20, opacity: 0 }, visible: { y: 0, opacity: 1 } }}
+                  >
+                    {renderItem(item)}
+                  </motion.div>
+                ))}
               </motion.div>
             ) : (
               <EmptyState

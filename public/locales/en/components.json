@@ -39,6 +39,24 @@
     },
     "sidebar": {
         "appealTitle": "Appeal to Rector",
-        "appealButton": "Send appeal"
+        "appealButton": "Send Appeal"
+    },
+    "faq": {
+        "title": "Frequently Asked Questions",
+        "subtitle": "Most common questions about the appeal process",
+        "searchPlaceholder": "Search questions...",
+        "noResults": "Nothing found. Try searching for another word.",
+        "contactPrompt": "Didn't find an answer to your question?",
+        "contactSubtitle": "For additional questions, please contact us via the following contacts",
+        "categories": {
+            "all": "All",
+            "general": "General",
+            "timing": "Timing",
+            "files": "Files",
+            "tracking": "Tracking",
+            "types": "Types",
+            "privacy": "Privacy",
+            "process": "Process"
+        }
     }
 }

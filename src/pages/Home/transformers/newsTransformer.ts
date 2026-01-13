@@ -72,10 +72,11 @@ export const transformNewsData = (apiData: any): HomeNewsData => {
       news: newsItems.filter((item: any) => item.category === 'news').sort(sortFn).map((e: any) => ({ ...e, date: e.published_at })),
       announcements: allAnnouncements.map((e: any) => ({ ...e, date: e.published_at })),
       events: eventItems.sort(sortFn).map((e: any) => ({ ...e, date: e.published_at })),
-      corruption: dedicatedCorruption.length > 0
-        ? dedicatedCorruption.sort(sortFn).map((e: any) => ({ ...e, date: e.published_at }))
-        : newsItems.filter((item: any) => ['corruption', 'korrupsiya', 'korrupsiyaga-qarshi-kurashish'].includes(item.category)).map((e: any) => ({ ...e, date: e.published_at })),
-      sport: newsItems.filter((item: any) => item.category === 'sport').map((e: any) => ({ ...e, date: e.published_at }))
+      corruption: (dedicatedCorruption.length > 0
+        ? dedicatedCorruption
+        : newsItems.filter((item: any) => ['corruption', 'korrupsiya', 'korrupsiyaga-qarshi-kurashish'].includes(item.category))
+      ).sort(sortFn).map((e: any) => ({ ...e, date: e.published_at })),
+      sport: newsItems.filter((item: any) => item.category === 'sport').sort(sortFn).map((e: any) => ({ ...e, date: e.published_at }))
     };
   }
 

@@ -18,7 +18,8 @@ import {
   Wrench,
   Info,
   Building,
-  ShieldAlert
+  ShieldAlert,
+  Image
 } from 'lucide-react';
 import SocialShare from '../shared/SocialShare';
 
@@ -225,12 +226,16 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
                 </div>
               )}
 
-              {meta.views !== undefined && (
-                <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 text-gray-700 rounded-xl px-3 py-1.5 text-sm transition-colors hover:bg-gray-100 cursor-default">
-                  <Eye size={16} className="text-[#555]" strokeWidth={2.5} />
-                  <span className="font-medium">{parseInt(String(meta.views), 10).toLocaleString()}</span>
-                </div>
-              )}
+              {(() => {
+                // Calculate total image count: hero image + gallery images
+                const totalImages = (heroImage ? 1 : 0) + (gallery?.length || 0);
+                return totalImages > 0 ? (
+                  <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 text-gray-700 rounded-xl px-3 py-1.5 text-sm transition-colors hover:bg-gray-100 cursor-default">
+                    <Image size={16} className="text-[#555]" strokeWidth={2.5} />
+                    <span className="font-medium">{totalImages}</span>
+                  </div>
+                ) : null;
+              })()}
             </div>
           )}
         </div>

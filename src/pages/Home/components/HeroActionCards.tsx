@@ -61,8 +61,14 @@ const HeroActionCards: React.FC<HeroActionCardsProps> = ({ links }) => {
                         cardTitle.includes('обращение к ректору') ||
                         cardTitle.includes('appeal to rector');
 
-                    const finalUrl = isRectorAppeal ? '/contact' : card.url;
-                    const finalIsExternal = isRectorAppeal ? false : card.isExternal;
+                    const isFAQ =
+                        cardTitle.includes('savol va javoblar') ||
+                        cardTitle.includes('savol-javoblar') ||
+                        cardTitle.includes('faq') ||
+                        cardTitle.includes('вопросы и ответы');
+
+                    const finalUrl = isRectorAppeal ? '/contact' : (isFAQ ? '/faq' : card.url);
+                    const finalIsExternal = (isRectorAppeal || isFAQ) ? false : card.isExternal;
 
                     return (
                         <div key={card.id} className={`${widthClass}`}>

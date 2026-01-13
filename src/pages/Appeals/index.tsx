@@ -7,7 +7,6 @@ import { AppealWizard } from '../../components/features/appeals/AppealWizard';
 import { AppealFormData } from '../../utils/validationSchemas';
 import { AppealTracking } from './AppealTracking';
 import { TrackingModal } from '../../components/features/appeals/TrackingModal';
-import { FAQSection } from './FAQSection';
 import { submitAppealApi } from '@/api/http/appeals.http';
 
 const AppealsPage: React.FC = () => {
@@ -155,9 +154,6 @@ const AppealsPage: React.FC = () => {
           ) : (
             <AppealWizard onSubmit={handleAppealSubmit} />
           )}
-
-          {/* FAQ Section */}
-          <FAQSection />
         </div>
       </SectionTemplate>
 

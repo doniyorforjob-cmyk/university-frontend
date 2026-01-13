@@ -40,5 +40,23 @@
     "sidebar": {
         "appealTitle": "Rektorga murojaat",
         "appealButton": "Murojaat qilish"
+    },
+    "faq": {
+        "title": "Tez-tez beriladigan savollar",
+        "subtitle": "Murojaat jarayoni haqida eng ko'p beriladigan savollar",
+        "searchPlaceholder": "Savol qidirish...",
+        "noResults": "Hech narsa topilmadi. Boshqa so'z bilan qidiring.",
+        "contactPrompt": "Savolingizga javob topmadimi?",
+        "contactSubtitle": "Qo'shimcha savollar uchun quyidagi kontaktlar orqali bog'laning",
+        "categories": {
+            "all": "Barchasi",
+            "general": "Umumiy",
+            "timing": "Vaqt",
+            "files": "Fayllar",
+            "tracking": "Kuzatish",
+            "types": "Turlari",
+            "privacy": "Maxfiylik",
+            "process": "Jarayon"
+        }
     }
 }

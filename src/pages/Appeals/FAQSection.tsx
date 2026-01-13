@@ -1,15 +1,18 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import { useTranslation } from 'react-i18next';
 import { useSettingsStore } from '../../store/settingsStore';
 import { useFAQData } from '../../hooks/useFAQData';
 import { FAQCategory } from '../../types/faq.types';
 import { formatPhone } from '../../utils/format';
+import EmptyState from '../../components/shared/EmptyState';
 
 export const FAQSection: React.FC = () => {
+  const { t } = useTranslation(['common', 'pages', 'components']);
   const { settings } = useSettingsStore();
   const { data: faqData = [], isLoading, error } = useFAQData();
-  const [openItems, setOpenItems] = useState<Set<string>>(new Set());
+  const [openItemId, setOpenItemId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
@@ -22,30 +25,20 @@ export const FAQSection: React.FC = () => {
       return acc;
     }, {} as Record<string, number>);
 
-    const categoryNames: Record<string, string> = {
-      general: 'Umumiy',
-      timing: 'Vaqt',
-      files: 'Fayllar',
-      tracking: 'Kuzatish',
-      types: 'Turlari',
-      privacy: 'Maxfiylik',
-      process: 'Jarayon',
-    };
-
     const result: FAQCategory[] = [
-      { id: 'all', name: 'Barchasi', count: faqData.length }
+      { id: 'all', name: t('components:faq.categories.all') as string, count: faqData.length }
     ];
 
     Object.entries(counts).forEach(([id, count]) => {
       result.push({
         id,
-        name: categoryNames[id] || id,
+        name: (t(`components:faq.categories.${id}`) as string) || id,
         count
       });
     });
 
     return result;
-  }, [faqData]);
+  }, [faqData, t]);
 
   const filteredFAQs = useMemo(() => {
     return faqData.filter(faq => {
@@ -57,13 +50,7 @@ export const FAQSection: React.FC = () => {
   }, [faqData, searchTerm, selectedCategory]);
 
   const toggleItem = (id: string) => {
-    const newOpenItems = new Set(openItems);
-    if (newOpenItems.has(id)) {
-      newOpenItems.delete(id);
-    } else {
-      newOpenItems.add(id);
-    }
-    setOpenItems(newOpenItems);
+    setOpenItemId(prevId => prevId === id ? null : id);
   };
 
   if (isLoading) {
@@ -83,7 +70,7 @@ export const FAQSection: React.FC = () => {
   if (error) {
     return (
       <div className="bg-white shadow-lg p-6 text-center text-red-600">
-        <p>Xatolik yuz berdi: {error.message}</p>
+        <p>{t('common:errorOccurred')}: {error.message}</p>
       </div>
     );
   }
@@ -92,10 +79,10 @@ export const FAQSection: React.FC = () => {
     <div className="bg-white shadow-lg p-6">
       <div className="text-center mb-8">
         <h3 className="text-2xl font-bold text-gray-900 mb-2">
-          Tez-tez beriladigan savollar
+          {t('components:faq.title')}
         </h3>
         <p className="text-gray-600">
-          Murojaat jarayoni haqida eng kop beriladigan savollar
+          {t('components:faq.subtitle')}
         </p>
       </div>
 
@@ -103,7 +90,7 @@ export const FAQSection: React.FC = () => {
       <div className="mb-6">
         <input
           type="text"
-          placeholder="Savol qidirish..."
+          placeholder={t('components:faq.searchPlaceholder') as string}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
@@ -129,9 +116,11 @@ export const FAQSection: React.FC = () => {
       {/* FAQ Items */}
       <div className="space-y-4">
         {filteredFAQs.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            Hech narsa topilmadi. Boshqa so&apos;z bilan qidiring.
-          </div>
+          <EmptyState
+            resourceKey="info"
+            title={t('components:faq.noResults')}
+            className="min-h-[15rem]"
+          />
         ) : (
           filteredFAQs.map((faq, index) => (
             <motion.div
@@ -147,7 +136,7 @@ export const FAQSection: React.FC = () => {
               >
                 <span className="font-medium text-gray-900">{faq.question}</span>
                 <motion.div
-                  animate={{ rotate: openItems.has(faq.id) ? 180 : 0 }}
+                  animate={{ rotate: openItemId === faq.id ? 180 : 0 }}
                   transition={{ duration: 0.2 }}
                 >
                   <ChevronDownIcon className="w-5 h-5 text-gray-500" />
@@ -155,7 +144,7 @@ export const FAQSection: React.FC = () => {
               </button>
 
               <AnimatePresence>
-                {openItems.has(faq.id) && (
+                {openItemId === faq.id && (
                   <motion.div
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
@@ -178,10 +167,10 @@ export const FAQSection: React.FC = () => {
       {/* Contact CTA */}
       <div className="mt-8 p-6 bg-blue-50 rounded-lg text-center">
         <h4 className="text-lg font-semibold text-blue-900 mb-2">
-          Savolingizga javob topmadimi?
+          {t('components:faq.contactPrompt')}
         </h4>
         <p className="text-blue-700 mb-4">
-          Qo&apos;shimcha savollar uchun quyidagi kontaktlar orqali bog&apos;laning
+          {t('components:faq.contactSubtitle')}
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <a

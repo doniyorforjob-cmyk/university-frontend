@@ -102,8 +102,11 @@ export const getPosts = async (category?: PostCategory, locale?: string): Promis
         published_at: entry.created_at || entry.published_at,
         views: entry.fields?.views || 0,
         category: (entry.fields?.category || category || 'news') as PostCategory,
+        gallery: Array.isArray(entry.fields?.gallery)
+          ? entry.fields.gallery.map((img: any) => getImageUrl(img.url || img.thumbnail_url || img.path || ''))
+          : [],
       };
-    });
+    }).sort((a: any, b: any) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime());
   } catch (error) {
     console.error("News fetch error:", error);
     return [];
