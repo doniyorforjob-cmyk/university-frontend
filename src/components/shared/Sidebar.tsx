@@ -164,7 +164,7 @@ const Sidebar = memo(() => {
               {locale === 'uz' ? 'Rektorga murojaat' : locale === 'ru' ? 'Обращение к ректору' : 'Appeal to Rector'}
             </h4>
             <PrefetchLink
-              to="/appeals"
+              to="/contact"
               prefetch={true}
               prefetchDelay={150}
               className="inline-block px-5 py-1.5 text-sm bg-primary text-white font-semibold rounded-md hover:bg-primary-dark transition-colors"

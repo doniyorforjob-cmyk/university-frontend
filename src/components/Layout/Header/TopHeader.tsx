@@ -13,7 +13,8 @@ import { useSettingsStore } from '../../../store/settingsStore';
 import useFontSizeStore from '../../../store/fontSizeStore';
 import useThemeStore from '../../../store/themeStore';
 import Container from '../../shared/Container';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import PrefetchLink from '../../shared/PrefetchLink';
 import { useLocale } from '../../../contexts/LocaleContext';
 
 const languageOptions = {
@@ -137,13 +138,16 @@ const TopHeader = () => {
                 <div className="flex-1 flex items-center justify-end">
                     <div className="flex items-center gap-2.5 md:gap-6">
                         {settings?.corruptionUrl && (
-                            <a
-                                href={settings.corruptionUrl}
-                                className="flex items-center text-white hover:text-secondary transition-colors text-[13px] font-medium"
+                            <PrefetchLink
+                                to="/corruption"
+                                prefetch={true}
+                                className="flex items-center text-white hover:text-secondary transition-colors group"
                             >
-                                <FaShieldAlt className="h-5 w-5 text-red-100" />
-                                <span className="hidden lg:inline ml-2">{t('fightCorruption')}</span>
-                            </a>
+                                <FaShieldAlt className="h-4 w-4 md:h-5 md:w-5 text-red-100 group-hover:scale-110 transition-transform" />
+                                <span className="hidden sm:inline ml-1.5 md:ml-2 text-[11px] md:text-[13px] whitespace-nowrap">
+                                    {t('fightCorruption')}
+                                </span>
+                            </PrefetchLink>
                         )}
 
                         <div className="w-px h-4 bg-secondary/50"></div>

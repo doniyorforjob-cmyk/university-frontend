@@ -21,6 +21,7 @@ import FooterSkeleton from './FooterSkeleton';
 import Container from '../shared/Container';
 import PrefetchLink from '../shared/PrefetchLink';
 import { useTranslation } from 'react-i18next';
+import { formatPhone } from '../../utils/format';
 
 const Footer: React.FC = () => {
   const { t } = useTranslation('common');
@@ -134,9 +135,9 @@ const Footer: React.FC = () => {
               <div>
                 <div className="flex items-center mb-4">
                   <span className="w-1 h-5 bg-secondary-500 mr-3"></span>
-                  <p className="font-medium text-lg text-white">{t('common:contact')}</p>
+                  <p className="font-medium text-base text-white">{t('common:contact')}</p>
                 </div>
-                <ul className="flex flex-col space-y-3 text-base text-gray-300">
+                <ul className="flex flex-col space-y-3 text-sm text-gray-300">
                   {settings?.contacts?.address && (
                     <li className="flex items-start group">
                       <MapPinIcon className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0 text-gray-400 transition-colors duration-300 group-hover:text-white" />
@@ -157,7 +158,7 @@ const Footer: React.FC = () => {
                         href={`tel:${settings?.contacts?.primaryPhone?.replace(/[^0-9+]/g, '') || ""}`}
                         className="hover:text-white hover:bg-gray-700/50 px-2 py-1 transition-all duration-300 focus:outline-none focus:text-white focus:bg-gray-700/50 -ml-2"
                       >
-                        {settings?.contacts?.primaryPhone}
+                        {formatPhone(settings?.contacts?.primaryPhone || "")}
                       </a>
                     </li>
                   )}
@@ -187,9 +188,9 @@ const Footer: React.FC = () => {
                 <div key={group.id}>
                   <div className="flex items-center mb-4">
                     <span className="w-1 h-5 bg-secondary-500 mr-3"></span>
-                    <p className="font-medium text-lg text-white">{getLocalized(group.title, locale)}</p>
+                    <p className="font-medium text-base text-white">{getLocalized(group.title, locale)}</p>
                   </div>
-                  <nav className="flex flex-col space-y-2 text-base text-gray-300">
+                  <nav className="flex flex-col space-y-2 text-sm text-gray-300">
                     {group.links.map((link) => (
                       <PrefetchLink
                         key={link.id}

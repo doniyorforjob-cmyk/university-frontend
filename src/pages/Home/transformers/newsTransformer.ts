@@ -55,11 +55,12 @@ export const transformNewsData = (apiData: any): HomeNewsData => {
 
   const sortFn = (a: any, b: any) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime();
 
-  // Handle combined data object { news: ..., events: ..., announcements: ... }
-  if (apiData && !Array.isArray(apiData) && (apiData.news || apiData.events || apiData.announcements)) {
+  // Handle combined data object { news: ..., events: ..., announcements: ..., corruption: ... }
+  if (apiData && !Array.isArray(apiData) && (apiData.news || apiData.events || apiData.announcements || apiData.corruption)) {
     const newsItems = normalize(apiData.news).map((item: any) => transformItem(item, 'news'));
     const eventItems = normalize(apiData.events).map((item: any) => transformItem(item, 'events'));
     const dedicatedAnnouncements = normalize(apiData.announcements).map((item: any) => transformItem(item, 'announcement'));
+    const dedicatedCorruption = normalize(apiData.corruption).map((item: any) => transformItem(item, 'corruption'));
 
     // Combined announcements
     const allAnnouncements = [
@@ -71,7 +72,9 @@ export const transformNewsData = (apiData: any): HomeNewsData => {
       news: newsItems.filter((item: any) => item.category === 'news').sort(sortFn).map((e: any) => ({ ...e, date: e.published_at })),
       announcements: allAnnouncements.map((e: any) => ({ ...e, date: e.published_at })),
       events: eventItems.sort(sortFn).map((e: any) => ({ ...e, date: e.published_at })),
-      corruption: newsItems.filter((item: any) => ['corruption', 'korrupsiya', 'korrupsiyaga-qarshi-kurashish'].includes(item.category)).map((e: any) => ({ ...e, date: e.published_at })),
+      corruption: dedicatedCorruption.length > 0
+        ? dedicatedCorruption.sort(sortFn).map((e: any) => ({ ...e, date: e.published_at }))
+        : newsItems.filter((item: any) => ['corruption', 'korrupsiya', 'korrupsiyaga-qarshi-kurashish'].includes(item.category)).map((e: any) => ({ ...e, date: e.published_at })),
       sport: newsItems.filter((item: any) => item.category === 'sport').map((e: any) => ({ ...e, date: e.published_at }))
     };
   }

@@ -43,6 +43,27 @@ export const useCachedApi = <T = any>({
   const [loading, setLoading] = useState(() => enabled && !cacheManager.getStale(localeKey));
   const [error, setError] = useState<Error | null>(null);
 
+  // Synchronize state with localeKey changes during render to avoid stale data flicker
+  const [prevLocaleKey, setPrevLocaleKey] = useState(localeKey);
+  if (localeKey !== prevLocaleKey) {
+    setPrevLocaleKey(localeKey);
+    const cachedData = cacheManager.get(localeKey);
+    const staleData = cacheManager.getStale(localeKey);
+
+    if (cachedData) {
+      setData(cachedData);
+      setLoading(false);
+    } else if (staleData) {
+      setData(staleData);
+      setLoading(false);
+    } else {
+      if (!keepPreviousData) {
+        setData(null);
+      }
+      if (enabled) setLoading(true);
+    }
+  }
+
   const ttl = ttlMinutes || config.defaultTtl;
 
   const fetchData = useCallback(async (force = false) => {

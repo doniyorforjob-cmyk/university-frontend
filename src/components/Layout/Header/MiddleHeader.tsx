@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import Container from '../../shared/Container';
 import { useSettingsStore } from '../../../store/settingsStore';
 import { PrefetchLink } from '../../shared';
+import { formatPhone } from '../../../utils/format';
 
 const MiddleHeader: React.FC = () => {
     const { settings } = useSettingsStore();
@@ -93,12 +94,12 @@ const MiddleHeader: React.FC = () => {
                                     </svg>
                                 </div>
                                 <div>
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.1em] mb-0.5">{t('contact')}</p>
+                                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-0">{t('contact')}</p>
                                     <a
                                         href={`tel:${phoneRaw}`}
-                                        className="text-[#0E104B] font-extrabold hover:text-[#0047BA] transition-colors text-base lg:text-lg"
+                                        className="text-[#0E104B] font-bold hover:text-[#0047BA] transition-colors text-sm lg:text-base"
                                     >
-                                        {phone}
+                                        {formatPhone(phone)}
                                     </a>
                                 </div>
                             </div>
@@ -130,8 +131,8 @@ const MiddleHeader: React.FC = () => {
                                     </svg>
                                 </div>
                                 <div>
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.1em] mb-0.5">{t('address')}</p>
-                                    <p className="text-[#0E104B] font-extrabold text-base lg:text-lg max-w-[220px] line-clamp-1">{address}</p>
+                                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-0">{t('address')}</p>
+                                    <p className="text-[#0E104B] font-bold text-sm lg:text-base max-w-[250px] leading-snug">{address}</p>
                                 </div>
                             </div>
                         )}
@@ -165,8 +166,8 @@ const MiddleHeader: React.FC = () => {
                     <div className="flex flex-col justify-center items-end gap-3 flex-shrink-0 max-w-[180px]">
                         {/* Telefon raqami */}
                         {phone && (
-                            <a href={`tel:${phoneRaw}`} className="flex items-center gap-2 text-[#0E104B] font-extrabold text-[15px] hover:text-secondary group">
-                                <span className="whitespace-nowrap">{phone}</span>
+                            <a href={`tel:${phoneRaw}`} className="flex items-center gap-1.5 text-[#0E104B] font-bold text-sm hover:text-secondary group">
+                                <span className="whitespace-nowrap">{formatPhone(phone)}</span>
                                 <div className="bg-primary/5 p-2 rounded-full group-hover:bg-primary/10 transition-colors flex items-center justify-center">
                                     <svg
                                         className="h-5 w-5 text-[#0E104B]"
@@ -187,8 +188,8 @@ const MiddleHeader: React.FC = () => {
 
                         {/* Manzil */}
                         {address && (
-                            <div className="flex items-center gap-2 text-[#0E104B] font-bold text-[15px] text-right">
-                                <span className="line-clamp-2 leading-tight">{address}</span>
+                            <div className="flex items-center gap-1.5 text-[#0E104B] font-bold text-sm text-right">
+                                <span className="leading-tight">{address}</span>
                                 <div className="bg-primary/5 p-2 rounded-full flex items-center justify-center">
                                     <svg
                                         className="h-5 w-5 text-[#0E104B]"

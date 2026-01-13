@@ -17,7 +17,8 @@ import {
   Megaphone,
   Wrench,
   Info,
-  Building
+  Building,
+  ShieldAlert
 } from 'lucide-react';
 import SocialShare from '../shared/SocialShare';
 
@@ -28,7 +29,7 @@ interface BreadcrumbItem {
 }
 
 // Content turlari
-export type ContentType = 'news' | 'announcement' | 'service' | 'info' | 'person';
+export type ContentType = 'news' | 'announcement' | 'service' | 'info' | 'person' | 'corruption';
 
 // Meta ma'lumotlar
 export interface DetailMeta {
@@ -170,6 +171,8 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
         return { icon: <Wrench size={18} />, label: t('content_types.service', 'Xizmat') };
       case 'person':
         return { icon: <User size={18} />, label: t('content_types.person', 'Shaxs') };
+      case 'corruption':
+        return { icon: <ShieldAlert size={18} className="text-red-500" />, label: t('content_types.corruption', 'Korrupsiya') };
       default:
         return { icon: <Info size={18} />, label: t('content_types.info', "Ma'lumot") };
     }

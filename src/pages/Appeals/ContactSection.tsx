@@ -8,6 +8,7 @@ import {
   UserGroupIcon
 } from '@heroicons/react/24/outline';
 import { useSettingsStore } from '../../store/settingsStore';
+import { formatPhone } from '../../utils/format';
 
 export const ContactSection: React.FC = () => {
   const { settings } = useSettingsStore();
@@ -31,22 +32,22 @@ export const ContactSection: React.FC = () => {
       responsibility: 'Universitet rahbariyati, strategik qarorlar'
     },
     {
-      name: 'O&apos;quv bo&apos;limi',
+      name: 'O\'quv bo\'limi',
       phone: '+998 69 227 00 02',
       email: 'oquv@namdtu.uz',
       responsibility: 'Talabalar, dars jadvali, baholash'
     },
     {
-      name: 'Ilmiy bo&apos;lim',
+      name: 'Ilmiy bo\'lim',
       phone: '+998 69 227 00 03',
       email: 'ilmiy@namdtu.uz',
       responsibility: 'Ilmiy tadqiqotlar, grantlar, konferensiyalar'
     },
     {
-      name: 'Moliya bo&apos;limi',
+      name: 'Moliya bo\'limi',
       phone: '+998 69 227 00 04',
       email: 'moliya@namdtu.uz',
-      responsibility: 'To&apos;lovlar, stipendiya, grantlar'
+      responsibility: 'To\'lovlar, stipendiya, grantlar'
     },
     {
       name: 'Axborot xizmati',
@@ -80,10 +81,10 @@ export const ContactSection: React.FC = () => {
           </div>
           <h4 className="font-semibold text-gray-900 mb-1">Telefon</h4>
           <a
-            href={`tel:${contactInfo.phone.replace(/\s/g, '')}`}
+            href={`tel:${contactInfo.phone.replace(/[^0-9+]/g, '')}`}
             className="text-blue-600 hover:text-blue-800 transition-colors"
           >
-            {contactInfo.phone}
+            {formatPhone(contactInfo.phone)}
           </a>
         </motion.div>
 
@@ -162,10 +163,10 @@ export const ContactSection: React.FC = () => {
                 <p>
                   <span className="font-medium">Tel:</span>{' '}
                   <a
-                    href={`tel:${dept.phone.replace(/\s/g, '')}`}
+                    href={`tel:${dept.phone.replace(/[^0-9+]/g, '')}`}
                     className="text-blue-600 hover:text-blue-800"
                   >
-                    {dept.phone}
+                    {formatPhone(dept.phone)}
                   </a>
                 </p>
                 <p>
@@ -186,3 +187,5 @@ export const ContactSection: React.FC = () => {
     </div>
   );
 };
+
+export default ContactSection;

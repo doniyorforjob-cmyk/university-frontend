@@ -107,12 +107,13 @@ export const homeApi = {
 
   getCombinedNewsData: async (locale?: string): Promise<any> => {
     try {
-      const [news, events, announcements] = await Promise.all([
+      const [news, events, announcements, corruption] = await Promise.all([
         fetchWithFallback('news', { with: 'image', per_page: 30 }, locale, true),
         fetchWithFallback('events', { with: 'image,gallery', per_page: 30 }, locale, true),
-        fetchWithFallback('announcements', { with: 'image', per_page: 30 }, locale, true)
+        fetchWithFallback('announcements', { with: 'image', per_page: 30 }, locale, true),
+        fetchWithFallback('corruption', { with: 'image,gallery,media', per_page: 30 }, locale, true).catch(() => [])
       ]);
-      return { news, events, announcements };
+      return { news, events, announcements, corruption };
     } catch (error) {
       console.error('Error fetching combined news data:', error);
       throw error;

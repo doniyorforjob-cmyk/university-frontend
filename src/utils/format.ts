@@ -96,16 +96,30 @@ export const formatPercent = (
 
 /**
  * Telefon raqamini formatlash
- * @example formatPhone('+998901234567') => '+998 90 123 45 67'
+ * @example formatPhone('+998692341485') => '(69)-234-14-85'
+ * @example formatPhone('692341485') => '(69)-234-14-85'
  */
 export const formatPhone = (phone: string): string => {
+  if (!phone) return '';
   const cleaned = phone.replace(/\D/g, '');
 
+  let area, first, second, third;
+
   if (cleaned.startsWith('998') && cleaned.length === 12) {
-    return `+${cleaned.slice(0, 3)} ${cleaned.slice(3, 5)} ${cleaned.slice(5, 8)} ${cleaned.slice(8, 10)} ${cleaned.slice(10)}`;
+    area = cleaned.slice(3, 5);
+    first = cleaned.slice(5, 8);
+    second = cleaned.slice(8, 10);
+    third = cleaned.slice(10, 12);
+  } else if (cleaned.length === 9) {
+    area = cleaned.slice(0, 2);
+    first = cleaned.slice(2, 5);
+    second = cleaned.slice(5, 7);
+    third = cleaned.slice(7, 9);
+  } else {
+    return phone;
   }
 
-  return phone;
+  return `(${area})-${first}-${second}-${third}`;
 };
 
 /**

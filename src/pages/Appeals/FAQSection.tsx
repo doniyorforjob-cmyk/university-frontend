@@ -4,6 +4,7 @@ import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import { useSettingsStore } from '../../store/settingsStore';
 import { useFAQData } from '../../hooks/useFAQData';
 import { FAQCategory } from '../../types/faq.types';
+import { formatPhone } from '../../utils/format';
 
 export const FAQSection: React.FC = () => {
   const { settings } = useSettingsStore();
@@ -187,7 +188,7 @@ export const FAQSection: React.FC = () => {
             href={`tel:${phone.replace(/[^0-9+]/g, '')}`}
             className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
-            📞 {phone}
+            📞 {formatPhone(phone)}
           </a>
           <a
             href={`mailto:${email}`}

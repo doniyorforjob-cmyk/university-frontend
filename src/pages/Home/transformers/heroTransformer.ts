@@ -41,13 +41,21 @@ export const transformHeroData = (apiData: any): HomeHeroData => {
       title: fields.title || item.title || '',
       url: fields.url || fields.link || '#',
       isExternal: fields.is_external || fields.isExternal || false,
+      order: fields.order !== undefined ? Number(fields.order) : Infinity,
       // Icon can be raw SVG string or image URL, assuming SVG string for now as per previous hardcoded data, 
       // but from API it will likely be a string or an object. 
       // If API returns an image object, we might need to fetch/render it.
       // For now, let's assume 'icon' field contains the SVG string OR we use a default if missing.
       icon: fields.icon || fields.svg || ''
     };
-  }).sort((a: any, b: any) => (Number(b.id) - Number(a.id))).slice(0, 3); // Latest 3 by ID descending
+  }).sort((a: any, b: any) => {
+    // Sort by order first
+    if (a.order !== b.order) {
+      return a.order - b.order;
+    }
+    // Fallback to ID descending
+    return (Number(b.id) - Number(a.id));
+  }).slice(0, 3); // Latest 3 after sorting
 
   return {
     items,

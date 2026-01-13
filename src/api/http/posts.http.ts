@@ -6,10 +6,17 @@ export const getPosts = async (category?: PostCategory, locale?: string): Promis
   try {
     const projectId = process.env.REACT_APP_PROJECT_ID;
     console.log("Using projectId:", projectId);
-    const params: any = { with: 'image' };
-    if (category) {
+    const params: any = { with: 'image,media' };
+
+    // Determine the correct collection endpoint
+    // If category is provided and it matches a dedicated collection, use it.
+    // Otherwise default to 'news'.
+    const collection = category === 'corruption' ? 'corruption' : 'news';
+
+    if (category && category !== 'corruption') {
       params['filter[category][eq]'] = category;
     }
+
     if (locale) {
       params['locale'] = locale;
     }
@@ -21,8 +28,8 @@ export const getPosts = async (category?: PostCategory, locale?: string): Promis
     if (currentLocale !== 'en') {
       try {
         const [resLocalized, resEnglish] = await Promise.all([
-          apiClient.get(`/projects/${projectId}/content/news`, { params }),
-          apiClient.get(`/projects/${projectId}/content/news`, {
+          apiClient.get(`/projects/${projectId}/content/${collection}`, { params }),
+          apiClient.get(`/projects/${projectId}/content/${collection}`, {
             params: { ...params, locale: 'en' }
           })
         ]);
@@ -30,9 +37,8 @@ export const getPosts = async (category?: PostCategory, locale?: string): Promis
         let dataLocalized = Array.isArray(resLocalized.data) ? resLocalized.data : resLocalized.data.data;
         const dataEnglish = Array.isArray(resEnglish.data) ? resEnglish.data : resEnglish.data.data;
 
-        // FALLBACK: Agar kategoriya bo'yicha o'zbekcha/ruscha ma'lumot topilmasa, filtersiz olib ko'rish
-        // Bu "uz dagi malumotlarni kursatmayapti" degan muammoni hal qiladi (ehtimol kategoriya sluglari mos emas)
-        if (!dataLocalized || dataLocalized.length === 0) {
+        // FALLBACK: Only for news, if localized is empty try unfiltered
+        if (collection === 'news' && (!dataLocalized || dataLocalized.length === 0)) {
           try {
             const fallbackParams = { ...params };
             if (fallbackParams['filter[category][eq]']) {
@@ -56,16 +62,16 @@ export const getPosts = async (category?: PostCategory, locale?: string): Promis
         data = (dataLocalized && dataLocalized.length > 0) ? dataLocalized : dataEnglish;
       } catch (e) {
         // Fallback to single request if parallel fails
-        const response = await apiClient.get(`/projects/${projectId}/content/news`, { params });
+        const response = await apiClient.get(`/projects/${projectId}/content/${collection}`, { params });
         data = Array.isArray(response.data) ? response.data : response.data.data;
       }
     } else {
-      const response = await apiClient.get(`/projects/${projectId}/content/news`, { params });
+      const response = await apiClient.get(`/projects/${projectId}/content/${collection}`, { params });
       data = Array.isArray(response.data) ? response.data : response.data.data;
     }
 
     // FINAL FALLBACK: If category was 'news' and returned 0 items, try WITHOUT category filter
-    if (category === 'news' && (!data || data.length === 0)) {
+    if (collection === 'news' && category === 'news' && (!data || data.length === 0)) {
       console.log("No items found with category 'news', trying unfiltered fetch...");
       const fallbackRes = await apiClient.get(`/projects/${projectId}/content/news`, {
         params: { with: 'image', per_page: 50 }
@@ -75,8 +81,8 @@ export const getPosts = async (category?: PostCategory, locale?: string): Promis
 
     return data.map((entry: any) => {
       // Logic for safer image extraction
-      const imgField = entry.fields?.image;
-      const imgsField = entry.fields?.images;
+      const imgField = entry.fields?.image || entry.fields?.media; // Support 'media' field for corruption
+      const imgsField = entry.fields?.images || entry.fields?.gallery;
 
       const primaryImage = (Array.isArray(imgField) ? imgField[0] : imgField) || {};
       const secondaryImage = (Array.isArray(imgsField) ? imgsField[0] : imgsField) || {};
@@ -92,10 +98,10 @@ export const getPosts = async (category?: PostCategory, locale?: string): Promis
         slug: entry.fields?.slug || entry.slug || entry.uuid || entry.id,
         title: entry.fields?.title || entry.title,
         image_url: getImageUrl(finalImageUrl),
-        description: entry.fields?.content ? entry.fields.content.substring(0, 150) + '...' : '',
+        description: entry.fields?.description || (entry.fields?.content ? entry.fields.content.substring(0, 150) + '...' : ''),
         published_at: entry.created_at || entry.published_at,
         views: entry.fields?.views || 0,
-        category: (entry.fields?.category || 'news') as PostCategory,
+        category: (entry.fields?.category || category || 'news') as PostCategory,
       };
     });
   } catch (error) {
@@ -104,7 +110,7 @@ export const getPosts = async (category?: PostCategory, locale?: string): Promis
   }
 };
 
-export const getPostBySlug = async (slug: string, locale?: string): Promise<PostDetail | undefined> => {
+export const getPostBySlug = async (slug: string, locale?: string, category: PostCategory = 'news'): Promise<PostDetail | undefined> => {
   try {
     const projectId = process.env.REACT_APP_PROJECT_ID;
     // Start localized and English fallback requests in parallel if current locale is not English
@@ -114,12 +120,15 @@ export const getPostBySlug = async (slug: string, locale?: string): Promise<Post
     const isUUID = slug.length > 20 && slug.includes('-');
     const filterKey = isUUID ? 'filter[id][eq]' : 'filter[slug][eq]';
 
+    // Determine the correct collection endpoint
+    const collection = category === 'corruption' ? 'corruption' : 'news';
+
     let data;
     if (currentLocale !== 'en') {
       try {
         // 1. Avval joriy tilda so'rab ko'ramiz
-        const resLocalized = await apiClient.get(`/projects/${projectId}/content/news`, {
-          params: { [filterKey]: slug, with: 'image,gallery', locale: currentLocale }
+        const resLocalized = await apiClient.get(`/projects/${projectId}/content/${collection}`, {
+          params: { [filterKey]: slug, with: 'image,gallery,media', locale: currentLocale }
         });
 
         const dataLocalized = Array.isArray(resLocalized.data) ? resLocalized.data : resLocalized.data.data;
@@ -129,16 +138,16 @@ export const getPostBySlug = async (slug: string, locale?: string): Promise<Post
           data = dataLocalized;
         } else {
           // 3. Agar joriy tilda yo'q bo'lsa, Ingliz tilida so'raymiz (Fallback)
-          const resEnglish = await apiClient.get(`/projects/${projectId}/content/news`, {
-            params: { [filterKey]: slug, with: 'image,gallery', locale: 'en' }
+          const resEnglish = await apiClient.get(`/projects/${projectId}/content/${collection}`, {
+            params: { [filterKey]: slug, with: 'image,gallery,media', locale: 'en' }
           });
           data = Array.isArray(resEnglish.data) ? resEnglish.data : resEnglish.data.data;
         }
       } catch (e) {
         // Xatolik bo'lsa, ingliz tilini sinab ko'ramiz
         try {
-          const resFallback = await apiClient.get(`/projects/${projectId}/content/news`, {
-            params: { [filterKey]: slug, with: 'image,gallery', locale: 'en' }
+          const resFallback = await apiClient.get(`/projects/${projectId}/content/${collection}`, {
+            params: { [filterKey]: slug, with: 'image,gallery,media', locale: 'en' }
           });
           data = Array.isArray(resFallback.data) ? resFallback.data : resFallback.data.data;
         } catch (err) {
@@ -147,8 +156,8 @@ export const getPostBySlug = async (slug: string, locale?: string): Promise<Post
         }
       }
     } else {
-      const response = await apiClient.get(`/projects/${projectId}/content/news`, {
-        params: { [filterKey]: slug, with: 'image,gallery' }
+      const response = await apiClient.get(`/projects/${projectId}/content/${collection}`, {
+        params: { [filterKey]: slug, with: 'image,gallery,media' }
       });
       data = Array.isArray(response.data) ? response.data : response.data.data;
     }
@@ -173,7 +182,8 @@ export const getPostBySlug = async (slug: string, locale?: string): Promise<Post
     if (!entry) return undefined;
 
     const fields = entry.fields || {};
-    const imageObj = Array.isArray(fields.image) ? fields.image[0] : fields.image;
+    const imageObj = (Array.isArray(fields.image) ? fields.image[0] : fields.image) ||
+      (Array.isArray(fields.media) ? fields.media[0] : fields.media);
 
     return {
       id: entry.uuid || entry.id,

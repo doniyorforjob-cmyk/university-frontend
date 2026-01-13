@@ -143,7 +143,7 @@ const NewsSection = () => {
             })}
           >
             <PrefetchLink
-              to={item.category === 'events' ? `/events/${item.slug}` : `/news/${item.slug}`}
+              to={item.category === 'events' ? `/events/${item.slug}` : item.category === 'corruption' ? `/corruption/${item.slug}` : `/news/${item.slug}`}
               state={{ post: item }}
               prefetch={true}
               className="block h-full"

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import PrefetchLink from '../../components/shared/PrefetchLink';
 import { useTranslation } from 'react-i18next';
 import Container from '../../components/shared/Container';
 import SectionHeader from './components/SectionHeader';
@@ -90,9 +91,9 @@ const InteractiveServicesSection = () => {
             const svgHtml = rawSvg;
 
             return (
-              <Link to={service.href} key={service.id} className="group">
+              <PrefetchLink to={service.href} key={service.id} className="group" prefetch={true}>
                 <div
-                  className="g-card _service _n1 relative p-6 h-32 flex items-center overflow-hidden transition-all duration-300 hover:shadow-md"
+                  className="g-card _service _n1 relative p-6 min-h-[145px] flex items-center overflow-hidden transition-all duration-300 hover:shadow-md"
                   {...(AOS_CONFIG.enabled && {
                     'data-aos': AOS_CONFIG.defaultAnimation,
                     'data-aos-delay': `${index * AOS_CONFIG.staggerDelay}`,
@@ -107,7 +108,7 @@ const InteractiveServicesSection = () => {
                     </div>
                     <div className="g-card-info flex-1 min-w-0">
                       <h4 className="text-white text-xl font-bold truncate pr-2">{getLocalized(service.title, locale)}</h4>
-                      <span className="text-white text-lg line-clamp-2 opacity-90 block">
+                      <span className="text-white text-base line-clamp-3 opacity-90 block leading-snug">
                         {getLocalized(service.description, locale)}
                       </span>
                     </div>
@@ -131,7 +132,7 @@ const InteractiveServicesSection = () => {
                     />
                   </div>
                 </div>
-              </Link>
+              </PrefetchLink>
             );
           })}
         </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import PrefetchLink from '../../../components/shared/PrefetchLink';
 
 interface HeroLink {
     id: string | number;
@@ -53,11 +54,21 @@ const HeroActionCards: React.FC<HeroActionCardsProps> = ({ links }) => {
                         ? "w-full md:max-w-sm lg:max-w-md"
                         : "w-full md:flex-1 md:min-w-[250px]";
 
+                    // Intercept "Rektorga murojaat" links and redirect to /contact
+                    const cardTitle = card.title.toLowerCase();
+                    const isRectorAppeal =
+                        cardTitle.includes('rektorga murojaat') ||
+                        cardTitle.includes('обращение к ректору') ||
+                        cardTitle.includes('appeal to rector');
+
+                    const finalUrl = isRectorAppeal ? '/contact' : card.url;
+                    const finalIsExternal = isRectorAppeal ? false : card.isExternal;
+
                     return (
                         <div key={card.id} className={`${widthClass}`}>
-                            {card.isExternal ? (
+                            {finalIsExternal ? (
                                 <a
-                                    href={card.url}
+                                    href={finalUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="block h-full"
@@ -65,12 +76,13 @@ const HeroActionCards: React.FC<HeroActionCardsProps> = ({ links }) => {
                                     {content}
                                 </a>
                             ) : (
-                                <Link
-                                    to={card.url}
+                                <PrefetchLink
+                                    to={finalUrl}
+                                    prefetch={true}
                                     className="block h-full"
                                 >
                                     {content}
-                                </Link>
+                                </PrefetchLink>
                             )}
                         </div>
                     );

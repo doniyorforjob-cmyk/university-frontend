@@ -19,7 +19,7 @@ import { AnnouncementDetail } from '@/types/announcement.types';
 import { PostDetail } from '@/types/post.types';
 import { OpenLessonDetail } from '@/types/open-lesson.types';
 
-export type PageType = 'announcement' | 'news' | 'service' | 'open-lesson' | 'event';
+export type PageType = 'announcement' | 'news' | 'service' | 'open-lesson' | 'event' | 'corruption';
 
 interface GenericDetailPageProps {
     type: PageType;
@@ -46,6 +46,8 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
                 return () => getOpenLessonBySlug(slug, locale);
             case 'event':
                 return () => getEventBySlug(slug, locale);
+            case 'corruption':
+                return () => getPostBySlug(slug, locale, 'corruption');
             default:
                 return null;
         }
@@ -62,6 +64,8 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
                 return `open-lesson-detail-${slug}`;
             case 'event':
                 return `event-detail-${slug}`;
+            case 'corruption':
+                return `corruption-detail-${slug}`;
             default:
                 return `generic-detail-${slug}`;
         }
@@ -73,6 +77,8 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
             case 'announcement':
                 return CACHE_CONFIG.ANNOUNCEMENT_DETAIL.ttlMinutes;
             case 'news':
+                return CACHE_CONFIG.NEWS_DETAIL.ttlMinutes;
+            case 'corruption':
                 return CACHE_CONFIG.NEWS_DETAIL.ttlMinutes;
             default:
                 return CACHE_CONFIG.DEFAULT_TTL;
@@ -114,6 +120,11 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
                 breadcrumbLabel = t('pages:home.tabs.events');
                 parentHref = '/news'; // Tadbirlar yangiliklar bo'limida
                 break;
+            case 'corruption':
+                setSidebarType('info');
+                breadcrumbLabel = t('pages:home.tabs.corruption');
+                parentHref = '/corruption';
+                break;
         }
 
         setBreadcrumbsData([
@@ -144,6 +155,9 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
                     break;
                 case 'event':
                     listPath = '/news';
+                    break;
+                case 'corruption':
+                    listPath = '/corruption';
                     break;
                 default:
                     listPath = '/';
@@ -257,6 +271,26 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
             templateProps.gallery = data.gallery.map((imgUrl: string) => ({
                 src: imgUrl,
                 alt: data.title
+            }));
+        }
+
+        templateProps.showSocialShare = true;
+        templateProps.showPrintButton = true;
+        templateProps.showSidebar = false;
+    } else if (type === 'corruption') {
+        const corruption = data as PostDetail;
+        templateProps.heroImage = corruption.image_url;
+        templateProps.heroImageAlt = corruption.title;
+        templateProps.meta = {
+            publishDate: corruption.published_at,
+            views: corruption.views
+        } as DetailMeta;
+
+        // Map gallery
+        if (corruption.gallery && Array.isArray(corruption.gallery)) {
+            templateProps.gallery = corruption.gallery.map(imgUrl => ({
+                src: imgUrl,
+                alt: corruption.title
             }));
         }
 
