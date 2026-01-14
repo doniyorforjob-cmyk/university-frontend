@@ -33,6 +33,8 @@ const AppRoutes = () => {
             <Routes>
                 <Route index element={<HomePage />} />
                 <Route path="contact" element={<ContactPage />} />
+                <Route path="faculties" element={<FacultiesPage />} />
+                <Route path="departments" element={<FacultiesPage />} />
 
                 {/* "Axborot xizmati" uchun doimiy Sidebar bilan ishlaydigan sahifalar */}
                 <Route element={<MainLayout />}>
@@ -58,7 +60,7 @@ const AppRoutes = () => {
                     <Route path="organizational-structure" element={<OrganizationalStructurePage />} />
                     <Route path="activities" element={<ActivitiesPage />} />
                     {/* <Route path="departments" element={<GenericDetailPage type="department" />} /> */}
-                    <Route path="faculties" element={<FacultiesPage />} />
+                    {/* <Route path="departments" element={<GenericDetailPage type="department" />} /> */}
                     <Route path="admission" element={<AdmissionPage />} />
                     <Route path="yashil-universitet" element={<YashilUniversitetPage />} />
                     <Route path="eco-active-students" element={<EcoActiveStudentsPage />} />
