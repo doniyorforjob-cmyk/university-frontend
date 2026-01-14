@@ -84,6 +84,17 @@ export const transformVideoGalleryData = (apiData: any, locale: string = 'uz'): 
       if (!photo) return null;
       const fields = photo.fields || {};
 
+      console.log('[DEBUG] Transformer - Processing photo:', {
+        id: photo.id || photo.uuid,
+        title: fields.title || photo.title,
+        fields_keys: Object.keys(fields),
+        has_cover_image: !!fields['cover-image'],
+        has_cover_image_alt: !!fields.cover_image,
+        has_image: !!fields.image,
+        has_gallery: !!fields.gallery,
+        raw_photo: photo
+      });
+
       let rawCover = fields['cover-image'] || fields.cover_image || photo.cover_image || photo['cover-image'] || fields.image || photo.image || fields.photo || photo.photo || fields.picture || photo.picture || fields.file || photo.file || photo.url || '';
 
       // If rawCover is an array (common in some API responses), take the first item
@@ -91,18 +102,24 @@ export const transformVideoGalleryData = (apiData: any, locale: string = 'uz'): 
         rawCover = rawCover[0];
       }
 
-      const coverPath = typeof rawCover === 'object' && rawCover !== null ? (rawCover.url || rawCover.thumbnail_url || rawCover.path) : rawCover;
+      const coverPath = typeof rawCover === 'object' && rawCover !== null ? (rawCover.thumbnail_url || rawCover.url || rawCover.path) : rawCover;
 
 
       const rawGallery = fields.gallery || photo.gallery || fields.images || photo.images || fields.photos || photo.photos || [];
       const gallery = Array.isArray(rawGallery)
         ? rawGallery.map((img: any) => {
-          const path = typeof img === 'string' ? img : (img.url || img.thumbnail_url || img.path);
+          const path = typeof img === 'string' ? img : (img.thumbnail_url || img.url || img.path);
           return getImageUrl(path);
         })
         : [];
 
       const finalCover = getImageUrl(coverPath);
+
+      console.log('[DEBUG] Transformer - Photo result:', {
+        title: fields.title || photo.title,
+        finalCover,
+        galleryCount: gallery.length
+      });
 
       if (finalCover.includes('logo.png')) {
         console.warn(`[DEBUG] Transformer - Photo "${fields.title || photo.title || 'Untitled'}" rejected: Falling back to logo (no real image found).`);

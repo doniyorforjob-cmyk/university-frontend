@@ -63,16 +63,16 @@ const CardContent: React.FC<CardContentProps> = (props) => {
               {date}
             </span>
             <div className="flex items-center gap-4">
-              <span className="flex items-center gap-2">
-                <EyeIcon className="w-5 h-5 md:w-6 md:h-6 stroke-[2]" />
-                {views}
-              </span>
               {photosCount > 0 && (
                 <span className="flex items-center gap-2 text-[#FFE082]">
                   <PhotoIcon className="w-5 h-5 md:w-6 md:h-6 stroke-[2]" />
                   {photosCount}
                 </span>
               )}
+              <span className="flex items-center gap-2">
+                <EyeIcon className="w-5 h-5 md:w-6 md:h-6 stroke-[2]" />
+                {views}
+              </span>
             </div>
           </div>
         </div>

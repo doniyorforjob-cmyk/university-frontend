@@ -52,19 +52,24 @@ const MediaGallery: React.FC = () => {
     }
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-        {photos.slice(0, 4).map((photo: HomeMediaData['photos'][0], index: number) => (
-          <MediaCard
-            key={photo.id}
-            type="photo"
-            title={photo.title}
-            thumbnail={photo.cover_image}
-            date={formatShortDate(photo.created_at, i18n.language)}
-            views={photo.views || 0}
-            photos={photo.gallery?.length || 0}
-            imageUrl={photo.cover_image}
-            slug={photo.id.toString()}
-          />
-        ))}
+        {photos.slice(0, 4).map((photo: HomeMediaData['photos'][0], index: number) => {
+          // Calculate total photos: cover image (1) + gallery images
+          const totalPhotos = 1 + (photo.gallery?.length || 0);
+
+          return (
+            <MediaCard
+              key={photo.id}
+              type="photo"
+              title={photo.title}
+              thumbnail={photo.cover_image}
+              date={formatShortDate(photo.created_at, i18n.language)}
+              views={photo.views || 0}
+              photos={totalPhotos}
+              imageUrl={photo.cover_image}
+              slug={photo.id.toString()}
+            />
+          );
+        })}
       </div>
     );
   };
