@@ -39,6 +39,30 @@ export const getFaculties = async (): Promise<Faculty[]> => {
     }
 };
 
+export const getFacultyById = async (id: string | number): Promise<Faculty | null> => {
+    try {
+        // Fetch all faculties and find the one with matching ID
+        const allFaculties = await getFaculties();
+        const faculty = allFaculties.find(f => String(f.id) === String(id));
+        return faculty || null;
+    } catch (error) {
+        console.error("Faculty fetch error:", error);
+        return null;
+    }
+};
+
+export const getDepartmentsByFacultyId = async (facultyId: string | number): Promise<Department[]> => {
+    try {
+        const allDepartments = await getDepartments();
+        return allDepartments.filter(dept =>
+            String(dept.facultyId) === String(facultyId)
+        );
+    } catch (error) {
+        console.error("Departments by faculty fetch error:", error);
+        return [];
+    }
+};
+
 export const getDepartments = async (): Promise<Department[]> => {
     try {
         const projectId = process.env.REACT_APP_PROJECT_ID;

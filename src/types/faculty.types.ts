@@ -9,6 +9,14 @@ export type Faculty = {
   iconImage?: string;
   dean?: string;
   slug?: string;
+  // Dean information
+  deanName?: string;
+  deanPosition?: string;
+  deanPhone?: string;
+  deanEmail?: string;
+  deanImage?: string;
+  // Additional info
+  description?: string;
 }
 
 export type Department = {

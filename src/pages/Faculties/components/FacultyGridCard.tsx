@@ -7,12 +7,15 @@ interface FacultyGridCardProps {
     id: string | number;
     name: string;
     image?: string;
-    href: string;
+    href?: string;
 }
 
 export const FacultyGridCard: React.FC<FacultyGridCardProps> = ({ id, name, image, href }) => {
+    // Use ID-based href if not explicitly provided (just ID for relative path)
+    const detailHref = href || `${id}`;
+
     return (
-        <Link to={href} className="group relative block w-full h-64 md:h-72 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
+        <Link to={detailHref} className="group relative block w-full h-64 md:h-72 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
             <div className="absolute inset-0 bg-gray-100">
                 <OptimizedImage
                     src={image || '/images/logo.png'}

@@ -22,6 +22,7 @@ const PhotoDetailPage = React.lazy(() => import('./pages/PhotoDetail'));
 const OpenLessonsPage = React.lazy(() => import('./pages/OpenLessons'));
 const GenericDetailPage = React.lazy(() => import('./pages/GenericDetail'));
 const FacultiesPage = React.lazy(() => import('./pages/Faculties'));
+const FacultyDetailPage = React.lazy(() => import('./pages/FacultyDetail'));
 const CorruptionPage = React.lazy(() => import('./pages/Corruption'));
 const FAQPage = React.lazy(() => import('./pages/FAQ'));
 const ServerError = React.lazy(() => import('./pages/Error/ServerError'));
@@ -34,6 +35,7 @@ const AppRoutes = () => {
                 <Route index element={<HomePage />} />
                 <Route path="contact" element={<ContactPage />} />
                 <Route path="faculties" element={<FacultiesPage />} />
+                <Route path="faculties/:id" element={<FacultyDetailPage />} />
                 <Route path="departments" element={<FacultiesPage />} />
 
                 {/* "Axborot xizmati" uchun doimiy Sidebar bilan ishlaydigan sahifalar */}
