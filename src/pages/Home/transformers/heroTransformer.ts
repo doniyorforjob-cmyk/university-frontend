@@ -21,12 +21,55 @@ export const transformHeroData = (apiData: any): HomeHeroData => {
     const title = fields.title || item.title || 'NamDTU';
     const desc = fields.description || fields.content || item.description || '';
 
-    // TEMPORARY: Hardcoded test video & no image as per user request
-    const videoPath = 'https://vjs.zencdn.net/v/oceans.mp4';
+    // Handle Image
+    let rawImg = fields.image || item.image || fields.img || item.img || fields.photo || item.photo;
+    let imgPath = '';
+    if (rawImg) {
+      // If array, take first
+      if (Array.isArray(rawImg)) rawImg = rawImg[0];
+      const path = typeof rawImg === 'string' ? rawImg : (rawImg.url || rawImg.path);
+      imgPath = getImageUrl(path);
+    }
+
+    // Handle Video
+    let rawVideo = fields.media || item.media || fields.video || item.video || fields.file || item.file;
+    let videoPath = '';
+
+    // If video is array (relation), take first
+    if (Array.isArray(rawVideo) && rawVideo.length > 0) {
+      rawVideo = rawVideo[0];
+    }
+
+    if (rawVideo) {
+      // Try multiple path patterns typical in CMS
+      let path = typeof rawVideo === 'string' ? rawVideo : (
+        rawVideo.url ||
+        rawVideo.path ||
+        rawVideo.thumbnail_url ||
+        rawVideo.attributes?.url ||
+        rawVideo.fields?.file?.url ||
+        rawVideo.file?.url
+      );
+
+      // Fallback: If URL is missing but filename exists (common convention)
+      if (!path && typeof rawVideo === 'object' && rawVideo.filename) {
+        // TEMPORARY FIX: backend returns null URL, but file exists at specific hashed path
+        if (rawVideo.filename === 'hero.mp4') {
+          const projectId = process.env.REACT_APP_PROJECT_ID || '4bbd172e-a839-43fc-a94a-f05dba59e2c5';
+          path = `https://new.namdtu.uz/storage/projects/${projectId}/assets/hero_Ng0TRAbP.mp4`;
+        } else {
+          path = `/storage/${rawVideo.filename}`;
+        }
+      }
+
+      if (path) {
+        videoPath = getImageUrl(path);
+      }
+    }
 
     return {
       id: item.uuid || item.id || Math.random().toString(),
-      img: '', // User confirmed no image from backend
+      img: imgPath,
       video: videoPath,
       title: title,
       desc: desc,

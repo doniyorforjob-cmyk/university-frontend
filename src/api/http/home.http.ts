@@ -75,7 +75,7 @@ export const homeApi = {
   getHeroData: async (locale?: string): Promise<any> => {
     try {
       const [heroData, linksData] = await Promise.all([
-        fetchWithFallback('hero', { with: 'image' }, locale),
+        fetchWithFallback('hero', { with: 'image,video,media' }, locale),
         fetchWithFallback('hero-links', { with: 'image' }, locale).catch(err => {
           console.warn('Failed to fetch hero-links, using empty array', err);
           return [];
@@ -154,30 +154,22 @@ export const homeApi = {
       // Slugs to try for photo gallery (User requested logic retained)
       const photoSlugs = ['photos', 'photo-gallery', 'photos-gallery', 'photogallery', 'gallery', 'media-photos', 'fotogallery', 'fotogalereya'];
 
-      console.log('[DEBUG] getMediaData: Attempting to fetch photos from multiple endpoints...');
-
       // Fetch collections
       const results = await Promise.all([
         ...photoSlugs.map(slug =>
           apiClient.get(`/projects/${projectId}/content/${slug}`, { params })
             .then(res => {
-              const data = Array.isArray(res.data) ? res.data : (res.data.data || []);
-              console.log(`[DEBUG] getMediaData: Endpoint '${slug}' returned ${data.length} items`);
               return { slug, data: res.data };
             })
             .catch(err => {
-              console.log(`[DEBUG] getMediaData: Endpoint '${slug}' failed:`, err.response?.status || err.message);
               return { slug, data: null };
             })
         ),
         apiClient.get(`/projects/${projectId}/content/video-gallery`, { params })
           .then(res => {
-            const data = Array.isArray(res.data) ? res.data : (res.data.data || []);
-            console.log(`[DEBUG] getMediaData: Endpoint 'video-gallery' returned ${data.length} items`);
             return { slug: 'video-gallery', data: res.data };
           })
           .catch(() => {
-            console.log('[DEBUG] getMediaData: Endpoint \'video-gallery\' failed');
             return { slug: 'video-gallery', data: null };
           })
       ]);
@@ -190,21 +182,14 @@ export const homeApi = {
         if (res.data) {
           const data = Array.isArray(res.data) ? res.data : (res.data.data || []);
           if (data.length > 0) {
-            console.log(`[DEBUG] getMediaData: Using photos from endpoint '${res.slug}' (${data.length} items)`);
             photosData = data;
             break;
           }
         }
       }
 
-      if (photosData.length === 0) {
-        console.warn('[DEBUG] getMediaData: No photos found from any endpoint!');
-      }
-
       const videoRes = results[results.length - 1];
       const videosData = videoRes.data ? (Array.isArray(videoRes.data) ? videoRes.data : (videoRes.data.data || [])) : [];
-
-      console.log(`[DEBUG] getMediaData: Final result - ${photosData.length} photos, ${videosData.length} videos`);
 
       return {
         photos: photosData,

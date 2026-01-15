@@ -55,7 +55,7 @@ const FacultiesSection: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-10 items-stretch">
           {/* LEFT: FACULTIES LIST */}
-          <div className="md:col-span-4 flex flex-col space-y-2 md:space-y-3 max-h-[34rem] overflow-y-auto pr-2 scrollbar-auto-hide">
+          <div className={`md:col-span-4 flex flex-col space-y-2 md:space-y-3 pr-2 ${faculties.length > 10 ? 'max-h-[34rem] overflow-y-auto scrollbar-auto-hide' : ''}`}>
             {faculties.length > 0 ? (
               faculties.map((faculty: Faculty) => (
                 <FacultyCard
@@ -77,7 +77,6 @@ const FacultiesSection: React.FC = () => {
           </div>
 
           {/* RIGHT: DEPARTMENTS GRID */}
-          {/* RIGHT: DEPARTMENTS GRID */}
           <div className="md:col-span-8 flex flex-col">
             <h2 className="text-xl md:text-2xl 2xl:text-3xl font-black text-brand-dark text-center mb-4 md:mb-6 tracking-tight">
               {t('pages:departments', 'Kafedralar')}
@@ -85,7 +84,7 @@ const FacultiesSection: React.FC = () => {
 
             <motion.div
               layout
-              className="bg-ghost-blue rounded-3xl lg:rounded-[2.5rem] p-4 sm:p-6 md:p-8 lg:p-10 border border-slate-200 shadow-sm min-h-[20rem] md:min-h-[28rem] lg:min-h-[34rem] relative overflow-hidden flex-grow"
+              className="bg-ghost-blue rounded-3xl lg:rounded-[2.5rem] p-4 sm:p-6 md:p-8 lg:p-10 border border-slate-200 shadow-sm h-[20rem] md:h-[28rem] lg:h-[34rem] relative flex-grow flex flex-col"
             >
               <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-brand-blue/20 to-transparent opacity-50" />
 
@@ -96,7 +95,7 @@ const FacultiesSection: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.2, ease: "easeOut" }}
-                  className="max-h-[32rem] overflow-y-auto pr-2 scrollbar-auto-hide"
+                  className="flex-grow overflow-y-auto pr-2 scrollbar-auto-hide"
                 >
                   {departments.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 lg:gap-6 2xl:gap-8 pb-4">

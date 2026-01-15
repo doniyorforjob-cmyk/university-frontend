@@ -84,17 +84,6 @@ export const transformVideoGalleryData = (apiData: any, locale: string = 'uz'): 
       if (!photo) return null;
       const fields = photo.fields || {};
 
-      console.log('[DEBUG] Transformer - Processing photo:', {
-        id: photo.id || photo.uuid,
-        title: fields.title || photo.title,
-        fields_keys: Object.keys(fields),
-        has_cover_image: !!fields['cover-image'],
-        has_cover_image_alt: !!fields.cover_image,
-        has_image: !!fields.image,
-        has_gallery: !!fields.gallery,
-        raw_photo: photo
-      });
-
       let rawCover = fields['cover-image'] || fields.cover_image || photo.cover_image || photo['cover-image'] || fields.image || photo.image || fields.photo || photo.photo || fields.picture || photo.picture || fields.file || photo.file || photo.url || '';
 
       // If rawCover is an array (common in some API responses), take the first item
@@ -114,16 +103,6 @@ export const transformVideoGalleryData = (apiData: any, locale: string = 'uz'): 
         : [];
 
       const finalCover = getImageUrl(coverPath);
-
-      console.log('[DEBUG] Transformer - Photo result:', {
-        title: fields.title || photo.title,
-        finalCover,
-        galleryCount: gallery.length
-      });
-
-      if (finalCover.includes('logo.png')) {
-        console.warn(`[DEBUG] Transformer - Photo "${fields.title || photo.title || 'Untitled'}" rejected: Falling back to logo (no real image found).`);
-      }
 
       return {
         id: String(photo.id || fields.id || photo.uuid || photo.slug || Math.random()),
