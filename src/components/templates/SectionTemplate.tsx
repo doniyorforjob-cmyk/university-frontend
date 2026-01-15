@@ -148,25 +148,30 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
     let dateRange: { from: string; to: string } | undefined;
 
     if (view === 'today') {
-      const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
-      const tomorrow = new Date(today);
-      tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
-      dateRange = { from: today.toISOString(), to: tomorrow.toISOString() };
+      const start = new Date();
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(start);
+      end.setDate(start.getDate() + 1);
+      dateRange = { from: start.toISOString(), to: end.toISOString() };
     } else if (view === 'day') {
-      const dayStart = new Date(Date.UTC(currentDisplayDate.getUTCFullYear(), currentDisplayDate.getUTCMonth(), currentDisplayDate.getUTCDate()));
-      const dayEnd = new Date(dayStart);
-      dayEnd.setUTCDate(dayEnd.getUTCDate() + 1);
-      dateRange = { from: dayStart.toISOString(), to: dayEnd.toISOString() };
+      const start = new Date(currentDisplayDate);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(start);
+      end.setDate(start.getDate() + 1);
+      dateRange = { from: start.toISOString(), to: end.toISOString() };
     } else if (view === 'week') {
-      const weekStart = new Date(currentDisplayDate);
-      weekStart.setUTCDate(currentDisplayDate.getUTCDate() - currentDisplayDate.getUTCDay() + 1);
-      const weekEnd = new Date(weekStart);
-      weekEnd.setUTCDate(weekStart.getUTCDate() + 7);
-      dateRange = { from: weekStart.toISOString(), to: weekEnd.toISOString() };
+      const start = new Date(currentDisplayDate);
+      start.setHours(0, 0, 0, 0);
+      const day = start.getDay();
+      const diff = day === 0 ? -6 : 1 - day; // Monday start
+      start.setDate(start.getDate() + diff);
+      const end = new Date(start);
+      end.setDate(start.getDate() + 7);
+      dateRange = { from: start.toISOString(), to: end.toISOString() };
     } else if (view === 'month') {
-      const monthStart = new Date(Date.UTC(currentDisplayDate.getUTCFullYear(), currentDisplayDate.getUTCMonth(), 1));
-      const monthEnd = new Date(Date.UTC(currentDisplayDate.getUTCFullYear(), currentDisplayDate.getUTCMonth() + 1, 1));
-      dateRange = { from: monthStart.toISOString(), to: monthEnd.toISOString() };
+      const start = new Date(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth(), 1);
+      const end = new Date(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth() + 1, 1);
+      dateRange = { from: start.toISOString(), to: end.toISOString() };
     } else if (view === 'all') {
       dateRange = undefined; // No date filter
     }
@@ -223,32 +228,13 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
     }
 
     return true;
+  }).sort((a, b) => {
+    // Default sort by date descending
+    const dateA = a.date ? new Date(a.date).getTime() : 0;
+    const dateB = b.date ? new Date(b.date).getTime() : 0;
+    return dateB - dateA;
   });
 
-  // Agar "Bugun" da e'lonlar kam bo'lsa, qo'shimcha e'lonlar qo'shish
-  if (activeCalendarView === 'today' && filters.dateRange && filteredItems.length < 5) {
-    const todayEnd = new Date(filters.dateRange.to);
-    const sevenDaysAgo = new Date(todayEnd);
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-    const additionalItems = (Array.isArray(items) ? items : []).filter(item => {
-      const itemDate = item.date ? new Date(item.date) : null;
-      if (!itemDate) return false;
-
-      // So'nggi 7 kun ichida, lekin bugungi emas
-      if (itemDate >= sevenDaysAgo && itemDate < todayEnd) {
-        // Asosiy filtrlar ham mos kelishi kerak
-        const titleMatch = !filters.search || item.title.toLowerCase().includes(filters.search.toLowerCase()) || item.description.toLowerCase().includes(filters.search.toLowerCase());
-        const categoryMatch = !filters.category || item.category === filters.category;
-        const priorityMatch = !filters.priority || item.priority === filters.priority;
-
-        return titleMatch && categoryMatch && priorityMatch && !filteredItems.some(f => f.id === item.id);
-      }
-      return false;
-    }).sort((a, b) => new Date(b.date || '').getTime() - new Date(a.date || '').getTime()).slice(0, 10 - filteredItems.length);
-
-    filteredItems.push(...additionalItems);
-  }
 
   // Sahifalash
   const totalPages = Math.ceil(filteredItems.length / itemsPerPage);

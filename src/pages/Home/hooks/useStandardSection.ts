@@ -14,6 +14,7 @@ interface UseStandardSectionOptions {
   refetchOnWindowFocus?: boolean;
   refetchInterval?: number;
   revalidateThresholdMinutes?: number;
+  keepPreviousData?: boolean;
 }
 
 export const useStandardSection = <T = any>(
@@ -21,7 +22,7 @@ export const useStandardSection = <T = any>(
   fetcher: (locale?: string) => Promise<T>,
   options: UseStandardSectionOptions = {}
 ) => {
-  const { locale } = useLocale();
+  const { locale = 'uz' } = useLocale();
   const {
     ttlMinutes = CACHE_CONFIG.SECTIONS[sectionType as keyof typeof CACHE_CONFIG.SECTIONS]?.ttlMinutes ?? CACHE_CONFIG.TTL.SHORT, // Default from config or SHORT
     enabled = true,
@@ -57,6 +58,7 @@ export const useStandardSection = <T = any>(
     refetchOnWindowFocus,
     refetchInterval,
     revalidateThresholdMinutes,
+    keepPreviousData: options.keepPreviousData,
     onSuccess: handleSuccess,
     onError: handleError
   });

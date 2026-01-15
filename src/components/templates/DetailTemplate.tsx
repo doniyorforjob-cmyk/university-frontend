@@ -4,7 +4,7 @@ import Container from '@/components/shared/Container';
 import Breadcrumbs from '@/components/shared/Breadcrumbs';
 import ContentBuilder, { ContentBlock } from '@/components/shared/ContentBuilder';
 import { useTranslation } from 'react-i18next';
-import { OptimizedImage, ImageCarousel } from '../shared';
+import { OptimizedImage, ImageCarousel, ImageViewer } from '../shared';
 import { DATE_FORMATS } from '@/config/constants';
 import {
   Calendar,
@@ -19,7 +19,8 @@ import {
   Info,
   Building,
   ShieldAlert,
-  Image
+  Image,
+  Maximize2
 } from 'lucide-react';
 import SocialShare from '../shared/SocialShare';
 
@@ -109,6 +110,7 @@ interface DetailTemplateProps {
   sidebarContent?: React.ReactNode;
 
   // Callbacks
+  galleryLayout?: 'carousel' | 'grid'; // New prop
   onShare?: (platform: string) => void;
   onPrint?: () => void;
   onRelatedClick?: (item: RelatedItem) => void;
@@ -124,6 +126,7 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
   heroImage,
   heroImageAlt,
   gallery,
+  galleryLayout = 'carousel', // Default to carousel
   breadcrumbs,
   relatedItems = [],
   showRelated = true,
@@ -141,8 +144,48 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
 }) => {
   const { t } = useTranslation('common');
 
+  const [isLightboxOpen, setIsLightboxOpen] = React.useState(false);
+  const [lightboxIndex, setLightboxIndex] = React.useState(0);
 
+  // Combine hero image and gallery into a single array (Memoized)
+  const carouselImages = React.useMemo(() => {
+    const images: Array<{ src: string; alt: string; }> = [];
+    if (heroImage) {
+      images.push({
+        src: heroImage,
+        alt: heroImageAlt || title,
+      });
+    }
+    if (gallery && gallery.length > 0) {
+      gallery.forEach(img => {
+        if (img.src !== heroImage) {
+          images.push(img);
+        }
+      });
+    }
+    return images;
+  }, [heroImage, heroImageAlt, title, gallery]);
 
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index);
+    setIsLightboxOpen(true);
+  };
+
+  const closeLightbox = () => {
+    setIsLightboxOpen(false);
+  };
+
+  const nextImage = () => {
+    if (carouselImages.length === 0) return;
+    setLightboxIndex((prev) => (prev + 1) % carouselImages.length);
+  };
+
+  const prevImage = () => {
+    if (carouselImages.length === 0) return;
+    setLightboxIndex((prev) => (prev - 1 + carouselImages.length) % carouselImages.length);
+  };
+
+  // ... (existing helper functions)
 
   const handlePrint = () => {
     window.print();
@@ -181,19 +224,7 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
 
   const typeInfo = getTypeInfo();
 
-  // Priority bo'yicha rang olish
-  const getPriorityColor = (priority?: string) => {
-    switch (priority) {
-      case 'high':
-        return 'bg-red-50 text-red-700 border-red-100';
-      case 'medium':
-        return 'bg-yellow-50 text-yellow-700 border-yellow-100';
-      case 'low':
-        return 'bg-green-50 text-green-700 border-green-100';
-      default:
-        return 'bg-gray-50 text-gray-700 border-gray-100';
-    }
-  };
+  // ...
 
   return (
     <div className={`flex flex-col gap-6 ${className}`}>
@@ -240,33 +271,55 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
           )}
         </div>
 
-        {/* Hero Carousel */}
-        {(() => {
-          // Combine hero image and gallery into a single array for the carousel
-          const carouselImages = [];
+        {/* Media Section: Carousel or Grid */}
+        {/* Media Section: Carousel or Grid */}
+        {carouselImages.length > 0 && (
+          galleryLayout === 'grid' ? (
+            <>
+              <div className="mb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {carouselImages.map((img, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => openLightbox(idx)}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`View full screen image ${idx + 1}`}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        openLightbox(idx);
+                      }
+                    }}
+                    className="relative aspect-[4/3] rounded-xl overflow-hidden group border border-gray-100 shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
+                    <OptimizedImage
+                      src={img.src}
+                      alt={img.alt}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
 
-          if (heroImage) {
-            carouselImages.push({
-              src: heroImage,
-              alt: heroImageAlt || title,
-            });
-          }
-
-          if (gallery && gallery.length > 0) {
-            gallery.forEach(img => {
-              // Avoid duplicates if hero image is also in gallery (simple check by src)
-              if (img.src !== heroImage) {
-                carouselImages.push(img);
-              }
-            });
-          }
-
-          return carouselImages.length > 0 ? (
-            <div className="mb-8">
+                    <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 backdrop-blur-[2px]">
+                      <div className="bg-white/20 backdrop-blur-md p-3 rounded-full border border-white/30 transform scale-75 group-hover:scale-100 transition-transform duration-300">
+                        <Maximize2 className="text-white w-6 h-6" strokeWidth={2.5} />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <ImageViewer
+                isOpen={isLightboxOpen}
+                onClose={closeLightbox}
+                images={carouselImages}
+                currentIndex={lightboxIndex}
+                onNext={nextImage}
+                onPrev={prevImage}
+              />
+            </>
+          ) : (
+            <div className="mb-8 max-h-[400px] overflow-hidden rounded-xl bg-gray-50 flex items-center justify-center">
               <ImageCarousel images={carouselImages} />
             </div>
-          ) : null;
-        })()}
+          )
+        )}
 
 
         {/* Main content */}
@@ -275,7 +328,7 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
             <ContentBuilder blocks={contentBlocks} />
           ) : content ? (
             <div dangerouslySetInnerHTML={{ __html: content }} />
-          ) : (
+          ) : (gallery && gallery.length > 0) || heroImage ? null : (
             <p className="text-gray-500 italic">{t('no_info', "Ma'lumot mavjud emas")}</p>
           )}
         </div>

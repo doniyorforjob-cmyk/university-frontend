@@ -105,6 +105,7 @@ export interface HomeMediaData {
     title: string;
     cover_image: string;
     gallery: string[];
+    slug?: string;
     created_at: string;
     updated_at: string;
     views?: number;

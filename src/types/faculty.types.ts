@@ -17,6 +17,10 @@ export type Faculty = {
   deanImage?: string;
   // Additional info
   description?: string;
+  content?: string;
+  gallery?: string[];
+  directionsAndSpecializations?: string;
+  internationalCooperation?: string;
 }
 
 export type Department = {
@@ -27,4 +31,11 @@ export type Department = {
   headName?: string;
   slug?: string;
   facultyId?: string | number;
+  // Additional info
+  image?: string;
+  description?: string;
+  content?: string;
+  gallery?: string[];
+  directions?: string;
+  history?: string;
 }

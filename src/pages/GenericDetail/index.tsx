@@ -13,13 +13,14 @@ import { getAnnouncementBySlug } from '@/services/announcementService';
 import { getPostBySlug } from '@/services/postService';
 import { getOpenLessonBySlug } from '@/services/openLessonService';
 import { getEventBySlug } from '@/services/eventService';
+import { getMediaArticleBySlug } from '@/services/mediaService';
 
 // Types
 import { AnnouncementDetail } from '@/types/announcement.types';
 import { PostDetail } from '@/types/post.types';
 import { OpenLessonDetail } from '@/types/open-lesson.types';
 
-export type PageType = 'announcement' | 'news' | 'service' | 'open-lesson' | 'event' | 'corruption';
+export type PageType = 'announcement' | 'news' | 'service' | 'open-lesson' | 'event' | 'corruption' | 'media';
 
 interface GenericDetailPageProps {
     type: PageType;
@@ -48,6 +49,8 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
                 return () => getEventBySlug(slug, locale);
             case 'corruption':
                 return () => getPostBySlug(slug, locale, 'corruption');
+            case 'media':
+                return () => getMediaArticleBySlug(slug, locale);
             default:
                 return null;
         }
@@ -66,6 +69,8 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
                 return `event-detail-${slug}`;
             case 'corruption':
                 return `corruption-detail-${slug}`;
+            case 'media':
+                return `media-detail-${slug}`;
             default:
                 return `generic-detail-${slug}`;
         }
@@ -125,6 +130,11 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
                 breadcrumbLabel = t('pages:home.tabs.corruption');
                 parentHref = '/corruption';
                 break;
+            case 'media':
+                setSidebarType('info');
+                breadcrumbLabel = t('pages:mediaResources');
+                parentHref = '/media-about-us';
+                break;
         }
 
         setBreadcrumbsData([
@@ -158,6 +168,9 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
                     break;
                 case 'corruption':
                     listPath = '/corruption';
+                    break;
+                case 'media':
+                    listPath = '/media-about-us';
                     break;
                 default:
                     listPath = '/';
@@ -291,6 +304,25 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
             templateProps.gallery = corruption.gallery.map(imgUrl => ({
                 src: imgUrl,
                 alt: corruption.title
+            }));
+        }
+
+        templateProps.showSocialShare = true;
+        templateProps.showPrintButton = true;
+        templateProps.showSidebar = false;
+    } else if (type === 'media') {
+        templateProps.heroImage = data.image;
+        templateProps.heroImageAlt = data.title;
+        templateProps.meta = {
+            publishDate: data.published_at,
+            views: data.views,
+            category: Array.isArray(data.categories) ? data.categories[0] : data.categories
+        } as DetailMeta;
+
+        if (data.gallery && Array.isArray(data.gallery)) {
+            templateProps.gallery = data.gallery.map((img: any) => ({
+                src: typeof img === 'string' ? img : img.url,
+                alt: data.title
             }));
         }
 

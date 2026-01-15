@@ -65,7 +65,7 @@ export const transformUniversitySystemsData = (
       category: normalizedCat,
       createdAt: item.created_at || item.createdAt || new Date().toISOString()
     };
-  });
+  }).filter(item => item.title && item.title.trim().length > 0);
 
   // Separate by category
   // 1. Deduplicate by string ID, Normalized Title, and Normalized URL

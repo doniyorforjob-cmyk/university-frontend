@@ -20,7 +20,7 @@ export const DeanInfoCard: React.FC<DeanInfoCardProps> = ({
     if (!name && !image) return null;
 
     return (
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+        <div className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200">
             <div className="flex flex-col md:flex-row gap-6 p-6">
                 {/* Dean Image - 1:1 aspect ratio */}
                 <div className="flex-shrink-0">

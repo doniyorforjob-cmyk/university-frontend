@@ -8,8 +8,6 @@ import { useLocale } from '@/contexts/LocaleContext';
 import { CarouselItem } from '@/types/home.types';
 
 export default function HeroSection({ data: propData }: { data?: any } = {}) {
-  const [firstImageLoaded, setFirstImageLoaded] = useState(false);
-
   // If propData is provided, use it directly, otherwise fetch
   const shouldFetch = !propData;
 
@@ -30,17 +28,6 @@ export default function HeroSection({ data: propData }: { data?: any } = {}) {
   const enabledItems = items.filter((item: CarouselItem) => item.enabled !== false);
   const activeItem = enabledItems.length > 0 ? enabledItems[0] : null;
 
-  // Check if first image is loaded
-  useEffect(() => {
-    if (activeItem) {
-      const img = new Image();
-      img.onload = () => setFirstImageLoaded(true);
-      img.src = activeItem.img;
-    } else {
-      setFirstImageLoaded(false);
-    }
-  }, [activeItem]);
-
   // Loading state - show skeleton until data is loaded
   if ((shouldFetch && loading) || !heroData) {
     return <SectionSkeleton sectionType="hero" />;
@@ -53,20 +40,22 @@ export default function HeroSection({ data: propData }: { data?: any } = {}) {
   if (!activeItem) return null;
 
   return (
-    <section className="relative w-full h-[500px] md:h-[600px] lg:h-[70vh] xl:h-[75vh] overflow-hidden flex flex-col justify-end">
+    <section className="relative w-full h-[500px] md:h-[600px] lg:h-[70vh] xl:h-[75vh] overflow-hidden flex flex-col justify-end bg-black">
       {/* Background Layer */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 bg-black">
         {/* Overlay for better text visibility */}
         <div className="absolute inset-0 bg-black/60 z-10" />
 
         {activeItem.video ? (
           <video
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover opacity-0 animate-fade-in"
+            onLoadedData={(e) => (e.target as HTMLVideoElement).style.opacity = '1'}
             src={activeItem.video}
             autoPlay
             loop
             muted
             playsInline
+            preload="auto"
             poster={activeItem.img}
           />
         ) : activeItem.img ? (

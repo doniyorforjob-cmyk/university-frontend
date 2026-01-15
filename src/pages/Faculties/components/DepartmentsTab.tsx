@@ -80,6 +80,7 @@ export const DepartmentsTab: React.FC<DepartmentsTabProps> = ({ departments, fac
                     {filteredDepartments.map((dept: Department) => (
                         <DepartmentGridCard
                             key={dept.id}
+                            id={dept.id}
                             name={dept.name}
                             phone={dept.phone}
                             email={dept.email}

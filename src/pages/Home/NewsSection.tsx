@@ -7,10 +7,11 @@ import { AnimatedNewsTabs } from './components/AnimatedNewsTabs';
 import { useStandardSection } from './hooks/useStandardSection';
 import { homeApi, HomeNewsData } from '../../services/homeService';
 import { PostCategory } from '../../types/post.types';
-import { AspectRatio } from '../../components/ui';
+import { AspectRatio } from '../../components/ui/aspect-ratio';
 import { OptimizedImage } from '../../components/shared';
 import { useTranslation } from 'react-i18next';
 import { AOS_CONFIG, NEWS_TABS } from '../../config/constants';
+import { MONTHS, DEFAULT_LOCALE } from '../../constants/dateConstants';
 import PrefetchLink from '../../components/shared/PrefetchLink';
 import { useGlobalCache } from '../../components/providers/CachedApiProvider';
 import EmptyState from '../../components/shared/EmptyState';
@@ -30,7 +31,9 @@ const AnnouncementsPreview = ({ announcements }: { announcements?: HomeNewsData[
           {otherAnnouncements.length > 0 ? (
             otherAnnouncements.map((item: HomeNewsData['announcements'][0]) => {
               const date = new Date(item.date);
-              const month = date.toLocaleDateString(i18n.language, { month: 'short' });
+              const monthIndex = date.getMonth();
+              const currentLang = ['uz', 'en', 'ru'].includes(i18n.language) ? i18n.language : DEFAULT_LOCALE;
+              const month = MONTHS[currentLang][monthIndex];
               const day = date.getDate();
               const truncatedDescription = item.description.length > 60 ? item.description.substring(0, 60) + '...' : item.description;
 
@@ -104,7 +107,7 @@ const NewsSection = () => {
   const { data, loading, isCached } = useStandardSection(
     'news',
     homeApi.getCombinedNewsData,
-    { transformData: transformNewsData }
+    { transformData: transformNewsData, keepPreviousData: true }
   );
 
   // 2. Prefetching Logic - Disabled temporarily due to cache pollution issues

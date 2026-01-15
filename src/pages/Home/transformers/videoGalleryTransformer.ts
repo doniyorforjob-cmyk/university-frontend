@@ -1,5 +1,6 @@
 import { HomeMediaData } from '../../../types/home.types';
 import { getImageUrl, getLocalized } from '../../../utils/apiUtils';
+import { createSlug } from '../../../utils/format';
 
 // Helper to extract YouTube ID from various URL formats
 const extractYoutubeId = (url: string): string => {
@@ -105,8 +106,9 @@ export const transformVideoGalleryData = (apiData: any, locale: string = 'uz'): 
       const finalCover = getImageUrl(coverPath);
 
       return {
-        id: String(photo.id || fields.id || photo.uuid || photo.slug || Math.random()),
+        id: String(photo.id || fields.id || photo.uuid || Math.random()),
         title: getLocalized(fields.title || photo.title || '', locale),
+        slug: fields.slug || photo.slug || createSlug(getLocalized(fields.title || photo.title || '', locale)),
         cover_image: finalCover,
         gallery: gallery,
         created_at: String(photo.created_at || fields.created_at || photo.uploadDate || new Date().toISOString()),

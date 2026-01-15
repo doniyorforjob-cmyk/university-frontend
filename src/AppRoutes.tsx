@@ -23,6 +23,7 @@ const OpenLessonsPage = React.lazy(() => import('./pages/OpenLessons'));
 const GenericDetailPage = React.lazy(() => import('./pages/GenericDetail'));
 const FacultiesPage = React.lazy(() => import('./pages/Faculties'));
 const FacultyDetailPage = React.lazy(() => import('./pages/FacultyDetail'));
+const DepartmentDetailPage = React.lazy(() => import('./pages/DepartmentDetail'));
 const CorruptionPage = React.lazy(() => import('./pages/Corruption'));
 const FAQPage = React.lazy(() => import('./pages/FAQ'));
 const ServerError = React.lazy(() => import('./pages/Error/ServerError'));
@@ -34,8 +35,9 @@ const AppRoutes = () => {
             <Routes>
                 <Route index element={<HomePage />} />
                 <Route path="contact" element={<ContactPage />} />
-                <Route path="faculties" element={<FacultiesPage />} />
                 <Route path="faculties/:id" element={<FacultyDetailPage />} />
+                <Route path="faculties" element={<FacultiesPage />} />
+                <Route path="departments/:id" element={<DepartmentDetailPage />} />
                 <Route path="departments" element={<FacultiesPage />} />
 
                 {/* "Axborot xizmati" uchun doimiy Sidebar bilan ishlaydigan sahifalar */}
@@ -45,6 +47,7 @@ const AppRoutes = () => {
                     <Route path="announcements" element={<AnnouncementsPage />} />
                     <Route path="announcements/:slug" element={<GenericDetailPage type="announcement" />} />
                     <Route path="media-about-us" element={<MediaAboutUsPage />} />
+                    <Route path="media-about-us/:slug" element={<GenericDetailPage type="media" />} />
                     <Route path="appeals" element={<AppealsPage />} />
                     <Route path="applications-suggestions-and-complaints" element={<AppealsPage />} />
                     <Route path="open-lessons" element={<OpenLessonsPage />} />

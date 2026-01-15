@@ -59,8 +59,11 @@ export const useCachedApi = <T = any>({
     } else {
       if (!keepPreviousData) {
         setData(null);
+        if (enabled) setLoading(true);
+      } else {
+        // If we keep data, we only show loading if we don't even have old data
+        if (enabled && !data) setLoading(true);
       }
-      if (enabled) setLoading(true);
     }
   }
 
@@ -84,7 +87,9 @@ export const useCachedApi = <T = any>({
 
       // If we have stale data but within TTL, we fetch in background silently
       // Loading state only for cases where we have NO data or it's hard EXPIRED
-      if (isExpired || !item) {
+      // If we have stale data (even if expired), we don't want to show loading state
+      // This implements 'stale-while-revalidate' strategy
+      if (!item && !data) {
         setLoading(true);
       }
 
@@ -135,8 +140,10 @@ export const useCachedApi = <T = any>({
     } else {
       if (!keepPreviousData) {
         setData(null);
+        if (enabled) setLoading(true);
+      } else {
+        if (enabled && !data) setLoading(true);
       }
-      if (enabled) setLoading(true);
     }
     fetchData();
   }, [fetchData, localeKey, cacheManager, enabled, keepPreviousData]);

@@ -3,15 +3,23 @@ import { useTranslation } from 'react-i18next';
 import { homeApi } from '../../services/homeService';
 import { useStandardSection } from '../../pages/Home/hooks/useStandardSection';
 import { SystemsContainer } from './cards';
+import { transformUniversitySystemsData } from '../../pages/Home/transformers/universitySystemsTransformer';
 
 const UniversitySystems = React.memo(() => {
   const { t } = useTranslation(['common', 'pages']);
   const { data, loading } = useStandardSection(
     'university-systems',
-    homeApi.getUniversitySystemsData
+    homeApi.getUniversitySystemsData,
+    {
+      ttlMinutes: 0.5,
+      keepPreviousData: true,
+      transformData: transformUniversitySystemsData
+    }
   );
 
-  if (loading || !data) {
+  console.log('[DEBUG] UniversitySystems data:', data, 'loading:', loading);
+
+  if (!data) {
     return (
       <div className="bg-white p-6 shadow-sm">
         <div className="animate-pulse">

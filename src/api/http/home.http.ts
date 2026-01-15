@@ -11,6 +11,7 @@ import {
   HomeUniversitySystemsData
 } from '../../types/home.types';
 import { getImageUrl } from '../../utils/apiUtils';
+import { createSlug } from '../../utils/format';
 import { transformStatsData } from '../../pages/Home/transformers/universityStatsTransformer';
 import { transformNewsData } from '../../pages/Home/transformers/newsTransformer';
 import { transformInteractiveServicesData } from '../../pages/Home/transformers/interactiveServicesTransformer';
@@ -30,11 +31,15 @@ const fetchWithFallback = async (endpoint: string, params: any = {}, locale?: st
   }
 
   try {
+    // console.log(`[DEBUG] fetchWithFallback: ${endpoint} locale=${locale}`);
     const response = await apiClient.get(`/projects/${projectId}/content/${endpoint}`, { params: requestParams });
     const data = Array.isArray(response.data) ? response.data : (response.data?.data || []);
 
+    // console.log(`[DEBUG] ${endpoint} response length: ${data.length}`);
+
     // Strict Fallback: Only if data is COMPLETELY empty and fallback is not disabled
     if (data.length === 0 && locale && locale !== 'uz' && !disableFallback) {
+      console.warn(`[DEBUG] Empty data for ${locale}, trying fallback to 'uz'`);
       const fallbackParams = { ...params, locale: 'uz' };
       const fallbackResponse = await apiClient.get(`/projects/${projectId}/content/${endpoint}`, { params: fallbackParams });
       const fallbackData = Array.isArray(fallbackResponse.data) ? fallbackResponse.data : (fallbackResponse.data?.data || []);
@@ -75,8 +80,8 @@ export const homeApi = {
   getHeroData: async (locale?: string): Promise<any> => {
     try {
       const [heroData, linksData] = await Promise.all([
-        fetchWithFallback('hero', { with: 'image,video,media' }, locale),
-        fetchWithFallback('hero-links', { with: 'image' }, locale).catch(err => {
+        fetchWithFallback('hero', { with: 'image,video,media' }, locale, true),
+        fetchWithFallback('hero-links', { with: 'image' }, locale, true).catch(err => {
           console.warn('Failed to fetch hero-links, using empty array', err);
           return [];
         })
@@ -89,8 +94,8 @@ export const homeApi = {
   },
 
   getStatsData: async (locale?: string): Promise<any> => {
-    // Restore locale parameter and use fallback (only checks for empty)
-    return fetchWithFallback('stats', {}, locale);
+    // Restore locale parameter and use fallback (only checks for empty) - Strict for locale
+    return fetchWithFallback('stats', {}, locale, true);
   },
 
   getNewsData: async (locale?: string): Promise<any> => {
@@ -122,10 +127,10 @@ export const homeApi = {
 
   getFacultiesData: async (locale?: string): Promise<any> => {
     try {
-      // Use fallback logic for both faculties and departments
+      // Use fallback logic for both faculties and departments - STRICT for locale
       const [facultiesRes, departmentsRes] = await Promise.all([
-        fetchWithFallback('faculties', { with: 'image' }, locale),
-        fetchWithFallback('departments', { with: 'image' }, locale)
+        fetchWithFallback('faculties', { with: 'image' }, locale, true),
+        fetchWithFallback('departments', { with: 'image' }, locale, true)
       ]);
 
       return { faculties: facultiesRes, departments: departmentsRes };
@@ -135,61 +140,30 @@ export const homeApi = {
     }
   },
 
-  getVideoGalleryData: async (): Promise<any> => {
-    try {
-      const projectId = process.env.REACT_APP_PROJECT_ID;
-      const response = await apiClient.get(`/projects/${projectId}/content/video-gallery`);
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching video gallery data:', error);
-      throw error;
-    }
-  },
-
   getMediaData: async (locale?: string): Promise<any> => {
     try {
-      const projectId = process.env.REACT_APP_PROJECT_ID;
-      const params = { with: 'image,gallery', locale };
-
-      // Slugs to try for photo gallery (User requested logic retained)
       const photoSlugs = ['photos', 'photo-gallery', 'photos-gallery', 'photogallery', 'gallery', 'media-photos', 'fotogallery', 'fotogalereya'];
 
-      // Fetch collections
+      // Try to fetch from all slugs in parallel, strict locale
       const results = await Promise.all([
         ...photoSlugs.map(slug =>
-          apiClient.get(`/projects/${projectId}/content/${slug}`, { params })
-            .then(res => {
-              return { slug, data: res.data };
-            })
-            .catch(err => {
-              return { slug, data: null };
-            })
+          fetchWithFallback(slug, { with: 'image,gallery', per_page: 100 }, locale, true)
+            .catch(() => []) // Don't throw if one slug fails
         ),
-        apiClient.get(`/projects/${projectId}/content/video-gallery`, { params })
-          .then(res => {
-            return { slug: 'video-gallery', data: res.data };
-          })
-          .catch(() => {
-            return { slug: 'video-gallery', data: null };
-          })
+        fetchWithFallback('video-gallery', { with: 'video', per_page: 50 }, locale, true)
+          .catch(() => [])
       ]);
 
       let photosData: any[] = [];
-
-      // Find first successful photo gallery response with data
+      // Use the first slug that returns non-empty data
       for (let i = 0; i < photoSlugs.length; i++) {
-        const res = results[i];
-        if (res.data) {
-          const data = Array.isArray(res.data) ? res.data : (res.data.data || []);
-          if (data.length > 0) {
-            photosData = data;
-            break;
-          }
+        if (results[i] && results[i].length > 0) {
+          photosData = results[i];
+          break;
         }
       }
 
-      const videoRes = results[results.length - 1];
-      const videosData = videoRes.data ? (Array.isArray(videoRes.data) ? videoRes.data : (videoRes.data.data || [])) : [];
+      const videosData = results[results.length - 1] || [];
 
       return {
         photos: photosData,
@@ -201,13 +175,91 @@ export const homeApi = {
     }
   },
 
+  getPhotoDetailById: async (id: string, locale?: string): Promise<any> => {
+    try {
+      const projectId = process.env.REACT_APP_PROJECT_ID;
+      const params = { with: 'image,gallery', locale };
+
+      const photoSlugs = ['photos', 'photo-gallery', 'photos-gallery', 'photogallery', 'gallery', 'media-photos', 'fotogallery', 'fotogalereya'];
+
+      // Try to find the item in any of these collections
+      // Strategy 1: Try direct fetch /content/{slug}/{id}
+      // Strategy 2: If 404, fetch collection /content/{slug} and find by ID (Backend limitation workaround)
+
+      // Parallel execution to speed up finding the item
+      const promises = photoSlugs.map(async (slug) => {
+        try {
+          // 1. Try Direct Fetch
+          const url = `/projects/${projectId}/content/${slug}/${id}`;
+          try {
+            const response = await apiClient.get(url, { params });
+            if (response.data) {
+              return { ...response.data, category_slug: slug };
+            }
+          } catch (directErr: any) {
+            // 2. Fallback: List Fetch if Direct 404s
+            if (directErr.status === 404 || directErr.response?.status === 404) {
+              // Pass true to disableFallback for strict language search as requested
+              const listData = await fetchWithFallback(slug, { ...params, per_page: 100 }, locale, true);
+
+              const foundItem = listData.find((item: any) => {
+                const itemUuid = String(item.uuid || item.id || '').toLowerCase();
+                const itemTitleSlug = createSlug(item.fields?.title || item.title || '').toLowerCase();
+                const itemExplicitSlug = String(item.slug || '').toLowerCase();
+                const searchId = String(id).toLowerCase();
+
+                return itemUuid === searchId || itemTitleSlug === searchId || itemExplicitSlug === searchId;
+              });
+
+              if (foundItem) {
+                return { ...foundItem, category_slug: slug };
+              }
+            }
+          }
+        } catch (e) {
+          return null;
+        }
+        return null;
+      });
+
+      const results = await Promise.all(promises);
+      const found = results.find(res => res !== null);
+
+      if (found) return found;
+      return null;
+    } catch (error) {
+      console.error('Error fetching photo detail:', error);
+      throw error;
+    }
+  },
+
   getInteractiveServicesData: async (locale?: string): Promise<any> => {
-    return fetchWithFallback('interactive-services', {}, locale);
+    return fetchWithFallback('interactive-services', {}, locale, true);
+  },
+
+  getVideoGalleryData: async (locale?: string): Promise<HomeMediaData> => {
+    try {
+      const data = await fetchWithFallback('video-gallery', { with: 'image,video', per_page: 100 }, locale, true);
+      return transformVideoGalleryData({ photos: [], videos: data });
+    } catch (error) {
+      console.error('Error fetching video gallery data:', error);
+      throw error;
+    }
+  },
+
+  getPhotoGalleryData: async (locale?: string): Promise<HomeMediaData> => {
+    try {
+      const data = await fetchWithFallback('photo-gallery', { with: 'image,gallery', per_page: 100 }, locale, true);
+      return transformVideoGalleryData({ photos: data, videos: [] });
+    } catch (error) {
+      console.error('Error fetching photo gallery data:', error);
+      throw error;
+    }
   },
 
   getUniversitySystemsData: async (locale?: string): Promise<any> => {
     try {
-      const systemsData = await fetchWithFallback('university-systems', {}, locale);
+      const systemsData = await fetchWithFallback('university-systems', { per_page: 50 }, locale, true);
       // Quick links are now part of university-systems collection (category: 'quick links')
       const quickLinksResponse = { data: [] };
       return { systems: systemsData, quickLinks: [] };

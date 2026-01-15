@@ -5,7 +5,14 @@ export interface MediaArticle {
     source: string;
     url: string;
     published_at: string;
-    excerpt: string;
+    content: string;
     image: string;
+    gallery?: string[];
+    categories?: string[];
     type?: 'online' | 'tv' | 'print';
+}
+
+export interface MediaDetail extends MediaArticle {
+    author?: { name: string };
+    views?: number;
 }

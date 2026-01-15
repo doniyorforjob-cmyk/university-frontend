@@ -26,6 +26,7 @@ const MediaAboutUsPage: React.FC = () => {
   const { t } = useTranslation(['common', 'pages']);
   const { setBreadcrumbsData, setSidebarType } = useGlobalLayout();
   const [currentPage, setCurrentPage] = React.useState(1);
+  const [activeCategory, setActiveCategory] = React.useState<string>('all');
   const itemsPerPage = 5;
 
   const { data: items, loading, error } = useStandardPage(
@@ -48,6 +49,23 @@ const MediaAboutUsPage: React.FC = () => {
     };
   }, [setBreadcrumbsData, setSidebarType, t]);
 
+  // Filter articles by category
+  const filteredArticles = React.useMemo(() => {
+    let result = (items || []);
+    if (activeCategory !== 'all') {
+      result = result.filter((item: MediaArticle) =>
+        (item.categories || []).map((c: string) => c.toLowerCase()).includes(activeCategory.toLowerCase()) ||
+        (item.type && item.type.toLowerCase() === activeCategory.toLowerCase())
+      );
+    }
+    // Sort articles by date (descending)
+    return [...result].sort((a, b) =>
+      new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
+    );
+  }, [items, activeCategory]);
+
+  const sortedArticles = filteredArticles;
+
   if (loading) {
     return <GenericPageSkeleton showSidebar={false} showBanner={false} layoutType="grid" gridItems={6} />;
   }
@@ -62,11 +80,6 @@ const MediaAboutUsPage: React.FC = () => {
       </Container>
     );
   }
-
-  // Sort articles by date (descending)
-  const sortedArticles = [...(items || [])].sort((a, b) =>
-    new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
-  );
 
   // Pagination logic: Page 1 has 5 items, subsequent pages have 6 items
   const totalItems = sortedArticles.length;
@@ -95,16 +108,33 @@ const MediaAboutUsPage: React.FC = () => {
   return (
     <div className="media-about-us-redesign pb-8">
 
+      {/* Filters */}
+      <div className="flex flex-wrap gap-4 mb-10">
+        {[
+          { id: 'all', label: t('all', 'Barchasi') },
+          { id: 'oav', label: t('media_types.online', 'OAV') },
+          { id: 'gazeta', label: t('media_types.print', 'Gazeta') },
+          { id: 'tv', label: t('media_types.tv', 'TV') }
+        ].map((cat) => (
+          <button
+            key={cat.id}
+            onClick={() => {
+              setActiveCategory(cat.id);
+              setCurrentPage(1);
+            }}
+            className={`px-6 py-2 rounded-xl text-sm font-bold uppercase tracking-wider transition-all duration-300 border-2 ${activeCategory === cat.id
+              ? 'bg-primary border-primary text-white shadow-lg'
+              : 'bg-white border-gray-100 text-gray-500 hover:border-primary/30 hover:text-primary'
+              }`}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
 
       {/* Featured Mention */}
       {featuredArticle && (
         <section className="mb-16">
-          <div className="flex items-center gap-3 mb-6">
-            <span className="w-2 h-2 bg-primary rounded-full animate-ping"></span>
-            <h2 className="text-sm font-bold uppercase tracking-widest text-primary">
-              {t('pages:latestCoverage')}
-            </h2>
-          </div>
           <MediaMentionCard article={featuredArticle} isFeatured={true} />
         </section>
       )}

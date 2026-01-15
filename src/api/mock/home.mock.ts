@@ -3,7 +3,7 @@ import { universitySystemsMockData } from './universitySystems.mock';
 import { facultiesData } from './faculties.mock';
 import { mockPosts } from './posts.mock';
 import { mockServices } from './interactiveServices.mock';
-import { HomeHeroData } from '../../types/home.types';
+import { HomeHeroData, HomeMediaData } from '../../types/home.types';
 
 // Helper to simulate network delay
 const simulateApiCall = <T>(data: T, delay = 300): Promise<T> => {
@@ -57,11 +57,11 @@ export const homeApiMock = {
     },
 
     getNewsData: async (locale?: string) => {
-        return simulateApiCall({ data: mockPosts });
+        return simulateApiCall(mockPosts);
     },
 
     getEventsData: async (locale?: string) => {
-        return simulateApiCall({ data: [] });
+        return simulateApiCall([]);
     },
 
     getCombinedNewsData: async (locale?: string) => {
@@ -72,8 +72,12 @@ export const homeApiMock = {
         return simulateApiCall({ faculties: facultiesData, departments: [] });
     },
 
-    getVideoGalleryData: async () => {
-        return simulateApiCall({ data: [] });
+    getVideoGalleryData: async (locale?: string): Promise<HomeMediaData> => {
+        return simulateApiCall({ photos: [], videos: [] });
+    },
+
+    getPhotoGalleryData: async (locale?: string): Promise<HomeMediaData> => {
+        return simulateApiCall({ photos: [], videos: [] });
     },
 
     getMediaData: async () => {
@@ -92,5 +96,9 @@ export const homeApiMock = {
 
     updateSectionData: async () => {
         // No-op for mock
+    },
+
+    getPhotoDetailById: async (id: string, locale?: string) => {
+        return simulateApiCall(null);
     }
 };

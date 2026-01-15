@@ -10,6 +10,7 @@ import { transformFacultiesData } from '../transformers/facultiesTransformer';
 import { transformVideoGalleryData } from '../transformers/videoGalleryTransformer';
 import { transformInteractiveServicesData } from '../transformers/interactiveServicesTransformer';
 import { transformUniversitySystemsData } from '../transformers/universitySystemsTransformer';
+import { HomeMediaData } from '../../../types/home.types';
 import {
   createHeroSectionBlock,
   createStatsSectionBlock,
@@ -26,7 +27,8 @@ export const useHomeSections = () => {
     homeApi.getHeroData,
     {
       ttlMinutes: 0.5, // Hero less frequent updates
-      transformData: transformHeroData
+      transformData: transformHeroData,
+      keepPreviousData: true
     }
   );
 
@@ -34,7 +36,8 @@ export const useHomeSections = () => {
     homeApi.getStatsData,
     {
       ttlMinutes: 0.5,
-      transformData: transformStatsData
+      transformData: transformStatsData,
+      keepPreviousData: true
     }
   );
 
@@ -42,7 +45,8 @@ export const useHomeSections = () => {
     homeApi.getNewsData,
     {
       ttlMinutes: 0.5, // News updates more frequently
-      transformData: transformNewsData
+      transformData: transformNewsData,
+      keepPreviousData: true
     }
   );
 
@@ -50,15 +54,17 @@ export const useHomeSections = () => {
     homeApi.getFacultiesData,
     {
       ttlMinutes: 1, // Faculty data rarely changes
-      transformData: transformFacultiesData
+      transformData: transformFacultiesData,
+      keepPreviousData: true
     }
   );
 
   const videoGallerySection = useStandardSection('video-gallery',
-    homeApi.getVideoGalleryData,
+    homeApi.getVideoGalleryData as (locale?: string) => Promise<HomeMediaData>,
     {
       ttlMinutes: 5,
-      transformData: transformVideoGalleryData
+      transformData: transformVideoGalleryData,
+      keepPreviousData: true
     }
   );
 
@@ -66,7 +72,8 @@ export const useHomeSections = () => {
     homeApi.getInteractiveServicesData,
     {
       ttlMinutes: 10, // Services rarely change
-      transformData: transformInteractiveServicesData
+      transformData: transformInteractiveServicesData,
+      keepPreviousData: true
     }
   );
 
@@ -74,7 +81,8 @@ export const useHomeSections = () => {
     homeApi.getUniversitySystemsData,
     {
       ttlMinutes: 10, // Systems rarely change
-      transformData: transformUniversitySystemsData
+      transformData: transformUniversitySystemsData,
+      keepPreviousData: true
     }
   );
 

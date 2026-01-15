@@ -1,8 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { AspectRatio } from '../../../components/ui/aspect-ratio';
-import { CalendarDaysIcon, EyeIcon, PhotoIcon } from '@heroicons/react/24/outline';
-import { PlayIcon as SolidPlayIcon, PhotoIcon as SolidPhotoIcon } from '@heroicons/react/24/solid';
+import { CalendarDaysIcon, EyeIcon, PhotoIcon, PlayIcon } from '@heroicons/react/24/outline';
 
 type BaseMediaCardProps = {
   title: string;
@@ -26,11 +25,11 @@ type PhotoCardProps = BaseMediaCardProps & {
 
 type MediaCardProps = VideoCardProps | PhotoCardProps;
 
-type CardContentProps = MediaCardProps & {
+type MediaCardContentProps = MediaCardProps & {
   photosCount: number;
 };
 
-const CardContent: React.FC<CardContentProps> = (props) => {
+const MediaCardContent: React.FC<MediaCardContentProps> = (props) => {
   const { type, title, thumbnail, date, views, photosCount } = props;
   return (
     <div className="flex flex-col h-full">
@@ -49,9 +48,9 @@ const CardContent: React.FC<CardContentProps> = (props) => {
         {/* Floating Icon Badge */}
         <div className="absolute top-4 left-4 bg-[#5a5a5a]/60 backdrop-blur-md border border-white/10 rounded-2xl p-3 z-20 shadow-lg">
           {type === 'video' ? (
-            <SolidPlayIcon className="w-6 h-6 md:w-8 md:h-8 text-white drop-shadow-md" />
+            <PlayIcon className="w-6 h-6 md:w-8 md:h-8 text-white drop-shadow-md" />
           ) : (
-            <SolidPhotoIcon className="w-6 h-6 md:w-8 md:h-8 text-white drop-shadow-md" />
+            <PhotoIcon className="w-6 h-6 md:w-8 md:h-8 text-white drop-shadow-md" />
           )}
         </div>
 
@@ -100,7 +99,7 @@ const MediaCard: React.FC<MediaCardProps> = (props) => {
   if (type === 'photo' && (props as PhotoCardProps).slug) {
     return (
       <Link to={`/photos/${(props as PhotoCardProps).slug}`} className={containerClasses}>
-        <CardContent {...commonProps} />
+        <MediaCardContent {...commonProps} />
       </Link>
     );
   }
@@ -118,7 +117,7 @@ const MediaCard: React.FC<MediaCardProps> = (props) => {
         }
       }}
     >
-      <CardContent {...commonProps} />
+      <MediaCardContent {...commonProps} />
     </div>
   );
 };

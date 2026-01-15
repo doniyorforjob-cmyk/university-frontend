@@ -10,6 +10,7 @@ import { useLocale } from '../../contexts/LocaleContext';
 import { useGlobalCache } from '../../components/providers/CachedApiProvider';
 import EmptyState from '../../components/shared/EmptyState';
 import { GlobeAltIcon } from '@heroicons/react/24/outline';
+import { SectionSkeleton } from './components/SectionSkeleton';
 
 const UniversitySystemsSection: React.FC = () => {
   const { t } = useTranslation(['common', 'pages']);
@@ -19,7 +20,7 @@ const UniversitySystemsSection: React.FC = () => {
   const { data, loading } = useStandardSection<TransformedUniversitySystemsData>(
     'university-systems',
     homeApi.getUniversitySystemsData as any,
-    { transformData: transformUniversitySystemsData }
+    { transformData: transformUniversitySystemsData, keepPreviousData: true }
   );
 
   // 2. Prefetching Logic
@@ -30,8 +31,8 @@ const UniversitySystemsSection: React.FC = () => {
   //   otherLocales.forEach(async (targetLocale) => { ... });
   // }, [data, locale, cacheManager]);
 
-  if (loading || !data) {
-    return null; // Or a skeleton loader
+  if (!data) {
+    return <SectionSkeleton sectionType="university-systems" />;
   }
 
   const hasContent = data.systems.length > 0 || data.quickLinks.length > 0;
