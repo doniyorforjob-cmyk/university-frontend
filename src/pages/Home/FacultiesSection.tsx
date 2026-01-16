@@ -66,6 +66,7 @@ const FacultiesSection: React.FC = () => {
                   isActive={activeFacultyId === faculty.id}
                   onClick={() => setActiveFacultyId(faculty.id)}
                   variant="list-item"
+                  slug={faculty.slug}
                 />
               ))
             ) : (
@@ -99,28 +100,32 @@ const FacultiesSection: React.FC = () => {
                 >
                   {departments.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 lg:gap-6 2xl:gap-8 pb-4">
-                      {departments.map((dept: any) => (
-                        <Link
-                          key={dept.id}
-                          to={`/department/${dept.id}`}
-                          className="bg-white rounded-2xl md:rounded-[24px] overflow-hidden shadow-[0_4px_20px_-10px_rgba(0,0,0,0.1)] hover:shadow-md transition-all duration-300 group block"
-                        >
-                          <div className="h-40 md:h-44 overflow-hidden bg-gray-100">
-                            <OptimizedImage
-                              src={dept.image}
-                              alt={dept.title}
-                              className="w-full h-full object-cover"
-                              width={320}
-                              height={220}
-                            />
-                          </div>
-                          <div className="p-4 md:p-5">
-                            <h4 className="text-brand-dark font-extrabold text-center leading-snug text-base md:text-lg">
-                              {dept.title}
-                            </h4>
-                          </div>
-                        </Link>
-                      ))}
+                      {departments.map((dept: any) => {
+                        // Ensure we have a valid slug or fallback to ID, matching our global strategy
+                        const linkSlug = dept.slug || dept.id;
+                        return (
+                          <Link
+                            key={dept.id}
+                            to={`/departments/${linkSlug}`}
+                            className="bg-white rounded-2xl md:rounded-[24px] overflow-hidden shadow-[0_4px_20px_-10px_rgba(0,0,0,0.1)] hover:shadow-md transition-all duration-300 group block"
+                          >
+                            <div className="h-40 md:h-44 overflow-hidden bg-gray-100">
+                              <OptimizedImage
+                                src={dept.image}
+                                alt={dept.title}
+                                className="w-full h-full object-cover"
+                                width={320}
+                                height={220}
+                              />
+                            </div>
+                            <div className="p-4 md:p-5">
+                              <h4 className="text-brand-dark font-extrabold text-center leading-snug text-base md:text-lg">
+                                {dept.title}
+                              </h4>
+                            </div>
+                          </Link>
+                        );
+                      })}
                     </div>
                   ) : (
                     <EmptyState

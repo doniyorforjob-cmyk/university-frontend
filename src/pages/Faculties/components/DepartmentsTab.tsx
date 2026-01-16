@@ -85,6 +85,7 @@ export const DepartmentsTab: React.FC<DepartmentsTabProps> = ({ departments, fac
                             phone={dept.phone}
                             email={dept.email}
                             headName={dept.headName}
+                            slug={dept.slug}
                         />
                     ))}
                 </div>

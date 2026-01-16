@@ -20,3 +20,11 @@ export interface OrganizationalStructure {
   kafedras: OrganizationalMember[];
   departments: OrganizationalMember[];
 }
+
+/**
+ * PDF formatidagi tashkiliy tuzilma hujjati
+ */
+export interface OrganizationalStructureDoc {
+  title: string;
+  fileUrl: string;
+}

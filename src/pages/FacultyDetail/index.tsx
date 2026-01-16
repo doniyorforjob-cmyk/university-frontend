@@ -8,13 +8,14 @@ import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
 import EmptyState from '@/components/shared/EmptyState';
 import { DeanInfoCard } from './components/DeanInfoCard';
 import { DepartmentGridCard } from '../Faculties/components/DepartmentGridCard';
-import { SectionTabs, OptimizedImage } from '@/components/shared';
+import { SectionTabs, OptimizedImage, ContentBuilder, Accordion } from '@/components/shared';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 import {
     BuildingLibraryIcon,
     UserGroupIcon,
     ListBulletIcon,
-    GlobeAltIcon
+    GlobeAltIcon,
+    AcademicCapIcon
 } from '@heroicons/react/24/outline';
 
 const FacultyDetailPage: React.FC = () => {
@@ -30,10 +31,16 @@ const FacultyDetailPage: React.FC = () => {
         ttlMinutes: 5
     });
 
+    useEffect(() => {
+        if (faculty) {
+            console.log('DEBUG: Faculty Data:', faculty);
+        }
+    }, [faculty]);
+
     const { data: departments, loading: loadingDepartments } = useCachedApi<Department[]>({
-        key: `faculty-departments-${id}`,
-        fetcher: () => getDepartmentsByFacultyId(id!),
-        enabled: !!id,
+        key: `faculty-departments-${faculty?.id}`,
+        fetcher: () => getDepartmentsByFacultyId(faculty?.id!),
+        enabled: !!faculty?.id,
         ttlMinutes: 5
     });
 
@@ -63,7 +70,7 @@ const FacultyDetailPage: React.FC = () => {
     }
 
     const tabs = [
-        { id: 'history', label: 'Fakultet tarixi', icon: BuildingLibraryIcon },
+        { id: 'history', label: 'Fakultet haqida', icon: BuildingLibraryIcon },
         { id: 'departments', label: 'Kafedralar', icon: UserGroupIcon },
         { id: 'directions', label: "Yo'nalish va mutaxassisliklari", icon: ListBulletIcon },
         { id: 'cooperation', label: 'Xalqaro hamkorlik', icon: GlobeAltIcon },
@@ -80,9 +87,9 @@ const FacultyDetailPage: React.FC = () => {
                             {faculty.name}
                         </h1>
 
-                        {/* Featured Image - Shorter with top cropping */}
+                        {/* Featured Image - Standard Tailwind height classes (h-64 mobile, h-80 desktop) - slightly smaller as requested */}
                         {faculty.image && (
-                            <div className="rounded-2xl overflow-hidden aspect-[16/5] w-full mb-6 md:aspect-[28/9]">
+                            <div className="w-full mb-8 h-64 md:h-80">
                                 <OptimizedImage
                                     src={faculty.image}
                                     alt={faculty.name}
@@ -102,27 +109,29 @@ const FacultyDetailPage: React.FC = () => {
                         </div>
                     </div>
 
+
                     {/* Tab Content Section */}
                     <div className="px-6 md:px-10 pb-10 min-h-[400px]">
                         {activeTab === 'history' && (
                             <div className="space-y-12">
                                 <div className="flex items-center gap-3 mb-8">
                                     <div className="w-1.5 h-10 bg-[#6D6EAB] rounded-full shadow-[0_0_15px_rgba(109,110,171,0.4)]"></div>
-                                    <h2 className="text-3xl font-bold text-[#003B5C]">Fakultet tarixi</h2>
+                                    <h2 className="text-3xl font-bold text-[#003B5C]">Fakultet haqida</h2>
                                 </div>
 
                                 <div className="bg-white">
-                                    {faculty.content ? (
-                                        <div
-                                            className="prose prose-lg max-w-none text-gray-700 prose-headings:text-[#003B5C] prose-headings:font-bold prose-a:text-blue-600 prose-img:rounded-2xl leading-relaxed"
-                                            dangerouslySetInnerHTML={{ __html: faculty.content }}
+                                    {faculty.content || faculty.description ? (
+                                        <ContentBuilder
+                                            blocks={[
+                                                {
+                                                    id: 'faculty-history',
+                                                    type: 'rich-text',
+                                                    data: { content: faculty.content || faculty.description }
+                                                }
+                                            ]}
                                         />
-                                    ) : faculty.description ? (
-                                        <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
-                                            <p>{faculty.description}</p>
-                                        </div>
                                     ) : (
-                                        <p className="text-gray-400 italic">Ma&apos;lumot mavjud emas</p>
+                                        <EmptyState resourceKey="info" />
                                     )}
                                 </div>
 
@@ -156,6 +165,7 @@ const FacultyDetailPage: React.FC = () => {
                                                 phone={dept.phone}
                                                 email={dept.email}
                                                 headName={dept.headName}
+                                                slug={dept.slug}
                                             />
                                         ))}
                                     </div>
@@ -177,39 +187,82 @@ const FacultyDetailPage: React.FC = () => {
                                 </div>
                                 <div className="bg-gray-50/50 rounded-3xl p-8 border border-gray-100 min-h-[300px]">
                                     {faculty.directionsAndSpecializations ? (
-                                        <div
-                                            className="prose prose-lg max-w-none text-gray-700 prose-headings:text-[#003B5C] prose-a:text-blue-600 prose-img:rounded-2xl"
-                                            dangerouslySetInnerHTML={{ __html: faculty.directionsAndSpecializations }}
+                                        <ContentBuilder
+                                            blocks={[
+                                                {
+                                                    id: 'faculty-directions',
+                                                    type: 'rich-text',
+                                                    data: { content: faculty.directionsAndSpecializations }
+                                                }
+                                            ]}
                                         />
                                     ) : (
-                                        <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-                                            <ListBulletIcon className="w-16 h-16 mb-4 opacity-20" />
-                                            <p className="italic text-lg">Hozircha ma&apos;lumot mavjud emas</p>
-                                        </div>
+                                        <EmptyState resourceKey="info" />
                                     )}
                                 </div>
                             </div>
                         )}
 
                         {activeTab === 'cooperation' && (
-                            <div>
-                                <div className="flex items-center gap-3 mb-8">
-                                    <div className="w-1.5 h-10 bg-[#6D6EAB] rounded-full shadow-[0_0_15px_rgba(109,110,171,0.4)]"></div>
-                                    <h2 className="text-3xl font-bold text-[#003B5C]">Xalqaro hamkorlik</h2>
+                            <div className="space-y-12">
+                                <div>
+                                    <div className="flex items-center gap-3 mb-8">
+                                        <div className="w-1.5 h-10 bg-[#6D6EAB] rounded-full shadow-[0_0_15px_rgba(109,110,171,0.4)]"></div>
+                                        <h2 className="text-3xl font-bold text-[#003B5C]">Xalqaro hamkorlik</h2>
+                                    </div>
+                                    <div className="bg-gray-50/50 rounded-3xl p-8 border border-gray-100 min-h-[100px]">
+                                        {faculty.internationalCooperation ? (
+                                            <ContentBuilder
+                                                blocks={[
+                                                    {
+                                                        id: 'faculty-cooperation',
+                                                        type: 'rich-text',
+                                                        data: { content: faculty.internationalCooperation }
+                                                    }
+                                                ]}
+                                            />
+                                        ) : (
+                                            <p className="text-gray-500 italic">Fakultet miqyosidagi xalqaro hamkorlik ma&apos;lumotlari mavjud emas.</p>
+                                        )}
+                                    </div>
                                 </div>
-                                <div className="bg-gray-50/50 rounded-3xl p-8 border border-gray-100 min-h-[300px]">
-                                    {faculty.internationalCooperation ? (
-                                        <div
-                                            className="prose prose-lg max-w-none text-gray-700 prose-headings:text-[#003B5C] prose-a:text-blue-600 prose-img:rounded-2xl"
-                                            dangerouslySetInnerHTML={{ __html: faculty.internationalCooperation }}
-                                        />
-                                    ) : (
-                                        <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-                                            <GlobeAltIcon className="w-16 h-16 mb-4 opacity-20" />
-                                            <p className="italic text-lg">Hozircha ma&apos;lumot mavjud emas</p>
+
+                                {/* Departments Cooperation */}
+                                {!loadingDepartments && departments && departments.some(d => d.internationalCooperation) && (
+                                    <div className="space-y-8 pt-8 border-t border-gray-100">
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <div className="w-1 h-8 bg-black rounded-full opacity-50"></div>
+                                            <h3 className="text-2xl font-bold text-black">Kafedralar kesimida xalqaro hamkorlik</h3>
                                         </div>
-                                    )}
-                                </div>
+
+                                        <Accordion
+                                            allowMultiple={true}
+                                            items={departments
+                                                .filter(d => d.internationalCooperation)
+                                                .map((dept) => ({
+                                                    id: dept.id,
+                                                    title: dept.name,
+                                                    content: (
+                                                        <ContentBuilder
+                                                            blocks={[
+                                                                {
+                                                                    id: `dept-cooperation-${dept.id}`,
+                                                                    type: 'rich-text',
+                                                                    data: { content: dept.internationalCooperation! }
+                                                                }
+                                                            ]}
+                                                        />
+                                                    )
+                                                }))
+                                            }
+                                        />
+                                    </div>
+                                )}
+
+                                {/* Global Empty State if absolutely nothing exists */}
+                                {!faculty.internationalCooperation && (!departments || !departments.some(d => d.internationalCooperation)) && (
+                                    <EmptyState resourceKey="info" />
+                                )}
                             </div>
                         )}
                     </div>

@@ -6,7 +6,7 @@ import { Department } from '@/types/faculty.types';
 import Container from '@/components/shared/Container';
 import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
 import EmptyState from '@/components/shared/EmptyState';
-import { SectionTabs, OptimizedImage } from '@/components/shared';
+import { SectionTabs, OptimizedImage, ContentBuilder } from '@/components/shared';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 import {
     BuildingLibraryIcon,
@@ -27,6 +27,12 @@ const DepartmentDetailPage: React.FC = () => {
         enabled: !!id,
         ttlMinutes: 5
     });
+
+    useEffect(() => {
+        if (department) {
+            console.log('DEBUG: Department Data (Mapped):', department);
+        }
+    }, [department]);
 
     useEffect(() => {
         console.log('Department Detail Debug:', { id, loadingDepartment, department, error });
@@ -54,8 +60,6 @@ const DepartmentDetailPage: React.FC = () => {
                 <Container className="pt-6">
                     <EmptyState
                         resourceKey="departments"
-                        title="Kafedra topilmadi"
-                        message={`ID: ${id} bo&apos;yicha kafedra ma&apos;lumoti topilmadi. Iltimos, boshqa kafedrani tanlang.`}
                     />
                 </Container>
             </section>
@@ -65,7 +69,7 @@ const DepartmentDetailPage: React.FC = () => {
     const tabs = [
         { id: 'about', label: 'Kafedra haqida', icon: BuildingLibraryIcon },
         { id: 'staff', label: 'Kafedra tarkibi', icon: UserGroupIcon },
-        { id: 'research', label: 'Ilmiy faoliyat', icon: AcademicCapIcon },
+        { id: 'scientific', label: 'Ilmiy faoliyat', icon: AcademicCapIcon },
         { id: 'cooperation', label: 'Xalqaro hamkorlik', icon: GlobeAltIcon },
     ];
 
@@ -80,13 +84,13 @@ const DepartmentDetailPage: React.FC = () => {
                             {department.name}
                         </h1>
 
-                        {/* Featured Image - Matches Faculty Detail Page Aspect Ratio and Styling */}
+                        {/* Featured Image - Standard Tailwind height classes (h-64 mobile, h-80 desktop) - slightly smaller as requested */}
                         {department.image && (
-                            <div className="rounded-2xl overflow-hidden aspect-[16/5] w-full mb-6 md:aspect-[28/9]">
+                            <div className="w-full mb-8 h-64 md:h-80">
                                 <OptimizedImage
                                     src={department.image}
                                     alt={department.name}
-                                    className="w-full h-full object-cover object-top"
+                                    className="w-full h-full object-cover object-center"
                                 />
                             </div>
                         )}
@@ -112,15 +116,18 @@ const DepartmentDetailPage: React.FC = () => {
                                 </div>
 
                                 <div className="bg-white">
-                                    {department.description ? (
-                                        <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
-                                            <p>{department.description}</p>
-                                        </div>
-                                    ) : (
-                                        <EmptyState
-                                            title="Ma&apos;lumot topilmadi"
-                                            message="Kafedra haqida ma&apos;lumot hozircha mavjud emas."
+                                    {department.content || department.description ? (
+                                        <ContentBuilder
+                                            blocks={[
+                                                {
+                                                    id: 'department-about',
+                                                    type: 'rich-text',
+                                                    data: { content: department.content || department.description }
+                                                }
+                                            ]}
                                         />
+                                    ) : (
+                                        <EmptyState resourceKey="info" />
                                     )}
                                 </div>
 
@@ -134,15 +141,9 @@ const DepartmentDetailPage: React.FC = () => {
                                         <div className="bg-white border border-gray-200 rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow">
                                             <div className="flex flex-col md:flex-row gap-8 items-start">
                                                 <div className="w-32 h-40 md:w-40 md:h-48 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0 relative shadow-inner">
-                                                    {department.image ? (
-                                                        <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-50">
-                                                            <UserGroupIcon className="w-16 h-16 opacity-50" />
-                                                        </div>
-                                                    ) : (
-                                                        <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-50">
-                                                            <UserGroupIcon className="w-16 h-16 opacity-50" />
-                                                        </div>
-                                                    )}
+                                                    <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-50">
+                                                        <UserGroupIcon className="w-16 h-16 opacity-50" />
+                                                    </div>
                                                 </div>
                                                 <div className="flex-1 space-y-4">
                                                     <div>
@@ -153,23 +154,23 @@ const DepartmentDetailPage: React.FC = () => {
                                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
                                                         {department.phone && (
                                                             <div className="space-y-1">
-                                                                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Telefon</p>
-                                                                <a href={`tel:${department.phone}`} className="text-gray-700 font-medium hover:text-[#003B5C] block text-lg transition-colors">
+                                                                <p className="text-xs font-bold text-black opacity-80 uppercase tracking-wider">Telefon</p>
+                                                                <a href={`tel:${department.phone}`} className="text-black font-semibold hover:text-[#003B5C] block text-lg transition-colors">
                                                                     {department.phone}
                                                                 </a>
                                                             </div>
                                                         )}
                                                         {department.email && (
                                                             <div className="space-y-1">
-                                                                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Email</p>
-                                                                <a href={`mailto:${department.email}`} className="text-gray-700 font-medium hover:text-[#003B5C] block text-lg transition-colors break-all">
+                                                                <p className="text-xs font-bold text-black opacity-80 uppercase tracking-wider">Email</p>
+                                                                <a href={`mailto:${department.email}`} className="text-black font-semibold hover:text-[#003B5C] block text-lg transition-colors break-all">
                                                                     {department.email}
                                                                 </a>
                                                             </div>
                                                         )}
                                                         <div className="space-y-1">
-                                                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Qabul kunlari</p>
-                                                            <p className="text-gray-700 font-medium text-lg">Dushanba-Juma, 09:00 – 17:00</p>
+                                                            <p className="text-xs font-bold text-black opacity-80 uppercase tracking-wider">Qabul kunlari</p>
+                                                            <p className="text-black font-semibold text-lg">Dushanba-Juma, 09:00 – 17:00</p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -181,27 +182,69 @@ const DepartmentDetailPage: React.FC = () => {
                         )}
 
                         {activeTab === 'staff' && (
-                            <EmptyState
-                                resourceKey="info"
-                                title="Kafedra tarkibi"
-                                message="Kafedra xodimlari haqida ma&apos;lumot hozircha mavjud emas."
-                            />
+                            <div className="space-y-8">
+                                <div className="flex items-center gap-3 mb-8">
+                                    <div className="w-1.5 h-10 bg-[#6D6EAB] rounded-full shadow-[0_0_15px_rgba(109,110,171,0.4)]"></div>
+                                    <h2 className="text-3xl font-bold text-[#003B5C]">Kafedra tarkibi</h2>
+                                </div>
+                                {department.staff ? (
+                                    <ContentBuilder
+                                        blocks={[
+                                            {
+                                                id: 'department-staff',
+                                                type: 'rich-text',
+                                                data: { content: department.staff }
+                                            }
+                                        ]}
+                                    />
+                                ) : (
+                                    <EmptyState resourceKey="info" />
+                                )}
+                            </div>
                         )}
 
-                        {activeTab === 'research' && (
-                            <EmptyState
-                                resourceKey="info"
-                                title="Ilmiy faoliyat"
-                                message="Kafedra ilmiy faoliyati haqida ma&apos;lumot hozircha mavjud emas."
-                            />
+                        {activeTab === 'scientific' && (
+                            <div className="space-y-8">
+                                <div className="flex items-center gap-3 mb-8">
+                                    <div className="w-1.5 h-10 bg-[#6D6EAB] rounded-full shadow-[0_0_15px_rgba(109,110,171,0.4)]"></div>
+                                    <h2 className="text-3xl font-bold text-[#003B5C]">Ilmiy faoliyat</h2>
+                                </div>
+                                {department.scientificActivity ? (
+                                    <ContentBuilder
+                                        blocks={[
+                                            {
+                                                id: 'department-scientific',
+                                                type: 'rich-text',
+                                                data: { content: department.scientificActivity }
+                                            }
+                                        ]}
+                                    />
+                                ) : (
+                                    <EmptyState resourceKey="info" />
+                                )}
+                            </div>
                         )}
 
                         {activeTab === 'cooperation' && (
-                            <EmptyState
-                                resourceKey="info"
-                                title="Xalqaro hamkorlik"
-                                message="Xalqaro hamkorlik haqida ma&apos;lumot hozircha mavjud emas."
-                            />
+                            <div className="space-y-8">
+                                <div className="flex items-center gap-3 mb-8">
+                                    <div className="w-1.5 h-10 bg-[#6D6EAB] rounded-full shadow-[0_0_15px_rgba(109,110,171,0.4)]"></div>
+                                    <h2 className="text-3xl font-bold text-[#003B5C]">Xalqaro hamkorlik</h2>
+                                </div>
+                                {department.internationalCooperation ? (
+                                    <ContentBuilder
+                                        blocks={[
+                                            {
+                                                id: 'department-cooperation',
+                                                type: 'rich-text',
+                                                data: { content: department.internationalCooperation }
+                                            }
+                                        ]}
+                                    />
+                                ) : (
+                                    <EmptyState resourceKey="info" />
+                                )}
+                            </div>
                         )}
                     </div>
                 </div>

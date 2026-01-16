@@ -242,7 +242,7 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
         <div className="mb-6">
 
           {/* Title */}
-          <h1 className="text-[22px] md:text-[26px] font-bold leading-[1.4] text-main mb-4">
+          <h1 className="text-[27px] md:text-[27px] font-[800] leading-[37px] font-sans text-main mb-4 tracking-tight">
             {title}
           </h1>
           <div className="border-b border-dashed border-gray-300 mb-6"></div>
@@ -251,8 +251,8 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
           {showMeta && meta && (
             <div className="flex w-full items-center justify-between mb-6">
               {meta.publishDate && (
-                <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 text-gray-700 rounded-xl px-3 py-1.5 text-sm transition-colors hover:bg-gray-100 cursor-default">
-                  <Calendar size={16} className="text-[#555]" strokeWidth={2.5} />
+                <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 text-black rounded-xl px-3 py-1.5 text-sm transition-colors hover:bg-gray-100 cursor-default">
+                  <Calendar size={16} className="text-black" strokeWidth={2.5} />
                   <span className="font-medium">{formatDate(meta.publishDate)}</span>
                 </div>
               )}
@@ -261,8 +261,8 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
                 // Calculate total image count: hero image + gallery images
                 const totalImages = (heroImage ? 1 : 0) + (gallery?.length || 0);
                 return totalImages > 0 ? (
-                  <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 text-gray-700 rounded-xl px-3 py-1.5 text-sm transition-colors hover:bg-gray-100 cursor-default">
-                    <Image size={16} className="text-[#555]" strokeWidth={2.5} />
+                  <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 text-black rounded-xl px-3 py-1.5 text-sm transition-colors hover:bg-gray-100 cursor-default">
+                    <Image size={16} className="text-black" strokeWidth={2.5} />
                     <span className="font-medium">{totalImages}</span>
                   </div>
                 ) : null;
@@ -323,13 +323,13 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
 
 
         {/* Main content */}
-        <div className="prose prose-lg max-w-none text-gray-700 prose-headings:text-main prose-a:text-blue-600 prose-img:rounded-xl prose-strong:text-main leading-relaxed">
+        <div className="prose prose-lg max-w-none font-serif text-[20px] leading-[30px] text-black prose-p:text-black prose-li:text-black prose-li:marker:text-black prose-headings:font-sans prose-headings:text-[#003B5C] prose-a:text-blue-600 prose-img:rounded-xl prose-strong:text-black prose-table:border prose-table:border-collapse prose-th:border prose-td:border prose-th:p-2 prose-td:p-2 leading-relaxed">
           {contentBlocks ? (
             <ContentBuilder blocks={contentBlocks} />
           ) : content ? (
             <div dangerouslySetInnerHTML={{ __html: content }} />
           ) : (gallery && gallery.length > 0) || heroImage ? null : (
-            <p className="text-gray-500 italic">{t('no_info', "Ma'lumot mavjud emas")}</p>
+            <p className="text-black italic">{t('no_info', "Ma'lumot mavjud emas")}</p>
           )}
         </div>
 
@@ -349,7 +349,7 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
           meta?.tags && meta.tags.length > 0 && (
             <div className="mt-8 pt-6 border-t border-dashed border-gray-200">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-gray-500 text-sm flex items-center gap-1 mr-2">
+                <span className="text-black font-semibold text-sm flex items-center gap-1 mr-2">
                   <Tag size={16} /> {t('tags', 'Teglar')}:
                 </span>
                 {meta.tags.map((tag, index) => (
@@ -380,7 +380,7 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
           {showPrintButton && (
             <button
               onClick={handlePrint}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors shadow-sm"
+              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-black rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
             >
               <Printer size={18} />
               <span className="text-sm font-medium">{t('print', 'Chop etish')}</span>
@@ -430,7 +430,7 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
                     </div>
                   )}
                   <div className="flex-1 min-w-0 py-1">
-                    <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
+                    <div className="flex items-center gap-2 text-xs text-black font-medium mb-2">
                       <Clock size={12} />
                       {item.date && new Date(item.date).toLocaleDateString('uz-UZ')}
                     </div>

@@ -11,6 +11,7 @@ interface FacultyCardProps {
     variant?: 'list-item' | 'grid-card';
     href?: string;
     description?: string;
+    slug?: string; // Optional slug for future use or if variant changes to link
 }
 
 export const FacultyCard: React.FC<FacultyCardProps> = ({
@@ -21,7 +22,8 @@ export const FacultyCard: React.FC<FacultyCardProps> = ({
     onClick,
     variant = 'list-item',
     href,
-    description
+    description,
+    slug
 }) => {
     const CardContent = (
         <>

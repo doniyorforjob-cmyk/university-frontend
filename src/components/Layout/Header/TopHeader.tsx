@@ -143,20 +143,20 @@ const TopHeader = () => {
                                 prefetch={true}
                                 className="flex items-center text-white hover:text-secondary transition-colors group"
                             >
-                                <FaShieldAlt className="h-4 w-4 md:h-5 md:w-5 text-red-100 group-hover:scale-110 transition-transform" />
-                                <span className="hidden sm:inline ml-1.5 md:ml-2 text-[11px] md:text-[13px] whitespace-nowrap">
+                                <FaShieldAlt className="h-4 w-4 md:h-5 md:w-5 xl:h-6 xl:w-6 text-red-100 group-hover:scale-110 transition-transform" />
+                                <span className="hidden sm:inline ml-1.5 md:ml-2 xl:ml-3 text-[11px] md:text-[13px] xl:text-[15px] whitespace-nowrap">
                                     {t('fightCorruption')}
                                 </span>
                             </PrefetchLink>
                         )}
 
-                        <div className="w-px h-4 bg-secondary/50"></div>
+                        <div className="w-px h-4 bg-secondary/50 xl:h-6"></div>
 
                         <div className="relative flex items-center" ref={langDropdownRef}>
-                            <button onClick={() => setLangDropdownOpen(!isLangDropdownOpen)} className="flex items-center focus:outline-none text-white hover:text-secondary text-[13px] font-bold">
-                                <img src={currentLangDetails.flag} width="18" alt={currentLangDetails.name} className="mr-2" />
+                            <button onClick={() => setLangDropdownOpen(!isLangDropdownOpen)} className="flex items-center focus:outline-none text-white hover:text-secondary text-[13px] xl:text-[15px] font-bold">
+                                <img src={currentLangDetails.flag} width="18" alt={currentLangDetails.name} className="mr-2 xl:w-[22px] xl:mr-3" />
                                 <span>{currentLangDetails.short}</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3 h-3 ml-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3 h-3 ml-1 xl:w-4 xl:h-4">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                                 </svg>
                             </button>

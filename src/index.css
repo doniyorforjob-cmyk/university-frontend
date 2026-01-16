@@ -1,7 +1,7 @@
 /* src/index.css */
 
 /* 1. Google Fonts — Inter (asosiy) + Montserrat (sarlavhalar) */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 /* 2. Tailwind CSS directives */
 @tailwind base;

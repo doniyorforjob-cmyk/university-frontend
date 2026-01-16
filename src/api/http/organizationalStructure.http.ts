@@ -1,23 +1,37 @@
 import apiClient from '../client';
-import { ContentBlock } from '@/components/shared/ContentBuilder';
+import { OrganizationalStructureDoc } from '../../types/organizationalStructure.types';
+import { getImageUrl } from '../../utils/apiUtils';
 
-export const fetchOrganizationalStructureData = async (): Promise<{ blocks: ContentBlock[] }> => {
+export const fetchOrganizationalStructureData = async (): Promise<OrganizationalStructureDoc | null> => {
   try {
     const projectId = process.env.REACT_APP_PROJECT_ID;
     const response = await apiClient.get(`/projects/${projectId}/content/organizational-structure`);
 
     const data = Array.isArray(response.data) ? response.data : response.data.data;
 
-    // Transform to ContentBlock format
-    const blocks = data.map((entry: any) => ({
-      type: entry.fields?.type || 'text',
-      content: entry.fields?.content || entry.content,
-      data: entry.fields?.data || entry.data
-    }));
+    if (!data || data.length === 0) return null;
 
-    return { blocks };
+    const entry = data[0];
+
+    // Helper to resolve file from varied API formats
+    const resolveFile = (file: any): string => {
+      if (!file) return '';
+      if (Array.isArray(file)) {
+        const first = file[0];
+        if (!first) return '';
+        if (typeof first === 'string') return first;
+        return first.url || '';
+      }
+      if (typeof file === 'string') return file;
+      return file.url || '';
+    };
+
+    return {
+      title: entry.fields?.title || entry.name || "Tashkiliy tuzilma",
+      fileUrl: getImageUrl(resolveFile(entry.fields?.file))
+    };
   } catch (error) {
     console.error("Organizational structure fetch error:", error);
-    return { blocks: [] };
+    return null;
   }
 };

@@ -38,4 +38,7 @@ export type Department = {
   gallery?: string[];
   directions?: string;
   history?: string;
+  staff?: string;
+  scientificActivity?: string;
+  internationalCooperation?: string;
 }

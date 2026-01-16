@@ -92,7 +92,8 @@ module.exports = {
       // === TIPOGRAFIYA ===
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+        display: ['Inter', 'sans-serif'],
+        serif: ['"PT Serif"', 'serif'],
       },
       fontSize: {
         // Fluid typography scale
@@ -212,6 +213,7 @@ module.exports = {
     },
   },
   plugins: [
+    require('@tailwindcss/typography'),
     require('@tailwindcss/aspect-ratio'),
     require('@tailwindcss/line-clamp'),
     require("tailwindcss-animate"),

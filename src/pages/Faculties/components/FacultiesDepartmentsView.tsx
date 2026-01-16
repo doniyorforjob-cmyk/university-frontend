@@ -72,6 +72,7 @@ export const FacultiesDepartmentsView: React.FC<FacultiesDepartmentsViewProps> =
                                         id={faculty.id}
                                         name={faculty.name}
                                         image={faculty.image}
+                                        slug={faculty.slug}
                                     />
                                 ))}
                             </div>

@@ -9,9 +9,10 @@ interface DepartmentGridCardProps {
     phone?: string;
     email?: string;
     headName?: string;
+    slug?: string;
 }
 
-export const DepartmentGridCard: React.FC<DepartmentGridCardProps> = ({ id, name, phone, email, headName }) => {
+export const DepartmentGridCard: React.FC<DepartmentGridCardProps> = ({ id, name, phone, email, headName, slug }) => {
     const navigate = useNavigate();
     const { locale } = useLocale();
 
@@ -22,7 +23,10 @@ export const DepartmentGridCard: React.FC<DepartmentGridCardProps> = ({ id, name
     };
 
     const handleCardClick = () => {
-        navigate(`/${locale}/departments/${id}`);
+        // Use slug if available, otherwise fallback to ID
+        // If slug is missing, generate one from name (optional, but safer to stick to what API provides)
+        const navigationParam = slug || id;
+        navigate(`/${locale}/departments/${navigationParam}`);
     };
 
     const handleLinkClick = (e: React.MouseEvent) => {

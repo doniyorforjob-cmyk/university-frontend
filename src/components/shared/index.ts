@@ -12,5 +12,7 @@ export { default as PageSkeleton } from './PageSkeleton';
 export { default as DownloadButton } from './DownloadLink';
 export { default as SocialShare } from './SocialShare';
 export { default as ImageCarousel } from './ImageCarousel';
+export { default as ContentBuilder } from './ContentBuilder';
 export { default as SectionTabs } from './SectionTabs';
+export * from './Accordion';
 

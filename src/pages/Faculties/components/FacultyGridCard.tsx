@@ -8,11 +8,14 @@ interface FacultyGridCardProps {
     name: string;
     image?: string;
     href?: string;
+    slug?: string;
 }
 
-export const FacultyGridCard: React.FC<FacultyGridCardProps> = ({ id, name, image, href }) => {
+export const FacultyGridCard: React.FC<FacultyGridCardProps> = ({ id, name, image, href, slug }) => {
     // Use ID-based href if not explicitly provided (just ID for relative path)
-    const detailHref = href || `${id}`;
+    // Updated: ensure it's an absolute path to avoid nesting issues or relative confusion
+    const linkSlug = slug || id;
+    const detailHref = href || `/faculties/${linkSlug}`;
 
     return (
         <Link to={detailHref} className="group relative block w-full h-64 md:h-72 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">

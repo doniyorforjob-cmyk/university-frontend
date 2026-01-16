@@ -91,10 +91,12 @@ export interface HomeFacultiesData {
     description: string;
     image: string;
     icon: string;
+    slug?: string;
     departments: Array<{
       id: number | string;
       title: string;
       image: string;
+      slug?: string;
     }>;
   }>;
 }
