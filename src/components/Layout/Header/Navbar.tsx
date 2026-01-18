@@ -81,12 +81,25 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
         console.log('Enriching Kafedralar:', { hasDepts, count: hasDepts ? departments.length : 0 });
 
         if (hasDepts) {
-          transformed.children = departments.map((d, idx) => ({
-            id: d.id || `dept-${idx}`,
-            title: d.title || d.name || 'Nomsiz Kafedra',
-            href: `/departments/${d.slug || d.id}`,
-            children: []
-          }));
+          // Helper to generate slug locally if missing from API
+          const slugify = (text: string) =>
+            text
+              .toLowerCase()
+              .replace(/['"ʻ`]/g, '')
+              .replace(/[^\w\s-]/g, '')
+              .replace(/\s+/g, '-')
+              .trim();
+
+          transformed.children = departments.map((d, idx) => {
+            const title = d.title || d.name || 'Nomsiz Kafedra';
+            const finalSlug = d.slug || slugify(title);
+            return {
+              id: d.id || `dept-${idx}`,
+              title: title,
+              href: `/departments/${finalSlug || d.id}`,
+              children: []
+            };
+          });
         }
       }
 
