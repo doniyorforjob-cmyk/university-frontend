@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, JSX } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import useClickOutside from '../../../hooks/useClickOutside';
 import { fetchNavItems, NavItem } from '../../../services/navbarService';
 import { useCachedApi } from '../../../hooks/useCachedApi';
@@ -15,6 +15,8 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import NavbarSkeleton from './NavbarSkeleton';
 import { AnimatePresence, motion } from 'framer-motion';
 import { getLocalized } from '../../../utils/apiUtils';
+import { getFaculties } from '../../../api/http/faculties.http';
+import { getDepartments } from '../../../api/http/department.http';
 
 interface NavbarProps {
   isSticky: boolean;
@@ -29,25 +31,87 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
     keepPreviousData: true
   });
 
+  // State for dynamic content
+  const [faculties, setFaculties] = useState<any[]>([]);
+  const [departments, setDepartments] = useState<any[]>([]);
+
+  // Fetch dynamic content on mount
+  useEffect(() => {
+    const fetchDynamicContent = async () => {
+      try {
+        const [facs, depts] = await Promise.all([
+          getFaculties(),
+          getDepartments()
+        ]);
+        console.log('RAW API Departments Response:', depts);
+        setFaculties(facs);
+        setDepartments(depts);
+      } catch (err) {
+        console.error('Failed to fetch dynamic navbar content:', err);
+      }
+    };
+    fetchDynamicContent();
+  }, []);
+
   // Local locale-based transformation for instant switching
   const displayNavItems = React.useMemo(() => {
     if (!navItemsRaw || !Array.isArray(navItemsRaw)) return [];
 
-    const transformRecursive = (item: NavItem): any => ({
-      ...item,
-      title: getLocalized(item.title, locale) || 'Menu Item',
-      description: getLocalized(item.description, locale),
-      children: item.children?.map(transformRecursive) || []
-    });
+    const transformRecursive = (item: NavItem): any => {
+      // Basic transformation
+      const transformed = {
+        ...item,
+        title: getLocalized(item.title, locale) || 'Menu Item',
+        description: getLocalized(item.description, locale),
+        children: item.children?.map(transformRecursive) || []
+      };
+
+      // Enrich "Tuzilma" -> "Fakultetlar"
+      if (transformed.title === 'Fakultetlar' && faculties.length > 0) {
+        transformed.children = faculties.map(f => ({
+          title: f.name,
+          href: `/faculties/${f.slug}`,
+          children: []
+        }));
+      }
+
+      // Enrich "Tuzilma" -> "Kafedralar"
+      if (transformed.title === 'Kafedralar') {
+        const hasDepts = departments && departments.length > 0;
+        console.log('Enriching Kafedralar:', { hasDepts, count: hasDepts ? departments.length : 0 });
+
+        if (hasDepts) {
+          transformed.children = departments.map((d, idx) => ({
+            id: d.id || `dept-${idx}`,
+            title: d.title || d.name || 'Nomsiz Kafedra',
+            href: `/departments/${d.slug || d.id}`,
+            children: []
+          }));
+        }
+      }
+
+      return transformed;
+    };
 
     return navItemsRaw.map(transformRecursive);
-  }, [navItemsRaw, locale]);
+  }, [navItemsRaw, locale, faculties, departments]);
+
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [hoveredCategoryTitle, setHoveredCategoryTitle] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openMobileSubmenu, setOpenMobileSubmenu] = useState<string | null>(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+
+  // DERIVE THE CURRENT HOVERED OBJECT FROM LATEST DATA
+  // This ensures that when displayNavItems updates (API data arrives), the UI updates too.
+  const currentHoveredCategory = React.useMemo(() => {
+    if (!activeDropdown || !hoveredCategoryTitle) return null;
+    const activeItem = displayNavItems.find((item: any) => item.title === activeDropdown);
+    if (!activeItem || !activeItem.children) return null;
+    return activeItem.children.find((child: any) => child.title === hoveredCategoryTitle) || null;
+  }, [displayNavItems, activeDropdown, hoveredCategoryTitle]);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -58,6 +122,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
 
   useClickOutside(navRef, () => {
     setActiveDropdown(null);
+    setHoveredCategoryTitle(null);
     setIsMobileMenuOpen(false);
     setOpenMobileSubmenu(null);
     setIsSearchOpen(false);
@@ -75,13 +140,13 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
     setIsSearchOpen(!isSearchOpen);
   };
 
-  // Dropdown yopish funksiyasi
   const closeDropdown = () => {
     setActiveDropdown(null);
+    setHoveredCategoryTitle(null);
   };
 
   const getSectionIcon = (): JSX.Element => {
-    return <BuildingLibraryIcon className="h-9 w-9" />;
+    return <BuildingLibraryIcon className="h-9 w-9 text-[#0E104B]" />;
   };
 
   return (
@@ -92,9 +157,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
           {loading && !displayNavItems.length ? (
             <NavbarSkeleton isSticky={isSticky} />
           ) : (
-            <div
-              className={`flex h-full items-center transition-opacity duration-500 opacity-100`}
-            >
+            <div className="flex h-full items-center transition-opacity duration-500 opacity-100">
               <AnimatePresence>
                 {isSticky && (
                   <motion.div
@@ -128,41 +191,33 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                   </motion.div>
                 )}
               </AnimatePresence>
+
               {displayNavItems.map((item: any) => {
-                const hasCategories =
-                  item.children && item.children.some((child: any) => child.children && child.children.length > 0);
+                const hasCategories = item.children && item.children.some((child: any) => child.children && child.children.length > 0);
 
                 return (
-                  <div
-                    key={String(item.title)}
-                    className="group h-full"
-                  >
+                  <div key={String(item.title)} className="group h-full">
                     <PrefetchLink
                       to={item.href || '#'}
-                      prefetch={true}
-                      prefetchDelay={150}
                       onMouseEnter={async () => {
                         const { prefetchService } = await import('../../../services/prefetchService');
-                        if (item.href === '/news') {
-                          prefetchService.prefetchNewsPage();
-                        } else if (item.href === '/') {
-                          prefetchService.prefetchHomeNews();
+                        if (item.href === '/news') prefetchService.prefetchNewsPage();
+                        if (item.href === '/') prefetchService.prefetchHomeNews();
+
+                        if (item.children) {
+                          setActiveDropdown(String(item.title));
+                          if (item.children.length > 0) {
+                            setHoveredCategoryTitle(item.children[0].title);
+                          }
                         }
-                        item.children && setActiveDropdown(String(item.title));
                       }}
-                      onMouseLeave={() => item.children && setActiveDropdown(null)}
                       onClick={() => {
                         closeDropdown();
                         if (item.children) {
-                          // Dropdown mavjud bo'lsa, hover effektini to'xtatish uchun
-                          const element = document.activeElement as HTMLElement;
-                          element?.blur();
+                          (document.activeElement as HTMLElement)?.blur();
                         }
                       }}
-                      className={`group flex items-center h-full px-4 text-base font-bold transition-colors duration-300 cursor-pointer relative ${activeDropdown === item.title
-                        ? 'text-white'
-                        : 'text-white'
-                        }`}
+                      className={`group flex items-center h-full px-4 text-base font-bold transition-colors duration-300 cursor-pointer relative text-white`}
                     >
                       {item.title}
                       {item.children && <ChevronDownIcon className="w-5 h-5 ml-1" />}
@@ -174,89 +229,147 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                       <div
                         className="absolute top-full left-0 right-0 z-50 pointer-events-none bg-white"
                         onMouseEnter={() => setActiveDropdown(String(item.title))}
-                        onMouseLeave={() => setActiveDropdown(null)}
+                        onMouseLeave={() => {
+                          setActiveDropdown(null);
+                          setHoveredCategoryTitle(null);
+                        }}
                       >
                         <div className="pointer-events-auto">
-                          <div className="bg-white border shadow-lg overflow-hidden animate-slide-in-bottom">
-                            <div className="p-6">
-                              <div className="grid grid-cols-3 gap-8">
-                                {/* LEFT PANEL */}
-                                <div className="col-span-1 space-y-4">
-                                  <div className="flex items-start gap-4">
-                                    <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-primary/10 text-primary ring-1 ring-primary/20">
-                                      {getSectionIcon()}
-                                    </div>
-                                    <h3 className="text-xl font-bold text-black">{String(item.title)}</h3>
+                          <div className="bg-white border-t border-gray-100 shadow-2xl overflow-hidden animate-slide-in-bottom">
+                            <div className="grid grid-cols-3 divide-x divide-gray-100">
+                              {/* LEFT PANEL (1/3) */}
+                              <div className="p-8 space-y-6">
+                                <div className="flex items-center gap-4 border-b border-gray-50 pb-6">
+                                  <div className="p-3 bg-gray-50 rounded-lg">
+                                    {getSectionIcon()}
                                   </div>
-                                  <p className="text-base text-black leading-relaxed max-w-xs">
-                                    {String(item.description || "Ushbu bo'lim haqida batafsil ma'lumot")}
-                                  </p>
+                                  <div>
+                                    <h3 className="text-xl font-bold text-[#0E104B]">{String(item.title)}</h3>
+                                    <p className="text-xs font-bold text-primary uppercase tracking-wider">Universitet</p>
+                                  </div>
                                 </div>
+                                <p className="text-sm text-gray-500 leading-relaxed italic">
+                                  {String(item.description || "Namangan davlat texnika universiteti bo'limlari va xizmatlari haqida batafsil ma'lumot.")}
+                                </p>
+                              </div>
 
-                                <div className="col-span-2">
-                                  {hasCategories ? (
-                                    <div className="grid grid-cols-2 gap-6">
-                                      {item.children!.map((category: any) => (
-                                        <div key={category.title} className="space-y-3">
+                              {/* CENTER AND RIGHT PANELS (The remaining 2/3) */}
+                              {hasCategories ? (
+                                <>
+                                  {/* CENTER - Parent Categories (1/3) */}
+                                  <div className="p-6">
+                                    <h4 className="text-xs font-black text-gray-300 uppercase tracking-widest mb-4">{"Bo'limlar"}</h4>
+                                    <div className="flex flex-col space-y-1">
+                                      {item.children!.map((parent: any, idx: number) => (
+                                        <div
+                                          key={parent.id || parent.title || idx}
+                                          onMouseEnter={() => setHoveredCategoryTitle(parent.title)}
+                                          className={`
+                                            cursor-pointer transition-all duration-150 border-r-2
+                                            ${currentHoveredCategory?.title === parent.title
+                                              ? 'bg-gray-200 text-primary border-primary'
+                                              : 'text-gray-700 hover:bg-gray-200 border-transparent'
+                                            }
+                                          `}
+                                        >
                                           <PrefetchLink
-                                            to={category.href || '#'}
+                                            to={parent.href || '#'}
                                             onClick={closeDropdown}
-                                            className="
-                                              block text-lg font-bold text-black
-                                              border-b-2 border-primary
-                                              hover:bg-primary/5
-                                              pb-1 transition-all duration-150
-                                            "
+                                            className="block w-full"
                                           >
-                                            {category.title}
+                                            <motion.div
+                                              whileHover={{ x: 8 }}
+                                              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                                              className="flex items-center justify-between px-4 py-3"
+                                            >
+                                              <span className="font-bold">{parent.title}</span>
+                                              <ChevronRightIcon className={`h-4 w-4 transition-transform ${currentHoveredCategory?.title === parent.title ? 'translate-x-1' : 'opacity-0'}`} />
+                                            </motion.div>
                                           </PrefetchLink>
-                                          {category.children && (
-                                            <ul className="space-y-1">
-                                              {category.children.map((link: any) => (
-                                                <li key={String(link.title)}>
-                                                  <PrefetchLink
-                                                    to={link.href!}
-                                                    onClick={closeDropdown}
-                                                    className="
-                                                      flex items-center gap-2 text-base font-medium text-black
-                                                      border-b border-gray-300
-                                                      hover:bg-gray-100
-                                                      px-3 py-2 transition-all duration-150
-                                                    "
-                                                  >
-                                                    <ChevronRightIcon className="h-5 w-5 opacity-50" />
-                                                    {link.title}
-                                                  </PrefetchLink>
-                                                </li>
-                                              ))}
-                                            </ul>
-                                          )}
                                         </div>
                                       ))}
                                     </div>
-                                  ) : (
-                                    <ul className="grid grid-cols-2 gap-x-8 gap-y-2">
-                                      {item.children!.map((link: any) => (
-                                        <li key={String(link.title)}>
-                                          <PrefetchLink
-                                            to={link.href!}
-                                            onClick={closeDropdown}
-                                            className="
-                                              flex items-center gap-2 text-base font-medium text-black
-                                              border-b border-gray-300
-                                              hover:bg-gray-100
-                                              px-3 py-2 transition-all duration-150
-                                            "
-                                          >
-                                            <ChevronRightIcon className="h-5 w-5 opacity-60" />
-                                            {link.title}
-                                          </PrefetchLink>
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  )}
+                                  </div>
+
+                                  {/* RIGHT - Child Links (1/3) */}
+                                  <div className="p-6 bg-gray-50/30">
+                                    {currentHoveredCategory ? (
+                                      <div className="animate-fade-in">
+                                        <div className="flex items-center justify-between mb-4">
+                                          <h4 className="text-xs font-black text-gray-300 uppercase tracking-widest">Havolalar</h4>
+                                          {currentHoveredCategory.children && currentHoveredCategory.children.length > 7 && (
+                                            <PrefetchLink
+                                              to={currentHoveredCategory.href || '#'}
+                                              onClick={closeDropdown}
+                                              className="text-xs font-black text-primary hover:underline uppercase tracking-tight"
+                                            >
+                                              {"Barchasi"}
+                                            </PrefetchLink>
+                                          )}
+                                        </div>
+                                        <div className="grid grid-cols-1 gap-1">
+                                          {currentHoveredCategory.children && currentHoveredCategory.children.length > 0 ? (
+                                            currentHoveredCategory.children.slice(0, 7).map((child: any, idx: number) => (
+                                              <PrefetchLink
+                                                key={child.id || child.title || idx}
+                                                to={child.href || '#'}
+                                                className="
+                                                  block text-gray-800 hover:text-black hover:bg-gray-300/40 hover:shadow-sm
+                                                  transition-all duration-150 border-b border-transparent rounded-md group/link
+                                                "
+                                              >
+                                                <motion.div
+                                                  whileHover={{ x: 8 }}
+                                                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                                                  className="flex items-center gap-3 py-2 px-3"
+                                                >
+                                                  <div className="h-1.5 w-1.5 bg-gray-500 group-hover/link:bg-black rounded-full flex-shrink-0" />
+                                                  <span className="text-base font-semibold text-gray-900 relative z-10 flex-1">
+                                                    {child.title || 'Untitled'}
+                                                  </span>
+                                                </motion.div>
+                                              </PrefetchLink>
+                                            ))
+                                          ) : (
+                                            <div className="p-6 text-center border-2 border-dashed border-gray-100 rounded-lg">
+                                              <p className="text-gray-400 text-sm italic">{"Ushbu bo'limda havolalar mavjud emas"}</p>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <div className="h-full flex flex-col items-center justify-center text-center p-8">
+                                        <BuildingLibraryIcon className="h-12 w-12 text-gray-200 mb-2" />
+                                        <p className="text-gray-400 text-sm">{"Batafsil ko'rish uchun bo'limni tanlang"}</p>
+                                      </div>
+                                    )}
+                                  </div>
+                                </>
+                              ) : (
+                                /* FLAT LAYOUT (2/3) */
+                                <div className="col-span-2 p-8 grid grid-cols-2 gap-x-8 gap-y-2 content-start">
+                                  {item.children!.map((link: any, idx: number) => (
+                                    <PrefetchLink
+                                      key={link.id || link.title || idx}
+                                      to={link.href || '#'}
+                                      onClick={closeDropdown}
+                                      className="
+                                          flex h-full items-center text-gray-800 hover:text-black hover:bg-gray-200
+                                          transition-all duration-150 border-b border-black/10
+                                        "
+                                    >
+                                      <motion.div
+                                        whileHover={{ x: 8 }}
+                                        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                                        className="flex items-center gap-3 py-3 px-4 w-full"
+                                      >
+                                        <ChevronRightIcon className="h-4 w-4 text-black" />
+                                        <span className="text-base font-bold">{link.title}</span>
+                                      </motion.div>
+                                    </PrefetchLink>
+                                  ))}
                                 </div>
-                              </div>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -275,32 +388,21 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
               className="flex items-center h-full px-4 text-base font-medium text-white hover:bg-navbar-dropdown hover:text-black transition-colors duration-300 cursor-pointer"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
-                <path
-                  fillRule="evenodd"
-                  d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                  clipRule="evenodd"
-                />
+                <path fillRule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clipRule="evenodd" />
               </svg>
             </button>
 
             {/* SEARCH DROPDOWN */}
-            <div
-              className={`absolute top-[100%] right-0 w-80 bg-white rounded-lg shadow-lg border border-gray-200 transition-all duration-200 z-50 ${isSearchOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
-                }`}
-            >
+            <div className={`absolute top-[100%] right-0 w-80 bg-white rounded-lg shadow-lg border border-gray-200 transition-all duration-200 z-50 ${isSearchOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
               <div className="relative p-4">
                 <input
                   type="text"
                   placeholder="Saytdan qidirish..."
-                  className="w-full px-4 py-3 pr-14 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 pr-14 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <button className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-blue-600 transition-colors">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path
-                      fillRule="evenodd"
-                      d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                      clipRule="evenodd"
-                    />
+                    <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
                   </svg>
                 </button>
               </div>
@@ -323,54 +425,49 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
         </button>
       </div>
 
-      {
-        isMobileMenuOpen && (
-          <div className="lg:hidden bg-white shadow-lg">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              {displayNavItems.map((item: any) => (
-                <div key={item.title}>
-                  {item.children ? (
-                    <>
-                      <button
-                        onClick={() => toggleMobileSubmenu(String(item.title))}
-                        className="w-full flex justify-between items-center text-gray-700 px-3 py-2 rounded-md text-lg font-medium hover:bg-gray-100"
-                      >
-                        <span>{String(item.title)}</span>
-                        <ChevronDownIcon
-                          className={`w-5 h-5 transform transition-transform ${openMobileSubmenu === String(item.title) ? 'rotate-180' : ''
-                            }`}
-                        />
-                      </button>
-                      {openMobileSubmenu === item.title && (
-                        <div className="pl-6 mt-1 space-y-1">
-                          {item.children.map((child: any) => (
-                            <PrefetchLink
-                              key={String(child.title)}
-                              to={child.href || '#'}
-                              className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-[#0E104B] hover:bg-gray-50"
-                              onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                              {String(child.title)}
-                            </PrefetchLink>
-                          ))}
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <PrefetchLink
-                      to={item.href || '#'}
-                      className="block px-3 py-2 rounded-md text-lg font-medium text-gray-700 hover:bg-gray-100"
-                      onClick={() => setIsMobileMenuOpen(false)}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden bg-white shadow-lg overflow-y-auto max-h-[80vh]">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            {displayNavItems.map((item: any) => (
+              <div key={item.title}>
+                {item.children && item.children.length > 0 ? (
+                  <>
+                    <button
+                      onClick={() => toggleMobileSubmenu(String(item.title))}
+                      className="w-full flex justify-between items-center text-gray-700 px-3 py-2 rounded-md text-lg font-medium hover:bg-gray-100"
                     >
-                      {String(item.title)}
-                    </PrefetchLink>
-                  )}
-                </div>
-              ))}
-            </div>
+                      <span>{String(item.title)}</span>
+                      <ChevronDownIcon className={`w-5 h-5 transform transition-transform ${openMobileSubmenu === String(item.title) ? 'rotate-180' : ''}`} />
+                    </button>
+                    {openMobileSubmenu === item.title && (
+                      <div className="pl-6 mt-1 space-y-1">
+                        {item.children.map((child: any) => (
+                          <PrefetchLink
+                            key={String(child.title)}
+                            to={child.href || '#'}
+                            className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-[#0E104B] hover:bg-gray-50"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            {String(child.title)}
+                          </PrefetchLink>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <PrefetchLink
+                    to={item.href || '#'}
+                    className="block px-3 py-2 rounded-md text-lg font-medium text-gray-700 hover:bg-gray-100"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {String(item.title)}
+                  </PrefetchLink>
+                )}
+              </div>
+            ))}
           </div>
-        )
-      }
+        </div>
+      )}
     </div>
   );
 };

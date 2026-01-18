@@ -10,7 +10,7 @@ export const getDepartments = async (): Promise<Department[]> => {
     const data = Array.isArray(response.data) ? response.data : response.data.data;
     return data.map((entry: any) => ({
       id: entry.uuid || entry.id,
-      name: entry.fields?.name || entry.name,
+      name: entry.fields?.name || entry.fields?.title || entry.name || entry.title || 'Nomsiz Kafedra',
       description: entry.fields?.description || entry.description,
       head: entry.fields?.head || entry.head,
       contact: entry.fields?.contact || entry.contact
