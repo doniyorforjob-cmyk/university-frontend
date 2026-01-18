@@ -5,7 +5,7 @@ import { useLocale } from '@/contexts/LocaleContext';
 
 interface UseCachedApiOptions {
   key: string;
-  fetcher: () => Promise<any>;
+  fetcher: (locale?: string) => Promise<any>;
   ttlMinutes?: number;
   enabled?: boolean;
   onSuccess?: (data: any) => void;
@@ -99,7 +99,7 @@ export const useCachedApi = <T = any>({
       let requestPromise = inflightRequests.get(localeKey);
 
       if (!requestPromise) {
-        requestPromise = fetcher();
+        requestPromise = fetcher(locale);
         inflightRequests.set(localeKey, requestPromise);
 
         try {

@@ -63,6 +63,7 @@ const AppRoutes = () => {
                 <Route element={<MainLayout />}>
                     <Route path="university" element={<UniversityPage />} />
                     <Route path="information-services" element={<InformationServicesPage />} />
+                    <Route path="information-service" element={<InformationServicesPage />} />
                     <Route path="activities" element={<ActivitiesPage />} />
                     {/* <Route path="departments" element={<GenericDetailPage type="department" />} /> */}
                     {/* <Route path="departments" element={<GenericDetailPage type="department" />} /> */}

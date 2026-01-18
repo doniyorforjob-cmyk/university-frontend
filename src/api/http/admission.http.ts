@@ -1,10 +1,12 @@
 import apiClient from '../client';
 import { ContentBlock } from '@/components/shared/ContentBuilder';
 
-export const fetchAdmissionData = async (): Promise<ContentBlock[]> => {
+export const fetchAdmissionData = async (locale?: string): Promise<ContentBlock[]> => {
   try {
     const projectId = process.env.REACT_APP_PROJECT_ID;
-    const response = await apiClient.get(`/projects/${projectId}/content/admission`);
+    const response = await apiClient.get(`/projects/${projectId}/content/admission`, {
+      params: { locale }
+    });
 
     const data = Array.isArray(response.data) ? response.data : response.data.data;
 

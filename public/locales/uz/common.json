@@ -3,6 +3,8 @@
     "seeAll": "Barchasi",
     "watchVideo": "Tomosha qilish",
     "home": "Bosh sahifa",
+    "university": "Universitet",
+    "lastUpdate": "Oxirgi yangilanish",
     "languages": {
         "uz": "O'zbek",
         "ru": "Rus",
@@ -35,8 +37,7 @@
     "social": {
         "facebook": "Facebook",
         "twitter": "Twitter",
-        "telegram": "Telegram",
-        "linkedin": "LinkedIn"
+        "telegram": "Telegram"
     },
     "department_suffix": "kafedrasi",
     "read_article": "Maqolani o'qish",

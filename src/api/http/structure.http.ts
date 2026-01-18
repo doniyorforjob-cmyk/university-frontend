@@ -1,10 +1,12 @@
 import apiClient from '../client';
 import { Department } from '../../types/structure.types';
 
-export const fetchStructureData = async (): Promise<any[]> => {
+export const fetchStructureData = async (locale?: string): Promise<any[]> => {
   try {
     const projectId = process.env.REACT_APP_PROJECT_ID;
-    const response = await apiClient.get(`/projects/${projectId}/content/structure`);
+    const response = await apiClient.get(`/projects/${projectId}/content/structure`, {
+      params: { locale }
+    });
 
     const data = Array.isArray(response.data) ? response.data : response.data.data;
 

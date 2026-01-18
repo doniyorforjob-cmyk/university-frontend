@@ -1,9 +1,11 @@
 import apiClient from '../client';
 
-export const fetchInteractiveServicesData = async (): Promise<any[]> => {
+export const fetchInteractiveServicesData = async (locale?: string): Promise<any[]> => {
   try {
     const projectId = process.env.REACT_APP_PROJECT_ID;
-    const response = await apiClient.get(`/projects/${projectId}/content/interactive-services`);
+    const response = await apiClient.get(`/projects/${projectId}/content/interactive-services`, {
+      params: { locale }
+    });
 
     const data = Array.isArray(response.data) ? response.data : response.data.data;
 

@@ -3,6 +3,8 @@
     "seeAll": "All",
     "watchVideo": "Watch",
     "home": "Home",
+    "university": "University",
+    "lastUpdate": "Last update",
     "languages": {
         "uz": "Uzbek",
         "ru": "Russian",
@@ -35,8 +37,7 @@
     "social": {
         "facebook": "Facebook",
         "twitter": "Twitter",
-        "telegram": "Telegram",
-        "linkedin": "LinkedIn"
+        "telegram": "Telegram"
     },
     "department_suffix": "department",
     "read_article": "Read article",

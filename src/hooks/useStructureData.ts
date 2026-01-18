@@ -6,6 +6,6 @@ export const useStructureData = () => {
   const { locale } = useLocale();
   return useQuery({
     queryKey: ['structureData', locale],
-    queryFn: fetchStructureData,
+    queryFn: () => fetchStructureData(locale),
   });
 };

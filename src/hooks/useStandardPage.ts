@@ -7,7 +7,7 @@ import { useLocale } from '../contexts/LocaleContext';
  */
 export const useStandardPage = <T = any>(
   pageName: string,
-  fetcher: () => Promise<T>,
+  fetcher: (locale?: string) => Promise<T>,
   options?: {
     ttlMinutes?: number;
     enabled?: boolean;

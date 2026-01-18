@@ -3,6 +3,8 @@
     "seeAll": "Все",
     "watchVideo": "Смотреть",
     "home": "Главная",
+    "university": "Университет",
+    "lastUpdate": "Последнее обновление",
     "languages": {
         "uz": "Узбекский",
         "ru": "Русский",
@@ -35,8 +37,7 @@
     "social": {
         "facebook": "Facebook",
         "twitter": "Twitter",
-        "telegram": "Telegram",
-        "linkedin": "LinkedIn"
+        "telegram": "Telegram"
     },
     "department_suffix": "кафедра",
     "read_article": "Читать статью",

@@ -53,7 +53,7 @@ const mockStructureData: Department[] = [
   },
 ];
 
-export const fetchStructureData = async (): Promise<Department[]> => {
+export const fetchStructureData = async (locale?: string): Promise<Department[]> => {
   console.log('Fetching structure data...');
   // Simulate network delay
   await new Promise(resolve => setTimeout(resolve, 500));

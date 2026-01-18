@@ -4,7 +4,6 @@ import {
     Share2,
     Facebook,
     Send,
-    Linkedin,
     Instagram,
     Twitter
 } from 'lucide-react';
@@ -17,7 +16,6 @@ export interface SocialShareProps {
         facebook?: boolean;
         telegram?: boolean;
         instagram?: boolean;
-        linkedin?: boolean;
         twitter?: boolean;
     };
     className?: string;
@@ -26,7 +24,7 @@ export interface SocialShareProps {
 const SocialShare: React.FC<SocialShareProps> = ({
     title,
     url,
-    options = { facebook: true, telegram: true, instagram: true, linkedin: true },
+    options = { facebook: true, telegram: true, instagram: true },
     className = ''
 }) => {
     const { t } = useTranslation('common');
@@ -59,9 +57,6 @@ const SocialShare: React.FC<SocialShareProps> = ({
                 break;
             case 'telegram':
                 window.open(`https://t.me/share/url?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(shareTitle)}`, '_blank');
-                break;
-            case 'linkedin':
-                window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl)}`, '_blank');
                 break;
             case 'instagram':
                 // Instagram doesn't support direct URL sharing through a simple web link easily,
@@ -107,15 +102,6 @@ const SocialShare: React.FC<SocialShareProps> = ({
                 </button>
             )}
 
-            {options.linkedin && (
-                <button
-                    onClick={() => handleShare('linkedin')}
-                    className="w-10 h-10 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-full hover:bg-indigo-600 hover:text-white transition-all duration-300"
-                    title={t('social.linkedin', 'LinkedIn') as string}
-                >
-                    <Linkedin size={18} />
-                </button>
-            )}
 
             {options.instagram && (
                 <button

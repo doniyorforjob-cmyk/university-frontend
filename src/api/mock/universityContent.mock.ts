@@ -105,11 +105,10 @@ export const transformUniversityContentToAccordion = (
         title: 'Universitetni tanlashning asosiy sabablari',
         items: content.reasons.map((reason) => ({
           question: `${reason.id}. ${reason.title}`,
-          answer: `${reason.description}${ 
-            reason.items
+          answer: `${reason.description}${reason.items
               ? `\n\nFakultetlar:\n${reason.items.map((item) => `• ${item}`).join('\n')}`
               : ''
-          }`,
+            }`,
         })),
       },
       className: 'mt-8',
@@ -240,6 +239,7 @@ const simulateApiCall = <T>(data: T, delay = 500): Promise<T> => {
  * ContentBuilder bloklar bilan universitet ma'lumotlarini olish
  */
 export const fetchUniversityContentBlocks = async (
+  locale?: string,
   layout: 'grid' | 'accordion' | 'cards' = 'grid'
 ): Promise<ContentBlock[]> => {
   try {

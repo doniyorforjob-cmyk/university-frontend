@@ -23,7 +23,16 @@ const HomePage = React.lazy(() => import('./pages/Home'));
 // Redirect component
 const NavigateToUz = () => {
   const location = useLocation();
-  return <Navigate to={`/uz${location.pathname}`} replace />;
+  const path = location.pathname;
+
+  // Prevent double prefixing if the path already starts with a locale
+  const hasLocalePrefix = /^\/(uz|ru|en)(\/|$)/.test(path);
+
+  if (hasLocalePrefix) {
+    return null; // Should not happen with current routing but safe guard
+  }
+
+  return <Navigate to={`/uz${path.startsWith('/') ? '' : '/'}${path}`} replace />;
 };
 
 function App() {

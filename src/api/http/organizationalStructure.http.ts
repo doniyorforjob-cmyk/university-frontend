@@ -2,10 +2,12 @@ import apiClient from '../client';
 import { OrganizationalStructureDoc } from '../../types/organizationalStructure.types';
 import { getImageUrl } from '../../utils/apiUtils';
 
-export const fetchOrganizationalStructureData = async (): Promise<OrganizationalStructureDoc | null> => {
+export const fetchOrganizationalStructureData = async (locale?: string): Promise<OrganizationalStructureDoc | null> => {
   try {
     const projectId = process.env.REACT_APP_PROJECT_ID;
-    const response = await apiClient.get(`/projects/${projectId}/content/organizational-structure`);
+    const response = await apiClient.get(`/projects/${projectId}/content/organizational-structure`, {
+      params: { locale }
+    });
 
     const data = Array.isArray(response.data) ? response.data : response.data.data;
 

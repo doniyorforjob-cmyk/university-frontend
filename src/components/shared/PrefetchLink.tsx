@@ -50,44 +50,16 @@ const PrefetchLink: React.FC<PrefetchLinkProps> = ({
     // If external link or anchor, return as is
     if (to.startsWith('http') || to.startsWith('#') || to.startsWith('mailto:')) return to;
 
-    // 2. Kiruvchi linkdan eski prefikslarni tozalash (masalan /en/news -> news)
-    let cleanTo = to.startsWith('/') ? to.substring(1) : to;
-
-    const localePrefixes = ['uz/', 'ru/', 'en/', 'uz', 'ru', 'en'];
-    for (const prefix of localePrefixes) {
-      if (cleanTo === prefix) {
-        cleanTo = '';
-        break;
-      }
-      if (cleanTo.startsWith(prefix)) {
-        cleanTo = cleanTo.substring(prefix.length);
-        if (cleanTo.startsWith('/')) cleanTo = cleanTo.substring(1);
-        break;
-      }
-    }
+    // 2. Kiruvchi linkdan BARCHA eski prefikslarni tozalash (masalan /en/ru/uz/news -> news yoki /uzuznews -> news)
+    // Regex: ixtiyoriy sonda (uz|ru|en) va ixtiyoriy / belgilarini olib tashlaydi
+    const cleanTo = to.replace(/^\/?((uz|ru|en)\/?)*/, '');
 
     // 3. Tozalangan linkka joriy til prefiksini qo'shish
-    // CASE 1: Bosh sahifa
     if (cleanTo === '') {
       if (currentLocale === 'uz') return '/';
       return `/${currentLocale}`;
     }
 
-    // CASE 2: Ichki sahifalar
-    if (currentLocale === 'uz') {
-      // O'zbek tilida (Default) odatda prefiks bo'lmaydi, LEKIN...
-      // Agar loyiha arxitekturasi /uz/ ni talab qilmasa, shunday qoldiramiz.
-      // Agar oldingi kodda /uz/ ishlatilgan bo'lsa, uni qo'shamiz.
-      // Tekshiruv: Oldingi kodda `if (locale === 'uz') return '/';` va `/${locale}/${cleanTo}` ishlatilgan.
-      // Demak, uz tili uchun ham prefiks qo'shilayotgan bo'lishi mumkin?
-      // YO'Q. Oldingi kodga qaraymiz: `if (locale === 'uz') return '/';` - bu root uchun.
-      // `return /${locale}/${cleanTo};` - va bu boshqa sahifalar uchun.
-      // Demak, o'zbek tilida ham /uz/news bo'lishi kerak.
-
-      return `/uz/${cleanTo}`;
-    }
-
-    // Boshqa tillar
     return `/${currentLocale}/${cleanTo}`;
   }, [to, currentLocale]);
 

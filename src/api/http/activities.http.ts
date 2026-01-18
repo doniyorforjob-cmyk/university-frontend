@@ -1,10 +1,12 @@
 import apiClient from '../client';
 import { ContentBlock } from '@/components/shared/ContentBuilder';
 
-export const fetchActivitiesData = async (): Promise<ContentBlock[]> => {
+export const fetchActivitiesData = async (locale?: string): Promise<ContentBlock[]> => {
   try {
     const projectId = process.env.REACT_APP_PROJECT_ID;
-    const response = await apiClient.get(`/projects/${projectId}/content/activities`);
+    const response = await apiClient.get(`/projects/${projectId}/content/activities`, {
+      params: { locale }
+    });
 
     const data = Array.isArray(response.data) ? response.data : response.data.data;
 

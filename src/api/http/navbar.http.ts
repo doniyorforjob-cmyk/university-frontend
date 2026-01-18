@@ -37,7 +37,7 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
         'Appeals': '/appeals',
         'Applications, Suggestions and Complaints': '/appeals',
         'Media about us': '/media-about-us',
-        'Information Service': '#', // Parent menu usually
+        'Information Service': '/information-services',
         'Rectorate': '/organizational-structure',
         'Faculties': '/faculties'
       };
