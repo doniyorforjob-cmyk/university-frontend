@@ -53,7 +53,8 @@ export const getFaculties = async (): Promise<Faculty[]> => {
                 deanImage: getImageUrl(resolveImage(entry.fields?.dean_image)),
                 gallery: Array.isArray(entry.fields?.gallery) ? entry.fields.gallery.map((img: any) => getImageUrl(resolveImage(img))) : [],
                 directionsAndSpecializations: entry.fields?.directions || entry.fields?.specializations || entry.fields?.yo_nalishlar || entry.fields?.yo_nalish,
-                internationalCooperation: entry.fields?.['international-cooperation'] || entry.fields?.international_cooperation || entry.fields?.cooperation || entry.fields?.xalqaro_hamkorlik
+                internationalCooperation: entry.fields?.['international-cooperation'] || entry.fields?.international_cooperation || entry.fields?.cooperation || entry.fields?.xalqaro_hamkorlik,
+                uuid: entry.uuid || entry.id
             };
         });
     } catch (error) {
@@ -112,7 +113,8 @@ export const getFacultyById = async (id: string | number): Promise<Faculty | nul
             deanImage: getImageUrl(resolveImage(entry.fields?.dean_image)),
             gallery: Array.isArray(entry.fields?.gallery) ? entry.fields.gallery.map((img: any) => getImageUrl(resolveImage(img))) : [],
             directionsAndSpecializations: entry.fields?.directions || entry.fields?.specializations || entry.fields?.yo_nalishlar || entry.fields?.yo_nalish,
-            internationalCooperation: entry.fields?.['international-cooperation'] || entry.fields?.international_cooperation || entry.fields?.cooperation || entry.fields?.xalqaro_hamkorlik
+            internationalCooperation: entry.fields?.['international-cooperation'] || entry.fields?.international_cooperation || entry.fields?.cooperation || entry.fields?.xalqaro_hamkorlik,
+            uuid: entry.uuid || entry.id
         };
     } catch (error) {
         console.error("Faculty fetch error or slug:", error);
@@ -134,9 +136,34 @@ export const getFacultyById = async (id: string | number): Promise<Faculty | nul
 export const getDepartmentsByFacultyId = async (facultyId: string | number): Promise<Department[]> => {
     try {
         const allDepartments = await getDepartments();
-        return allDepartments.filter(dept =>
-            String(dept.facultyId) === String(facultyId)
-        );
+
+        // Robust filtering: 
+        // 1. Try direct match
+        let filtered = allDepartments.filter(dept => {
+            if (!dept.facultyId) return false;
+            return String(dept.facultyId).toLowerCase() === String(facultyId).toLowerCase();
+        });
+
+        // 2. If nothing found, try to find the faculty by ID/UUID to get its alternates
+        if (filtered.length === 0) {
+            const allFaculties = await getFaculties();
+            const faculty = allFaculties.find(f =>
+                String(f.id) === String(facultyId) ||
+                f.uuid === String(facultyId) ||
+                f.slug === String(facultyId) ||
+                f.name.toLowerCase().replace(/\s+/g, '-') === String(facultyId).toLowerCase() // Name fallback
+            );
+
+            if (faculty) {
+                filtered = allDepartments.filter(dept => {
+                    if (!dept.facultyId) return false;
+                    return String(dept.facultyId) === String(faculty.id) ||
+                        (faculty.uuid && String(dept.facultyId) === String(faculty.uuid));
+                });
+            }
+        }
+
+        return filtered;
     } catch (error) {
         console.error("Departments by faculty fetch error:", error);
         return [];
@@ -154,7 +181,7 @@ export const getDepartmentById = async (id: string | number): Promise<Department
 
         if (isUUID) {
             // Direct fetch by ID
-            response = await apiClient.get(`/projects/${projectId}/content/departments/${id}`, {
+            response = await apiClient.get(`/projects/${projectId}/content/academic-departments/${id}`, {
                 params: { with: 'image,gallery,faculty' }
             });
             entry = response.data?.data || response.data;
@@ -182,6 +209,15 @@ export const getDepartmentById = async (id: string | number): Promise<Department
             return img.thumbnail_url || img.url || '';
         };
 
+        const getRelationId = (field: any) => {
+            if (!field) return undefined;
+            if (Array.isArray(field)) return field[0]?.uuid || field[0]?.id || field[0];
+            if (typeof field === 'object') return field.uuid || field.id;
+            return field;
+        };
+
+        const facultyId = getRelationId(entry.fields?.faculty || entry.fields?.faculties || entry.faculty || entry.fields?.faculty_id);
+
         return {
             id: entry.uuid || entry.id,
             name: entry.fields?.name || entry.fields?.title || entry.name || entry.title,
@@ -189,7 +225,7 @@ export const getDepartmentById = async (id: string | number): Promise<Department
             email: entry.fields?.email,
             headName: entry.fields?.head_name || entry.fields?.manager || entry.fields?.dean || entry.fields?.leader,
             slug: entry.fields?.slug || entry.slug,
-            facultyId: entry.fields?.faculty?.uuid || entry.fields?.faculty?.id,
+            facultyId: facultyId,
             image: getImageUrl(resolveImage(entry.fields?.image)),
             description: entry.fields?.description || entry.fields?.content,
             content: entry.fields?.content || '',
@@ -227,7 +263,7 @@ export const getDepartmentById = async (id: string | number): Promise<Department
 export const getDepartments = async (): Promise<Department[]> => {
     try {
         const projectId = process.env.REACT_APP_PROJECT_ID;
-        const response = await apiClient.get(`/projects/${projectId}/content/departments`, {
+        const response = await apiClient.get(`/projects/${projectId}/content/academic-departments`, {
             params: { with: 'image,faculty' }
         });
 
@@ -258,7 +294,18 @@ export const getDepartments = async (): Promise<Department[]> => {
         };
 
         return data.map((entry: any) => {
-            const name = entry.fields?.name || entry.fields?.title || entry.name || entry.title;
+            const name = entry.fields?.name || entry.fields?.title || entry.name || entry.title || "Kafedra";
+
+            // Relation parsing (handling object, array, or ID)
+            const getRelationId = (field: any) => {
+                if (!field) return undefined;
+                if (Array.isArray(field)) return field[0]?.uuid || field[0]?.id || field[0];
+                if (typeof field === 'object') return field.uuid || field.id;
+                return field;
+            };
+
+            const facultyId = getRelationId(entry.fields?.faculty || entry.fields?.faculties || entry.faculty || entry.fields?.faculty_id);
+
             return {
                 id: entry.uuid || entry.id,
                 name: name,
@@ -266,7 +313,7 @@ export const getDepartments = async (): Promise<Department[]> => {
                 email: entry.fields?.email,
                 headName: entry.fields?.head_name || entry.fields?.manager || entry.fields?.dean || entry.fields?.leader,
                 slug: ensureSlug(name, entry.fields?.slug || entry.slug),
-                facultyId: entry.fields?.faculty?.uuid || entry.fields?.faculty?.id,
+                facultyId: facultyId,
                 image: getImageUrl(resolveImage(entry.fields?.image)),
                 description: entry.fields?.description || entry.fields?.content,
                 content: entry.fields?.content || '',

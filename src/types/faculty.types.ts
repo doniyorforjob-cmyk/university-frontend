@@ -21,6 +21,7 @@ export type Faculty = {
   gallery?: string[];
   directionsAndSpecializations?: string;
   internationalCooperation?: string;
+  uuid?: string;
 }
 
 export type Department = {

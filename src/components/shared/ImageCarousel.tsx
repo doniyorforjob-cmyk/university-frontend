@@ -69,7 +69,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({
                             key={index}
                             className="relative flex-[0_0_100%] min-w-0" // Slide
                         >
-                            <div className="aspect-[16/9] relative w-full overflow-hidden">
+                            <div className="relative w-full h-80 md:h-[50vh] lg:h-[65vh] min-h-[20rem] overflow-hidden">
                                 <OptimizedImage
                                     src={image.src}
                                     alt={image.alt}
@@ -92,27 +92,19 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({
                 </div>
             </div>
 
-            {/* Navigation Buttons (Only if > 1 image) */}
-            {images.length > 1 && (
-                <>
-
-
-                    {/* Dots Pagination */}
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
-                        {scrollSnaps.map((_, index) => (
-                            <button
-                                key={index}
-                                className={`h-1.5 rounded-full transition-all duration-300 ${index === selectedIndex
-                                    ? 'bg-white w-8 shadow-sm'
-                                    : 'bg-white/50 hover:bg-white/80 w-4'
-                                    }`}
-                                onClick={() => scrollTo(index)}
-                                aria-label={`Go to slide ${index + 1}`}
-                            />
-                        ))}
-                    </div>
-                </>
-            )}
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 z-20">
+                {scrollSnaps.map((_, index) => (
+                    <button
+                        key={index}
+                        className={`h-2.5 rounded-full transition-all duration-300 shadow-lg ${index === selectedIndex
+                            ? 'bg-white w-12 opacity-100'
+                            : 'bg-white/40 hover:bg-white/70 w-3.5 opacity-80'
+                            }`}
+                        onClick={() => scrollTo(index)}
+                        aria-label={`Go to slide ${index + 1}`}
+                    />
+                ))}
+            </div>
         </div>
     );
 };

@@ -31,6 +31,7 @@ import { TestimonialsBlock } from './data/TestimonialsBlock';
 import { TeamMemberBlock } from './data/TeamMemberBlock';
 import { PricingBlock } from './data/PricingBlock';
 import { FeatureBlock } from './data/FeatureBlock';
+import { LeadershipListBlock } from './data/LeadershipListBlock';
 
 import { MapBlock } from './integration/MapBlock';
 import { IframeBlock } from './integration/IframeBlock';
@@ -84,6 +85,7 @@ export const blockRenderers = {
   'team-member': TeamMemberBlock,
   pricing: PricingBlock,
   feature: FeatureBlock,
+  'leadership-list': LeadershipListBlock,
 
   // Integration blocks
   map: MapBlock,

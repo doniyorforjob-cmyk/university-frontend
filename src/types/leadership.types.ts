@@ -1,7 +1,10 @@
 export interface Leadership {
     id: string;
     name: string;
-    head: string;
+    position: string;
     phone: string;
     email: string;
+    image?: string;
+    career?: string; // Career history (HTML/RichText)
+    description?: string; // Duties/Tasks (HTML/RichText)
 }

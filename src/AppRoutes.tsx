@@ -14,6 +14,7 @@ const ContactPage = React.lazy(() => import('./pages/Contact'));
 const OrganizationalStructurePage = React.lazy(() => import('./pages/OrganizationalStructure'));
 const ActivitiesPage = React.lazy(() => import('./pages/Activities'));
 const AdmissionPage = React.lazy(() => import('./pages/Admission'));
+const AdministrationPage = React.lazy(() => import('./pages/Administration'));
 const YashilUniversitetPage = React.lazy(() => import('./pages/YashilUniversitet'));
 const EcoActiveStudentsPage = React.lazy(() => import('./pages/EcoActiveStudents'));
 const UniversityPage = React.lazy(() => import('./pages/University'));
@@ -40,6 +41,8 @@ const AppRoutes = () => {
                 <Route path="departments/:id" element={<DepartmentDetailPage />} />
                 <Route path="departments" element={<FacultiesPage />} />
                 <Route path="organizational-structure" element={<OrganizationalStructurePage />} />
+                <Route path="administration" element={<AdministrationPage />} />
+                <Route path="leadership" element={<AdministrationPage />} />
 
                 {/* "Axborot xizmati" uchun doimiy Sidebar bilan ishlaydigan sahifalar */}
                 <Route element={<MainLayout />}>

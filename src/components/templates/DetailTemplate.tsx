@@ -315,7 +315,7 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
               />
             </>
           ) : (
-            <div className="mb-8 max-h-[400px] overflow-hidden rounded-xl bg-gray-50 flex items-center justify-center">
+            <div className="mb-8 w-full overflow-hidden rounded-xl bg-gray-50 flex items-center justify-center">
               <ImageCarousel images={carouselImages} />
             </div>
           )

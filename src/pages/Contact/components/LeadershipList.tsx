@@ -98,7 +98,7 @@ const LeadershipList: React.FC = () => {
                             <p className="text-gray-900 mb-3 flex items-center text-sm">
                                 <UserIcon className="w-4 h-4 mr-2 text-gray-900/70" />
                                 <span>
-                                    {t('responsible')}: <strong>{item.head}</strong>
+                                    {t('responsible')}: <strong>{item.position}</strong>
                                 </span>
                             </p>
                             <div className="space-y-2 text-sm">

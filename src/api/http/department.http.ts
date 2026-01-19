@@ -4,7 +4,7 @@ import { Department } from '../../types/department.types';
 export const getDepartments = async (): Promise<Department[]> => {
   try {
     const projectId = process.env.REACT_APP_PROJECT_ID;
-    const response = await apiClient.get(`/projects/${projectId}/content/departments`);
+    const response = await apiClient.get(`/projects/${projectId}/content/academic-departments`);
 
     // Transform API response to Department format
     const data = Array.isArray(response.data) ? response.data : response.data.data;

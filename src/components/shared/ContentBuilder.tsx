@@ -14,7 +14,7 @@ export interface ContentBlock {
   // Interaktiv elementlar
   | 'button' | 'link' | 'form' | 'contact-form' | 'accordion' | 'tabs' | 'modal' | 'dropdown'
   // Ma'lumotli komponentlar
-  | 'card' | 'stats' | 'testimonials' | 'team-member' | 'faq' | 'timeline' | 'timeline-vertical' | 'feature' | 'pricing'
+  | 'card' | 'stats' | 'testimonials' | 'team-member' | 'leadership-list' | 'faq' | 'timeline' | 'timeline-vertical' | 'feature' | 'pricing'
   // Integratsiya elementlari
   | 'map' | 'social-embed' | 'iframe' | 'embed'
   // Texnik bloklar

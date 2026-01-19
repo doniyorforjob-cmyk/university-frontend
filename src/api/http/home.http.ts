@@ -130,7 +130,7 @@ export const homeApi = {
       // Use fallback logic for both faculties and departments - STRICT for locale
       const [facultiesRes, departmentsRes] = await Promise.all([
         fetchWithFallback('faculties', { with: 'image' }, locale, true),
-        fetchWithFallback('departments', { with: 'image' }, locale, true)
+        fetchWithFallback('academic-departments', { with: 'image' }, locale, true)
       ]);
 
       return { faculties: facultiesRes, departments: departmentsRes };

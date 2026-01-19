@@ -14,5 +14,6 @@ export { default as SocialShare } from './SocialShare';
 export { default as ImageCarousel } from './ImageCarousel';
 export { default as ContentBuilder } from './ContentBuilder';
 export { default as SectionTabs } from './SectionTabs';
+export { default as LeadershipCard } from './LeadershipCard';
 export * from './Accordion';
 
