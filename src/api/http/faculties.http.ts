@@ -2,58 +2,36 @@ import apiClient from '../client';
 import { Faculty, Department } from '../../types/faculty.types';
 import { getImageUrl } from '../../utils/apiUtils';
 
-export const getFaculties = async (): Promise<Faculty[]> => {
+const resolveImage = (img: any): string | null => {
+    if (!img) return null;
+    if (Array.isArray(img) && img.length > 0) return resolveImage(img[0]); // Handle array of images
+    if (typeof img === 'string') return img;
+    return img.url || img.thumbnail_url || img.path || null;
+};
+
+const ensureSlug = (name: string, slug?: string) => {
+    if (slug) return slug;
+    return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+};
+
+export const getFaculties = async (locale?: string): Promise<Faculty[]> => {
     try {
         const projectId = process.env.REACT_APP_PROJECT_ID;
         const response = await apiClient.get(`/projects/${projectId}/content/faculties`, {
-            params: { with: 'icon,image' }
+            params: { locale, with: 'icon,image' }
         });
-
         const data = Array.isArray(response.data) ? response.data : response.data.data;
-
-        // Helper to resolve image from varied API formats (string, object, array of strings/objects)
-        const resolveImage = (img: any): string => {
-            if (!img) return '';
-            if (Array.isArray(img)) {
-                const first = img[0];
-                if (!first) return '';
-                if (typeof first === 'string') return first;
-                return first.thumbnail_url || first.url || '';
-            }
-            if (typeof img === 'string') return img;
-            return img.thumbnail_url || img.url || '';
-        };
-
-        // Helper to ensure slug exists (same logic as in getDepartments, kept local to function scope to avoid global pollution or we could extract it)
-        const ensureSlug = (name: string, existingSlug?: string): string => {
-            if (existingSlug && existingSlug.trim().length > 0) return existingSlug;
-            return name
-                .toLowerCase()
-                .replace(/['"]/g, '')
-                .replace(/[^\w\s-]/g, '')
-                .replace(/\s+/g, '-')
-                .trim();
-        };
-
         return data.map((entry: any) => {
-            const name = entry.fields?.name || entry.fields?.title || entry.name || entry.title || "Fakultet";
+            const fields = entry.fields || {};
+            const name = fields.name || fields.title || entry.name || entry.title || "Fakultet";
             return {
                 id: entry.uuid || entry.id,
                 name: name,
-                shortDescription: entry.fields?.description || entry.description,
-                content: entry.fields?.content || '',
-                image: getImageUrl(resolveImage(entry.fields?.image || entry.image)),
-                iconImage: getImageUrl(resolveImage(entry.fields?.icon || entry.icon)),
-                color: entry.fields?.color || 'from-sky-500 to-indigo-500',
-                slug: ensureSlug(name, entry.fields?.slug || entry.slug),
-                deanName: entry.fields?.dean_name || entry.fields?.dean,
-                deanPosition: entry.fields?.dean_position,
-                deanPhone: entry.fields?.dean_phone,
-                deanEmail: entry.fields?.dean_email,
-                deanImage: getImageUrl(resolveImage(entry.fields?.dean_image)),
-                gallery: Array.isArray(entry.fields?.gallery) ? entry.fields.gallery.map((img: any) => getImageUrl(resolveImage(img))) : [],
-                directionsAndSpecializations: entry.fields?.directions || entry.fields?.specializations || entry.fields?.yo_nalishlar || entry.fields?.yo_nalish,
-                internationalCooperation: entry.fields?.['international-cooperation'] || entry.fields?.international_cooperation || entry.fields?.cooperation || entry.fields?.xalqaro_hamkorlik,
+                description: fields.content || fields.description || entry.description,
+                image: getImageUrl(resolveImage(fields.image || entry.image)),
+                iconImage: getImageUrl(resolveImage(fields.icon || entry.icon)),
+                color: fields.color || 'from-sky-500 to-indigo-500',
+                slug: ensureSlug(name, fields.slug || entry.slug),
                 uuid: entry.uuid || entry.id
             };
         });
@@ -63,269 +41,222 @@ export const getFaculties = async (): Promise<Faculty[]> => {
     }
 };
 
-export const getFacultyById = async (id: string | number): Promise<Faculty | null> => {
+export const getFacultyById = async (id: string | number, locale?: string): Promise<Faculty | null> => {
     try {
         const projectId = process.env.REACT_APP_PROJECT_ID;
-        // Check if ID is UUID
-        const isUUID = String(id).length > 20 && String(id).includes('-');
+        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(id));
+        const filterKey = isUUID ? 'filter[id][eq]' : 'filter[slug][eq]';
 
-        let entry;
-        const endpoint = `/projects/${projectId}/content/faculties/${id}`;
-
-        if (isUUID) {
-            const response = await apiClient.get(endpoint, {
-                params: { with: 'icon,image,gallery,dean_image' }
-            });
-            entry = response.data?.data || response.data;
-        } else {
-            // If not UUID, assume it's a slug and search in all faculties
-            throw new Error("Not a UUID, switching to slug search fallback");
-        }
-
-        if (!entry) return null;
-
-        // Resolve image helper (defined inside getFaculties, but let's re-use logic)
-        const resolveImage = (img: any): string => {
-            if (!img) return '';
-            if (Array.isArray(img)) {
-                const first = img[0];
-                if (!first) return '';
-                if (typeof first === 'string') return first;
-                return first.thumbnail_url || first.url || '';
+        const response = await apiClient.get(`/projects/${projectId}/content/faculties`, {
+            params: {
+                [filterKey]: id,
+                locale,
+                with: 'icon,image,gallery'
             }
-            if (typeof img === 'string') return img;
-            return img.thumbnail_url || img.url || '';
-        };
-
-        return {
-            id: entry.uuid || entry.id,
-            name: entry.fields?.name || entry.fields?.title || entry.name || entry.title || "Fakultet",
-            description: entry.fields?.content || entry.fields?.description || entry.description,
-            content: entry.fields?.content || '',
-            image: getImageUrl(resolveImage(entry.fields?.image || entry.image)),
-            iconImage: getImageUrl(resolveImage(entry.fields?.icon || entry.icon)),
-            color: entry.fields?.color || 'from-sky-500 to-indigo-500',
-            slug: entry.fields?.slug || entry.slug,
-            deanName: entry.fields?.dean_name || entry.fields?.dean,
-            deanPosition: entry.fields?.dean_position || "Fakultet dekani",
-            deanPhone: entry.fields?.dean_phone,
-            deanEmail: entry.fields?.dean_email,
-            deanImage: getImageUrl(resolveImage(entry.fields?.dean_image)),
-            gallery: Array.isArray(entry.fields?.gallery) ? entry.fields.gallery.map((img: any) => getImageUrl(resolveImage(img))) : [],
-            directionsAndSpecializations: entry.fields?.directions || entry.fields?.specializations || entry.fields?.yo_nalishlar || entry.fields?.yo_nalish,
-            internationalCooperation: entry.fields?.['international-cooperation'] || entry.fields?.international_cooperation || entry.fields?.cooperation || entry.fields?.xalqaro_hamkorlik,
-            uuid: entry.uuid || entry.id
-        };
-    } catch (error) {
-        console.error("Faculty fetch error or slug:", error);
-        // Fallback to searching in all faculties if single fetch fails
-        try {
-            const allFaculties = await getFaculties();
-            return allFaculties.find(f =>
-                String(f.id) === String(id) ||
-                f.slug === String(id) ||
-                // Last resort: name match
-                f.name.toLowerCase().replace(/\s+/g, '-') === String(id).toLowerCase()
-            ) || null;
-        } catch (e) {
-            return null;
-        }
-    }
-};
-
-export const getDepartmentsByFacultyId = async (facultyId: string | number): Promise<Department[]> => {
-    try {
-        const allDepartments = await getDepartments();
-
-        // Robust filtering: 
-        // 1. Try direct match
-        let filtered = allDepartments.filter(dept => {
-            if (!dept.facultyId) return false;
-            return String(dept.facultyId).toLowerCase() === String(facultyId).toLowerCase();
-        });
-
-        // 2. If nothing found, try to find the faculty by ID/UUID to get its alternates
-        if (filtered.length === 0) {
-            const allFaculties = await getFaculties();
-            const faculty = allFaculties.find(f =>
-                String(f.id) === String(facultyId) ||
-                f.uuid === String(facultyId) ||
-                f.slug === String(facultyId) ||
-                f.name.toLowerCase().replace(/\s+/g, '-') === String(facultyId).toLowerCase() // Name fallback
-            );
-
-            if (faculty) {
-                filtered = allDepartments.filter(dept => {
-                    if (!dept.facultyId) return false;
-                    return String(dept.facultyId) === String(faculty.id) ||
-                        (faculty.uuid && String(dept.facultyId) === String(faculty.uuid));
-                });
-            }
-        }
-
-        return filtered;
-    } catch (error) {
-        console.error("Departments by faculty fetch error:", error);
-        return [];
-    }
-};
-
-export const getDepartmentById = async (id: string | number): Promise<Department | null> => {
-    try {
-        const projectId = process.env.REACT_APP_PROJECT_ID;
-        // Check if ID is UUID
-        const isUUID = String(id).length > 20 && String(id).includes('-');
-
-        let entry;
-        let response;
-
-        if (isUUID) {
-            // Direct fetch by ID
-            response = await apiClient.get(`/projects/${projectId}/content/academic-departments/${id}`, {
-                params: { with: 'image,gallery,faculty' }
-            });
-            entry = response.data?.data || response.data;
-        } else {
-            // If not UUID, assume it's a slug and search in all departments
-            // OR verify if API supports 'slug' filter (usually simpler to fetch all and find)
-            // Let's try to fetch all first as a robust fallback for now
-            throw new Error("Not a UUID, switching to slug search fallback");
-        }
-
-        console.log('getDepartmentById API Response:', { id, entry, fullResponse: response?.data });
-        if (!entry) return null;
-
-
-
-        const resolveImage = (img: any): string => {
-            if (!img) return '';
-            if (Array.isArray(img)) {
-                const first = img[0];
-                if (!first) return '';
-                if (typeof first === 'string') return first;
-                return first.thumbnail_url || first.url || '';
-            }
-            if (typeof img === 'string') return img;
-            return img.thumbnail_url || img.url || '';
-        };
-
-        const getRelationId = (field: any) => {
-            if (!field) return undefined;
-            if (Array.isArray(field)) return field[0]?.uuid || field[0]?.id || field[0];
-            if (typeof field === 'object') return field.uuid || field.id;
-            return field;
-        };
-
-        const facultyId = getRelationId(entry.fields?.faculty || entry.fields?.faculties || entry.faculty || entry.fields?.faculty_id);
-
-        return {
-            id: entry.uuid || entry.id,
-            name: entry.fields?.name || entry.fields?.title || entry.name || entry.title,
-            phone: entry.fields?.phone || entry.fields?.phone_number,
-            email: entry.fields?.email,
-            headName: entry.fields?.head_name || entry.fields?.manager || entry.fields?.dean || entry.fields?.leader,
-            slug: entry.fields?.slug || entry.slug,
-            facultyId: facultyId,
-            image: getImageUrl(resolveImage(entry.fields?.image)),
-            description: entry.fields?.description || entry.fields?.content,
-            content: entry.fields?.content || '',
-            gallery: Array.isArray(entry.fields?.gallery) ? entry.fields.gallery.map((img: any) => getImageUrl(resolveImage(img))) : [],
-            directions: entry.fields?.directions,
-            history: entry.fields?.history,
-            staff: entry.fields?.staff || entry.fields?.composition || entry.fields?.tarkib || entry.fields?.kafedra_tarkibi,
-            scientificActivity: entry.fields?.['scientific-activity'] || entry.fields?.scientific_activity || entry.fields?.scientific || entry.fields?.ilmiy_faoliyat,
-            internationalCooperation: entry.fields?.['international-cooperation'] || entry.fields?.international_cooperation || entry.fields?.cooperation || entry.fields?.xalqaro_hamkorlik
-        };
-    } catch (error) {
-        console.error("Department fetch error or slug search:", error);
-        // Fallback: try to find in all departments by ID or Slug
-        try {
-            console.log('Trying fallback: fetching all departments to find ID/Slug:', id);
-            const allDepartments = await getDepartments();
-
-            // Try to find by ID (exact match) OR Slug (exact match)
-            const found = allDepartments.find(d =>
-                String(d.id) === String(id) ||
-                d.slug === String(id) ||
-                // Last resort: simple slugify match of name
-                d.name.toLowerCase().replace(/\s+/g, '-') === String(id).toLowerCase()
-            );
-
-            console.log('Fallback result:', found);
-            return found || null;
-        } catch (fallbackError) {
-            console.error("Fallback also failed:", fallbackError);
-            return null;
-        }
-    }
-};
-
-export const getDepartments = async (): Promise<Department[]> => {
-    try {
-        const projectId = process.env.REACT_APP_PROJECT_ID;
-        const response = await apiClient.get(`/projects/${projectId}/content/academic-departments`, {
-            params: { with: 'image,faculty' }
         });
 
         const data = Array.isArray(response.data) ? response.data : response.data.data;
+        let entry = (data || []).find((item: any) => {
+            const itemSlug = item.fields?.slug || item.slug;
+            const itemId = item.uuid || item.id;
+            return String(itemSlug) === String(id) || String(itemId) === String(id);
+        });
 
-        const resolveImage = (img: any): string => {
-            if (!img) return '';
-            if (Array.isArray(img)) {
-                const first = img[0];
-                if (!first) return '';
-                if (typeof first === 'string') return first;
-                return first.thumbnail_url || first.url || '';
+        if (!entry) {
+            const all = await getFaculties(locale);
+            const found = all.find(f => f.slug === id || String(f.id) === String(id) || String(f.uuid) === String(id));
+            if (!found) return null;
+
+            const retryRes = await apiClient.get(`/projects/${projectId}/content/faculties`, {
+                params: {
+                    'filter[id][eq]': found.uuid || found.id,
+                    locale,
+                    with: 'icon,image,gallery'
+                }
+            });
+            const retryData = Array.isArray(retryRes.data) ? retryRes.data : retryRes.data.data;
+            entry = (retryData || []).find((item: any) => (item.uuid || item.id) === (found.uuid || found.id));
+        }
+
+        if (!entry) return null;
+
+        const fields = entry.fields || {};
+        const facultyId = entry.uuid || entry.id;
+
+        let deanInfo = undefined;
+        try {
+            const deanRes = await apiClient.get(`/projects/${projectId}/content/deans-of-faculties`, {
+                params: { locale, with: 'image,positions,faculty' }
+            });
+            const deansData = Array.isArray(deanRes.data) ? deanRes.data : deanRes.data.data;
+            const deanEntry = deansData.find((d: any) => {
+                const fId = d.fields?.faculty?.uuid || d.fields?.faculty?.id || d.fields?.faculty;
+                return String(fId) === String(facultyId);
+            });
+
+            if (deanEntry) {
+                const df = deanEntry.fields || {};
+                const rawPos = df.positions;
+                const posName = rawPos?.fields?.name || rawPos?.name || (Array.isArray(rawPos) ? rawPos[0]?.fields?.name : null) || df.position || "Fakultet dekani";
+
+                deanInfo = {
+                    id: deanEntry.uuid || deanEntry.id,
+                    name: (df.name || deanEntry.name || '').trim(),
+                    position: posName,
+                    phone: df.phone || deanEntry.phone,
+                    email: df.email || deanEntry.email,
+                    image: getImageUrl(resolveImage(df.image || deanEntry.image)),
+                    career: df['work-experience'] || df.work_experience || df.career || df.ish_tajribasi || df.milestones || df.experience,
+                    description: df.responsibilities || df.description || df.vazifalari || df.bio || df.content,
+                    isMain: false
+                };
             }
-            if (typeof img === 'string') return img;
-            return img.thumbnail_url || img.url || '';
-        };
+        } catch (deanErr) {
+            console.warn("Error fetching dean for faculty:", deanErr);
+        }
 
-        // Helper to ensure slug exists
-        const ensureSlug = (name: string, existingSlug?: string): string => {
-            if (existingSlug && existingSlug.trim().length > 0) return existingSlug;
-            // Generate simple slug from name: "My Dept" -> "my-dept"
-            return name
-                .toLowerCase()
-                .replace(/['"]/g, '') // remove quotes
-                .replace(/[^\w\s-]/g, '') // remove special chars except space and dash
-                .replace(/\s+/g, '-') // replace spaces with dashes
-                .trim();
-        };
+        const name = fields.name || fields.title || entry.name || entry.title || "Fakultet";
 
+        return {
+            id: facultyId,
+            name: name,
+            description: fields.content || fields.description || entry.description,
+            content: fields.content || '',
+            image: getImageUrl(resolveImage(fields.image || entry.image)),
+            iconImage: getImageUrl(resolveImage(fields.icon || entry.icon)),
+            color: fields.color || 'from-sky-500 to-indigo-500',
+            slug: ensureSlug(name, fields.slug || entry.slug),
+            gallery: Array.isArray(fields.gallery) ? fields.gallery.map((img: any) => getImageUrl(resolveImage(img))) : [],
+            directionsAndSpecializations: fields.directions || fields.specializations || fields.yo_nalishlar || fields['directions-and-specializations'],
+            internationalCooperation: fields['international-cooperation'] || fields.international_cooperation || fields.cooperation || fields.xalqaro_hamkorlik,
+            uuid: facultyId,
+            deanInfo
+        };
+    } catch (error) {
+        console.error("Faculty fetch error:", error);
+        return null;
+    }
+};
+
+export const getDepartmentsByFacultyId = async (facultyId: string | number, locale?: string): Promise<Department[]> => {
+    try {
+        const projectId = process.env.REACT_APP_PROJECT_ID;
+        const response = await apiClient.get(`/projects/${projectId}/content/academic-departments`, {
+            params: { locale, with: 'image,faculty' }
+        });
+        const data = Array.isArray(response.data) ? response.data : response.data.data;
+        return data
+            .filter((item: any) => {
+                const fId = item.fields?.faculty?.uuid || item.fields?.faculty?.id || item.fields?.faculty;
+                return String(fId) === String(facultyId);
+            })
+            .map((entry: any) => {
+                const fields = entry.fields || {};
+                const name = fields.name || fields.title || entry.name || entry.title || "Kafedra";
+                return {
+                    id: entry.uuid || entry.id,
+                    name: name,
+                    slug: ensureSlug(name, fields.slug || entry.slug),
+                    facultyId: facultyId,
+                    image: getImageUrl(resolveImage(fields.image)),
+                    phone: fields.phone || fields.phone_number,
+                    email: fields.email,
+                    headName: fields.head_name || fields.manager || fields.dean || fields.leader
+                };
+            });
+    } catch (error) {
+        console.error("Error fetching departments by faculty:", error);
+        return [];
+    }
+};
+
+export const getDepartments = async (locale?: string): Promise<Department[]> => {
+    try {
+        const projectId = process.env.REACT_APP_PROJECT_ID;
+        const response = await apiClient.get(`/projects/${projectId}/content/academic-departments`, {
+            params: { locale, with: 'image,faculty' }
+        });
+        const data = Array.isArray(response.data) ? response.data : response.data.data;
         return data.map((entry: any) => {
-            const name = entry.fields?.name || entry.fields?.title || entry.name || entry.title || "Kafedra";
-
-            // Relation parsing (handling object, array, or ID)
-            const getRelationId = (field: any) => {
-                if (!field) return undefined;
-                if (Array.isArray(field)) return field[0]?.uuid || field[0]?.id || field[0];
-                if (typeof field === 'object') return field.uuid || field.id;
-                return field;
-            };
-
-            const facultyId = getRelationId(entry.fields?.faculty || entry.fields?.faculties || entry.faculty || entry.fields?.faculty_id);
-
+            const fields = entry.fields || {};
+            const name = fields.name || fields.title || entry.name || entry.title || "Kafedra";
             return {
                 id: entry.uuid || entry.id,
                 name: name,
-                phone: entry.fields?.phone || entry.fields?.phone_number,
-                email: entry.fields?.email,
-                headName: entry.fields?.head_name || entry.fields?.manager || entry.fields?.dean || entry.fields?.leader,
-                slug: ensureSlug(name, entry.fields?.slug || entry.slug),
-                facultyId: facultyId,
-                image: getImageUrl(resolveImage(entry.fields?.image)),
-                description: entry.fields?.description || entry.fields?.content,
-                content: entry.fields?.content || '',
-                staff: entry.fields?.staff || entry.fields?.composition || entry.fields?.tarkib || entry.fields?.kafedra_tarkibi,
-                scientificActivity: entry.fields?.['scientific-activity'] || entry.fields?.scientific_activity || entry.fields?.scientific || entry.fields?.ilmiy_faoliyat,
-                internationalCooperation: entry.fields?.['international-cooperation'] || entry.fields?.international_cooperation || entry.fields?.cooperation || entry.fields?.xalqaro_hamkorlik,
-                history: entry.fields?.history || entry.fields?.tarix,
-                directions: entry.fields?.directions || entry.fields?.yo_nalishlar
+                slug: ensureSlug(name, fields.slug || entry.slug),
+                facultyId: fields.faculty?.uuid || fields.faculty?.id || fields.faculty,
+                image: getImageUrl(resolveImage(fields.image))
             };
         });
     } catch (error) {
-        console.error("Departments fetch error:", error);
+        console.error("Error fetching departments:", error);
         return [];
+    }
+};
+
+export const getDepartmentById = async (id: string | number, locale?: string): Promise<Department | null> => {
+    try {
+        const projectId = process.env.REACT_APP_PROJECT_ID;
+        const isTrueUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(id));
+        const filterKey = isTrueUUID ? 'filter[id][eq]' : 'filter[slug][eq]';
+
+        const response = await apiClient.get(`/projects/${projectId}/content/academic-departments`, {
+            params: {
+                [filterKey]: id,
+                locale,
+                with: 'image,gallery,faculty'
+            }
+        });
+
+        const data = Array.isArray(response.data) ? response.data : response.data.data;
+        let entry = (data || []).find((item: any) => {
+            const itemSlug = item.fields?.slug || item.slug;
+            const itemId = item.uuid || item.id;
+            return String(itemSlug) === String(id) || String(itemId) === String(id);
+        });
+
+        if (!entry) {
+            const all = await getDepartments(locale);
+            const found = all.find(d => d.slug === id || String(d.id) === String(id));
+            if (!found) return null;
+
+            const retryRes = await apiClient.get(`/projects/${projectId}/content/academic-departments`, {
+                params: {
+                    'filter[id][eq]': found.id,
+                    locale,
+                    with: 'image,gallery,faculty'
+                }
+            });
+            const retryData = Array.isArray(retryRes.data) ? retryRes.data : retryRes.data.data;
+            entry = (retryData || []).find((item: any) => (item.uuid || item.id) === found.id);
+        }
+
+        if (!entry) return null;
+
+        const fields = entry.fields || {};
+        const facultyId = fields.faculty?.uuid || fields.faculty?.id || fields.faculty;
+        const name = fields.name || fields.title || entry.name || entry.title || "Kafedra";
+
+        return {
+            id: entry.uuid || entry.id,
+            name: name,
+            phone: fields.phone || fields.phone_number,
+            email: fields.email,
+            headName: fields.head_name || fields.manager || fields.dean || fields.leader,
+            slug: ensureSlug(name, fields.slug || entry.slug),
+            facultyId: facultyId,
+            image: getImageUrl(resolveImage(fields.image)),
+            description: fields.description || fields.content,
+            content: fields.content || '',
+            gallery: Array.isArray(fields.gallery) ? fields.gallery.map((img: any) => getImageUrl(resolveImage(img))) : [],
+            directions: fields.directions || fields.yo_nalishlar || fields['directions-and-specializations'] || fields.yonalishlar,
+            history: fields.history || fields.tarix || fields.about || fields.history_uz || fields.history_ru || fields.history_en,
+            staff: fields.staff || fields.composition || fields.kafedra_tarkibi || fields.members || fields.teachers || fields.employee,
+            scientificActivity: fields['scientific-activity'] || fields.scientific_activity || fields.ilmiy_faoliyat || fields.science || fields.research,
+            internationalCooperation: fields['international-cooperation'] || fields.international_cooperation || fields.xalqaro_hamkorlik || fields.cooperation
+        };
+    } catch (error) {
+        console.error("Department fetch error:", error);
+        return null;
     }
 };

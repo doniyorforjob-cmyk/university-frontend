@@ -6,9 +6,8 @@ import { Faculty, Department } from '@/types/faculty.types';
 import Container from '@/components/shared/Container';
 import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
 import EmptyState from '@/components/shared/EmptyState';
-import { DeanInfoCard } from './components/DeanInfoCard';
 import { DepartmentGridCard } from '../Faculties/components/DepartmentGridCard';
-import { SectionTabs, OptimizedImage, ContentBuilder, Accordion } from '@/components/shared';
+import { SectionTabs, OptimizedImage, ContentBuilder, Accordion, LeadershipCard } from '@/components/shared';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 import {
     BuildingLibraryIcon,
@@ -136,15 +135,14 @@ const FacultyDetailPage: React.FC = () => {
                                 </div>
 
                                 {/* Dean Info as a Full Width Section within History */}
-                                <div className="pt-8 border-t border-gray-100">
-                                    <DeanInfoCard
-                                        name={faculty.deanName}
-                                        position={faculty.deanPosition}
-                                        phone={faculty.deanPhone}
-                                        email={faculty.deanEmail}
-                                        image={faculty.deanImage}
-                                    />
-                                </div>
+                                {faculty.deanInfo && (
+                                    <div className="pt-8 border-t border-gray-100">
+                                        <LeadershipCard
+                                            member={faculty.deanInfo}
+                                            isMain={false}
+                                        />
+                                    </div>
+                                )}
                             </div>
                         )}
 

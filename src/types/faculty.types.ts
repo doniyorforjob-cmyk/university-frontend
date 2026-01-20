@@ -22,6 +22,7 @@ export type Faculty = {
   directionsAndSpecializations?: string;
   internationalCooperation?: string;
   uuid?: string;
+  deanInfo?: import('./leadership.types').Leadership;
 }
 
 export type Department = {

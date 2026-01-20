@@ -25,7 +25,7 @@ const LeadershipCard: React.FC<LeadershipCardProps> = ({ member, isMain = false 
             viewport={{ once: true }}
             className="bg-white rounded-[24px] shadow-[0_4px_30px_rgba(0,0,0,0.03)] border border-gray-100 overflow-hidden mb-6"
         >
-            <div className={`flex flex-col lg:flex-row relative lg:h-72 overflow-hidden ${!isMain ? 'lg:flex-row-reverse' : ''}`}>
+            <div className={`flex flex-col lg:flex-row relative ${isMain ? 'lg:h-96' : 'lg:h-72'} overflow-hidden ${!isMain ? 'lg:flex-row-reverse' : ''}`}>
 
                 {/* Left/Right: Info Section */}
                 <div className={`flex-1 px-4 lg:px-10 z-10 flex flex-col justify-start pt-4 lg:pt-6 h-full ${!isMain ? 'lg:pl-6' : ''}`}>
@@ -110,7 +110,7 @@ const LeadershipCard: React.FC<LeadershipCardProps> = ({ member, isMain = false 
                 )}
 
                 {/* Right/Left: Photo Section */}
-                <div className={`relative ${isMain ? 'lg:w-[35%] lg:-ml-8' : 'lg:w-[30%]'} h-64 lg:h-72 overflow-hidden bg-gray-50 flex items-start justify-center z-0 pt-0 mt-0`}>
+                <div className={`relative ${isMain ? 'lg:w-[35%] lg:-ml-8' : 'lg:w-[30%]'} h-64 ${isMain ? 'lg:h-96' : 'lg:h-72'} overflow-hidden bg-gray-50 flex items-start justify-center z-0 pt-0 mt-0`}>
                     {/* Background Detail for Rector */}
                     {isMain && (
                         <>
