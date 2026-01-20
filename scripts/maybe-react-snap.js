@@ -1,10 +1,12 @@
-const isVercel = !!process.env.VERCEL;
-const skipSnap = process.env.SKIP_REACT_SNAP === "true";
-
-if (isVercel || skipSnap) {
-    console.log("🚫 react-snap skipped");
-    process.exit(0);
+// scripts/maybe-react-snap.js
+if (process.env.CI === "true" || process.env.VERCEL === "1") {
+    console.log("🚫 react-snap skipped in CI/Vercel");
+    return;
 }
 
-console.log("⚡ Running react-snap...");
-require("react-snap").run();
+try {
+    console.log("⚡ Running react-snap...");
+    require("react-snap").run();
+} catch (e) {
+    console.warn("⚠️ react-snap failed, skipping", e.message);
+}
