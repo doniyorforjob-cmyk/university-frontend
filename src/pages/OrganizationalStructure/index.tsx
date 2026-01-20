@@ -10,7 +10,7 @@ import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 const OrganizationalStructurePage: React.FC = () => {
   const { t } = useTranslation(['common', 'pages']);
   const { setBreadcrumbsData, setSidebarType } = useGlobalLayout();
-  const { data, loading, error, refetch } = useStandardPage(
+  const { data, loading, error } = useStandardPage(
     'organizational-structure',
     fetchOrganizationalStructureData
   );

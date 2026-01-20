@@ -13,9 +13,6 @@ import { registerServiceWorker } from './utils/serviceWorker';
 import { observeWebVitals, reportPerformance } from './utils/performance';
 import { setupResourceHints } from './utils/preload';
 import { disableConsoleInProduction } from './utils/logger';
-import { fetchNavItems } from './api/http/navbar.http';
-import { homeApi } from './api/http/home.http';
-import { cacheManager } from './utils/cacheManager';
 
 // Disable console logs in production
 disableConsoleInProduction();
@@ -32,7 +29,6 @@ setupResourceHints();
 
 // Prefetch critical data
 const prefetchData = async () => {
-  const locale = localStorage.getItem('locale') || 'en';
   const { prefetchService } = await import('./services/prefetchService');
 
   // Parallel prefetch using the new service

@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useStandardSection } from './hooks';
 import { transformHeroData } from './transformers/heroTransformer';
 import { homeApi } from '../../services/homeService';
 import { SectionSkeleton } from './components/SectionSkeleton';
 import HeroActionCards from './components/HeroActionCards';
-import { useLocale } from '@/contexts/LocaleContext';
 import { CarouselItem } from '@/types/home.types';
 
 export default function HeroSection({ data: propData }: { data?: any } = {}) {

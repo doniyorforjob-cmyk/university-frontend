@@ -1,4 +1,3 @@
-import apiClient from '../client';
 import { Announcement, AnnouncementDetail } from '../../types/announcement.types';
 
 const mockAnnouncements: Announcement[] = [

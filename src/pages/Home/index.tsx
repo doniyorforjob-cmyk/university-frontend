@@ -1,15 +1,12 @@
 import React from 'react';
 import HomeContentBuilder from './HomeContentBuilder';
 import { useHomeSections } from './hooks';
-import { generateDefaultSections, homeSectionTemplates } from './HomeSectionTemplate';
-import { SectionSkeleton } from './components/SectionSkeleton';
-import ServerError from '@/pages/Errors/ServerError';
+import { generateDefaultSections } from './HomeSectionTemplate';
 
 const HomePage = () => {
     // Home sections management hook
     const {
-        sections,
-        refetch
+        sections
     } = useHomeSections();
 
     // Pass sections to builder. Builder handles individual skeletons via DynamicSection.

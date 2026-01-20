@@ -1,5 +1,4 @@
 import { useCachedApi } from './useCachedApi';
-import { useLocale } from '../contexts/LocaleContext';
 
 /**
  * Standard page hook - barcha sahifalar uchun umumiy konfiguratsiya
@@ -13,7 +12,6 @@ export const useStandardPage = <T = any>(
     enabled?: boolean;
   }
 ) => {
-  const { locale } = useLocale();
   const {
     ttlMinutes = 0.5,
     enabled = true

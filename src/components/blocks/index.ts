@@ -36,10 +36,12 @@ import { LeadershipListBlock } from './data/LeadershipListBlock';
 import { MapBlock } from './integration/MapBlock';
 import { IframeBlock } from './integration/IframeBlock';
 
-import { ActivitiesStatsGridBlock } from './activities';
-import { ActivitiesCategoriesBlock } from './activities';
-import { ActivitiesTimelineBlock } from './activities';
-import { ActivitiesFuturePlansBlock } from './activities';
+import {
+  ActivitiesStatsGridBlock,
+  ActivitiesCategoriesBlock,
+  ActivitiesTimelineBlock,
+  ActivitiesFuturePlansBlock
+} from './activities';
 
 import { ListBlock } from './special/ListBlock';
 import { TableBlock } from './special/TableBlock';

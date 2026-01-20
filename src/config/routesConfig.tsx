@@ -23,7 +23,6 @@ const EcoActiveStudentsPage = React.lazy(() => import('../pages/EcoActiveStudent
 
 // Route wrappers
 const NewsDetailRoute = () => <GenericDetailPage type="news" />;
-const AnnouncementsDetailRoute = () => <GenericDetailPage type="announcement" />;
 
 // Route configuration with lazy loading
 export const routeConfig: any[] = [

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Container from '../../components/shared/Container';
 import { homeApi, HomeFacultiesData } from '../../services/homeService';
@@ -23,7 +23,7 @@ const FacultiesSection: React.FC = () => {
   );
   const [activeFacultyId, setActiveFacultyId] = useState<string | number | null>(null);
 
-  const faculties = data?.faculties || [];
+  const faculties = useMemo(() => data?.faculties || [], [data?.faculties]);
 
   useEffect(() => {
     if (faculties.length > 0) {

@@ -6,10 +6,9 @@ import { homeApi, HomeMediaData } from '../../services/homeService';
 import { MediaGalleryHeader } from './components/SectionHeader';
 import MediaCard from './components/MediaCard';
 import { useSettingsStore } from '../../store/settingsStore';
-import { CalendarDaysIcon } from '@heroicons/react/24/outline';
+import { CalendarDaysIcon, PhotoIcon, FilmIcon } from '@heroicons/react/24/outline';
 import { formatShortDate } from '../../utils/format';
 import EmptyState from '../../components/shared/EmptyState';
-import { PhotoIcon, FilmIcon } from '@heroicons/react/24/outline';
 import { transformVideoGalleryData } from './transformers/videoGalleryTransformer';
 import { useLocale } from '../../contexts/LocaleContext';
 

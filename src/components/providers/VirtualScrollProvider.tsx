@@ -1,78 +1,42 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { createContext } from 'react';
+
+export const VirtualScrollContext = createContext<any>(null);
 
 interface VirtualScrollProviderProps {
+  children?: React.ReactNode;
   items: any[];
   itemHeight: number;
-  containerHeight?: number;
+  containerHeight: number;
   renderItem: (item: any, index: number) => React.ReactNode;
-  className?: string;
-  overscanCount?: number;
 }
 
-const VirtualScrollProvider: React.FC<VirtualScrollProviderProps> = ({
+export const VirtualScrollProvider: React.FC<VirtualScrollProviderProps> = ({
+  children,
   items,
   itemHeight,
-  containerHeight = 400,
-  renderItem,
-  className = '',
-  overscanCount = 5
+  containerHeight,
+  renderItem
 }) => {
-  const [scrollTop, setScrollTop] = useState(0);
-
-  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
-    setScrollTop(e.currentTarget.scrollTop);
-  }, []);
-
-  const visibleRange = useMemo(() => {
-    const start = Math.floor(scrollTop / itemHeight);
-    const visibleCount = Math.ceil(containerHeight / itemHeight);
-    const end = Math.min(start + visibleCount + overscanCount, items.length);
-
-    return {
-      start: Math.max(0, start - overscanCount),
-      end
-    };
-  }, [scrollTop, itemHeight, containerHeight, overscanCount, items.length]);
-
-  const visibleItems = useMemo(() => {
-    return items.slice(visibleRange.start, visibleRange.end).map((item, index) => {
-      const actualIndex = visibleRange.start + index;
-      return {
-        item,
-        index: actualIndex,
-        style: {
-          position: 'absolute' as const,
-          top: actualIndex * itemHeight,
-          height: itemHeight,
-          width: '100%'
-        }
-      };
-    });
-  }, [items, visibleRange, itemHeight]);
-
-  const totalHeight = items.length * itemHeight;
-
   return (
-    <div
-      className={`virtual-scroll-container ${className}`}
-      style={{
-        height: containerHeight,
-        overflow: 'auto',
-        position: 'relative'
-      }}
-      onScroll={handleScroll}
-    >
-      <div style={{ height: totalHeight, position: 'relative' }}>
-        {visibleItems.map(({ item, index, style }) => (
-          <div key={index} style={style}>
-            {renderItem(item, index)}
-          </div>
-        ))}
+    <VirtualScrollContext.Provider value={{ items, itemHeight, containerHeight }}>
+      <div style={{ height: containerHeight, overflowY: 'auto' }}>
+        <div style={{ position: 'relative', height: items.length * itemHeight }}>
+          {items.map((item, index) => (
+            <div
+              key={index}
+              style={{
+                position: 'absolute',
+                top: index * itemHeight,
+                height: itemHeight,
+                width: '100%'
+              }}
+            >
+              {renderItem(item, index)}
+            </div>
+          ))}
+        </div>
+        {children}
       </div>
-    </div>
+    </VirtualScrollContext.Provider>
   );
 };
-
-VirtualScrollProvider.displayName = 'VirtualScrollProvider';
-
-export { VirtualScrollProvider };

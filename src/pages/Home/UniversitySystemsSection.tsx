@@ -6,18 +6,14 @@ import { homeApi } from '../../services/homeService';
 import SectionHeader from './components/SectionHeader';
 import { SystemsContainer } from '../../components/shared/cards';
 import { useTranslation } from 'react-i18next';
-import { useLocale } from '../../contexts/LocaleContext';
-import { useGlobalCache } from '../../components/providers/CachedApiProvider';
 import EmptyState from '../../components/shared/EmptyState';
 import { GlobeAltIcon } from '@heroicons/react/24/outline';
 import { SectionSkeleton } from './components/SectionSkeleton';
 
 const UniversitySystemsSection: React.FC = () => {
   const { t } = useTranslation(['common', 'pages']);
-  const { locale } = useLocale(); // Assuming useLocale is available here (imported below)
-  const { cacheManager } = useGlobalCache();
 
-  const { data, loading } = useStandardSection<TransformedUniversitySystemsData>(
+  const { data } = useStandardSection<TransformedUniversitySystemsData>(
     'university-systems',
     homeApi.getUniversitySystemsData as any,
     { transformData: transformUniversitySystemsData, keepPreviousData: true }

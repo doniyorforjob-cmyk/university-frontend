@@ -1,15 +1,11 @@
 import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import Container from '@/components/shared/Container';
-import Breadcrumbs from '@/components/shared/Breadcrumbs';
 import ContentBuilder, { ContentBlock } from '@/components/shared/ContentBuilder'; // Ensure ContentBuilder is imported
 import EmptyState from '@/components/shared/EmptyState';
 
 import { FaPrint } from 'react-icons/fa';
 import SocialShare from './SocialShare';
-
-
 
 // Dynamic content component for page footer
 const PageFooter: React.FC<{ title: string }> = ({ title }) => {
@@ -36,26 +32,6 @@ const PageFooter: React.FC<{ title: string }> = ({ title }) => {
   );
 };
 
-/**
- * Breadcrumb navigatsiya elementi
- */
-interface BreadcrumbItem {
-  label: string;
-  href?: string;
-}
-
-/**
- * PageTemplate Props interfeysi
- * 
- * @interface PageTemplateProps
- * @property {string} title - Sahifa sarlavhasi
- * @property {BreadcrumbItem[]} breadcrumbs - Breadcrumb yo'li
- * @property {React.ReactNode} [children] - Sahifa kontenti (children yoki contentBlocks)
- * @property {ContentBlock[]} [contentBlocks] - ContentBuilder bloklari (children o'rniga)
- * @property {string} [heroImage] - Hero rasm URL
- * @property {string} [heroGradient] - Hero gradient (rasm bo'lmasa)
- * @property {string} [className] - Qo'shimcha CSS klasslar
- */
 interface PageTemplateProps {
   title: string;
   children?: React.ReactNode;
@@ -73,21 +49,10 @@ interface PageTemplateProps {
   emptyResourceKey?: 'photos' | 'videos' | 'news' | 'announcements' | 'services' | 'departments' | 'info' | 'systems' | 'faculties';
 }
 
-/**
- * PageTemplate - Barcha sahifalar uchun umumiy shablon
- * 
- * 
- * @component
- * @param {PageTemplateProps} props - Shablon props
- * @returns {React.ReactElement} Formatted sahifa
- */
 const PageTemplate: React.FC<PageTemplateProps> = memo(({
   title,
   children,
   contentBlocks,
-  heroImage,
-  heroGradient,
-  headerIcon,
   className = '',
   isEmpty = false,
   emptyMessage,

@@ -1,64 +1,41 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { Button } from '@/components/ui';
-import ServerError from '@/pages/Errors/ServerError';
+import React from 'react';
 
-interface Props {
-  children: ReactNode;
-  fallback?: ReactNode;
-  onError?: (error: Error, errorInfo: ErrorInfo) => void;
+interface ErrorBoundaryProps {
+  children: React.ReactNode;
 }
 
-interface State {
+interface ErrorBoundaryState {
   hasError: boolean;
-  error: Error | null;
 }
 
-/**
- * Error Boundary Component
- * React komponentlarida xatoliklarni ushlash va ko'rsatish
- */
-class ErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
-    this.state = {
-      hasError: false,
-      error: null,
-    };
+    this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(error: Error): State {
-    return {
-      hasError: true,
-      error,
-    };
+  static getDerivedStateFromError() {
+    return { hasError: true };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Log xatolikni console ga
-    console.error('Error caught by ErrorBoundary:', error, errorInfo);
-
-    // Custom error handler
-    if (this.props.onError) {
-      this.props.onError(error, errorInfo);
-    }
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Error Boundary caught an error:', error, errorInfo);
   }
-
-  handleReset = () => {
-    this.setState({
-      hasError: false,
-      error: null,
-    });
-  };
 
   render() {
     if (this.state.hasError) {
-      // Custom fallback UI
-      if (this.props.fallback) {
-        return this.props.fallback;
-      }
-
-      // Custom fallback UI (ServerError page)
-      return <ServerError />;
+      return (
+        <div className="p-8 text-center bg-red-50 rounded-xl border border-red-100">
+          <h2 className="text-xl font-bold text-red-600 mb-2">Nimadir xato ketdi</h2>
+          <p className="text-red-500 mb-4">Iltimos, sahifani qayta yuklab {"ko'ring."}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+          >
+            Qayta yuklash
+          </button>
+        </div>
+      );
     }
 
     return this.props.children;

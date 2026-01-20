@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { observeWebVitals, reportPerformance } from '@/utils/performance';
+import { observeWebVitals } from '@/utils/performance';
 import { useGlobalCache } from './CachedApiProvider';
 
 export const PerformanceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {

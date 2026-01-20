@@ -33,7 +33,8 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   onError,
 }) => {
   const { settings } = useSettingsStore();
-  const { supportsWebP, isLoading: webpLoading } = useWebPSupport();
+  // No-op - hooks kept for potential future use if needed, but unused for now
+  useWebPSupport();
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [isInView, setIsInView] = useState(!lazy);

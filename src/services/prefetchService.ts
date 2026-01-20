@@ -1,4 +1,3 @@
-import { CACHE_CONFIG } from '../config/constants';
 import { cacheManager } from '../utils/cacheManager';
 import { fetchNavItems } from './navbarService';
 import { homeApi } from './homeService';

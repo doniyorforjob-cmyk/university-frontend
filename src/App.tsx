@@ -2,9 +2,8 @@ import React, { Suspense } from 'react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 // MainLayout import removed (moved to AppRoutes)
-import GlobalLayout from '@/components/templates/GlobalLayout';
 import { ScrollToTop } from '@/components/shared';
-import { LocaleProvider, useLocale } from '@/contexts/LocaleContext';
+import { useLocale } from '@/contexts/LocaleContext';
 // Error Pages & Components
 // NetworkError imported
 // NotFound moved to AppRoutes

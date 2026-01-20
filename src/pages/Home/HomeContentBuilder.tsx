@@ -1,6 +1,5 @@
 import React from 'react';
-import { HomeSectionBlock, HomeSectionType } from './types';
-import { SectionSkeleton } from './components/SectionSkeleton';
+import { HomeSectionBlock } from './types';
 import { SectionErrorBoundary } from './components/SectionErrorBoundary';
 
 // Dynamic section renderers - API data ga qarab component tanlanadi

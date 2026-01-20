@@ -4,7 +4,6 @@ import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
 import { useStandardPage } from '@/hooks/useStandardPage';
 import { fetchAdmissionData } from '@/services/admissionService';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
-import ContentBuilder from '@/components/shared/ContentBuilder';
 
 const AdmissionPage: React.FC = () => {
   const { setBreadcrumbsData } = useGlobalLayout();
@@ -44,9 +43,6 @@ const AdmissionPage: React.FC = () => {
       </PageTemplate>
     );
   }
-
-  const heroBlock = data.length > 0 ? [data[0]] : [];
-  const otherBlocks = data.length > 1 ? data.slice(1) : [];
 
   return (
     <PageTemplate

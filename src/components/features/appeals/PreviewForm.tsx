@@ -2,7 +2,7 @@ import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import { AppealFormData } from '../../../utils/validationSchemas';
-import { PRIORITY_LEVELS, STATUS_LABELS } from '../../../types/appeal.types';
+import { PRIORITY_LEVELS } from '../../../types/appeal.types';
 
 interface PreviewFormProps {
   onEdit: (step: number) => void;

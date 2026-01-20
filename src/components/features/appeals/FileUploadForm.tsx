@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useDropzone } from 'react-dropzone';
 import { motion } from 'framer-motion';
@@ -6,8 +6,9 @@ import { validateFiles } from '../../../utils/validationSchemas';
 import { FILE_CONSTRAINTS } from '../../../types/appeal.types';
 
 export const FileUploadForm: React.FC = () => {
-  const { watch, setValue, formState: { errors } } = useFormContext();
-  const attachments = watch('attachments') || [];
+  const { watch, setValue } = useFormContext();
+  const watchedAttachments = watch('attachments');
+  const attachments = useMemo(() => watchedAttachments || [], [watchedAttachments]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const currentFiles = attachments || [];
@@ -31,7 +32,7 @@ export const FileUploadForm: React.FC = () => {
       return acc;
     }, {} as Record<string, string[]>),
     maxSize: FILE_CONSTRAINTS.maxSize,
-    maxFiles: FILE_CONSTRAINTS.maxFiles - (attachments?.length || 0),
+    maxFiles: Math.max(0, FILE_CONSTRAINTS.maxFiles - (attachments?.length || 0)),
   });
 
   const removeFile = (index: number) => {
@@ -59,8 +60,8 @@ export const FileUploadForm: React.FC = () => {
       <div
         {...getRootProps()}
         className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${isDragActive
-            ? 'border-primary bg-primary/5'
-            : 'border-gray-300 hover:border-gray-400'
+          ? 'border-primary bg-primary/5'
+          : 'border-gray-300 hover:border-gray-400'
           }`}
       >
         <input {...getInputProps()} />

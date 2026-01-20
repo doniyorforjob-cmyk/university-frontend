@@ -1,4 +1,3 @@
-import apiClient from '../client';
 import { Post, PostDetail, PostCategory } from '../../types/post.types';
 
 // --- Soxta ma'lumotlar (Backend tayyor bo'lguncha ishlatish uchun) ---
@@ -144,10 +143,6 @@ export const mockNewsDetail: PostDetail = {
 // Postlarni olish (kategoriya bo'yicha filtr bilan)
 export const getPosts = async (category?: PostCategory): Promise<Post[]> => {
     try {
-        // // Haqiqiy API chaqiruvi (Backend tayyor bo'lganda ishlatiladi)
-        // const response = await apiClient.get('/posts', { params: { category } });
-        // return response.data;
-
         // Vaqtinchalik soxta ma'lumotlarni qaytarish
         return new Promise(resolve => {
             setTimeout(() => {

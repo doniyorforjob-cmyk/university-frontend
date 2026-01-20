@@ -13,8 +13,7 @@ import {
     BuildingLibraryIcon,
     UserGroupIcon,
     ListBulletIcon,
-    GlobeAltIcon,
-    AcademicCapIcon
+    GlobeAltIcon
 } from '@heroicons/react/24/outline';
 
 const FacultyDetailPage: React.FC = () => {

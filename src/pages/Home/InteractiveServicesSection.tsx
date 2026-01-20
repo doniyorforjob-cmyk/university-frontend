@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import PrefetchLink from '../../components/shared/PrefetchLink';
 import { useTranslation } from 'react-i18next';
 import Container from '../../components/shared/Container';
@@ -9,7 +8,6 @@ import { useStandardSection } from './hooks/useStandardSection';
 import { homeApi } from '../../services/homeService';
 import { getLocalized } from '../../utils/apiUtils';
 import { useLocale } from '../../contexts/LocaleContext';
-import { useGlobalCache } from '../../components/providers/CachedApiProvider';
 import EmptyState from '../../components/shared/EmptyState';
 import { ComputerDesktopIcon } from '@heroicons/react/24/outline';
 import { transformInteractiveServicesData } from './transformers/interactiveServicesTransformer';
@@ -34,7 +32,6 @@ const svgMap: Record<string, string> = {
 const InteractiveServicesSection = () => {
   const { t } = useTranslation(['common', 'pages']);
   const { locale } = useLocale();
-  const { cacheManager } = useGlobalCache();
 
   const { data, loading } = useStandardSection(
     'interactive-services',
@@ -42,18 +39,9 @@ const InteractiveServicesSection = () => {
     { transformData: transformInteractiveServicesData }
   );
 
-  // 2. Prefetching Logic
-  // 2. Prefetching Logic - Disabled to prevent cache pollution (wrong locale data)
-  // React.useEffect(() => {
-  //   if (!data) return;
-  //   const otherLocales = ['uz', 'ru', 'en'].filter(l => l !== locale);
-  //   otherLocales.forEach(async (targetLocale) => { ... });
-  // }, [data, locale, cacheManager]);
-
   if (loading || !data) return null;
 
   const services = (data?.services || []) as ServiceItem[];
-  // Original soft colors
   const cardColors = ['#4F99DD', '#2FA5AD', '#697FD7', '#329CC6'];
 
   return (
@@ -73,7 +61,6 @@ const InteractiveServicesSection = () => {
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {services.map((service: any, index: number) => {
-            // Retrieve dynamic color or fallback
             const backgroundColor = service.color && service.color.startsWith('#')
               ? service.color
               : cardColors[index % cardColors.length];
@@ -83,11 +70,6 @@ const InteractiveServicesSection = () => {
               : svgMap[service.icon] ||
               `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-16 h-16"><path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>`;
 
-            // Force SVG to be white (replacing stroke or fill if necessary, but mostly ensuring usage in context)
-            // A simple way is to replace typical color attributes or just rely on parent 'text-white' + 'stroke-current' / 'fill-current'
-            // But since these are arbitrary SVGs, we'll try to strictly inject white stroke/fill if they are hardcoded.
-            // Best approach: Replace "stroke="..."" into "stroke='white'" and "fill='...'" into "fill='white'" if needed.
-            // We rely on CSS classes to styling the SVG to avoid regex brittleness
             const svgHtml = rawSvg;
 
             return (
@@ -101,7 +83,6 @@ const InteractiveServicesSection = () => {
                   })}
                   style={{ backgroundColor }}
                 >
-                  {/* Asosiy kontent */}
                   <div className="flex items-center z-10 w-full">
                     <div className="g-card-image mr-4 flex-shrink-0 text-white [&>svg]:w-16 [&>svg]:h-16 [&_path]:fill-none [&_path]:stroke-white [&_path]:stroke-[1.5]">
                       <div dangerouslySetInnerHTML={{ __html: svgHtml }} />
@@ -114,14 +95,11 @@ const InteractiveServicesSection = () => {
                     </div>
                   </div>
 
-                  {/* KATTA IKONKA — TEPADAN PASTGA CHIROYL HIRALASHUV, QORA SOYA YOʻQ */}
                   <div className="g-card-alpha absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none">
                     <div
                       className="w-32 h-32 opacity-15 [&>svg]:w-32 [&>svg]:h-32 [&_path]:fill-none [&_path]:stroke-white [&_path]:stroke-1"
                       style={{
-                        // Juda yumshoq, tabiiy soya — qora emas, kartaga mos
                         filter: 'drop-shadow(0 8px 20px rgba(0,0,0,0.18))',
-                        // Tepadan pastga hiralashuv — aniq, lekin chiroyli
                         maskImage: 'linear-gradient(to bottom, black 15%, black 55%, transparent 100%)',
                         WebkitMaskImage: 'linear-gradient(to bottom, black 15%, black 55%, transparent 100%)',
                         maskSize: '100% 100%',

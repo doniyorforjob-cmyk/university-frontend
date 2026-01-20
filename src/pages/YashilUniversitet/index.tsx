@@ -4,7 +4,6 @@ import useStandardPage from '@/hooks/useStandardPage';
 import { fetchYashilUniversitetData } from '@/services/yashilUniversitetService';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 import PageTemplate from '@/components/shared/PageTemplate';
-import ContentBuilder from '@/components/shared/ContentBuilder';
 
 const YashilUniversitetPage: React.FC = () => {
   const { setBreadcrumbsData } = useGlobalLayout();

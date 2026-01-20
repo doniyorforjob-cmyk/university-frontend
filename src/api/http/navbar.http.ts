@@ -8,7 +8,6 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
   try {
     console.log('Fetching navbar from Navigation API...');
     const projectId = process.env.REACT_APP_PROJECT_ID;
-    const locale = localeOverride || localStorage.getItem('locale') || 'en';
 
     // Use navigation tree API
     const response = await apiClient.get(`/projects/${projectId}/navigation/main/tree`);

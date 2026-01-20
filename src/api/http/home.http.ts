@@ -1,27 +1,8 @@
 import apiClient from '../client';
 import { HomeSectionBlock, HomeSectionType } from '../../pages/Home/types';
-import {
-  HomeHeroData,
-  HomeStatsData,
-  HomeNewsData,
-  HomeFacultiesData,
-  HomeVideoGalleryData,
-  HomeMediaData,
-  HomeInteractiveServicesData,
-  HomeUniversitySystemsData
-} from '../../types/home.types';
-import { getImageUrl } from '../../utils/apiUtils';
-import { createSlug } from '../../utils/format';
-import { transformStatsData } from '../../pages/Home/transformers/universityStatsTransformer';
-import { transformNewsData } from '../../pages/Home/transformers/newsTransformer';
-import { transformInteractiveServicesData } from '../../pages/Home/transformers/interactiveServicesTransformer';
-import { TransformedUniversitySystemsData, transformUniversitySystemsData } from '../../pages/Home/transformers/universitySystemsTransformer';
-
+import { HomeMediaData } from '../../types/home.types';
 import { transformVideoGalleryData } from '../../pages/Home/transformers/videoGalleryTransformer';
-
-import { transformFacultiesData } from '../../pages/Home/transformers/facultiesTransformer';
-
-// Helper to fetch data with fallback to 'uz' locale if empty (count < 1)
+import { createSlug } from '../../utils/format';
 const fetchWithFallback = async (endpoint: string, params: any = {}, locale?: string, disableFallback: boolean = false) => {
   const projectId = process.env.REACT_APP_PROJECT_ID;
   const requestParams = { ...params };
@@ -261,7 +242,6 @@ export const homeApi = {
     try {
       const systemsData = await fetchWithFallback('university-systems', { per_page: 50 }, locale, true);
       // Quick links are now part of university-systems collection (category: 'quick links')
-      const quickLinksResponse = { data: [] };
       return { systems: systemsData, quickLinks: [] };
     } catch (error) {
       console.error('Error fetching university systems data:', error);

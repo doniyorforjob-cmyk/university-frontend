@@ -7,7 +7,7 @@ import { formatPhone } from '../../../utils/format';
 
 const MiddleHeader: React.FC = () => {
     const { settings } = useSettingsStore();
-    const { t, i18n } = useTranslation('common');
+    const { t } = useTranslation('common');
 
     const phone = settings?.contacts?.primaryPhone || "";
     const phoneRaw = phone.replace(/[^0-9+]/g, '');

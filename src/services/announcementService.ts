@@ -1,6 +1,5 @@
 import { getAnnouncements as mockGetAnnouncements, getAnnouncementBySlug as mockGetAnnouncementBySlug } from '../api/mock/announcement.mock';
 import { getAnnouncements as httpGetAnnouncements, getAnnouncementBySlug as httpGetAnnouncementBySlug } from '../api/http/announcement.http';
-import { Announcement, AnnouncementDetail } from '../types/announcement.types';
 
 const useMock = process.env.REACT_APP_USE_MOCK_API === 'true';
 

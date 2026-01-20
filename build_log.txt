@@ -1,0 +1,252 @@
+
+> university-frontend@0.1.0 build
+> npm run optimize-images && craco build
+
+
+> university-frontend@0.1.0 optimize-images
+> node scripts/convert-images.js
+
+--- Starting WebP Conversion ---
+Skipping logo.png (WebP up to date)
+--- WebP Conversion Finished ---
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+Creating an optimized production build...
+
+[1m[33mwarn[39m[22m - As of Tailwind CSS v3.3, the `@tailwindcss/line-clamp` plugin is now included by default.
+[1m[33mwarn[39m[22m - Remove it from the `plugins` array in your configuration to eliminate this warning.
+
+[1m[33mwarn[39m[22m - The class `ease-[cubic-bezier(0.34,1.56,0.64,1)]` is ambiguous and matches multiple utilities.
+[1m[33mwarn[39m[22m - If this is content and not a class, replace it with `ease-&lsqb;cubic-bezier(0.34,1.56,0.64,1)&rsqb;` to silence this warning.
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+
+Treating warnings as errors because process.env.CI = true.
+Most CI servers set it automatically.
+
+Failed to compile.
+
+[eslint] 
+src/api/http/home.http.ts
+  Line 4:3:     'HomeHeroData' is defined but never used                      @typescript-eslint/no-unused-vars
+  Line 5:3:     'HomeStatsData' is defined but never used                     @typescript-eslint/no-unused-vars
+  Line 6:3:     'HomeNewsData' is defined but never used                      @typescript-eslint/no-unused-vars
+  Line 7:3:     'HomeFacultiesData' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 8:3:     'HomeVideoGalleryData' is defined but never used              @typescript-eslint/no-unused-vars
+  Line 10:3:    'HomeInteractiveServicesData' is defined but never used       @typescript-eslint/no-unused-vars
+  Line 11:3:    'HomeUniversitySystemsData' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 13:10:   'getImageUrl' is defined but never used                       @typescript-eslint/no-unused-vars
+  Line 15:10:   'transformStatsData' is defined but never used                @typescript-eslint/no-unused-vars
+  Line 16:10:   'transformNewsData' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 17:10:   'transformInteractiveServicesData' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 18:10:   'TransformedUniversitySystemsData' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 18:44:   'transformUniversitySystemsData' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 22:10:   'transformFacultiesData' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 264:13:  'quickLinksResponse' is assigned a value but never used       @typescript-eslint/no-unused-vars
+
+src/api/http/informationServices.http.ts
+  Line 2:10:  'ContentBlock' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/api/http/navbar.http.ts
+  Line 11:11:  'locale' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/api/mock/announcement.mock.ts
+  Line 1:8:  'apiClient' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/api/mock/organizationalStructure.mock.ts
+  Line 7:10:  'OrganizationalMember' is defined but never used     @typescript-eslint/no-unused-vars
+  Line 7:32:  'OrganizationalStructure' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/api/mock/posts.mock.ts
+  Line 1:8:  'apiClient' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/components/Layout/Footer.tsx
+  Line 2:10:   'Link' is defined but never used                     @typescript-eslint/no-unused-vars
+  Line 45:9:   'contactInfo' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  Line 239:7:  'getSocialColor' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/components/Layout/Header/MiddleHeader.tsx
+  Line 10:16:  'i18n' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/components/Layout/Header/TopHeader.tsx
+  Line 1:19:   '/Users/druswer/Desktop/namdtu/university-frontend/node_modules/react/index.js' imported multiple times  import/no-duplicates
+  Line 2:45:   '/Users/druswer/Desktop/namdtu/university-frontend/node_modules/react/index.js' imported multiple times  import/no-duplicates
+  Line 16:36:  'Link' is defined but never used                                                                         @typescript-eslint/no-unused-vars
+  Line 28:21:  'setLocale' is assigned a value but never used                                                           @typescript-eslint/no-unused-vars
+  Line 31:12:  'isPending' is assigned a value but never used                                                           @typescript-eslint/no-unused-vars
+  Line 35:13:  'isDark' is assigned a value but never used                                                              @typescript-eslint/no-unused-vars
+
+src/components/features/appeals/AppealDetailsForm.tsx
+  Line 4:10:  'APPEAL_CATEGORIES' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/components/features/appeals/AppealWizard.tsx
+  Line 11:10:  'APPEAL_CATEGORIES' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 30:10:  'selectedType' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  Line 53:54:  'errors' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 112:9:  'canProceed' is assigned a value but never used    @typescript-eslint/no-unused-vars
+
+src/components/features/appeals/FileUploadForm.tsx
+  Line 9:41:  'errors' is assigned a value but never used                                                                                                                                                                @typescript-eslint/no-unused-vars
+  Line 10:9:  The 'attachments' logical expression could make the dependencies of useCallback Hook (at line 25) change on every render. To fix this, wrap the initialization of 'attachments' in its own useMemo() Hook  react-hooks/exhaustive-deps
+
+src/components/providers/VirtualScrollProvider.tsx
+  Line 1:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/components/shared/Breadcrumbs.tsx
+  Line 13:11:  'BreadcrumbItem' is already defined  @typescript-eslint/no-redeclare
+
+src/components/shared/ImageCarousel.tsx
+  Line 35:11:  'scrollPrev' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  Line 39:11:  'scrollNext' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/components/shared/PageTemplate.tsx
+  Line 4:8:    'Container' is defined but never used       @typescript-eslint/no-unused-vars
+  Line 5:8:    'Breadcrumbs' is defined but never used     @typescript-eslint/no-unused-vars
+  Line 42:11:  'BreadcrumbItem' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/components/shared/Sidebar.tsx
+  Line 1:17:  'useState' is defined but never used   @typescript-eslint/no-unused-vars
+  Line 1:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 2:10:  'Link' is defined but never used       @typescript-eslint/no-unused-vars
+
+src/components/shared/error-boundary.tsx
+  Line 2:10:  'Button' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/components/templates/DetailTemplate.tsx
+  Line 3:8:    'Container' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 11:3:   'Eye' is defined but never used                @typescript-eslint/no-unused-vars
+  Line 225:9:  'typeInfo' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/components/templates/SectionTemplate.tsx
+  Line 18:10:  'useTranslation' is defined but never used                                                                                                                              @typescript-eslint/no-unused-vars
+  Line 190:6:  React Hook useEffect has missing dependencies: 'activeCalendarView', 'handleCalendarViewChange', and 'sectionType'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+src/config/routesConfig.tsx
+  Line 26:7:  'AnnouncementsDetailRoute' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/hooks/useCachedApi.ts
+  Line 127:6:  React Hook useCallback has missing dependencies: 'cacheManager', 'data', and 'locale'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+  Line 149:6:  React Hook useEffect has a missing dependency: 'data'. Either include it or remove the dependency array                                    react-hooks/exhaustive-deps
+
+src/hooks/useStandardPage.ts
+  Line 16:11:  'locale' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/i18n.ts
+  Line 6:1:  Caution: `i18n` also has a named export `use`. Check if you meant to write `import {use} from 'i18next'` instead  import/no-named-as-default-member
+
+src/index.tsx
+  Line 16:10:  'fetchNavItems' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 17:10:  'homeApi' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 18:10:  'cacheManager' is defined but never used     @typescript-eslint/no-unused-vars
+  Line 35:9:   'locale' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Admission/index.tsx
+  Line 7:8:   'ContentBuilder' is defined but never used        @typescript-eslint/no-unused-vars
+  Line 48:9:  'heroBlock' is assigned a value but never used    @typescript-eslint/no-unused-vars
+  Line 49:9:  'otherBlocks' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Announcements/index.tsx
+  Line 31:14:  'i18n' is assigned a value but never used                                                             @typescript-eslint/no-unused-vars
+  Line 37:11:  'setBannerData' is assigned a value but never used                                                    @typescript-eslint/no-unused-vars
+  Line 38:40:  'refetch' is assigned a value but never used                                                          @typescript-eslint/no-unused-vars
+  Line 56:6:   React Hook useEffect has a missing dependency: 't'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+src/pages/Appeals/AppealTracking.tsx
+  Line 1:17:  'useState' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/DepartmentDetail/index.tsx
+  Line 20:11:  'navigate' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/EcoActiveStudents/index.tsx
+  Line 7:8:   'ContentBuilder' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 8:8:   'Container' is defined but never used               @typescript-eslint/no-unused-vars
+  Line 50:9:  'heroBlock' is assigned a value but never used      @typescript-eslint/no-unused-vars
+  Line 52:9:  'contentBlocks' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Faculties/components/FacultyGridCard.tsx
+  Line 3:10:  'ArrowLeft' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/FacultyDetail/index.tsx
+  Line 17:5:  'AcademicCapIcon' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Home/FacultiesSection.tsx
+  Line 26:9:  The 'faculties' logical expression could make the dependencies of useEffect Hook (at line 38) change on every render. To fix this, wrap the initialization of 'faculties' in its own useMemo() Hook  react-hooks/exhaustive-deps
+
+src/pages/Home/HeroSection.tsx
+  Line 1:17:  'useState' is defined but never used   @typescript-eslint/no-unused-vars
+  Line 1:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 7:10:  'useLocale' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Home/HomeContentBuilder.tsx
+  Line 2:28:  'HomeSectionType' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 3:8:   'HomeSectionSkeleton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Home/InteractiveServicesSection.tsx
+  Line 2:10:   'useNavigate' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 37:11:  'cacheManager' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Home/NewsSection.tsx
+  Line 1:17:    'useState' is defined but never used                                                                                               @typescript-eslint/no-unused-vars
+  Line 2:10:    'Link' is defined but never used                                                                                                   @typescript-eslint/no-unused-vars
+  Line 3:52:    '/Users/druswer/Desktop/namdtu/university-frontend/node_modules/@heroicons/react/24/outline/esm/index.js' imported multiple times  import/no-duplicates
+  Line 9:10:    'PostCategory' is defined but never used                                                                                           @typescript-eslint/no-unused-vars
+  Line 18:31:   '/Users/druswer/Desktop/namdtu/university-frontend/node_modules/@heroicons/react/24/outline/esm/index.js' imported multiple times  import/no-duplicates
+  Line 73:21:   'prefetchService' is assigned a value but never used                                                                               @typescript-eslint/no-unused-vars
+  Line 103:11:  'cacheManager' is assigned a value but never used                                                                                  @typescript-eslint/no-unused-vars
+  Line 107:26:  'isCached' is assigned a value but never used                                                                                      @typescript-eslint/no-unused-vars
+
+src/pages/Home/Stats.tsx
+  Line 7:10:   'useStandardSection' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 8:10:   'homeApi' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 9:10:   'AOS_CONFIG' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 15:10:  'transformStatsData' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Home/UniversitySystemsSection.tsx
+  Line 17:11:  'locale' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 18:11:  'cacheManager' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  Line 20:17:  'loading' is assigned a value but never used       @typescript-eslint/no-unused-vars
+
+src/pages/Home/VideoGallerySection.tsx
+  Line 9:34:   '/Users/druswer/Desktop/namdtu/university-frontend/node_modules/@heroicons/react/24/outline/esm/index.js' imported multiple times  import/no-duplicates
+  Line 12:37:  '/Users/druswer/Desktop/namdtu/university-frontend/node_modules/@heroicons/react/24/outline/esm/index.js' imported multiple times  import/no-duplicates
+
+src/pages/Home/components/HeroActionCards.tsx
+  Line 2:10:  'Link' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Home/hooks/useStandardSection.ts
+  Line 45:6:  React Hook useCallback has a missing dependency: 'sectionType'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+src/pages/Home/transformers/interactiveServicesTransformer.ts
+  Line 2:10:  'getImageUrl' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Home/transformers/videoGalleryTransformer.ts
+  Line 8:40:  Unnecessary escape character: \/  no-useless-escape
+  Line 8:98:  Unnecessary escape character: \/  no-useless-escape
+
+src/pages/InformationServices/index.tsx
+  Line 14:33:  'refetch' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/MediaAboutUs/index.tsx
+  Line 29:9:  'itemsPerPage' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/News/index.tsx
+  Line 36:11:  'setBannerData' is assigned a value but never used                                                    @typescript-eslint/no-unused-vars
+  Line 39:40:  'refetch' is assigned a value but never used                                                          @typescript-eslint/no-unused-vars
+  Line 77:6:   React Hook useEffect has a missing dependency: 't'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+src/services/admissionService.ts
+  Line 3:10:  'ContentBlock' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/services/announcementService.ts
+  Line 3:10:  'Announcement' is defined but never used        @typescript-eslint/no-unused-vars
+  Line 3:24:  'AnnouncementDetail' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/services/ecoActiveStudentsService.ts
+  Line 3:10:  'ContentBlock' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/services/postService.ts
+  Line 2:10:  'Post' is defined but never used        @typescript-eslint/no-unused-vars
+  Line 2:16:  'PostDetail' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/services/yashilUniversitetService.ts
+  Line 3:10:  'ContentBlock' is defined but never used  @typescript-eslint/no-unused-vars
+
+

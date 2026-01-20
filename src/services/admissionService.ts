@@ -1,6 +1,5 @@
 import { fetchAdmissionData as mockFetchAdmissionData } from '../api/mock/admission.mock';
 import { fetchAdmissionData as httpFetchAdmissionData } from '../api/http/admission.http';
-import { ContentBlock } from '@/components/shared/ContentBuilder';
 
 const useMock = process.env.REACT_APP_USE_MOCK_API === 'true';
 

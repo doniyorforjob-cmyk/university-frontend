@@ -15,8 +15,6 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import GenericPageSkeleton from '../shared/GenericPageSkeleton';
-import Container from '../shared/Container';
-import { useTranslation } from 'react-i18next';
 import EmptyState from '../shared/EmptyState';
 import { formatStandardDate } from '@/config/constants';
 
@@ -102,11 +100,9 @@ interface SectionTemplateProps {
 }
 
 const SectionTemplate: React.FC<SectionTemplateProps> = ({
-  parentTitle,
   sectionTitle,
   sectionType,
   items,
-  totalItems = items.length,
   layoutType = 'grid',
   itemsPerPage = 12,
   showFilters = true,
@@ -128,7 +124,6 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
   className = '',
   children
 }) => {
-  const { t } = useTranslation(['common', 'pages']);
   const { settings } = useSettingsStore();
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<SectionFilters>({});
@@ -139,12 +134,11 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
   const [currentDisplayDate, setCurrentDisplayDate] = useState(displayDate);
 
   // Calendar handlers
-  const handleCalendarViewChange = (view: string) => {
+  const handleCalendarViewChange = React.useCallback((view: string) => {
     setActiveCalendarView(view);
     onCalendarViewChange?.(view);
 
     // Update filters based on view
-    const now = new Date();
     let dateRange: { from: string; to: string } | undefined;
 
     if (view === 'today') {
@@ -176,8 +170,11 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
       dateRange = undefined; // No date filter
     }
 
-    handleFilterChange({ dateRange });
-  };
+    // Filter qo'llash logic inside handleFilterChange but we invoke it here
+    setFilters(prev => ({ ...prev, dateRange }));
+    setCurrentPage(1);
+    onFilterChange?.({ ...filters, dateRange });
+  }, [currentDisplayDate, filters, onCalendarViewChange, onFilterChange]);
 
   const handleDateChange = (date: Date) => {
     setCurrentDisplayDate(date);
@@ -190,6 +187,7 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
     if (sectionType === 'announcements') {
       handleCalendarViewChange(activeCalendarView);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
@@ -295,6 +293,7 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
     if (layoutType === 'horizontal') {
       return (
         <div
+          key={item.id}
           className="flex items-start justify-between border-b border-gray-200 transition-colors py-4"
         >
           <div className="w-40 h-36 flex-shrink-0 bg-gray-50 rounded overflow-hidden">
@@ -338,15 +337,12 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
 
             <div className="">
               <DownloadLink
-                // Agar item.fileUrl mavjud bo'lsa, uni ishlatadi
                 fileUrl={item.fileUrl}
-                // Aks holda, sarlavha va tavsifdan matn yaratib, yuklaydi
                 contentToDownload={
                   !item.fileUrl
                     ? `${item.title}\n\n${item.description}`
                     : undefined
                 }
-                // Fayl nomini sarlavhadan oladi
                 fileName={item.fileName || `${item.title.replace(/ /g, '_')}.txt`}
                 label=""
                 className="bg-transparent hover:bg-gray-100 text-gray-600 hover:text-primary p-2 rounded-full"
@@ -359,6 +355,7 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
 
     return (
       <div
+        key={item.id}
         className={`flex flex-col bg-white overflow-hidden transition-all duration-300 relative group shadow-sm cursor-pointer h-full ${layoutType === 'masonry' ? 'break-inside-avoid' : ''}`}
         onClick={handleClick}
         onKeyDown={(e) => { if (e.key === 'Enter') handleClick(); }}

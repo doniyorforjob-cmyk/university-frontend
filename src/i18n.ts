@@ -1,27 +1,24 @@
-import i18n from 'i18next';
+import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import HttpApi from 'i18next-http-backend';
+import Backend from 'i18next-http-backend';
+
+const i18n = i18next;
 
 i18n
-  .use(HttpApi) // Tarjimalarni serverdan yuklash uchun
-  .use(LanguageDetector) // Brauzer tilini avtomatik aniqlash uchun
-  .use(initReactI18next) // i18next'ni react bilan bog'lash uchun
+  .use(Backend)
+  .use(LanguageDetector)
+  .use(initReactI18next)
   .init({
-    supportedLngs: ['uz', 'ru', 'en'],
     fallbackLng: 'uz',
-    debug: true, // Ishlab chiqish rejimida qo'shimcha ma'lumotlarni ko'rsatish
-    detection: {
-      order: ['path', 'cookie', 'htmlTag', 'localStorage', 'subdomain'],
-      caches: ['cookie'],
+    debug: false,
+    interpolation: {
+      escapeValue: false,
     },
+    ns: ['common', 'pages', 'nav'],
+    defaultNS: 'common',
     backend: {
       loadPath: '/locales/{{lng}}/{{ns}}.json',
-    },
-    ns: ['common', 'components', 'pages'],
-    defaultNS: 'common',
-    react: {
-      useSuspense: false,
     },
   });
 

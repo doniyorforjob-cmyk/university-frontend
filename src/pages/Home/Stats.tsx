@@ -1,4 +1,3 @@
-// src/pages/Home/Stats.tsx
 import React, { useEffect, useState } from 'react';
 import CountUp from 'react-countup';
 import { useInView } from 'react-intersection-observer';
@@ -6,11 +5,9 @@ import Container from '../../components/shared/Container';
 import SectionHeader from './components/SectionHeader';
 import { useStandardSection } from './hooks/useStandardSection';
 import { homeApi } from '../../services/homeService';
-import { AOS_CONFIG } from '../../config/constants';
 import { useTranslation } from 'react-i18next';
 import { getLocalized } from '../../utils/apiUtils';
 import { useLocale } from '../../contexts/LocaleContext';
-
 import { MapIcon } from '@heroicons/react/24/outline';
 import { transformStatsData } from './transformers/universityStatsTransformer';
 
@@ -18,8 +15,7 @@ const Stats = () => {
   const { t } = useTranslation(['common', 'pages']);
   const { locale } = useLocale();
 
-  // Yangi arxitektura: useStandardSection hook
-  const { data, loading, isCached, error } = useStandardSection(
+  const { data, loading, error } = useStandardSection(
     'stats',
     homeApi.getStatsData,
     { transformData: transformStatsData }
@@ -32,9 +28,8 @@ const Stats = () => {
     if (inView) setAnimate(true);
   }, [inView]);
 
-  // Clean loading - arxitektura prinsipiga muvofiq
   if (loading || !data || !data.stats || error) {
-    return null; // Section butunlay yashirin, loading ko'rsatilmaydi
+    return null;
   }
 
   return (
@@ -47,12 +42,9 @@ const Stats = () => {
           noContainer={true}
         />
 
-        {/* Asosiy grid — balandliklarni bir xil qilish uchun flex + h-full */}
         <div className="flex flex-col lg:flex-row gap-6">
-          {/* CHAP TARAF — balandligi o‘ng bilan bir xil */}
           <div className="lg:w-[30%]">
             <div className="bg-white overflow-hidden h-full flex flex-col hover:shadow-lg">
-              {/* Rasm — aniq ko‘rinadigan, tez yuklanadigan */}
               <div className="w-full h-48">
                 <img
                   src={data.universityArea?.image || "https://images.unsplash.com/photo-1564981797816-1043664bf78d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"}
@@ -65,7 +57,6 @@ const Stats = () => {
                 />
               </div>
 
-              {/* Pastki qism */}
               <div className="flex-1 p-6 bg-gradient-to-br from-green-50 to-white flex flex-col justify-center items-center">
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3">
                   <MapIcon className="w-6 h-6 text-green-600" />
@@ -80,7 +71,6 @@ const Stats = () => {
             </div>
           </div>
 
-          {/* O‘NG TARAF — chap bilan bir xil balandlikda */}
           <div className="lg:w-[70%]">
             <div className="bg-white p-5 h-full flex flex-col hover:shadow-lg">
               <div className="flex-1 grid grid-cols-2 gap-0 overflow-hidden">

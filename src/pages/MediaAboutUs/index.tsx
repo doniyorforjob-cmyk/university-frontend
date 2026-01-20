@@ -14,7 +14,6 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-  PaginationEllipsis
 } from '@/components/ui/pagination';
 
 // Media About Us ma'lumotlarini olish funksiyasi
@@ -27,7 +26,6 @@ const MediaAboutUsPage: React.FC = () => {
   const { setBreadcrumbsData, setSidebarType } = useGlobalLayout();
   const [currentPage, setCurrentPage] = React.useState(1);
   const [activeCategory, setActiveCategory] = React.useState<string>('all');
-  const itemsPerPage = 5;
 
   const { data: items, loading, error } = useStandardPage(
     'media-about-us',

@@ -8,7 +8,6 @@ import { AppealDetailsForm } from './AppealDetailsForm';
 import { FileUploadForm } from './FileUploadForm';
 import { PreviewForm } from './PreviewForm';
 import { ProgressBar } from './ProgressBar';
-import { APPEAL_CATEGORIES } from '../../../types/appeal.types';
 
 const steps = [
   { id: 1, title: 'Murojaat turi', description: '' },
@@ -27,7 +26,6 @@ export const AppealWizard: React.FC<AppealWizardProps> = ({
   isSubmitting = false
 }) => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [selectedType, setSelectedType] = useState<string>('');
 
   const methods = useForm({
     resolver: zodResolver(appealFormSchema),
@@ -50,7 +48,7 @@ export const AppealWizard: React.FC<AppealWizardProps> = ({
     },
   });
 
-  const { handleSubmit, watch, trigger, formState: { errors, isValid } } = methods;
+  const { handleSubmit, watch, trigger } = methods;
 
   const watchedType = watch('appealType');
 
@@ -76,7 +74,6 @@ export const AppealWizard: React.FC<AppealWizardProps> = ({
 
   const handleTypeSelect = (type: string) => {
     console.log('Type selected:', type);
-    setSelectedType(type);
     methods.setValue('appealType', type);
     // Force validation update
     methods.trigger('appealType');
@@ -109,7 +106,6 @@ export const AppealWizard: React.FC<AppealWizardProps> = ({
     }
   };
 
-  const canProceed = currentStep < steps.length && isValid;
   const canGoBack = currentStep > 1;
 
   return (

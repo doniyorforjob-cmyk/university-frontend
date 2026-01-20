@@ -37,12 +37,12 @@ export const useStandardSection = <T = any>(
   // Stabilize callbacks to prevent infinite re-render loops in useCachedApi
   const handleSuccess = useCallback((data: any) => {
     userOnSuccess?.(data);
-  }, [sectionType, userOnSuccess]);
+  }, [userOnSuccess]);
 
   const handleError = useCallback((error: Error) => {
     console.error(`${sectionType} section xatolik:`, error);
     userOnError?.(error);
-  }, [sectionType, userOnError]);
+  }, [userOnError, sectionType]);
 
   // Stabilize the fetcher to prevent infinite reload loops
   const stabilizedFetcher = useMemo(() => async () => {

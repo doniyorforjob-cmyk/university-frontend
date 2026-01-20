@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
     FaTelegramPlane,
@@ -13,7 +12,7 @@ import { useSettingsStore } from '../../../store/settingsStore';
 import useFontSizeStore from '../../../store/fontSizeStore';
 import useThemeStore from '../../../store/themeStore';
 import Container from '../../shared/Container';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import PrefetchLink from '../../shared/PrefetchLink';
 import { useLocale } from '../../../contexts/LocaleContext';
 
@@ -25,14 +24,14 @@ const languageOptions = {
 
 const TopHeader = () => {
     const { t, i18n } = useTranslation();
-    const { locale, setLocale } = useLocale();
+    const { locale } = useLocale();
     const navigate = useNavigate();
     const location = useLocation();
-    const [isPending, startTransition] = React.useTransition();
+    const [, startTransition] = React.useTransition();
     const [isLangDropdownOpen, setLangDropdownOpen] = useState(false);
     const langDropdownRef = useRef<HTMLDivElement>(null);
     const { increaseFontSize, decreaseFontSize, resetFontSize } = useFontSizeStore();
-    const { isDark, toggleTheme } = useThemeStore();
+    const { toggleTheme } = useThemeStore();
     const { settings } = useSettingsStore();
 
     useClickOutside(langDropdownRef, () => setLangDropdownOpen(false));

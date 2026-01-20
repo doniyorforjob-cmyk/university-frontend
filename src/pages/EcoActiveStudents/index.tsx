@@ -4,8 +4,6 @@ import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
 import { useStandardPage } from '@/hooks/useStandardPage';
 import { fetchEcoActiveStudentsData } from '@/services/ecoActiveStudentsService';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
-import ContentBuilder from '@/components/shared/ContentBuilder';
-import Container from '@/components/shared/Container';
 
 const EcoActiveStudentsPage: React.FC = () => {
   const { setBreadcrumbsData } = useGlobalLayout();
@@ -47,9 +45,6 @@ const EcoActiveStudentsPage: React.FC = () => {
   }
 
   // Hero blokni ajratib olish
-  const heroBlock = data.slice(0, 1);
-  // Qolgan kontent bloklari
-  const contentBlocks = data.slice(1);
 
   return (
     <PageTemplate

@@ -1,5 +1,4 @@
 import { HomeInteractiveServicesData } from '../../../types/home.types'; // Fixed import path
-import { getImageUrl } from '../../../utils/apiUtils';
 
 export const transformInteractiveServicesData = (apiData: any): HomeInteractiveServicesData => {
   const rawItems = Array.isArray(apiData)

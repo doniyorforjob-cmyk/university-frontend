@@ -1,5 +1,4 @@
 import apiClient from '../client';
-import { ContentBlock } from '@/components/shared/ContentBuilder';
 
 export interface InformationServiceData {
   title: Record<string, string>;

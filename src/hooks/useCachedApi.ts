@@ -124,7 +124,7 @@ export const useCachedApi = <T = any>({
     } finally {
       setLoading(false);
     }
-  }, [localeKey, fetcher, ttl, revalidateThresholdMinutes, onSuccess, onError]);
+  }, [localeKey, fetcher, ttl, revalidateThresholdMinutes, onSuccess, onError, cacheManager, data, locale]);
 
   // Initial load and key change handling
   useEffect(() => {
@@ -146,7 +146,7 @@ export const useCachedApi = <T = any>({
       }
     }
     fetchData();
-  }, [fetchData, localeKey, cacheManager, enabled, keepPreviousData]);
+  }, [fetchData, localeKey, cacheManager, enabled, keepPreviousData, data]);
 
   // Refetch on window focus
   useEffect(() => {

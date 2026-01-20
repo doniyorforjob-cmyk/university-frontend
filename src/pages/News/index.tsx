@@ -33,10 +33,10 @@ const NewsPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation(['common', 'pages']);
-  const { setBannerData, setBreadcrumbsData, setSidebarType } = useGlobalLayout();
+  const { setBreadcrumbsData, setSidebarType } = useGlobalLayout();
   const { locale } = useLocale();
   const { cacheManager } = useGlobalCache();
-  const { data: items, loading, error, refetch } = useStandardPage(
+  const { data: items, loading, error } = useStandardPage(
     'news',
     () => fetchNewsData(locale)
   );
@@ -74,7 +74,7 @@ const NewsPage: React.FC = () => {
       setBreadcrumbsData(undefined);
       setSidebarType(undefined);
     };
-  }, [setBreadcrumbsData, setSidebarType, locale]);
+  }, [setBreadcrumbsData, setSidebarType, locale, t]);
 
 
   const handleItemClick = useCallback((item: SectionItem) => {

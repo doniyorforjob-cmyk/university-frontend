@@ -32,13 +32,6 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({
         [emblaApi]
     );
 
-    const scrollPrev = useCallback(() => {
-        if (emblaApi) emblaApi.scrollPrev();
-    }, [emblaApi]);
-
-    const scrollNext = useCallback(() => {
-        if (emblaApi) emblaApi.scrollNext();
-    }, [emblaApi]);
 
     const onSelect = useCallback(() => {
         if (!emblaApi) return;

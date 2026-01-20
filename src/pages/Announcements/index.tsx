@@ -28,14 +28,14 @@ const fetchAnnouncementsData = async (): Promise<SectionItem[]> => {
 const AnnouncementsPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { t, i18n } = useTranslation(['common', 'pages']);
+  const { t } = useTranslation(['common', 'pages']);
 
   // URL dan to'g'ridan-to'g'ri locale ni olish (i18n.language emas!)
   const pathSegments = location.pathname.split('/').filter(Boolean);
   const urlLocale = ['uz', 'en', 'ru'].includes(pathSegments[0]) ? pathSegments[0] : 'uz';
 
-  const { setBannerData, setBreadcrumbsData, setSidebarType } = useGlobalLayout();
-  const { data: items, loading, error, refetch } = useStandardPage(
+  const { setBreadcrumbsData, setSidebarType } = useGlobalLayout();
+  const { data: items, loading, error } = useStandardPage(
     'announcements',
     fetchAnnouncementsData
   );
@@ -53,7 +53,7 @@ const AnnouncementsPage: React.FC = () => {
       setBreadcrumbsData(undefined);
       setSidebarType(undefined);
     };
-  }, [setBreadcrumbsData, setSidebarType]);
+  }, [setBreadcrumbsData, setSidebarType, t]);
 
 
   const handleItemClick = useCallback((item: SectionItem) => {

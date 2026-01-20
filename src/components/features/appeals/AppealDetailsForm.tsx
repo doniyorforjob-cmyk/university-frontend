@@ -1,7 +1,7 @@
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { motion } from 'framer-motion';
-import { APPEAL_CATEGORIES, PRIORITY_LEVELS } from '../../../types/appeal.types';
+import { PRIORITY_LEVELS } from '../../../types/appeal.types';
 
 interface AppealDetailsFormProps {
   appealType: string;
@@ -15,8 +15,6 @@ export const AppealDetailsForm: React.FC<AppealDetailsFormProps> = ({ appealType
     formState: { errors }
   } = useFormContext();
 
-  const selectedCategory = watch('category');
-  const categories = APPEAL_CATEGORIES[appealType as keyof typeof APPEAL_CATEGORIES] || [];
 
   return (
     <motion.div

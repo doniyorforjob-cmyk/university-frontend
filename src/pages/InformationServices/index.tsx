@@ -11,7 +11,7 @@ import { getLocalized, getImageUrl } from '@/utils/apiUtils';
 const InformationServicesPage: React.FC = () => {
   const { t, i18n } = useTranslation(['common', 'pages']);
   const { setBreadcrumbsData, setSidebarType } = useGlobalLayout();
-  const { data, loading, error, refetch } = useStandardPage<InformationServiceData>(
+  const { data, loading, error } = useStandardPage<InformationServiceData>(
     'information-services',
     fetchInformationServicesData
   );

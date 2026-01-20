@@ -4,7 +4,7 @@
  * universityContentApi.ts ga o'xshab API ga tayyorlangan
  */
 
-import { OrganizationalMember, OrganizationalStructure, OrganizationalStructureDoc } from '../../types/organizationalStructure.types';
+import { OrganizationalStructureDoc } from '../../types/organizationalStructure.types';
 
 /**
  * Mock API - Tashkiliy tuzilma ma'lumotlarini olish

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { useCachedApi } from '@/hooks/useCachedApi';
 import { getDepartmentById } from '@/services/facultiesService';
 import { Department } from '@/types/faculty.types';
@@ -17,9 +17,8 @@ import {
 
 const DepartmentDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
-    const navigate = useNavigate();
     const { setBreadcrumbsData } = useGlobalLayout();
-    const [activeTab, setActiveTab] = useState('about');
+    const [activeTab, setActiveTab] = React.useState('about');
 
     const { data: department, loading: loadingDepartment, error } = useCachedApi<Department | null>({
         key: `department-detail-${id}`,

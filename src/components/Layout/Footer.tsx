@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import {
   FaFacebookF,
   FaTelegramPlane,
@@ -41,12 +40,6 @@ const Footer: React.FC = () => {
     console.error("Footer API Error:", error);
   }
 
-  // Fallback data if API fails
-  const contactInfo = settings?.contacts || {
-    address: '',
-    primaryPhone: '',
-    email: ''
-  };
   const socialLinks = settings?.socials || [];
   const linkGroups = data?.linkGroups || [];
   const copyrightText = (data as any)?.copyright || settings?.footer?.copyright || `© ${currentYear} ${settings?.siteName || "Namangan Davlat Texnika Universiteti"}.`;
@@ -236,21 +229,5 @@ const SocialIcon: React.FC<{ name: SocialLink['name'] }> = ({ name }) => {
   }
 };
 
-const getSocialColor = (name: SocialLink['name']): string => {
-  switch (name) {
-    case 'Facebook':
-      return 'hover:bg-[#1877F2] hover:text-white';
-    case 'Telegram':
-      return 'hover:bg-[#0088cc] hover:text-white';
-    case 'Instagram':
-      return 'hover:bg-gradient-to-br hover:from-[#833AB4] hover:via-[#FD1D1D] hover:to-[#F77737] hover:text-white';
-    case 'YouTube':
-      return 'hover:bg-[#FF0000] hover:text-white';
-    case 'Twitter':
-      return 'hover:bg-[#1DA1F2] hover:text-white';
-    default:
-      return 'hover:bg-gray-700 hover:text-white';
-  }
-};
 
 export default Footer;

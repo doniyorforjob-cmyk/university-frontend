@@ -1,21 +1,17 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ChevronRightIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
+import React from 'react';
 import Container from '../../components/shared/Container';
 import SectionHeader from './components/SectionHeader';
 import { AnimatedNewsTabs } from './components/AnimatedNewsTabs';
 import { useStandardSection } from './hooks/useStandardSection';
 import { homeApi, HomeNewsData } from '../../services/homeService';
-import { PostCategory } from '../../types/post.types';
 import { AspectRatio } from '../../components/ui/aspect-ratio';
 import { OptimizedImage } from '../../components/shared';
 import { useTranslation } from 'react-i18next';
 import { AOS_CONFIG, NEWS_TABS } from '../../config/constants';
 import { MONTHS, DEFAULT_LOCALE } from '../../constants/dateConstants';
 import PrefetchLink from '../../components/shared/PrefetchLink';
-import { useGlobalCache } from '../../components/providers/CachedApiProvider';
 import EmptyState from '../../components/shared/EmptyState';
-import { NewspaperIcon } from '@heroicons/react/24/outline';
+import { ChevronRightIcon, CalendarDaysIcon, NewspaperIcon } from '@heroicons/react/24/outline';
 import { stripHtml } from '../../utils/format';
 import { transformNewsData } from './transformers/newsTransformer';
 
@@ -70,8 +66,7 @@ const AnnouncementsPreview = ({ announcements }: { announcements?: HomeNewsData[
           to="/announcements"
           prefetch={true}
           onMouseEnter={async () => {
-            const { prefetchService } = await import('../../services/prefetchService');
-            // prefetchService.prefetchAnnouncementsPage(); 
+            // prefetch logic removed
           }}
           className="inline-flex items-center text-[#0E104B] font-semibold hover:underline"
         >
@@ -100,11 +95,10 @@ const formatDate = (dateString?: string, locale: string = 'uz', t: any = (s: any
 const NewsSection = () => {
   const { t, i18n } = useTranslation(['common', 'pages', 'components']);
   const locale = i18n.language;
-  const { cacheManager } = useGlobalCache();
 
   // 1. Stabilize Fetcher - Direct reference ensures useStandardSection handles locale consistently
   // Yeni arxitektura: useStandardSection hook
-  const { data, loading, isCached } = useStandardSection(
+  const { data, loading } = useStandardSection(
     'news',
     homeApi.getCombinedNewsData,
     { transformData: transformNewsData, keepPreviousData: true }

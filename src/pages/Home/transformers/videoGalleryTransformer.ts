@@ -5,7 +5,7 @@ import { createSlug } from '../../../utils/format';
 // Helper to extract YouTube ID from various URL formats
 const extractYoutubeId = (url: string): string => {
   if (!url) return '';
-  const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+  const regex = /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/;
   const match = url.match(regex);
   return match ? match[1] : '';
 };
