@@ -159,9 +159,9 @@ export const getDepartmentsByFacultyId = async (facultyId: string | number, loca
                     slug: ensureSlug(name, fields.slug || entry.slug),
                     facultyId: facultyId,
                     image: getImageUrl(resolveImage(fields.image)),
-                    phone: fields.phone || fields.phone_number,
-                    email: fields.email,
-                    headName: fields.head_name || fields.manager || fields.dean || fields.leader
+                    phone: fields.phone ? String(fields.phone).split('.')[0] : (fields.phone_number ? String(fields.phone_number) : undefined),
+                    email: fields.email ? String(fields.email).trim() : undefined,
+                    headName: fields.head_name || fields.manager || fields.dean || fields.leader || (fields.staff && typeof fields.staff === 'string' && fields.staff.length < 50 ? fields.staff : undefined)
                 };
             });
     } catch (error) {
@@ -185,7 +185,10 @@ export const getDepartments = async (locale?: string): Promise<Department[]> => 
                 name: name,
                 slug: ensureSlug(name, fields.slug || entry.slug),
                 facultyId: fields.faculty?.uuid || fields.faculty?.id || fields.faculty,
-                image: getImageUrl(resolveImage(fields.image))
+                image: getImageUrl(resolveImage(fields.image)),
+                phone: fields.phone ? String(fields.phone).split('.')[0] : (fields.phone_number ? String(fields.phone_number) : undefined),
+                email: fields.email ? String(fields.email).trim() : undefined,
+                headName: fields.head_name || fields.manager || fields.dean || fields.leader || (fields.staff && typeof fields.staff === 'string' && fields.staff.length < 50 ? fields.staff : undefined)
             };
         });
     } catch (error) {

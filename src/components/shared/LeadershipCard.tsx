@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Phone, Mail, ChevronDown, User } from 'lucide-react';
 import { Leadership } from '@/types/leadership.types';
 import OptimizedImage from './OptimizedImage';
 import { useTranslation } from 'react-i18next';
+import { settingsApi } from '@/api/http/settings.http';
+import { getImageUrl } from '@/utils/apiUtils';
 
 interface LeadershipCardProps {
     member: Leadership;
@@ -11,8 +13,25 @@ interface LeadershipCardProps {
 }
 
 const LeadershipCard: React.FC<LeadershipCardProps> = ({ member, isMain = false }) => {
-    const { t } = useTranslation('common');
+    const { t, i18n } = useTranslation('common');
     const [expandedSection, setExpandedSection] = React.useState<'career' | 'duties' | null>(null);
+    const [logoUrl, setLogoUrl] = useState<string>('/images/logo.png');
+
+    useEffect(() => {
+        if (isMain) {
+            const fetchLogo = async () => {
+                try {
+                    const settings = await settingsApi.getSettings(i18n.language);
+                    if (settings.logo) {
+                        setLogoUrl(getImageUrl(settings.logo));
+                    }
+                } catch (error) {
+                    console.error("Error fetching logo for LeadershipCard:", error);
+                }
+            };
+            fetchLogo();
+        }
+    }, [isMain, i18n.language]);
 
     const toggleSection = (section: 'career' | 'duties') => {
         setExpandedSection(prev => prev === section ? null : section);
@@ -25,7 +44,7 @@ const LeadershipCard: React.FC<LeadershipCardProps> = ({ member, isMain = false 
             viewport={{ once: true }}
             className="bg-white rounded-[24px] shadow-[0_4px_30px_rgba(0,0,0,0.03)] border border-gray-100 overflow-hidden mb-6"
         >
-            <div className={`flex flex-col lg:flex-row relative ${isMain ? 'lg:h-96' : 'lg:h-72'} overflow-hidden ${!isMain ? 'lg:flex-row-reverse' : ''}`}>
+            <div className={`flex flex-col lg:flex-row relative ${isMain ? 'lg:h-[21rem]' : 'lg:h-72'} overflow-hidden ${!isMain ? 'lg:flex-row-reverse' : ''}`}>
 
                 {/* Left/Right: Info Section */}
                 <div className={`flex-1 px-4 lg:px-10 z-10 flex flex-col justify-start pt-4 lg:pt-6 h-full ${!isMain ? 'lg:pl-6' : ''}`}>
@@ -98,7 +117,7 @@ const LeadershipCard: React.FC<LeadershipCardProps> = ({ member, isMain = false 
                         {/* The Logo Circle - Centered on the line */}
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-white rounded-full border-4 border-[#3B82F6] shadow-lg flex items-center justify-center overflow-hidden p-2 z-30">
                             <img
-                                src="/images/logo.png"
+                                src={logoUrl}
                                 alt="Logo"
                                 className="w-full h-full object-contain scale-110"
                                 onError={(e) => {
@@ -110,7 +129,7 @@ const LeadershipCard: React.FC<LeadershipCardProps> = ({ member, isMain = false 
                 )}
 
                 {/* Right/Left: Photo Section */}
-                <div className={`relative ${isMain ? 'lg:w-[35%] lg:-ml-8' : 'lg:w-[30%]'} h-64 ${isMain ? 'lg:h-96' : 'lg:h-72'} overflow-hidden bg-gray-50 flex items-start justify-center z-0 pt-0 mt-0`}>
+                <div className={`relative ${isMain ? 'lg:w-[35%] lg:-ml-8' : 'lg:w-[30%]'} h-64 ${isMain ? 'lg:h-[21rem]' : 'lg:h-72'} overflow-hidden bg-gray-50 flex items-start justify-center z-0 pt-0 mt-0`}>
                     {/* Background Detail for Rector */}
                     {isMain && (
                         <>

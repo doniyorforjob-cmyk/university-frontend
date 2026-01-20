@@ -11,7 +11,7 @@ interface SettingsState {
     fetchSettings: (locale?: string, force?: boolean) => Promise<void>;
 }
 
-export const useSettingsStore = create<SettingsState>((set, get) => ({
+export const useSettingsStore = create<SettingsState>((set: any, get: any) => ({
     settings: null,
     settingsCache: {},
     isLoading: false,
@@ -30,7 +30,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
         const cacheItem = cacheManager.getItem(cacheKey);
 
         if (!force && cacheItem) {
-            set((state) => ({
+            set((state: any) => ({
                 settings: cacheItem.data,
                 settingsCache: { ...state.settingsCache, [locale]: cacheItem.data },
                 error: null
@@ -48,17 +48,22 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
         }
 
         // Only set loading if we don't have any data to show (Silent SWR)
-        if (!cacheItem && !currentStore.settings) {
-            set({ isLoading: true, error: null });
-        } else {
-            set({ error: null });
+        if (!force && cacheItem) {
+            set((state: SettingsState) => ({
+                settings: cacheItem.data,
+                settingsCache: { ...state.settingsCache, [locale]: cacheItem.data },
+                error: null
+            }));
+            return;
         }
+
+        set({ isLoading: true, error: null });
 
         try {
             // 2. Fetch from API
             const data = await settingsApi.getSettings(locale);
 
-            set((state) => ({
+            set((state: SettingsState) => ({
                 settings: data,
                 settingsCache: { ...state.settingsCache, [locale]: data },
                 isLoading: false

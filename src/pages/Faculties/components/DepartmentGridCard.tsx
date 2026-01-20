@@ -13,6 +13,7 @@ interface DepartmentGridCardProps {
 }
 
 export const DepartmentGridCard: React.FC<DepartmentGridCardProps> = ({ id, name, phone, email, headName, slug }) => {
+    console.log(`DepartmentGridCard [${id}]:`, { name, phone, email, headName });
     const navigate = useNavigate();
     const { locale } = useLocale();
 

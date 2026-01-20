@@ -49,7 +49,6 @@
     "react-virtualized-auto-sizer": "^1.0.26",
     "react-window": "^2.2.3",
     "react-window-infinite-loader": "^2.0.0",
-    "react-snap": "^1.x.x",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^4.9.5",
@@ -60,28 +59,10 @@
   "scripts": {
     "start": "craco start",
     "optimize-images": "node scripts/convert-images.js",
-    "build": "npm run optimize-images && craco build && node scripts/maybe-react-snap.js",
+    "build": "npm run optimize-images && craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
     "analyze": "ANALYZE=true npm run build"
-  },
-  "reactSnap": {
-    "source": "build",
-    "minifyHtml": {
-      "collapseWhitespace": true,
-      "removeComments": true
-    },
-    "include": [
-      "/",
-      "/news",
-      "/announcements"
-    ],
-    "puppeteer": {
-      "args": [
-        "--no-sandbox",
-        "--disable-setuid-sandbox"
-      ]
-    }
   },
   "browserslist": {
     "production": [
@@ -104,7 +85,6 @@
     "critters": "^0.0.25",
     "critters-webpack-plugin": "^3.0.2",
     "postcss": "^8.5.6",
-    "react-snap": "^1.23.0",
     "sharp": "^0.34.5",
     "tailwindcss": "^3.4.13",
     "webpack-bundle-analyzer": "^4.10.2"
