@@ -58,5 +58,37 @@
             "sport": "Sport",
             "faq": "FAQ"
         }
+    },
+    "facultiesAndDepartments": "Faculties and Departments",
+    "search": "Search",
+    "allFaculties": "All faculties",
+    "allEducationForms": "All forms of education",
+    "nothingFound": "Nothing found",
+    "noDepartmentsFound": "No departments found matching your search.",
+    "goToSection": "Go to section",
+    "facultyTabs": {
+        "about": "About Faculty",
+        "departments": "Departments",
+        "directions": "Directions and Specialties",
+        "cooperation": "International Cooperation"
+    },
+    "departmentTabs": {
+        "about": "About Department",
+        "staff": "Department Staff",
+        "scientific": "Scientific Activity",
+        "cooperation": "International Cooperation"
+    },
+    "breadcrumbs": {
+        "home": "Home",
+        "faculties": "Faculties",
+        "departments": "Departments"
+    },
+    "headers": {
+        "facultyDepartments": "Faculty Departments",
+        "departmentsCooperation": "International Cooperation of Departments"
+    },
+    "messages": {
+        "departmentsNotFound": "Departments not found",
+        "noDepartmentsInFaculty": "There are no departments in this faculty yet."
     }
 }

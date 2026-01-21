@@ -38,7 +38,9 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
         'Media about us': '/media-about-us',
         'Information Service': '/information-services',
         'Rectorate': '/organizational-structure',
-        'Faculties': '/faculties'
+        'Faculties': '/faculties',
+        'Corruption': '/corruption',
+        'Fight against corruption': '/corruption'
       };
 
       const key = Object.keys(map).find(k => titleEn?.includes(k));

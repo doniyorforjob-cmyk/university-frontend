@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Department, Faculty } from '../../../types/faculty.types';
 import { DepartmentGridCard } from './DepartmentGridCard';
 import { Search, ChevronDown } from 'lucide-react';
@@ -10,6 +11,7 @@ interface DepartmentsTabProps {
 }
 
 export const DepartmentsTab: React.FC<DepartmentsTabProps> = ({ departments, faculties = [] }) => {
+    const { t } = useTranslation('pages');
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedFaculty, setSelectedFaculty] = useState<string | number>('all');
 
@@ -36,7 +38,7 @@ export const DepartmentsTab: React.FC<DepartmentsTabProps> = ({ departments, fac
                 <div className="relative">
                     <input
                         type="text"
-                        placeholder="Qidiruv"
+                        placeholder={t('search') as string}
                         className="w-full pl-4 pr-10 py-3 rounded-lg border border-green-600 focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none transition-all text-sm"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -52,7 +54,7 @@ export const DepartmentsTab: React.FC<DepartmentsTabProps> = ({ departments, fac
                         value={selectedFaculty}
                         onChange={(e) => setSelectedFaculty(e.target.value)}
                     >
-                        <option value="all">Barcha fakultetlar</option>
+                        <option value="all">{t('allFaculties')}</option>
                         {faculties.map(faculty => (
                             <option key={faculty.id} value={faculty.id}>
                                 {faculty.name}
@@ -66,7 +68,7 @@ export const DepartmentsTab: React.FC<DepartmentsTabProps> = ({ departments, fac
 
                 <div className="relative">
                     <select className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-green-600 outline-none transition-all text-sm text-gray-600 bg-white opacity-80 appearance-none pointer-events-none" disabled>
-                        <option>Ta&apos;lim barcha shakllari</option>
+                        <option>{t('allEducationForms')}</option>
                     </select>
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
                         <ChevronDown size={18} />
@@ -93,8 +95,8 @@ export const DepartmentsTab: React.FC<DepartmentsTabProps> = ({ departments, fac
                 <div className="py-12">
                     <EmptyState
                         resourceKey="departments"
-                        title="Hech narsa topilmadi"
-                        message="Qidiruv so'rovi bo'yicha kafedralar topilmadi."
+                        title={t('nothingFound')}
+                        message={t('noDepartmentsFound')}
                     />
                 </div>
             )}

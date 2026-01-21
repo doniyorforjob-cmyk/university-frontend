@@ -43,4 +43,5 @@ export type Department = {
   staff?: string;
   scientificActivity?: string;
   internationalCooperation?: string;
+  headInfo?: import('./leadership.types').Leadership;
 }

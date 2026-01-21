@@ -58,5 +58,37 @@
             "sport": "Спорт",
             "faq": "Вопросы и ответы"
         }
+    },
+    "facultiesAndDepartments": "Факультеты и кафедры",
+    "search": "Поиск",
+    "allFaculties": "Все факультеты",
+    "allEducationForms": "Все формы обучения",
+    "nothingFound": "Ничего не найдено",
+    "noDepartmentsFound": "Кафедры по вашему запросу не найдены.",
+    "goToSection": "Перейти в раздел",
+    "facultyTabs": {
+        "about": "О факультете",
+        "departments": "Кафедры",
+        "directions": "Направления и специальности",
+        "cooperation": "Международное сотрудничество"
+    },
+    "departmentTabs": {
+        "about": "О кафедре",
+        "staff": "Состав кафедры",
+        "scientific": "Научная деятельность",
+        "cooperation": "Международное сотрудничество"
+    },
+    "breadcrumbs": {
+        "home": "Главная",
+        "faculties": "Факультеты",
+        "departments": "Кафедры"
+    },
+    "headers": {
+        "facultyDepartments": "Кафедры факультета",
+        "departmentsCooperation": "Международное сотрудничество кафедр"
+    },
+    "messages": {
+        "departmentsNotFound": "Кафедры не найдены",
+        "noDepartmentsInFaculty": "На этом факультете пока нет кафедр."
     }
 }

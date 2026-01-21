@@ -58,5 +58,37 @@
             "sport": "Sport",
             "faq": "Savol-javoblar"
         }
+    },
+    "facultiesAndDepartments": "Fakultetlar va kafedralar",
+    "search": "Qidiruv",
+    "allFaculties": "Barcha fakultetlar",
+    "allEducationForms": "Ta'lim barcha shakllari",
+    "nothingFound": "Hech narsa topilmadi",
+    "noDepartmentsFound": "Qidiruv so'rovi bo'yicha kafedralar topilmadi.",
+    "goToSection": "Bo'limga o'tish",
+    "facultyTabs": {
+        "about": "Fakultet haqida",
+        "departments": "Kafedralar",
+        "directions": "Yo'nalish va mutaxassisliklari",
+        "cooperation": "Xalqaro hamkorlik"
+    },
+    "departmentTabs": {
+        "about": "Kafedra haqida",
+        "staff": "Kafedra tarkibi",
+        "scientific": "Ilmiy faoliyat",
+        "cooperation": "Xalqaro hamkorlik"
+    },
+    "breadcrumbs": {
+        "home": "Asosiy",
+        "faculties": "Fakultetlar",
+        "departments": "Kafedralar"
+    },
+    "headers": {
+        "facultyDepartments": "Fakultet kafedralari",
+        "departmentsCooperation": "Kafedralar kesimida xalqaro hamkorlik"
+    },
+    "messages": {
+        "departmentsNotFound": "Kafedralar topilmadi",
+        "noDepartmentsInFaculty": "Ushbu fakultetga tegishli kafedralar hozircha mavjud emas."
     }
 }

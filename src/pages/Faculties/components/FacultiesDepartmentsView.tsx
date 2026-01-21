@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Faculty, Department } from '@/types/faculty.types';
 import { FacultyGridCard } from './FacultyGridCard';
 import { DepartmentsTab } from './DepartmentsTab';
@@ -18,6 +19,8 @@ export const FacultiesDepartmentsView: React.FC<FacultiesDepartmentsViewProps> =
     activeTab,
     onTabChange
 }) => {
+    const { t } = useTranslation('pages');
+
     return (
         <div className="not-prose">
             {/* Tabs */}
@@ -29,7 +32,7 @@ export const FacultiesDepartmentsView: React.FC<FacultiesDepartmentsViewProps> =
                         : 'text-gray-400 hover:text-gray-600'
                         }`}
                 >
-                    Fakultetlar
+                    {t('faculties')}
                     {activeTab === 'faculties' && (
                         <motion.div
                             layoutId="activeTab"
@@ -45,7 +48,7 @@ export const FacultiesDepartmentsView: React.FC<FacultiesDepartmentsViewProps> =
                         : 'text-gray-400 hover:text-gray-600'
                         }`}
                 >
-                    Kafedralar
+                    {t('departments')}
                     {activeTab === 'departments' && (
                         <motion.div
                             layoutId="activeTab"

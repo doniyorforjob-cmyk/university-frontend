@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useCachedApi } from '@/hooks/useCachedApi';
 import { getFaculties, getDepartments } from '@/services/facultiesService';
 import { Faculty, Department } from '@/types/faculty.types';
@@ -10,6 +11,7 @@ import Container from '@/components/shared/Container';
 import { FacultiesDepartmentsView } from './components/FacultiesDepartmentsView';
 
 const FacultiesPage: React.FC = () => {
+    const { t } = useTranslation('pages');
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -50,7 +52,7 @@ const FacultiesPage: React.FC = () => {
             <Container>
                 <div className="mb-8">
                     <h1 className="text-3xl md:text-4xl lg:text-[42px] font-bold text-[#003B5C] mb-8 text-left max-w-3xl leading-[1.2]">
-                        Fakultetlar va kafedralar
+                        {t('facultiesAndDepartments')}
                     </h1>
                 </div>
                 <FacultiesDepartmentsView

@@ -9,6 +9,11 @@ const resolveImage = (img: any): string | null => {
     return img.url || img.thumbnail_url || img.path || null;
 };
 
+const formatPhone = (phone: any): string => {
+    if (!phone) return '';
+    return String(phone).split('.')[0];
+};
+
 const ensureSlug = (name: string, slug?: string) => {
     if (slug) return slug;
     return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -80,6 +85,16 @@ export const getFacultyById = async (id: string | number, locale?: string): Prom
 
         if (!entry) return null;
 
+        const toString = (val: any): string => {
+            if (typeof val === 'string') return val;
+            if (typeof val === 'number') return String(val);
+            if (Array.isArray(val) && val.length > 0) return toString(val[0]);
+            if (val && typeof val === 'object') {
+                return val.fields?.name || val.fields?.title || val.name || val.title || '';
+            }
+            return '';
+        };
+
         const fields = entry.fields || {};
         const facultyId = entry.uuid || entry.id;
 
@@ -89,25 +104,28 @@ export const getFacultyById = async (id: string | number, locale?: string): Prom
                 params: { locale, with: 'image,positions,faculty' }
             });
             const deansData = Array.isArray(deanRes.data) ? deanRes.data : deanRes.data.data;
+
             const deanEntry = deansData.find((d: any) => {
-                const fId = d.fields?.faculty?.uuid || d.fields?.faculty?.id || d.fields?.faculty;
+                const facultyField = d.fields?.faculty;
+                const facultyObj = Array.isArray(facultyField) ? facultyField[0] : facultyField;
+                const fId = facultyObj?.uuid || facultyObj?.id || facultyObj;
                 return String(fId) === String(facultyId);
             });
 
             if (deanEntry) {
                 const df = deanEntry.fields || {};
                 const rawPos = df.positions;
-                const posName = rawPos?.fields?.name || rawPos?.name || (Array.isArray(rawPos) ? rawPos[0]?.fields?.name : null) || df.position || "Fakultet dekani";
+                const posName = toString(rawPos) || toString(df.position) || "Fakultet dekani";
 
                 deanInfo = {
                     id: deanEntry.uuid || deanEntry.id,
-                    name: (df.name || deanEntry.name || '').trim(),
+                    name: toString(df.name || deanEntry.name || '').trim(),
                     position: posName,
-                    phone: df.phone || deanEntry.phone,
-                    email: df.email || deanEntry.email,
+                    phone: formatPhone(df.phone || deanEntry.phone),
+                    email: toString(df.email || deanEntry.email),
                     image: getImageUrl(resolveImage(df.image || deanEntry.image)),
-                    career: df['work-experience'] || df.work_experience || df.career || df.ish_tajribasi || df.milestones || df.experience,
-                    description: df.responsibilities || df.description || df.vazifalari || df.bio || df.content,
+                    career: toString(df['work-experience'] || df.work_experience || df.career || df.ish_tajribasi || df.milestones || df.experience),
+                    description: toString(df.responsibilities || df.description || df.vazifalari || df.bio || df.content),
                     isMain: false
                 };
             }
@@ -115,7 +133,7 @@ export const getFacultyById = async (id: string | number, locale?: string): Prom
             console.warn("Error fetching dean for faculty:", deanErr);
         }
 
-        const name = fields.name || fields.title || entry.name || entry.title || "Fakultet";
+        const name = toString(fields.name || fields.title || entry.name || entry.title || "Fakultet");
 
         return {
             id: facultyId,
@@ -237,11 +255,65 @@ export const getDepartmentById = async (id: string | number, locale?: string): P
         if (!entry) return null;
 
         const fields = entry.fields || {};
+        const departmentId = entry.uuid || entry.id;
         const facultyId = fields.faculty?.uuid || fields.faculty?.id || fields.faculty;
         const name = fields.name || fields.title || entry.name || entry.title || "Kafedra";
 
+        const toString = (val: any): string => {
+            if (typeof val === 'string') return val;
+            if (typeof val === 'number') return String(val);
+            if (Array.isArray(val) && val.length > 0) return toString(val[0]);
+            if (val && typeof val === 'object') {
+                return val.fields?.name || val.fields?.title || val.name || val.title || '';
+            }
+            return '';
+        };
+
+        let headInfo = undefined;
+        try {
+            const headRes = await apiClient.get(`/projects/${projectId}/content/heads-of-academic-departments`, {
+                params: { locale, with: 'image,positions,academic_department,academic-department' }
+            });
+            let headsData = Array.isArray(headRes.data) ? headRes.data : headRes.data.data;
+
+            // Fallback 1: try without locale on the same collection if empty
+            if (!headsData || headsData.length === 0) {
+                const headResAlt = await apiClient.get(`/projects/${projectId}/content/heads-of-academic-departments`, {
+                    params: { with: 'image,positions,academic_department,academic-department' }
+                });
+                headsData = Array.isArray(headResAlt.data) ? headResAlt.data : headResAlt.data.data;
+            }
+
+            const headEntry = headsData?.find((h: any) => {
+                const deptField = h.fields?.academic_department || h.fields?.['academic-department'] || h.fields?.department;
+                const deptObj = Array.isArray(deptField) ? deptField[0] : deptField;
+                const dId = deptObj?.uuid || deptObj?.id || deptObj;
+                return String(dId) === String(departmentId);
+            });
+
+            if (headEntry) {
+                const hf = headEntry.fields || {};
+                const rawPos = hf.positions || hf.position;
+                const posName = toString(rawPos) || "Kafedra mudiri";
+
+                headInfo = {
+                    id: headEntry.uuid || headEntry.id,
+                    name: toString(hf.name || headEntry.name || '').trim(),
+                    position: posName,
+                    phone: formatPhone(hf.phone || headEntry.phone),
+                    email: toString(hf.email || headEntry.email),
+                    image: getImageUrl(resolveImage(hf.image || headEntry.image)),
+                    career: toString(hf['work-experience'] || hf.work_experience || hf.career || hf.ish_tajribasi || hf.milestones || hf.experience),
+                    description: toString(hf.responsibilities || hf.description || hf.vazifalari || hf.bio || hf.content),
+                    isMain: false
+                };
+            }
+        } catch (headErr) {
+            console.warn("Error fetching head for department:", headErr);
+        }
+
         return {
-            id: entry.uuid || entry.id,
+            id: departmentId,
             name: name,
             phone: fields.phone || fields.phone_number,
             email: fields.email,
@@ -256,7 +328,8 @@ export const getDepartmentById = async (id: string | number, locale?: string): P
             history: fields.history || fields.tarix || fields.about || fields.history_uz || fields.history_ru || fields.history_en,
             staff: fields.staff || fields.composition || fields.kafedra_tarkibi || fields.members || fields.teachers || fields.employee,
             scientificActivity: fields['scientific-activity'] || fields.scientific_activity || fields.ilmiy_faoliyat || fields.science || fields.research,
-            internationalCooperation: fields['international-cooperation'] || fields.international_cooperation || fields.xalqaro_hamkorlik || fields.cooperation
+            internationalCooperation: fields['international-cooperation'] || fields.international_cooperation || fields.xalqaro_hamkorlik || fields.cooperation,
+            headInfo
         };
     } catch (error) {
         console.error("Department fetch error:", error);

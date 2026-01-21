@@ -50,5 +50,9 @@
     "noDataWithResource": "Hozircha {{resource}} mavjud emas",
     "universityName": "Namangan Davlat\nTexnika\nUniversiteti",
     "officialWebsite": "Rasmiy veb-sayti",
-    "address": "Manzil"
+    "address": "Manzil",
+    "leadership": {
+        "career": "Mehnat faoliyati",
+        "duties": "Vazifalari"
+    }
 }

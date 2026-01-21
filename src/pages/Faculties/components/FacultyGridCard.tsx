@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { useLocale } from '@/contexts/LocaleContext';
 import { OptimizedImage } from '../../../components/shared';
 
 interface FacultyGridCardProps {
@@ -12,10 +14,13 @@ interface FacultyGridCardProps {
 }
 
 export const FacultyGridCard: React.FC<FacultyGridCardProps> = ({ id, name, image, href, slug }) => {
+    const { t } = useTranslation('pages');
+    const { locale } = useLocale();
+
     // Use ID-based href if not explicitly provided (just ID for relative path)
     // Updated: ensure it's an absolute path to avoid nesting issues or relative confusion
     const linkSlug = slug || id;
-    const detailHref = href || `/faculties/${linkSlug}`;
+    const detailHref = href || `/${locale}/faculties/${linkSlug}`;
 
     return (
         <Link to={detailHref} className="group relative block w-full h-64 md:h-72 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
@@ -38,7 +43,7 @@ export const FacultyGridCard: React.FC<FacultyGridCardProps> = ({ id, name, imag
                 </h3>
 
                 <div className="flex items-center text-white font-medium text-sm md:text-base group-hover:translate-x-2 transition-transform duration-300">
-                    <span>Bo&apos;limga o&apos;tish</span>
+                    <span>{t('goToSection')}</span>
                     <div className="ml-2 bg-white/20 rounded-full p-1.5 backdrop-blur-sm">
                         <ArrowRight size={16} />
                     </div>

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { useLocale } from '@/contexts/LocaleContext';
 import { useCachedApi } from '@/hooks/useCachedApi';
 import { getFacultyById, getDepartmentsByFacultyId } from '@/services/facultiesService';
 import { Faculty, Department } from '@/types/faculty.types';
@@ -7,7 +9,7 @@ import Container from '@/components/shared/Container';
 import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
 import EmptyState from '@/components/shared/EmptyState';
 import { DepartmentGridCard } from '../Faculties/components/DepartmentGridCard';
-import { SectionTabs, OptimizedImage, ContentBuilder, Accordion, LeadershipCard } from '@/components/shared';
+import { SectionTabs, ContentBuilder, Accordion, LeadershipCard } from '@/components/shared';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 import {
     BuildingLibraryIcon,
@@ -19,6 +21,8 @@ import {
 const FacultyDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const { t } = useTranslation('pages');
+    const { locale } = useLocale();
     const { setBreadcrumbsData } = useGlobalLayout();
     const [activeTab, setActiveTab] = useState('history');
 
@@ -31,7 +35,7 @@ const FacultyDetailPage: React.FC = () => {
 
     useEffect(() => {
         if (faculty) {
-            console.log('DEBUG: Faculty Data:', faculty);
+            // Updated breadcrumbs or other side effects
         }
     }, [faculty]);
 
@@ -44,20 +48,20 @@ const FacultyDetailPage: React.FC = () => {
 
     useEffect(() => {
         if (!loadingFaculty && !faculty) {
-            navigate('/faculties');
+            navigate(`/${locale}/faculties`);
         }
-    }, [loadingFaculty, faculty, navigate]);
+    }, [loadingFaculty, faculty, navigate, locale]);
 
     useEffect(() => {
         if (faculty) {
             setBreadcrumbsData([
-                { label: 'Asosiy', href: '/' },
-                { label: 'Fakultetlar', href: '/faculties' },
+                { label: t('breadcrumbs.home'), href: `/${locale}` },
+                { label: t('breadcrumbs.faculties'), href: `/${locale}/faculties` },
                 { label: faculty.name }
             ]);
         }
         return () => setBreadcrumbsData([]);
-    }, [faculty, setBreadcrumbsData]);
+    }, [faculty, setBreadcrumbsData, locale, t]);
 
     if (loadingFaculty) {
         return <GenericPageSkeleton />;
@@ -68,10 +72,10 @@ const FacultyDetailPage: React.FC = () => {
     }
 
     const tabs = [
-        { id: 'history', label: 'Fakultet haqida', icon: BuildingLibraryIcon },
-        { id: 'departments', label: 'Kafedralar', icon: UserGroupIcon },
-        { id: 'directions', label: "Yo'nalish va mutaxassisliklari", icon: ListBulletIcon },
-        { id: 'cooperation', label: 'Xalqaro hamkorlik', icon: GlobeAltIcon },
+        { id: 'history', label: t('facultyTabs.about'), icon: BuildingLibraryIcon },
+        { id: 'departments', label: t('facultyTabs.departments'), icon: UserGroupIcon },
+        { id: 'directions', label: t('facultyTabs.directions'), icon: ListBulletIcon },
+        { id: 'cooperation', label: t('facultyTabs.cooperation'), icon: GlobeAltIcon },
     ];
 
     return (
@@ -86,15 +90,15 @@ const FacultyDetailPage: React.FC = () => {
                         </h1>
 
                         {/* Featured Image - Standard Tailwind height classes (h-64 mobile, h-80 desktop) - slightly smaller as requested */}
-                        {faculty.image && (
-                            <div className="w-full mb-8 h-64 md:h-80">
-                                <OptimizedImage
-                                    src={faculty.image}
-                                    alt={faculty.name}
-                                    className="w-full h-full object-cover object-top"
-                                />
-                            </div>
-                        )}
+                        {/* {faculty.image && (
+    <div className="w-full mb-8 h-64 md:h-80">
+        <OptimizedImage
+            src={faculty.image}
+            alt={faculty.name}
+            className="w-full h-full object-cover object-top"
+        />
+    </div>
+)} */}
 
                         {/* Tabs Navigation - Closer to image, no border */}
                         <div className="pt-2">
@@ -112,9 +116,18 @@ const FacultyDetailPage: React.FC = () => {
                     <div className="px-6 md:px-10 pb-10 min-h-[400px]">
                         {activeTab === 'history' && (
                             <div className="space-y-12">
+                                {faculty.deanInfo && (
+                                    <div className="mb-8">
+                                        <LeadershipCard
+                                            member={faculty.deanInfo}
+                                            isMain={false}
+                                        />
+                                    </div>
+                                )}
+
                                 <div className="flex items-center gap-3 mb-8">
                                     <div className="w-1.5 h-10 bg-[#6D6EAB] rounded-full shadow-[0_0_15px_rgba(109,110,171,0.4)]"></div>
-                                    <h2 className="text-3xl font-bold text-[#003B5C]">Fakultet haqida</h2>
+                                    <h2 className="text-3xl font-bold text-[#003B5C]">{t('facultyTabs.about')}</h2>
                                 </div>
 
                                 <div className="bg-white">
@@ -132,16 +145,6 @@ const FacultyDetailPage: React.FC = () => {
                                         <EmptyState resourceKey="info" />
                                     )}
                                 </div>
-
-                                {/* Dean Info as a Full Width Section within History */}
-                                {faculty.deanInfo && (
-                                    <div className="pt-8 border-t border-gray-100">
-                                        <LeadershipCard
-                                            member={faculty.deanInfo}
-                                            isMain={false}
-                                        />
-                                    </div>
-                                )}
                             </div>
                         )}
 
@@ -149,7 +152,7 @@ const FacultyDetailPage: React.FC = () => {
                             <div>
                                 <div className="flex items-center gap-3 mb-8">
                                     <div className="w-1.5 h-10 bg-[#6D6EAB] rounded-full shadow-[0_0_15px_rgba(109,110,171,0.4)]"></div>
-                                    <h2 className="text-3xl font-bold text-[#003B5C]">Fakultet kafedralari</h2>
+                                    <h2 className="text-3xl font-bold text-[#003B5C]">{t('headers.facultyDepartments')}</h2>
                                 </div>
 
                                 {!loadingDepartments && departments && departments.length > 0 ? (
@@ -169,8 +172,8 @@ const FacultyDetailPage: React.FC = () => {
                                 ) : (
                                     <EmptyState
                                         resourceKey="departments"
-                                        title="Kafedralar topilmadi"
-                                        message="Ushbu fakultetga tegishli kafedralar hozircha mavjud emas."
+                                        title={t('messages.departmentsNotFound')}
+                                        message={t('messages.noDepartmentsInFaculty')}
                                     />
                                 )}
                             </div>
@@ -180,7 +183,7 @@ const FacultyDetailPage: React.FC = () => {
                             <div>
                                 <div className="flex items-center gap-3 mb-8">
                                     <div className="w-1.5 h-10 bg-[#6D6EAB] rounded-full shadow-[0_0_15px_rgba(109,110,171,0.4)]"></div>
-                                    <h2 className="text-3xl font-bold text-[#003B5C]">Yo&apos;nalish va mutaxassisliklari</h2>
+                                    <h2 className="text-3xl font-bold text-[#003B5C]">{t('facultyTabs.directions')}</h2>
                                 </div>
                                 <div className="bg-gray-50/50 rounded-3xl p-8 border border-gray-100 min-h-[300px]">
                                     {faculty.directionsAndSpecializations ? (
@@ -205,7 +208,7 @@ const FacultyDetailPage: React.FC = () => {
                                 <div>
                                     <div className="flex items-center gap-3 mb-8">
                                         <div className="w-1.5 h-10 bg-[#6D6EAB] rounded-full shadow-[0_0_15px_rgba(109,110,171,0.4)]"></div>
-                                        <h2 className="text-3xl font-bold text-[#003B5C]">Xalqaro hamkorlik</h2>
+                                        <h2 className="text-3xl font-bold text-[#003B5C]">{t('facultyTabs.cooperation')}</h2>
                                     </div>
                                     <div className="bg-gray-50/50 rounded-3xl p-8 border border-gray-100 min-h-[100px]">
                                         {faculty.internationalCooperation ? (
@@ -229,7 +232,7 @@ const FacultyDetailPage: React.FC = () => {
                                     <div className="space-y-8 pt-8 border-t border-gray-100">
                                         <div className="flex items-center gap-3 mb-6">
                                             <div className="w-1 h-8 bg-black rounded-full opacity-50"></div>
-                                            <h3 className="text-2xl font-bold text-black">Kafedralar kesimida xalqaro hamkorlik</h3>
+                                            <h3 className="text-2xl font-bold text-black">{t('headers.departmentsCooperation')}</h3>
                                         </div>
 
                                         <Accordion
@@ -265,7 +268,7 @@ const FacultyDetailPage: React.FC = () => {
                     </div>
                 </div>
             </Container>
-        </section>
+        </section >
     );
 };
 

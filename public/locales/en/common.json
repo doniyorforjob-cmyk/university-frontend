@@ -50,5 +50,9 @@
     "noDataWithResource": "There are no {{resource}} yet",
     "universityName": "Namangan State\nTechnical\nUniversity",
     "officialWebsite": "Official Website",
-    "address": "Address"
+    "address": "Address",
+    "leadership": {
+        "career": "Work Experience",
+        "duties": "Duties"
+    }
 }

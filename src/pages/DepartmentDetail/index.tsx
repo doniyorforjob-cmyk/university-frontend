@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { useLocale } from '@/contexts/LocaleContext';
 import { useCachedApi } from '@/hooks/useCachedApi';
 import { getDepartmentById } from '@/services/facultiesService';
 import { Department } from '@/types/faculty.types';
 import Container from '@/components/shared/Container';
 import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
 import EmptyState from '@/components/shared/EmptyState';
-import { SectionTabs, OptimizedImage, ContentBuilder } from '@/components/shared';
+import { SectionTabs, OptimizedImage, ContentBuilder, LeadershipCard } from '@/components/shared';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 import {
     BuildingLibraryIcon,
@@ -17,36 +19,29 @@ import {
 
 const DepartmentDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
+    const { t } = useTranslation('pages');
+    const { locale } = useLocale();
     const { setBreadcrumbsData } = useGlobalLayout();
     const [activeTab, setActiveTab] = React.useState('about');
 
-    const { data: department, loading: loadingDepartment, error } = useCachedApi<Department | null>({
+    const { data: department, loading: loadingDepartment } = useCachedApi<Department | null>({
         key: `department-detail-${id}`,
         fetcher: () => getDepartmentById(id!),
         enabled: !!id,
         ttlMinutes: 5
     });
 
-    useEffect(() => {
-        if (department) {
-            console.log('DEBUG: Department Data (Mapped):', department);
-        }
-    }, [department]);
-
-    useEffect(() => {
-        console.log('Department Detail Debug:', { id, loadingDepartment, department, error });
-    }, [id, loadingDepartment, department, error]);
 
     useEffect(() => {
         if (department) {
             setBreadcrumbsData([
-                { label: 'Asosiy', href: '/' },
-                { label: 'Kafedralar', href: '/departments' },
+                { label: t('breadcrumbs.home'), href: `/${locale}` },
+                { label: t('breadcrumbs.departments'), href: `/${locale}/departments` },
                 { label: department.name }
             ]);
         }
         return () => setBreadcrumbsData([]);
-    }, [department, setBreadcrumbsData]);
+    }, [department, setBreadcrumbsData, locale, t]);
 
     if (loadingDepartment) {
         return <GenericPageSkeleton />;
@@ -66,10 +61,10 @@ const DepartmentDetailPage: React.FC = () => {
     }
 
     const tabs = [
-        { id: 'about', label: 'Kafedra haqida', icon: BuildingLibraryIcon },
-        { id: 'staff', label: 'Kafedra tarkibi', icon: UserGroupIcon },
-        { id: 'scientific', label: 'Ilmiy faoliyat', icon: AcademicCapIcon },
-        { id: 'cooperation', label: 'Xalqaro hamkorlik', icon: GlobeAltIcon },
+        { id: 'about', label: t('departmentTabs.about'), icon: BuildingLibraryIcon },
+        { id: 'staff', label: t('departmentTabs.staff'), icon: UserGroupIcon },
+        { id: 'scientific', label: t('departmentTabs.scientific'), icon: AcademicCapIcon },
+        { id: 'cooperation', label: t('departmentTabs.cooperation'), icon: GlobeAltIcon },
     ];
 
     return (
@@ -111,7 +106,7 @@ const DepartmentDetailPage: React.FC = () => {
                             <div className="space-y-12">
                                 <div className="flex items-center gap-3 mb-8">
                                     <div className="w-1.5 h-10 bg-[#6D6EAB] rounded-full shadow-[0_0_15px_rgba(109,110,171,0.4)]"></div>
-                                    <h2 className="text-3xl font-bold text-[#003B5C]">Kafedra haqida</h2>
+                                    <h2 className="text-3xl font-bold text-[#003B5C]">{t('departmentTabs.about')}</h2>
                                 </div>
 
                                 <div className="bg-white">
@@ -129,54 +124,6 @@ const DepartmentDetailPage: React.FC = () => {
                                         <EmptyState resourceKey="info" />
                                     )}
                                 </div>
-
-                                {/* Department Head Info */}
-                                {department.headName && (
-                                    <div className="pt-8 border-t border-gray-100">
-                                        <div className="flex items-center gap-3 mb-8">
-                                            <div className="w-1.5 h-10 bg-[#6D6EAB] rounded-full"></div>
-                                            <h2 className="text-3xl font-bold text-[#003B5C]">Kafedra mudiri</h2>
-                                        </div>
-                                        <div className="bg-white border border-gray-200 rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow">
-                                            <div className="flex flex-col md:flex-row gap-8 items-start">
-                                                <div className="w-32 h-40 md:w-40 md:h-48 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0 relative shadow-inner">
-                                                    <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-50">
-                                                        <UserGroupIcon className="w-16 h-16 opacity-50" />
-                                                    </div>
-                                                </div>
-                                                <div className="flex-1 space-y-4">
-                                                    <div>
-                                                        <h3 className="text-2xl font-bold text-[#003B5C] mb-1">{department.headName}</h3>
-                                                        <p className="text-gray-500 font-medium text-lg">Kafedra mudiri</p>
-                                                    </div>
-
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                                                        {department.phone && (
-                                                            <div className="space-y-1">
-                                                                <p className="text-xs font-bold text-black opacity-80 uppercase tracking-wider">Telefon</p>
-                                                                <a href={`tel:${department.phone}`} className="text-black font-semibold hover:text-[#003B5C] block text-lg transition-colors">
-                                                                    {department.phone}
-                                                                </a>
-                                                            </div>
-                                                        )}
-                                                        {department.email && (
-                                                            <div className="space-y-1">
-                                                                <p className="text-xs font-bold text-black opacity-80 uppercase tracking-wider">Email</p>
-                                                                <a href={`mailto:${department.email}`} className="text-black font-semibold hover:text-[#003B5C] block text-lg transition-colors break-all">
-                                                                    {department.email}
-                                                                </a>
-                                                            </div>
-                                                        )}
-                                                        <div className="space-y-1">
-                                                            <p className="text-xs font-bold text-black opacity-80 uppercase tracking-wider">Qabul kunlari</p>
-                                                            <p className="text-black font-semibold text-lg">Dushanba-Juma, 09:00 – 17:00</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
                             </div>
                         )}
 
@@ -184,8 +131,18 @@ const DepartmentDetailPage: React.FC = () => {
                             <div className="space-y-8">
                                 <div className="flex items-center gap-3 mb-8">
                                     <div className="w-1.5 h-10 bg-[#6D6EAB] rounded-full shadow-[0_0_15px_rgba(109,110,171,0.4)]"></div>
-                                    <h2 className="text-3xl font-bold text-[#003B5C]">Kafedra tarkibi</h2>
+                                    <h2 className="text-3xl font-bold text-[#003B5C]">{t('departmentTabs.staff')}</h2>
                                 </div>
+
+                                {department.headInfo && (
+                                    <div className="mb-12">
+                                        <LeadershipCard
+                                            member={department.headInfo}
+                                            isMain={false}
+                                        />
+                                    </div>
+                                )}
+
                                 {department.staff ? (
                                     <ContentBuilder
                                         blocks={[
@@ -206,7 +163,7 @@ const DepartmentDetailPage: React.FC = () => {
                             <div className="space-y-8">
                                 <div className="flex items-center gap-3 mb-8">
                                     <div className="w-1.5 h-10 bg-[#6D6EAB] rounded-full shadow-[0_0_15px_rgba(109,110,171,0.4)]"></div>
-                                    <h2 className="text-3xl font-bold text-[#003B5C]">Ilmiy faoliyat</h2>
+                                    <h2 className="text-3xl font-bold text-[#003B5C]">{t('departmentTabs.scientific')}</h2>
                                 </div>
                                 {department.scientificActivity ? (
                                     <ContentBuilder
@@ -228,7 +185,7 @@ const DepartmentDetailPage: React.FC = () => {
                             <div className="space-y-8">
                                 <div className="flex items-center gap-3 mb-8">
                                     <div className="w-1.5 h-10 bg-[#6D6EAB] rounded-full shadow-[0_0_15px_rgba(109,110,171,0.4)]"></div>
-                                    <h2 className="text-3xl font-bold text-[#003B5C]">Xalqaro hamkorlik</h2>
+                                    <h2 className="text-3xl font-bold text-[#003B5C]">{t('departmentTabs.cooperation')}</h2>
                                 </div>
                                 {department.internationalCooperation ? (
                                     <ContentBuilder
@@ -248,7 +205,7 @@ const DepartmentDetailPage: React.FC = () => {
                     </div>
                 </div>
             </Container>
-        </section>
+        </section >
     );
 };
 

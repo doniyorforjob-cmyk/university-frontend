@@ -50,5 +50,9 @@
     "noDataWithResource": "Пока {{resource}} отсутствуют",
     "universityName": "Наманганский\nгосударственный\nтехнический университет",
     "officialWebsite": "Официальный веб-сайт",
-    "address": "Адрес"
+    "address": "Адрес",
+    "leadership": {
+        "career": "Трудовая деятельность",
+        "duties": "Обязанности"
+    }
 }
