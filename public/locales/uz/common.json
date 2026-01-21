@@ -54,5 +54,13 @@
     "leadership": {
         "career": "Mehnat faoliyati",
         "duties": "Vazifalari"
+    },
+    "navbar": {
+        "sections": "Bo'limlar",
+        "links": "Havolalar",
+        "no_links": "Ushbu bo'limda havolalar mavjud emas",
+        "all": "Barchasi",
+        "select_section": "Batafsil ko'rish uchun bo'limni tanlang",
+        "about_university_sections": "Namangan davlat texnika universiteti bo'limlari va xizmatlari haqida batafsil ma'lumot."
     }
 }

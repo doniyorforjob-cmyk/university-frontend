@@ -238,18 +238,40 @@ export const getDepartmentById = async (id: string | number, locale?: string): P
 
         if (!entry) {
             const all = await getDepartments(locale);
-            const found = all.find(d => d.slug === id || String(d.id) === String(id));
+            let found = all.find(d => d.slug === id || String(d.id) === String(id));
+
+            if (!found && locale !== 'uz') {
+                const allUz = await getDepartments('uz');
+                found = allUz.find(d => d.slug === id || String(d.id) === String(id));
+            }
+
             if (!found) return null;
 
+            const targetId = found.id;
+
+            // First attempt: fetch in requested locale
             const retryRes = await apiClient.get(`/projects/${projectId}/content/academic-departments`, {
                 params: {
-                    'filter[id][eq]': found.id,
+                    'filter[id][eq]': targetId,
                     locale,
                     with: 'image,gallery,faculty'
                 }
             });
-            const retryData = Array.isArray(retryRes.data) ? retryRes.data : retryRes.data.data;
-            entry = (retryData || []).find((item: any) => (item.uuid || item.id) === found.id);
+            let retryData = Array.isArray(retryRes.data) ? retryRes.data : retryRes.data.data;
+            entry = (retryData || []).find((item: any) => (item.uuid || item.id) === targetId);
+
+            // Second attempt: if content not found in current locale (e.g. RU), fetch in UZ (fallback content)
+            if (!entry && locale !== 'uz') {
+                const fallbackRes = await apiClient.get(`/projects/${projectId}/content/academic-departments`, {
+                    params: {
+                        'filter[id][eq]': targetId,
+                        locale: 'uz',
+                        with: 'image,gallery,faculty'
+                    }
+                });
+                const fallbackData = Array.isArray(fallbackRes.data) ? fallbackRes.data : fallbackRes.data.data;
+                entry = (fallbackData || []).find((item: any) => (item.uuid || item.id) === targetId);
+            }
         }
 
         if (!entry) return null;

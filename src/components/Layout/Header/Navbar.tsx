@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import useClickOutside from '../../../hooks/useClickOutside';
 import { fetchNavItems, NavItem } from '../../../services/navbarService';
 import { useCachedApi } from '../../../hooks/useCachedApi';
+import { useTranslation } from 'react-i18next';
 import { useLocale } from '../../../contexts/LocaleContext';
 import Container from '../../shared/Container';
 import { PrefetchLink } from '../../shared';
@@ -23,6 +24,7 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
+  const { t } = useTranslation('common');
   const { locale } = useLocale();
   const { data: navItemsRaw, loading } = useCachedApi<NavItem[]>({
     key: `navbar-items`, // Match prefetchService key
@@ -265,11 +267,11 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                   </div>
                                   <div>
                                     <h3 className="text-xl font-bold text-[#0E104B]">{String(item.title)}</h3>
-                                    <p className="text-xs font-bold text-primary uppercase tracking-wider">Universitet</p>
+                                    <p className="text-xs font-bold text-primary uppercase tracking-wider">{t('university')}</p>
                                   </div>
                                 </div>
                                 <p className="text-sm text-gray-500 leading-relaxed italic">
-                                  {String(item.description || "Namangan davlat texnika universiteti bo'limlari va xizmatlari haqida batafsil ma'lumot.")}
+                                  {String(item.description || t('navbar.about_university_sections'))}
                                 </p>
                               </div>
 
@@ -278,7 +280,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                 <>
                                   {/* CENTER - Parent Categories (1/3) */}
                                   <div className="p-6">
-                                    <h4 className="text-xs font-black text-gray-300 uppercase tracking-widest mb-4">{"Bo'limlar"}</h4>
+                                    <h4 className="text-xs font-black text-gray-300 uppercase tracking-widest mb-4">{t('navbar.sections')}</h4>
                                     <div className="flex flex-col space-y-1">
                                       {item.children!.map((parent: any, idx: number) => (
                                         <div
@@ -316,14 +318,14 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                     {currentHoveredCategory ? (
                                       <div className="animate-fade-in">
                                         <div className="flex items-center justify-between mb-4">
-                                          <h4 className="text-xs font-black text-gray-300 uppercase tracking-widest">Havolalar</h4>
+                                          <h4 className="text-xs font-black text-gray-300 uppercase tracking-widest">{t('navbar.links')}</h4>
                                           {currentHoveredCategory.children && currentHoveredCategory.children.length > 7 && (
                                             <PrefetchLink
                                               to={currentHoveredCategory.href || '#'}
                                               onClick={closeDropdown}
                                               className="text-xs font-black text-primary hover:underline uppercase tracking-tight"
                                             >
-                                              {"Barchasi"}
+                                              {t('navbar.all')}
                                             </PrefetchLink>
                                           )}
                                         </div>
@@ -352,7 +354,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                             ))
                                           ) : (
                                             <div className="p-6 text-center border-2 border-dashed border-gray-100 rounded-lg">
-                                              <p className="text-gray-400 text-sm italic">{"Ushbu bo'limda havolalar mavjud emas"}</p>
+                                              <p className="text-gray-400 text-sm italic">{t('navbar.no_links')}</p>
                                             </div>
                                           )}
                                         </div>
@@ -360,7 +362,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                     ) : (
                                       <div className="h-full flex flex-col items-center justify-center text-center p-8">
                                         <BuildingLibraryIcon className="h-12 w-12 text-gray-200 mb-2" />
-                                        <p className="text-gray-400 text-sm">{"Batafsil ko'rish uchun bo'limni tanlang"}</p>
+                                        <p className="text-gray-400 text-sm">{t('navbar.select_section')}</p>
                                       </div>
                                     )}
                                   </div>
