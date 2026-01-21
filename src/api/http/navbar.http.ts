@@ -39,6 +39,8 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
         'Information Service': '/information-services',
         'Rectorate': '/organizational-structure',
         'Faculties': '/faculties',
+        'Academic Departments': '/departments',
+        'Departments': '/departments',
         'Corruption': '/corruption',
         'Fight against corruption': '/corruption'
       };
@@ -51,6 +53,15 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
     const transformItem = (item: any): NavItem => {
       const backendUrl = item.url_uz || item.url_en || item.url_ru;
       const mappedRoute = getRouteByTitle(item.title?.en || '');
+
+      // FIX: Rename "Departments" (Kafedralar) to "Academic Departments" in English to avoid conflict with "Departments" (Bo'limlar)
+      if (item.title?.uz === 'Kafedralar' || item.title?.en === 'Departments') {
+        // Only rename if it's actually the academic departments node (usually identified by 'Kafedralar' in UZ)
+        if (item.title?.uz === 'Kafedralar') {
+          if (!item.title) item.title = {};
+          item.title.en = 'Academic Departments';
+        }
+      }
 
       return {
         key: item.title?.en,

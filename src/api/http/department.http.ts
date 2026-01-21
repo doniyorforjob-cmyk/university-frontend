@@ -1,13 +1,18 @@
 import apiClient from '../client';
 import { Department } from '../../types/department.types';
 
-export const getDepartments = async (): Promise<Department[]> => {
+export const getDepartments = async (locale?: string): Promise<Department[]> => {
   try {
     const projectId = process.env.REACT_APP_PROJECT_ID;
-    const response = await apiClient.get(`/projects/${projectId}/content/academic-departments`);
+    const response = await apiClient.get(`/projects/${projectId}/content/academic-departments`, {
+      params: { locale }
+    });
 
     // Transform API response to Department format
     const data = Array.isArray(response.data) ? response.data : response.data.data;
+    // Handle potential null/undefined data safely
+    if (!data) return [];
+
     return data.map((entry: any) => ({
       id: entry.uuid || entry.id,
       name: entry.fields?.name || entry.fields?.title || entry.name || entry.title || 'Nomsiz Kafedra',
@@ -18,6 +23,6 @@ export const getDepartments = async (): Promise<Department[]> => {
     }));
   } catch (error) {
     console.error('Error fetching departments:', error);
-    throw error;
+    return [];
   }
 };

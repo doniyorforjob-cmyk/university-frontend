@@ -35,13 +35,13 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
   const [faculties, setFaculties] = useState<any[]>([]);
   const [departments, setDepartments] = useState<any[]>([]);
 
-  // Fetch dynamic content on mount
+  // Fetch dynamic content when locale changes
   useEffect(() => {
     const fetchDynamicContent = async () => {
       try {
         const [facs, depts] = await Promise.all([
-          getFaculties(),
-          getDepartments()
+          getFaculties(locale),
+          getDepartments(locale)
         ]);
         console.log('RAW API Departments Response:', depts);
         setFaculties(facs);
@@ -51,7 +51,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
       }
     };
     fetchDynamicContent();
-  }, []);
+  }, [locale]);
 
   // Local locale-based transformation for instant switching
   const displayNavItems = React.useMemo(() => {
@@ -67,7 +67,10 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
       };
 
       // Enrich "Tuzilma" -> "Fakultetlar"
-      if (transformed.title === 'Fakultetlar' && faculties.length > 0) {
+      // Check distinct title in stable language (uz) to ensure it works across all locales
+      const isFaculties = (item.title as any)?.uz === 'Fakultetlar' || (item.title as any)?.en === 'Faculties';
+
+      if (isFaculties && faculties.length > 0) {
         transformed.children = faculties.map(f => ({
           title: f.name,
           href: `/faculties/${f.slug}`,
@@ -76,7 +79,11 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
       }
 
       // Enrich "Tuzilma" -> "Kafedralar"
-      if (transformed.title === 'Kafedralar') {
+      // FIX: Only target the specific "Kafedralar" node. 
+      // Do NOT include 'Departments' check because it matches "Bo'limlar" (Functional Departments) which should come from Navigation.
+      const isDepartments = (item.title as any)?.uz === 'Kafedralar' || (item.title as any)?.en === 'Academic Departments';
+
+      if (isDepartments) {
         const hasDepts = departments && departments.length > 0;
         console.log('Enriching Kafedralar:', { hasDepts, count: hasDepts ? departments.length : 0 });
 
