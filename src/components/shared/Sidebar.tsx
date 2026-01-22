@@ -54,50 +54,111 @@ export const Sidebar: React.FC = () => {
 
   const normalizedCurrentPath = normalizePath(currentPath);
 
-  // Find the active group based on the tree
+  // Find the active group based on the tree with longest prefix match strategy
   const findActiveGroup = (items: NavItem[]): { parentTitle: string; links: NavItem[] } | null => {
+    let bestMatch: { parentTitle: string; links: NavItem[], pathLength: number } | null = null;
+
     for (const item of items) {
+      // Check Level 1 (Top) - usually we don't show siblings of top level, but if it matches, its children are the context
+      // Actually, if Top Level matches, we usually want to show ITs children as the sidebar links.
+      // So if item matches, parentTitle is item.title, links is item.children.
       const itemHref = normalizePath(item.href || '');
-
-      // If current path matches or starts with parent path (e.g. /news/slug starts with /news)
-      const isParentMatch = itemHref !== '/' && (normalizedCurrentPath === itemHref || normalizedCurrentPath.startsWith(itemHref + '/'));
-
-      if (isParentMatch && item.children && item.children.length > 0) {
-        return {
-          parentTitle: getLocalized(item.title, locale),
-          links: item.children
-        };
-      }
-
-      // Check children level
-      if (item.children) {
-        for (const child of item.children) {
-          const childHref = normalizePath(child.href || '');
-          const isChildMatch = childHref !== '/' && (normalizedCurrentPath === childHref || normalizedCurrentPath.startsWith(childHref + '/'));
-
-          if (isChildMatch) {
-            return {
+      if (itemHref !== '/' && (normalizedCurrentPath === itemHref || normalizedCurrentPath.startsWith(itemHref + '/'))) {
+        if (item.children && item.children.length > 0) {
+          if (!bestMatch || itemHref.length > bestMatch.pathLength) {
+            bestMatch = {
               parentTitle: getLocalized(item.title, locale),
-              links: item.children
+              links: item.children,
+              pathLength: itemHref.length
             };
           }
+        }
+      }
 
-          // Check subchildren
+      // Check Level 2 (Children)
+      if (item.children) {
+        for (const child of item.children) {
+          // If child matches, we want to show shared siblings (item.children) OR child's children?
+          // Standard logic: Show siblings. parentTitle = item.title.
+          // Exception: If child has children and we are INSIDE child, maybe show child's children?
+          // The recursion logic above was:
+          // If Child Matches -> Return Parent Title + Parent Children (Siblings)
+          // If Child Matches AND has Subchildren -> What did we do?
+          // The old logic returned the first match.
+
+          // Let's stick to standard sidebar: Show SIBLINGS of the active item, unless active item is a section root?
+          // Actually, if I click "University", I want to see "University" sub-pages.
+          // If I click "University Council" (sub-page), I want to see "University" sub-pages (my siblings).
+
+          // So:
+          // 1. If Child Matches (University): matched path /university. 
+          // We want to show Child's Siblings (Level 2 items) OR Child's Children (Level 3)?
+          // IF "University" is a section header in the menu, we usually want to show its children.
+          // But here "University" is a LINK.
+
+          // Let's look at the old logic:
+          // if (isParentMatch && item.children) -> return parentTitle=item.title, links=item.children (Show children of matched item)
+          // if (isChildMatch) -> return parentTitle=item.title, links=item.children (Show siblings of matched item)
+
+          // So if Parent matches, show Parent's children.
+          // If Child matches, show Child's siblings (Parent's children).
+          // If SubChild matches, show SubChild's siblings (Child's children).
+
+          // Match Level 2 (Child)
+          const childHref = normalizePath(child.href || '');
+          if (childHref !== '/' && (normalizedCurrentPath === childHref || normalizedCurrentPath.startsWith(childHref + '/'))) {
+            // If child has children, and we are deeper?
+            // Actually, if we are at /university/council, Child (/university) matches.
+            // SubChild (/university/council) matches.
+            // SubChild is longer. 
+            // So we should pick SubChild match.
+
+            // What context for SubChild match?
+            // Old logic:
+            // if (subChildMatch) return parentTitle: child.title, links: child.children
+            // (Show siblings of subChild, i.e., Level 3 items)
+
+            // So we just need to collect matches and their corresponding contexts.
+
+            // Context for Child match: Parent Title (Level 1), Links (Level 2 - Child's siblings)
+            // WAIT, old logic for Child Match:
+            // return { parentTitle: getLocalized(item.title, locale), links: item.children };
+            // Yes, siblings.
+
+            // Use this context for Level 2 match:
+            if (!bestMatch || childHref.length > bestMatch.pathLength) {
+              bestMatch = {
+                parentTitle: getLocalized(item.title, locale), // Level 1 Title
+                links: item.children, // Level 2 Links
+                pathLength: childHref.length
+              };
+            }
+          }
+
+          // Check Level 3 (SubChildren)
           if (child.children) {
             for (const subChild of child.children) {
               const subChildHref = normalizePath(subChild.href || '');
               if (subChildHref !== '/' && (normalizedCurrentPath === subChildHref || normalizedCurrentPath.startsWith(subChildHref + '/'))) {
-                return {
-                  parentTitle: getLocalized(child.title, locale),
-                  links: child.children
-                };
+                // Context for SubChild match: Child Title (Level 2), Links (Level 3 - SubChild's siblings)
+                if (!bestMatch || subChildHref.length > bestMatch.pathLength) {
+                  bestMatch = {
+                    parentTitle: getLocalized(child.title, locale), // Level 2 Title
+                    links: child.children, // Level 3 Links
+                    pathLength: subChildHref.length
+                  };
+                }
               }
             }
           }
         }
       }
     }
-    return null;
+
+    // Check if we found nothing, but maybe Top Level match should have been caught?
+    // Added Level 1 check above.
+
+    return bestMatch;
   };
 
   const activeGroup = navItemsRaw ? findActiveGroup(navItemsRaw) : null;

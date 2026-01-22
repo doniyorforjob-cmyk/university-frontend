@@ -93,5 +93,8 @@
         "departmentsNotFound": "Кафедры не найдены",
         "noDepartmentsInFaculty": "На этом факультете пока нет кафедр."
     },
-    "centers": "Центры"
+    "centers": "Центры",
+    "university_council": "Совет университета",
+    "university": "Университет",
+    "public_council": "Общественный совет"
 }

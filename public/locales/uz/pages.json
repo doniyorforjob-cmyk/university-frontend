@@ -93,5 +93,8 @@
         "departmentsNotFound": "Kafedralar topilmadi",
         "noDepartmentsInFaculty": "Ushbu fakultetga tegishli kafedralar hozircha mavjud emas."
     },
-    "centers": "Markazlar"
+    "centers": "Markazlar",
+    "university_council": "Universitet Kengashi",
+    "university": "Universitet",
+    "public_council": "Jamoatchilik kengashi"
 }

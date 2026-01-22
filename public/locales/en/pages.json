@@ -93,5 +93,8 @@
         "departmentsNotFound": "Departments not found",
         "noDepartmentsInFaculty": "There are no departments in this faculty yet."
     },
-    "centers": "Centers"
+    "centers": "Centers",
+    "university_council": "University Council",
+    "university": "University",
+    "public_council": "Public Council"
 }

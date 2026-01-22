@@ -23,8 +23,14 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
         'News': '/news',
         'Announcements': '/announcements',
         'Events': '/announcements',
+        // Check specific council types BEFORE generic ones
+        'Public Council': '/university/public-council',
+        'Jamoatchilik kengashi': '/university/public-council',
+        'University Council': '/university/council',
+        'Board of Trustees': '/university/council',
+        'Council': '/university/council',
+        'About University': '/university', // Must be before 'University'
         'University': '/university',
-        'About University': '/university',
         'Structure': '/organizational-structure',
         'Activities': '/activities',
         'Admission': '/admission',
