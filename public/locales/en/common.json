@@ -62,5 +62,10 @@
         "all": "All",
         "select_section": "Select a section for more details",
         "about_university_sections": "Detailed information about the departments and services of Namangan State Technical University."
+    },
+    "nav": {
+        "home": "Home",
+        "about": "University",
+        "administration": "Administration"
     }
 }

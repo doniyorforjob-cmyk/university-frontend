@@ -79,11 +79,10 @@ export const HeroBuilder: React.FC<HeroBuilderProps> = ({
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-                activeTab === tab.id
+              className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.id
                   ? 'border-blue-500 text-blue-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
+                }`}
             >
               {tab.label}
             </button>
@@ -144,11 +143,10 @@ export const HeroBuilder: React.FC<HeroBuilderProps> = ({
                     <button
                       key={preset}
                       onClick={() => updateBackground({ value: preset })}
-                      className={`h-12 rounded-lg border-2 transition-all ${
-                        config.background.value === preset
+                      className={`h-12 rounded-lg border-2 transition-all ${config.background.value === preset
                           ? 'border-blue-500 ring-2 ring-blue-200'
                           : 'border-gray-200 hover:border-gray-300'
-                      } bg-gradient-to-r ${preset}`}
+                        } bg-gradient-to-r ${preset}`}
                     />
                   ))}
                 </div>
@@ -218,7 +216,7 @@ export const HeroBuilder: React.FC<HeroBuilderProps> = ({
                   onChange={(e) => updateConfig({ showTitle: e.target.checked })}
                   className="text-blue-600"
                 />
-                <span className="text-sm">Sarlavhani ko'rsatish</span>
+                <span className="text-sm">Sarlavhani ko&apos;rsatish</span>
               </label>
 
               <label className="flex items-center space-x-2">
@@ -228,7 +226,7 @@ export const HeroBuilder: React.FC<HeroBuilderProps> = ({
                   onChange={(e) => updateConfig({ showSubtitle: e.target.checked })}
                   className="text-blue-600"
                 />
-                <span className="text-sm">Tavsifni ko'rsatish</span>
+                <span className="text-sm">Tavsifni ko&apos;rsatish</span>
               </label>
             </div>
 
@@ -275,7 +273,7 @@ export const HeroBuilder: React.FC<HeroBuilderProps> = ({
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                 >
                   <option value="py-8">Kichik (py-8)</option>
-                  <option value="py-12">O'rtacha (py-12)</option>
+                  <option value="py-12">O&apos;rtacha (py-12)</option>
                   <option value="py-16">Katta (py-16)</option>
                   <option value="py-20">Juda katta (py-20)</option>
                 </select>
@@ -291,9 +289,9 @@ export const HeroBuilder: React.FC<HeroBuilderProps> = ({
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                 >
                   <option value="max-w-4xl">Kichik (max-w-4xl)</option>
-                  <option value="max-w-6xl">O'rtacha (max-w-6xl)</option>
+                  <option value="max-w-6xl">O&apos;rtacha (max-w-6xl)</option>
                   <option value="max-w-7xl">Katta (max-w-7xl)</option>
-                  <option value="max-w-full">To'liq (max-w-full)</option>
+                  <option value="max-w-full">To&apos;liq (max-w-full)</option>
                 </select>
               </div>
             </div>
@@ -309,13 +307,13 @@ export const HeroBuilder: React.FC<HeroBuilderProps> = ({
               >
                 <option value="left">Chapga</option>
                 <option value="center">Markazga</option>
-                <option value="right">O'ngga</option>
+                <option value="right">O&apos;ngga</option>
               </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Shrift o'lchami
+                Shrift o&apos;lchami
               </label>
               <select
                 value={config.styling.fontSize}
@@ -323,7 +321,7 @@ export const HeroBuilder: React.FC<HeroBuilderProps> = ({
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg"
               >
                 <option value="sm">Kichik</option>
-                <option value="base">O'rtacha</option>
+                <option value="base">O&apos;rtacha</option>
                 <option value="lg">Katta</option>
                 <option value="xl">Juda katta</option>
                 <option value="2xl">Ultra katta</option>

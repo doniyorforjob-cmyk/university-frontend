@@ -29,6 +29,7 @@ export const LeadershipListBlock: React.FC<LeadershipListBlockProps> = ({ block,
                         key={member.id || memberIndex}
                         member={member}
                         isMain={memberIndex === 0 && block.data.highlightFirst}
+                        variant={block.data.variant}
                     />
                 ))}
             </div>

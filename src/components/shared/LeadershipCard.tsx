@@ -10,9 +10,10 @@ import { getImageUrl } from '@/utils/apiUtils';
 interface LeadershipCardProps {
     member: Leadership;
     isMain?: boolean; // For the rector (different layout)
+    variant?: 'default' | 'small';
 }
 
-const LeadershipCard: React.FC<LeadershipCardProps> = ({ member, isMain = false }) => {
+const LeadershipCard: React.FC<LeadershipCardProps> = ({ member, isMain = false, variant = 'default' }) => {
     const { t, i18n } = useTranslation('common');
     const [expandedSection, setExpandedSection] = React.useState<'career' | 'duties' | null>(null);
     const [logoUrl, setLogoUrl] = useState<string>('/images/logo.png');
@@ -48,10 +49,10 @@ const LeadershipCard: React.FC<LeadershipCardProps> = ({ member, isMain = false 
 
                 {/* Left/Right: Info Section */}
                 <div className={`flex-1 px-4 lg:px-10 z-10 flex flex-col justify-start pt-4 lg:pt-6 h-full ${!isMain ? 'lg:pl-6' : ''}`}>
-                    <h2 className="text-xl lg:text-3xl font-extrabold text-[#003B5C] leading-none mb-2 tracking-tight mt-0">
+                    <h2 className={`text-xl font-extrabold text-[#003B5C] leading-none mb-2 tracking-tight mt-0 ${variant === 'small' ? 'lg:text-2xl' : 'lg:text-3xl'}`}>
                         {member.name}
                     </h2>
-                    <p className="text-sm lg:text-lg font-medium mb-4 mt-0" style={{ color: '#4b5563' }}>
+                    <p className={`text-sm font-medium mb-4 mt-0 ${variant === 'small' ? 'lg:text-base' : 'lg:text-lg'}`} style={{ color: '#4b5563' }}>
                         {member.position}
                     </p>
 
@@ -62,19 +63,19 @@ const LeadershipCard: React.FC<LeadershipCardProps> = ({ member, isMain = false 
                         {member.phone && (
                             <a
                                 href={`tel:${member.phone}`}
-                                className="flex items-center gap-2 px-3 py-1.5 lg:px-4 lg:py-2 bg-[#F4F7FE] text-[#003B5C] rounded-lg hover:bg-blue-50 transition-all border border-blue-100/50 font-semibold text-xs lg:text-xl no-underline"
+                                className="flex items-center gap-2 px-3 py-1.5 lg:px-4 lg:py-2 bg-[#F4F7FE] text-[#003B5C] rounded-lg hover:bg-blue-50 transition-all border border-blue-100/50 font-semibold text-xs no-underline"
                             >
                                 <Phone size={20} className="text-[#3B82F6]" />
-                                <span className="no-underline">+{member.phone.replace(/^\+/, '')}</span>
+                                <span className={`no-underline ${variant === 'small' ? 'lg:text-lg' : 'lg:text-xl'}`}>+{member.phone.replace(/^\+/, '')}</span>
                             </a>
                         )}
                         {member.email && (
                             <a
                                 href={`mailto:${member.email}`}
-                                className="flex items-center gap-2 px-3 py-1.5 lg:px-4 lg:py-2 bg-[#F2FBF6] text-[#059669] rounded-lg hover:bg-emerald-50 transition-all border border-emerald-100/50 font-semibold text-xs lg:text-xl no-underline"
+                                className="flex items-center gap-2 px-3 py-1.5 lg:px-4 lg:py-2 bg-[#F2FBF6] text-[#059669] rounded-lg hover:bg-emerald-50 transition-all border border-emerald-100/50 font-semibold text-xs no-underline"
                             >
                                 <Mail size={20} className="text-[#10B981]" />
-                                <span className="no-underline">{member.email}</span>
+                                <span className={`no-underline ${variant === 'small' ? 'lg:text-lg' : 'lg:text-xl'}`}>{member.email}</span>
                             </a>
                         )}
                     </div>
@@ -84,10 +85,10 @@ const LeadershipCard: React.FC<LeadershipCardProps> = ({ member, isMain = false 
                         {member.career && (
                             <button
                                 onClick={() => toggleSection('career')}
-                                className={`flex items-center gap-2 px-4 py-2 lg:px-6 lg:py-3 rounded-lg transition-all font-bold text-xs lg:text-xl border ${expandedSection === 'career'
+                                className={`flex items-center gap-2 px-4 py-2 lg:px-6 lg:py-3 rounded-lg transition-all font-bold text-xs border ${expandedSection === 'career'
                                     ? 'bg-[#003B5C] text-white border-[#003B5C]'
                                     : 'bg-[#F1F5F9] text-[#1E293B] border-transparent hover:bg-gray-200'
-                                    }`}
+                                    } ${variant === 'small' ? 'lg:text-lg' : 'lg:text-xl'}`}
                             >
                                 {t('leadership.career', 'Mehnat faoliyati')}
                                 <ChevronDown size={18} className={`transition-transform duration-300 ${expandedSection === 'career' ? 'rotate-180' : ''}`} />
@@ -96,10 +97,10 @@ const LeadershipCard: React.FC<LeadershipCardProps> = ({ member, isMain = false 
                         {member.description && (
                             <button
                                 onClick={() => toggleSection('duties')}
-                                className={`flex items-center gap-2 px-4 py-2 lg:px-6 lg:py-3 rounded-lg transition-all font-bold text-xs lg:text-xl border ${expandedSection === 'duties'
+                                className={`flex items-center gap-2 px-4 py-2 lg:px-6 lg:py-3 rounded-lg transition-all font-bold text-xs border ${expandedSection === 'duties'
                                     ? 'bg-[#003B5C] text-white border-[#003B5C]'
                                     : 'bg-[#F1F5F9] text-[#1E293B] border-transparent hover:bg-gray-200'
-                                    }`}
+                                    } ${variant === 'small' ? 'lg:text-lg' : 'lg:text-xl'}`}
                             >
                                 {t('leadership.duties', 'Vazifalari')}
                                 <ChevronDown size={18} className={`transition-transform duration-300 ${expandedSection === 'duties' ? 'rotate-180' : ''}`} />

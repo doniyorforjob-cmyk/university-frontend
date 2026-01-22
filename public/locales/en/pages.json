@@ -90,5 +90,6 @@
     "messages": {
         "departmentsNotFound": "Departments not found",
         "noDepartmentsInFaculty": "There are no departments in this faculty yet."
-    }
+    },
+    "centers": "Centers"
 }

@@ -90,5 +90,6 @@
     "messages": {
         "departmentsNotFound": "Kafedralar topilmadi",
         "noDepartmentsInFaculty": "Ushbu fakultetga tegishli kafedralar hozircha mavjud emas."
-    }
+    },
+    "centers": "Markazlar"
 }

@@ -27,6 +27,7 @@ const FacultyDetailPage = React.lazy(() => import('./pages/FacultyDetail'));
 const DepartmentDetailPage = React.lazy(() => import('./pages/DepartmentDetail'));
 const CorruptionPage = React.lazy(() => import('./pages/Corruption'));
 const FAQPage = React.lazy(() => import('./pages/FAQ'));
+const CentersPage = React.lazy(() => import('./pages/Centers'));
 const ServerError = React.lazy(() => import('./pages/Error/ServerError'));
 const NotFound = React.lazy(() => import('./pages/Errors/NotFound'));
 
@@ -68,6 +69,10 @@ const AppRoutes = () => {
                     <Route path="information-services" element={<InformationServicesPage />} />
                     <Route path="information-service" element={<InformationServicesPage />} />
                     <Route path="activities" element={<ActivitiesPage />} />
+                    <Route path="centers" element={<CentersPage />} />
+                    <Route path="markazlar" element={<CentersPage />} />
+                    <Route path="centers-and-departments" element={<CentersPage />} />
+                    <Route path="university-centers" element={<CentersPage />} />
                     {/* <Route path="departments" element={<GenericDetailPage type="department" />} /> */}
                     {/* <Route path="departments" element={<GenericDetailPage type="department" />} /> */}
                     <Route path="admission" element={<AdmissionPage />} />

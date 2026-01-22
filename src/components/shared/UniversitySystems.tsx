@@ -7,7 +7,7 @@ import { transformUniversitySystemsData } from '../../pages/Home/transformers/un
 
 const UniversitySystems = React.memo(() => {
   const { t } = useTranslation(['common', 'pages']);
-  const { data, loading } = useStandardSection(
+  const { data } = useStandardSection(
     'university-systems',
     homeApi.getUniversitySystemsData,
     {

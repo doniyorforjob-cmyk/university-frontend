@@ -11,7 +11,7 @@ const MainContent = () => {
                     Saytning qolgan qismi
                 </h2>
                 <p className="text-gray-600 text-center">
-                    Bu yerda yangiliklar, e'lonlar, fakultetlar haqida ma'lumot va boshqa bo'limlar joylashadi.
+                    Bu yerda yangiliklar, e&apos;lonlar, fakultetlar haqida ma&apos;lumot va boshqa bo&apos;limlar joylashadi.
                 </p>
             </div>
         </main>

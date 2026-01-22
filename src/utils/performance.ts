@@ -98,10 +98,8 @@ export const observeWebVitals = (callback: (metric: WebVitalsMetrics) => void) =
 // Resource loading performance
 export const measureResourceTiming = () => {
   if ('PerformanceObserver' in window) {
-    const resourceObserver = new PerformanceObserver((list) => {
-      for (const entry of list.getEntries()) {
-        // Resource timing tracked silently
-      }
+    const resourceObserver = new PerformanceObserver((_list) => {
+      // Resource timing tracked silently
     });
     resourceObserver.observe({ entryTypes: ['resource'] });
   }
@@ -167,11 +165,10 @@ export const checkPerformanceBudget = (metrics: WebVitalsMetrics) => {
 
 // Report performance metrics
 export const reportPerformance = (metrics: WebVitalsMetrics) => {
-  const budgetResults = checkPerformanceBudget(metrics);
-
   // Performance metrics tracked silently (no console output)
-  const memory = getMemoryUsage();
-  const network = getNetworkInfo();
+  checkPerformanceBudget(metrics);
+  getMemoryUsage();
+  getNetworkInfo();
 
   // Send to analytics if needed
   if (typeof window !== 'undefined' && (window as any).gtag) {

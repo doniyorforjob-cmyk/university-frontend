@@ -42,7 +42,7 @@ const Maintenance: React.FC = () => {
                 {/* Educational Quote (Optional filler) */}
                 <div className="pt-8 border-t border-gray-200">
                     <p className="text-sm text-gray-400 italic">
-                        "Ilm - bu nurni kashf etishdir."
+                        &quot;Ilm - bu nurni kashf etishdir.&quot;
                     </p>
                 </div>
             </div>
