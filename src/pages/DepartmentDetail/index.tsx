@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from '@/contexts/LocaleContext';
 import { useCachedApi } from '@/hooks/useCachedApi';
@@ -19,6 +19,7 @@ import {
 
 const DepartmentDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
     const { t } = useTranslation('pages');
     const { locale } = useLocale();
     const { setBreadcrumbsData } = useGlobalLayout();
@@ -26,10 +27,19 @@ const DepartmentDetailPage: React.FC = () => {
 
     const { data: department, loading: loadingDepartment } = useCachedApi<Department | null>({
         key: `department-detail-${id}`,
-        fetcher: () => getDepartmentById(id!),
+        fetcher: (loc) => getDepartmentById(id!, loc),
         enabled: !!id,
         ttlMinutes: 5
     });
+
+    // Redirect to list page when locale changes (to show content in new language)
+    const [initialLocale] = React.useState(locale);
+    useEffect(() => {
+        if (locale !== initialLocale) {
+            const prefix = locale === 'uz' ? '' : `/${locale}`;
+            navigate(`${prefix}/departments`, { replace: true });
+        }
+    }, [locale, initialLocale, navigate]);
 
 
     useEffect(() => {
@@ -39,9 +49,16 @@ const DepartmentDetailPage: React.FC = () => {
                 { label: t('breadcrumbs.departments'), href: `/${locale}/departments` },
                 { label: department.name }
             ]);
+
+            // Slug Stabilizer: If loaded by ID/UUID, or slug mismatch, redirect to canonical slug URL
+            if (department.slug && id !== department.slug) {
+                const prefix = locale === 'uz' ? '' : `/${locale}`;
+                // Use replace to avoid history stack pollution
+                navigate(`${prefix}/departments/${department.slug}`, { replace: true });
+            }
         }
         return () => setBreadcrumbsData([]);
-    }, [department, setBreadcrumbsData, locale, t]);
+    }, [department, setBreadcrumbsData, locale, t, id, navigate]);
 
     if (loadingDepartment) {
         return <GenericPageSkeleton />;

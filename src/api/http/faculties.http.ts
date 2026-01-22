@@ -1,6 +1,7 @@
 import apiClient from '../client';
 import { Faculty, Department } from '../../types/faculty.types';
 import { getImageUrl } from '../../utils/apiUtils';
+import { slugify as transliterateSlugify } from '../../utils/transliterate';
 
 const resolveImage = (img: any): string | null => {
     if (!img) return null;
@@ -16,7 +17,7 @@ const formatPhone = (phone: any): string => {
 
 const ensureSlug = (name: string, slug?: string) => {
     if (slug) return slug;
-    return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    return transliterateSlugify(name);
 };
 
 export const getFaculties = async (locale?: string): Promise<Faculty[]> => {
@@ -36,7 +37,7 @@ export const getFaculties = async (locale?: string): Promise<Faculty[]> => {
                 image: getImageUrl(resolveImage(fields.image || entry.image)),
                 iconImage: getImageUrl(resolveImage(fields.icon || entry.icon)),
                 color: fields.color || 'from-sky-500 to-indigo-500',
-                slug: ensureSlug(name, fields.slug || entry.slug),
+                slug: ensureSlug(name, entry.slug || fields.slug),
                 uuid: entry.uuid || entry.id
             };
         });
@@ -67,23 +68,41 @@ export const getFacultyById = async (id: string | number, locale?: string): Prom
             return String(itemSlug) === String(id) || String(itemId) === String(id);
         });
 
+        // If not found in initial fetch, try to find it across all locales
         if (!entry) {
-            const all = await getFaculties(locale);
-            const found = all.find(f => f.slug === id || String(f.id) === String(id) || String(f.uuid) === String(id));
+            let found = null;
+            let targetId: string | number | null = null;
+
+            // First try current locale
+            const currentLocaleFacs = await getFaculties(locale);
+            found = currentLocaleFacs.find(f => f.slug === id || String(f.id) === String(id) || String(f.uuid) === String(id));
+
+            // If not found, try other locales to find the faculty by slug
+            if (!found) {
+                const locales = ['uz', 'ru', 'en'].filter(l => l !== locale);
+                for (const otherLocale of locales) {
+                    const otherFacs = await getFaculties(otherLocale);
+                    found = otherFacs.find(f => f.slug === id || String(f.id) === String(id) || String(f.uuid) === String(id));
+                    if (found) break;
+                }
+            }
+
             if (!found) return null;
 
+            targetId = found.uuid || found.id;
+
+            // Fetch by ID in the requested locale
             const retryRes = await apiClient.get(`/projects/${projectId}/content/faculties`, {
                 params: {
-                    'filter[id][eq]': found.uuid || found.id,
+                    'filter[id][eq]': targetId,
                     locale,
                     with: 'icon,image,gallery'
                 }
             });
             const retryData = Array.isArray(retryRes.data) ? retryRes.data : retryRes.data.data;
-            entry = (retryData || []).find((item: any) => (item.uuid || item.id) === (found.uuid || found.id));
+            entry = (retryData || []).find((item: any) => (item.uuid || item.id) === targetId);
         }
 
-        if (!entry) return null;
 
         const toString = (val: any): string => {
             if (typeof val === 'string') return val;
@@ -105,7 +124,7 @@ export const getFacultyById = async (id: string | number, locale?: string): Prom
             });
             const deansData = Array.isArray(deanRes.data) ? deanRes.data : deanRes.data.data;
 
-            const deanEntry = deansData.find((d: any) => {
+            const deanEntry = deansData?.find((d: any) => {
                 const facultyField = d.fields?.faculty;
                 const facultyObj = Array.isArray(facultyField) ? facultyField[0] : facultyField;
                 const fId = facultyObj?.uuid || facultyObj?.id || facultyObj;
@@ -143,7 +162,7 @@ export const getFacultyById = async (id: string | number, locale?: string): Prom
             image: getImageUrl(resolveImage(fields.image || entry.image)),
             iconImage: getImageUrl(resolveImage(fields.icon || entry.icon)),
             color: fields.color || 'from-sky-500 to-indigo-500',
-            slug: ensureSlug(name, fields.slug || entry.slug),
+            slug: ensureSlug(name, entry.slug || fields.slug), // Prioritize entry.slug (stable)
             gallery: Array.isArray(fields.gallery) ? fields.gallery.map((img: any) => getImageUrl(resolveImage(img))) : [],
             directionsAndSpecializations: fields.directions || fields.specializations || fields.yo_nalishlar || fields['directions-and-specializations'],
             internationalCooperation: fields['international-cooperation'] || fields.international_cooperation || fields.cooperation || fields.xalqaro_hamkorlik,
@@ -174,7 +193,7 @@ export const getDepartmentsByFacultyId = async (facultyId: string | number, loca
                 return {
                     id: entry.uuid || entry.id,
                     name: name,
-                    slug: ensureSlug(name, fields.slug || entry.slug),
+                    slug: ensureSlug(name, entry.slug || fields.slug),
                     facultyId: facultyId,
                     image: getImageUrl(resolveImage(fields.image)),
                     phone: fields.phone ? String(fields.phone).split('.')[0] : (fields.phone_number ? String(fields.phone_number) : undefined),
@@ -201,7 +220,7 @@ export const getDepartments = async (locale?: string): Promise<Department[]> => 
             return {
                 id: entry.uuid || entry.id,
                 name: name,
-                slug: ensureSlug(name, fields.slug || entry.slug),
+                slug: ensureSlug(name, entry.slug || fields.slug),
                 facultyId: fields.faculty?.uuid || fields.faculty?.id || fields.faculty,
                 image: getImageUrl(resolveImage(fields.image)),
                 phone: fields.phone ? String(fields.phone).split('.')[0] : (fields.phone_number ? String(fields.phone_number) : undefined),
@@ -236,20 +255,30 @@ export const getDepartmentById = async (id: string | number, locale?: string): P
             return String(itemSlug) === String(id) || String(itemId) === String(id);
         });
 
+        // If not found in initial fetch, try to find it across all locales
         if (!entry) {
-            const all = await getDepartments(locale);
-            let found = all.find(d => d.slug === id || String(d.id) === String(id));
+            let found = null;
+            let targetId: string | number | null = null;
 
-            if (!found && locale !== 'uz') {
-                const allUz = await getDepartments('uz');
-                found = allUz.find(d => d.slug === id || String(d.id) === String(id));
+            // First try current locale
+            const currentLocaleDepts = await getDepartments(locale);
+            found = currentLocaleDepts.find(d => d.slug === id || String(d.id) === String(id));
+
+            // If not found, try other locales to find the department by slug
+            if (!found) {
+                const locales = ['uz', 'ru', 'en'].filter(l => l !== locale);
+                for (const otherLocale of locales) {
+                    const otherDepts = await getDepartments(otherLocale);
+                    found = otherDepts.find(d => d.slug === id || String(d.id) === String(id));
+                    if (found) break;
+                }
             }
 
             if (!found) return null;
 
-            const targetId = found.id;
+            targetId = found.id;
 
-            // First attempt: fetch in requested locale
+            // Fetch by ID in the requested locale
             const retryRes = await apiClient.get(`/projects/${projectId}/content/academic-departments`, {
                 params: {
                     'filter[id][eq]': targetId,
@@ -257,24 +286,10 @@ export const getDepartmentById = async (id: string | number, locale?: string): P
                     with: 'image,gallery,faculty'
                 }
             });
-            let retryData = Array.isArray(retryRes.data) ? retryRes.data : retryRes.data.data;
+            const retryData = Array.isArray(retryRes.data) ? retryRes.data : retryRes.data.data;
             entry = (retryData || []).find((item: any) => (item.uuid || item.id) === targetId);
-
-            // Second attempt: if content not found in current locale (e.g. RU), fetch in UZ (fallback content)
-            if (!entry && locale !== 'uz') {
-                const fallbackRes = await apiClient.get(`/projects/${projectId}/content/academic-departments`, {
-                    params: {
-                        'filter[id][eq]': targetId,
-                        locale: 'uz',
-                        with: 'image,gallery,faculty'
-                    }
-                });
-                const fallbackData = Array.isArray(fallbackRes.data) ? fallbackRes.data : fallbackRes.data.data;
-                entry = (fallbackData || []).find((item: any) => (item.uuid || item.id) === targetId);
-            }
         }
 
-        if (!entry) return null;
 
         const fields = entry.fields || {};
         const departmentId = entry.uuid || entry.id;
@@ -296,15 +311,7 @@ export const getDepartmentById = async (id: string | number, locale?: string): P
             const headRes = await apiClient.get(`/projects/${projectId}/content/heads-of-academic-departments`, {
                 params: { locale, with: 'image,positions,academic_department,academic-department' }
             });
-            let headsData = Array.isArray(headRes.data) ? headRes.data : headRes.data.data;
-
-            // Fallback 1: try without locale on the same collection if empty
-            if (!headsData || headsData.length === 0) {
-                const headResAlt = await apiClient.get(`/projects/${projectId}/content/heads-of-academic-departments`, {
-                    params: { with: 'image,positions,academic_department,academic-department' }
-                });
-                headsData = Array.isArray(headResAlt.data) ? headResAlt.data : headResAlt.data.data;
-            }
+            const headsData = Array.isArray(headRes.data) ? headRes.data : headRes.data.data;
 
             const headEntry = headsData?.find((h: any) => {
                 const deptField = h.fields?.academic_department || h.fields?.['academic-department'] || h.fields?.department;
@@ -340,7 +347,7 @@ export const getDepartmentById = async (id: string | number, locale?: string): P
             phone: fields.phone || fields.phone_number,
             email: fields.email,
             headName: fields.head_name || fields.manager || fields.dean || fields.leader,
-            slug: ensureSlug(name, fields.slug || entry.slug),
+            slug: ensureSlug(name, entry.slug || fields.slug),
             facultyId: facultyId,
             image: getImageUrl(resolveImage(fields.image)),
             description: fields.description || fields.content,

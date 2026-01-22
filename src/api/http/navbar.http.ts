@@ -6,7 +6,6 @@ export type { NavItem };
 
 export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]> => {
   try {
-    console.log('Fetching navbar from Navigation API...');
     const projectId = process.env.REACT_APP_PROJECT_ID;
 
     // Use navigation tree API
@@ -73,7 +72,6 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
     };
 
     const navItems = items.map(transformItem);
-    console.log('Navigation items loaded (multi-locale):', navItems.length);
     return navItems;
 
   } catch (error) {

@@ -16,7 +16,7 @@ export const getDepartments = async (locale?: string): Promise<Department[]> => 
     return data.map((entry: any) => ({
       id: entry.uuid || entry.id,
       name: entry.fields?.name || entry.fields?.title || entry.name || entry.title || 'Nomsiz Kafedra',
-      slug: entry.fields?.slug || entry.slug,
+      slug: entry.slug || entry.fields?.slug || (entry.fields?.name || entry.name || '').toLowerCase().replace(/['"ʻ`]/g, '').replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').trim(),
       description: entry.fields?.description || entry.description,
       head: entry.fields?.head || entry.head,
       contact: entry.fields?.contact || entry.contact

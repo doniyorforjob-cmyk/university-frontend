@@ -69,14 +69,18 @@ apiClient.interceptors.response.use(
     const config = error.config;
 
     // DETAILED ERROR LOGGING for debugging
+    // DETAILED ERROR LOGGING for debugging
+    // Skip logging for 404 errors as they are often expected during content probing
     if (error.response) {
-      console.error('API Error Response:', {
-        url: config?.url,
-        method: config?.method,
-        status: error.response.status,
-        data: error.response.data,
-        headers: error.response.headers
-      });
+      if (error.response.status !== 404) {
+        console.error('API Error Response:', {
+          url: config?.url,
+          method: config?.method,
+          status: error.response.status,
+          data: error.response.data,
+          headers: error.response.headers
+        });
+      }
     } else if (error.request) {
       console.error('API Error Request (No response):', error.request);
     } else {

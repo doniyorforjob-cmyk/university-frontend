@@ -66,7 +66,12 @@ const app = (
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <CachedApiProvider>
-        <BrowserRouter>
+        <BrowserRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true
+          }}
+        >
           <LocaleProvider>
             <App />
           </LocaleProvider>

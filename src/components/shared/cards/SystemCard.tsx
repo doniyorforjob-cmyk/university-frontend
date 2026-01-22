@@ -117,10 +117,7 @@ export const SystemsContainer = ({
   showQuickLinks = true
 }: SystemsContainerProps) => {
   const { t } = useTranslation('common');
-  console.log('SystemsContainer rendering with:', {
-    systemsCount: systems.length,
-    quickLinksCount: quickLinks.length
-  });
+
   if (variant === 'sidebar') {
     return (
       <motion.div

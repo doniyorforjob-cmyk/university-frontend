@@ -1,3 +1,4 @@
+import { slugify } from '../../../utils/transliterate';
 import { HomeFacultiesData } from '../../../types/home.types';
 import { getImageUrl } from '../../../utils/apiUtils';
 
@@ -18,15 +19,13 @@ export const transformFacultiesData = (facultiesData: any, departmentsData: any 
       const fFields = facultyRaw.fields || {};
       const fId = facultyRaw.uuid || facultyRaw.id;
 
-      // Helper to ensure slug exists (same logic as in api/http/faculties.http.ts)
+      // Use robust slugify from utils which handles Cyrillic -> Latin transliteration
       const ensureSlug = (name: string, existingSlug?: string): string => {
         if (existingSlug && existingSlug.trim().length > 0) return existingSlug;
-        return (name || '')
-          .toLowerCase()
-          .replace(/['"]/g, '')
-          .replace(/[^\w\s-]/g, '')
-          .replace(/\s+/g, '-')
-          .trim();
+        const generated = slugify(name || '');
+        // If slugify returns empty string (rare but possible), fall back to id 
+        // But we return string here, the component handles fallback if still empty
+        return generated;
       };
 
       // Filter departments for this faculty

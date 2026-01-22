@@ -12,15 +12,12 @@ const fetchWithFallback = async (endpoint: string, params: any = {}, locale?: st
   }
 
   try {
-    // console.log(`[DEBUG] fetchWithFallback: ${endpoint} locale=${locale}`);
     const response = await apiClient.get(`/projects/${projectId}/content/${endpoint}`, { params: requestParams });
     const data = Array.isArray(response.data) ? response.data : (response.data?.data || []);
 
-    // console.log(`[DEBUG] ${endpoint} response length: ${data.length}`);
-
     // Strict Fallback: Only if data is COMPLETELY empty and fallback is not disabled
     if (data.length === 0 && locale && locale !== 'uz' && !disableFallback) {
-      console.warn(`[DEBUG] Empty data for ${locale}, trying fallback to 'uz'`);
+      // Valid fallback attempt (silent)
       const fallbackParams = { ...params, locale: 'uz' };
       const fallbackResponse = await apiClient.get(`/projects/${projectId}/content/${endpoint}`, { params: fallbackParams });
       const fallbackData = Array.isArray(fallbackResponse.data) ? fallbackResponse.data : (fallbackResponse.data?.data || []);
@@ -32,7 +29,8 @@ const fetchWithFallback = async (endpoint: string, params: any = {}, locale?: st
 
     return data;
   } catch (error) {
-    console.warn(`Error fetching ${endpoint} (with fallback logic):`, error);
+    // Silent failure for fallback logic (probed endpoints might fail)
+
     // If original request fails, try fallback 'uz' immediately just in case (if not disabled)
     if (locale && locale !== 'uz' && !disableFallback) {
       try {
@@ -123,25 +121,23 @@ export const homeApi = {
 
   getMediaData: async (locale?: string): Promise<any> => {
     try {
-      const photoSlugs = ['photos', 'photo-gallery', 'photos-gallery', 'photogallery', 'gallery', 'media-photos', 'fotogallery', 'fotogalereya'];
+      // Prioritize 'photos-gallery' as confirmed by user, then common fallbacks
+      // Use only 'photos-gallery' as confirmed by user to avoid 404 noise from parallel probing
+      const photoSlugs = ['photos-gallery'];
 
-      // Try to fetch from all slugs in parallel, strict locale
+      // Fetch from the single correct endpoint
       const results = await Promise.all([
         ...photoSlugs.map(slug =>
           fetchWithFallback(slug, { with: 'image,gallery', per_page: 100 }, locale, true)
-            .catch(() => []) // Don't throw if one slug fails
+            .catch(() => [])
         ),
         fetchWithFallback('video-gallery', { with: 'video', per_page: 50 }, locale, true)
           .catch(() => [])
       ]);
 
       let photosData: any[] = [];
-      // Use the first slug that returns non-empty data
-      for (let i = 0; i < photoSlugs.length; i++) {
-        if (results[i] && results[i].length > 0) {
-          photosData = results[i];
-          break;
-        }
+      if (results[0] && results[0].length > 0) {
+        photosData = results[0];
       }
 
       const videosData = results[results.length - 1] || [];
@@ -161,7 +157,7 @@ export const homeApi = {
       const projectId = process.env.REACT_APP_PROJECT_ID;
       const params = { with: 'image,gallery', locale };
 
-      const photoSlugs = ['photos', 'photo-gallery', 'photos-gallery', 'photogallery', 'gallery', 'media-photos', 'fotogallery', 'fotogalereya'];
+      const photoSlugs = ['photos-gallery'];
 
       // Try to find the item in any of these collections
       // Strategy 1: Try direct fetch /content/{slug}/{id}
@@ -230,7 +226,7 @@ export const homeApi = {
 
   getPhotoGalleryData: async (locale?: string): Promise<HomeMediaData> => {
     try {
-      const data = await fetchWithFallback('photo-gallery', { with: 'image,gallery', per_page: 100 }, locale, true);
+      const data = await fetchWithFallback('photos-gallery', { with: 'image,gallery', per_page: 100 }, locale, true);
       return transformVideoGalleryData({ photos: data, videos: [] });
     } catch (error) {
       console.error('Error fetching photo gallery data:', error);

@@ -16,6 +16,7 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import NavbarSkeleton from './NavbarSkeleton';
 import { AnimatePresence, motion } from 'framer-motion';
 import { getLocalized } from '../../../utils/apiUtils';
+import { slugify } from '../../../utils/transliterate';
 import { getFaculties } from '../../../api/http/faculties.http';
 import { getDepartments } from '../../../api/http/department.http';
 
@@ -45,7 +46,6 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
           getFaculties(locale),
           getDepartments(locale)
         ]);
-        console.log('RAW API Departments Response:', depts);
         setFaculties(facs);
         setDepartments(depts);
       } catch (err) {
@@ -87,18 +87,8 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
 
       if (isDepartments) {
         const hasDepts = departments && departments.length > 0;
-        console.log('Enriching Kafedralar:', { hasDepts, count: hasDepts ? departments.length : 0 });
 
         if (hasDepts) {
-          // Helper to generate slug locally if missing from API
-          const slugify = (text: string) =>
-            text
-              .toLowerCase()
-              .replace(/['"ʻ`]/g, '')
-              .replace(/[^\w\s-]/g, '')
-              .replace(/\s+/g, '-')
-              .trim();
-
           transformed.children = departments.map((d, idx) => {
             const title = d.title || d.name || 'Nomsiz Kafedra';
             const finalSlug = d.slug || slugify(title);

@@ -15,7 +15,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 type Faculty = HomeFacultiesData['faculties'][0];
 
 const FacultiesSection: React.FC = () => {
-  const { t } = useTranslation(['common', 'pages']);
+  const { t, i18n } = useTranslation(['common', 'pages']);
   const { data, loading } = useStandardSection<HomeFacultiesData>(
     'faculties',
     homeApi.getFacultiesData as any,
@@ -106,7 +106,7 @@ const FacultiesSection: React.FC = () => {
                         return (
                           <Link
                             key={dept.id}
-                            to={`/departments/${linkSlug}`}
+                            to={`/${i18n.language || 'uz'}/departments/${linkSlug}`}
                             className="bg-white rounded-2xl md:rounded-[24px] overflow-hidden shadow-[0_4px_20px_-10px_rgba(0,0,0,0.1)] hover:shadow-md transition-all duration-300 group block"
                           >
                             <div className="h-40 md:h-44 overflow-hidden bg-gray-100">

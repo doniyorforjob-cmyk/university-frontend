@@ -29,7 +29,7 @@ export const observeWebVitals = (callback: (metric: WebVitalsMetrics) => void) =
       });
       clsObserver.observe({ entryTypes: ['layout-shift'] });
     } catch (e) {
-      console.warn('CLS observation not supported');
+      // CLS observation not supported
     }
 
     // FID - First Input Delay
@@ -42,7 +42,7 @@ export const observeWebVitals = (callback: (metric: WebVitalsMetrics) => void) =
       });
       fidObserver.observe({ entryTypes: ['first-input'] });
     } catch (e) {
-      console.warn('FID observation not supported');
+      // FID observation not supported
     }
 
     // LCP - Largest Contentful Paint
@@ -55,7 +55,7 @@ export const observeWebVitals = (callback: (metric: WebVitalsMetrics) => void) =
       });
       lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
     } catch (e) {
-      console.warn('LCP observation not supported');
+      // LCP observation not supported
     }
   }
 
@@ -72,7 +72,7 @@ export const observeWebVitals = (callback: (metric: WebVitalsMetrics) => void) =
       });
       paintObserver.observe({ entryTypes: ['paint'] });
     } catch (e) {
-      console.warn('FCP observation not supported');
+      // FCP observation not supported
     }
   }
 
@@ -90,7 +90,7 @@ export const observeWebVitals = (callback: (metric: WebVitalsMetrics) => void) =
       });
       navigationObserver.observe({ entryTypes: ['navigation'] });
     } catch (e) {
-      console.warn('TTFB observation not supported');
+      // TTFB observation not supported
     }
   }
 };
@@ -100,9 +100,7 @@ export const measureResourceTiming = () => {
   if ('PerformanceObserver' in window) {
     const resourceObserver = new PerformanceObserver((list) => {
       for (const entry of list.getEntries()) {
-        const resourceEntry = entry as PerformanceResourceTiming;
-        console.log(`Resource: ${resourceEntry.name}`);
-        console.log(`Load time: ${resourceEntry.responseEnd - resourceEntry.requestStart}ms`);
+        // Resource timing tracked silently
       }
     });
     resourceObserver.observe({ entryTypes: ['resource'] });
@@ -171,23 +169,9 @@ export const checkPerformanceBudget = (metrics: WebVitalsMetrics) => {
 export const reportPerformance = (metrics: WebVitalsMetrics) => {
   const budgetResults = checkPerformanceBudget(metrics);
 
-  console.group('🚀 Performance Metrics');
-  console.log(`CLS: ${metrics.cls?.toFixed(3)} (${budgetResults.cls})`);
-  console.log(`FID: ${metrics.fid?.toFixed(0)}ms (${budgetResults.fid})`);
-  console.log(`FCP: ${metrics.fcp?.toFixed(0)}ms (${budgetResults.fcp})`);
-  console.log(`LCP: ${metrics.lcp?.toFixed(0)}ms (${budgetResults.lcp})`);
-  console.log(`TTFB: ${metrics.ttfb?.toFixed(0)}ms (${budgetResults.ttfb})`);
-
+  // Performance metrics tracked silently (no console output)
   const memory = getMemoryUsage();
-  if (memory) {
-    console.log(`Memory: ${memory.used}MB / ${memory.total}MB`);
-  }
-
   const network = getNetworkInfo();
-  if (network) {
-    console.log(`Network: ${network.effectiveType}, ${network.downlink}Mbps`);
-  }
-  console.groupEnd();
 
   // Send to analytics if needed
   if (typeof window !== 'undefined' && (window as any).gtag) {

@@ -17,8 +17,6 @@ const UniversitySystems = React.memo(() => {
     }
   );
 
-  console.log('[DEBUG] UniversitySystems data:', data, 'loading:', loading);
-
   if (!data) {
     return (
       <div className="bg-white p-6 shadow-sm">

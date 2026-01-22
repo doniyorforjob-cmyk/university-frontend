@@ -5,7 +5,6 @@ import { getImageUrl } from '../../utils/apiUtils';
 export const getPosts = async (category?: PostCategory, locale?: string): Promise<Post[]> => {
   try {
     const projectId = process.env.REACT_APP_PROJECT_ID;
-    console.log("Using projectId:", projectId);
     const params: any = { with: 'image,media' };
 
     // Determine the correct collection endpoint

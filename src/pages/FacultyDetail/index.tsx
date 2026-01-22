@@ -28,10 +28,19 @@ const FacultyDetailPage: React.FC = () => {
 
     const { data: faculty, loading: loadingFaculty } = useCachedApi<Faculty | null>({
         key: `faculty-detail-${id}`,
-        fetcher: () => getFacultyById(id!),
+        fetcher: (loc) => getFacultyById(id!, loc),
         enabled: !!id,
         ttlMinutes: 5
     });
+
+    // Redirect to list page when locale changes (to show content in new language)
+    const [initialLocale] = React.useState(locale);
+    useEffect(() => {
+        if (locale !== initialLocale) {
+            const prefix = locale === 'uz' ? '' : `/${locale}`;
+            navigate(`${prefix}/faculties`, { replace: true });
+        }
+    }, [locale, initialLocale, navigate]);
 
     useEffect(() => {
         if (faculty) {
@@ -41,7 +50,7 @@ const FacultyDetailPage: React.FC = () => {
 
     const { data: departments, loading: loadingDepartments } = useCachedApi<Department[]>({
         key: `faculty-departments-${faculty?.id}`,
-        fetcher: () => getDepartmentsByFacultyId(faculty?.id!),
+        fetcher: (loc) => getDepartmentsByFacultyId(faculty?.id!, loc),
         enabled: !!faculty?.id,
         ttlMinutes: 5
     });
@@ -59,9 +68,15 @@ const FacultyDetailPage: React.FC = () => {
                 { label: t('breadcrumbs.faculties'), href: `/${locale}/faculties` },
                 { label: faculty.name }
             ]);
+
+            // Slug Stabilizer: If loaded by ID/UUID, or slug mismatch, redirect to canonical slug URL
+            if (faculty.slug && id !== faculty.slug) {
+                const prefix = locale === 'uz' ? '' : `/${locale}`;
+                navigate(`${prefix}/faculties/${faculty.slug}`, { replace: true });
+            }
         }
         return () => setBreadcrumbsData([]);
-    }, [faculty, setBreadcrumbsData, locale, t]);
+    }, [faculty, setBreadcrumbsData, locale, t, id, navigate]);
 
     if (loadingFaculty) {
         return <GenericPageSkeleton />;

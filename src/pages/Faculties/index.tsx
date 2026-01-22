@@ -6,12 +6,14 @@ import { getFaculties, getDepartments } from '@/services/facultiesService';
 import { Faculty, Department } from '@/types/faculty.types';
 import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
 import Container from '@/components/shared/Container';
+import { useLocale } from '@/contexts/LocaleContext';
 
 // Components
 import { FacultiesDepartmentsView } from './components/FacultiesDepartmentsView';
 
 const FacultiesPage: React.FC = () => {
     const { t } = useTranslation('pages');
+    const { locale } = useLocale();
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -40,10 +42,11 @@ const FacultiesPage: React.FC = () => {
     const departmentsList = departments || [];
 
     const handleTabChange = (tab: 'faculties' | 'departments') => {
+        const prefix = locale === 'uz' ? '' : `/${locale}`;
         if (tab === 'departments') {
-            navigate('/departments');
+            navigate(`${prefix}/departments`);
         } else {
-            navigate('/faculties');
+            navigate(`${prefix}/faculties`);
         }
     };
 
