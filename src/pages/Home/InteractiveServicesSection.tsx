@@ -11,6 +11,7 @@ import { useLocale } from '../../contexts/LocaleContext';
 import EmptyState from '../../components/shared/EmptyState';
 import { ComputerDesktopIcon } from '@heroicons/react/24/outline';
 import { transformInteractiveServicesData } from './transformers/interactiveServicesTransformer';
+import { SectionSkeleton } from './components/SectionSkeleton';
 
 interface ServiceItem {
   id: number;
@@ -36,10 +37,14 @@ const InteractiveServicesSection = () => {
   const { data, loading } = useStandardSection(
     'interactive-services',
     homeApi.getInteractiveServicesData,
-    { transformData: transformInteractiveServicesData }
+    { transformData: transformInteractiveServicesData, keepPreviousData: true }
   );
 
-  if (loading || !data) return null;
+  if (loading && !data) {
+    return <SectionSkeleton sectionType="interactive-services" />;
+  }
+
+  if (!data) return null;
 
   const services = (data?.services || []) as ServiceItem[];
   const cardColors = ['#4F99DD', '#2FA5AD', '#697FD7', '#329CC6'];

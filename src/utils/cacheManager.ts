@@ -21,7 +21,7 @@ interface CacheStats {
 class CacheManager {
   private static instance: CacheManager;
   private cache = new Map<string, CacheItem>();
-  private readonly VERSION = 'v1.0';
+  private readonly VERSION = 'v1.2'; // Bumping version to force invalidation for visibility
   private readonly DEFAULT_TTL = 30 * 1000; // 30 seconds (0.5 minutes)
   private readonly MAX_MEMORY_ITEMS = 100;
   private hits = 0;

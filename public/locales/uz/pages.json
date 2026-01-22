@@ -47,7 +47,9 @@
         "departments": "kafedralar",
         "info": "ma'lumotlar",
         "systems": "tizimlar",
-        "faculties": "fakultetlar"
+        "faculties": "fakultetlar",
+        "corruption": "korrupsiyaga oid ma'lumotlar",
+        "events": "tadbirlar"
     },
     "home": {
         "tabs": {

@@ -14,6 +14,7 @@ import EmptyState from '../../components/shared/EmptyState';
 import { ChevronRightIcon, CalendarDaysIcon, NewspaperIcon } from '@heroicons/react/24/outline';
 import { stripHtml } from '../../utils/format';
 import { transformNewsData } from './transformers/newsTransformer';
+import { SectionSkeleton } from './components/SectionSkeleton';
 
 const AnnouncementsPreview = ({ announcements }: { announcements?: HomeNewsData['announcements'] }) => {
   const { t, i18n } = useTranslation(['common', 'pages']);
@@ -23,7 +24,7 @@ const AnnouncementsPreview = ({ announcements }: { announcements?: HomeNewsData[
     <div className="flex flex-col">
       <div>
         <h3 className="text-xl font-bold text-gray-900 mb-4 border-b-2 border-primary pb-2">{t('common:otherAnnouncements')}</h3>
-        <ul className="space-y-3 mt-4 overflow-y-auto max-h-[36rem] pr-2" data-aos="fade-left" data-aos-duration="800" data-aos-delay="200">
+        <ul className="space-y-3 mt-4 overflow-y-auto max-h-[36rem] pr-2">
           {otherAnnouncements.length > 0 ? (
             otherAnnouncements.map((item: HomeNewsData['announcements'][0]) => {
               const date = new Date(item.date);
@@ -112,16 +113,18 @@ const NewsSection = () => {
   // }, [data, loading, locale, cacheManager]);
 
   // Clean loading - arxitektura prinsipiga muvofiq
-  if (loading || !data) {
-    return null; // Section butunlay yashirin, loading ko'rsatilmaydi
+  if (loading && !data) {
+    return <SectionSkeleton sectionType="news" />;
   }
 
+  if (!data) return null;
+
   // Render grid for each category
-  const renderGrid = (items: any[]) => {
+  const renderGrid = (items: any[], resourceKey: string = 'news') => {
     if (items.length === 0) {
       return (
         <EmptyState
-          resourceKey="news"
+          resourceKey={resourceKey as any}
           icon={<NewspaperIcon className="w-12 h-12 text-slate-300" />}
         />
       );
@@ -179,7 +182,7 @@ const NewsSection = () => {
   const tabs = NEWS_TABS.map(tab => ({
     ...tab,
     label: t(`pages:home.tabs.${tab.id}`) || tab.label, // Dynamic translation
-    content: renderGrid((data as any)[tab.id] || [])
+    content: renderGrid((data as any)[tab.id] || [], tab.id)
   }));
 
   return (

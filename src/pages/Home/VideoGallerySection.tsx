@@ -11,6 +11,7 @@ import { formatShortDate } from '../../utils/format';
 import EmptyState from '../../components/shared/EmptyState';
 import { transformVideoGalleryData } from './transformers/videoGalleryTransformer';
 import { useLocale } from '../../contexts/LocaleContext';
+import { SectionSkeleton } from './components/SectionSkeleton';
 
 const VideoGallerySection: React.FC = () => {
   const { t, i18n } = useTranslation('common');
@@ -31,7 +32,9 @@ const VideoGallerySection: React.FC = () => {
     { transformData: transformer, keepPreviousData: true }
   );
 
-  if (loading && !data) return null;
+  if (loading && !data) {
+    return <SectionSkeleton sectionType="video-gallery" />;
+  }
 
   const renderPhotoContent = () => {
     const photos = data?.photos || [];

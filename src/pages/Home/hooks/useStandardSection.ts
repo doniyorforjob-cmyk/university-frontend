@@ -51,7 +51,7 @@ export const useStandardSection = <T = any>(
   }, [fetcher, transformData, locale]);
 
   return useCachedApi({
-    key: `home-section-${sectionType}-http-${locale}_v6`, // Versioned key to force fresh fetch
+    key: `home-section-${sectionType}-http_v8`, // Stable key, locale handled by useCachedApi
     fetcher: stabilizedFetcher,
     ttlMinutes,
     enabled,

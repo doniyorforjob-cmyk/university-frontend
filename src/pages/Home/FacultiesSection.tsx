@@ -11,6 +11,7 @@ import { transformFacultiesData } from './transformers/facultiesTransformer';
 import { FacultyCard } from '../../components/shared/cards/FacultyCard';
 
 import { motion, AnimatePresence } from 'framer-motion';
+import { SectionSkeleton } from './components/SectionSkeleton';
 
 type Faculty = HomeFacultiesData['faculties'][0];
 
@@ -37,7 +38,11 @@ const FacultiesSection: React.FC = () => {
     }
   }, [faculties, activeFacultyId]);
 
-  if (loading || !data) return null;
+  if (loading && !data) {
+    return <SectionSkeleton sectionType="faculties" />;
+  }
+
+  if (!data) return null;
 
   const activeFaculty = faculties.find((f: Faculty) => String(f.id) === String(activeFacultyId)) || faculties[0];
   const departments = activeFaculty?.departments || [];

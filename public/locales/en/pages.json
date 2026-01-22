@@ -47,7 +47,9 @@
         "departments": "departments",
         "info": "information",
         "systems": "systems",
-        "faculties": "faculties"
+        "faculties": "faculties",
+        "corruption": "anti-corruption news",
+        "events": "events"
     },
     "home": {
         "tabs": {

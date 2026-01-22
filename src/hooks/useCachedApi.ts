@@ -35,16 +35,17 @@ export const useCachedApi = <T = any>({
   const { locale } = useLocale();
 
   // Create a unique composite key that includes the locale
-  const localeKey = key.includes(locale) ? key : `${key}_${locale}`;
+  const localeKey = `${key}_${locale}`;
 
-  // SWR: Get stale data if available for immediate display
+  // SWR: Initial data from cache
   const [data, setData] = useState<T | null>(() => cacheManager.getStale(localeKey));
-  // Loading is true only if we have NO data at all (neither fresh nor stale)
+  // Loading is true only if we have NO data at all for this locale
   const [loading, setLoading] = useState(() => enabled && !cacheManager.getStale(localeKey));
   const [error, setError] = useState<Error | null>(null);
 
   // Synchronize state with localeKey changes during render to avoid stale data flicker
   const [prevLocaleKey, setPrevLocaleKey] = useState(localeKey);
+
   if (localeKey !== prevLocaleKey) {
     setPrevLocaleKey(localeKey);
     const cachedData = cacheManager.get(localeKey);
@@ -57,12 +58,14 @@ export const useCachedApi = <T = any>({
       setData(staleData);
       setLoading(false);
     } else {
+      // IF keepPreviousData is false, CLEAR data to avoid showing wrong locale
       if (!keepPreviousData) {
         setData(null);
-        if (enabled) setLoading(true);
-      } else {
-        // If we keep data, we only show loading if we don't even have old data
-        if (enabled && !data) setLoading(true);
+      }
+
+      // If we have no data for this NEW locale, we must show loading
+      if (enabled) {
+        setLoading(true);
       }
     }
   }
@@ -74,7 +77,6 @@ export const useCachedApi = <T = any>({
       // Check cache validity
       const item = cacheManager.getItem(localeKey);
       const isExpired = !item || item.expiresAt <= Date.now();
-      // Handle missing timestamp (legacy items) by treating them as stale
       const isStale = item && (!item.timestamp || (Date.now() - item.timestamp > revalidateThresholdMinutes * 60 * 1000));
 
       // SWR Logic: If we have fresh enough data, just return
@@ -85,10 +87,9 @@ export const useCachedApi = <T = any>({
         return;
       }
 
-      // If we have stale data but within TTL, we fetch in background silently
-      // Loading state only for cases where we have NO data or it's hard EXPIRED
-      // If we have stale data (even if expired), we don't want to show loading state
-      // This implements 'stale-while-revalidate' strategy
+      // We only show loading if we really have no data to show (respecting keepPreviousData)
+      // data corresponds to the state of the component, which might be stale from previous locale
+      // if keepPreviousData is true. If it's false, data was set to null in the render block above.
       if (!item && !data) {
         setLoading(true);
       }
@@ -111,9 +112,8 @@ export const useCachedApi = <T = any>({
           inflightRequests.delete(localeKey);
         }
       } else {
-        // Reuse existing request
         const freshData = await requestPromise;
-        setData(freshData); // Update even if we were stale
+        setData(freshData);
         onSuccess?.(freshData);
       }
 
@@ -124,29 +124,12 @@ export const useCachedApi = <T = any>({
     } finally {
       setLoading(false);
     }
-  }, [localeKey, fetcher, ttl, revalidateThresholdMinutes, onSuccess, onError, cacheManager, data, locale]);
+  }, [localeKey, fetcher, ttl, revalidateThresholdMinutes, onSuccess, onError, cacheManager, locale, data]);
 
   // Initial load and key change handling
   useEffect(() => {
-    const cachedData = cacheManager.get(localeKey);
-    const staleData = cacheManager.getStale(localeKey);
-
-    if (cachedData) {
-      setData(cachedData);
-      setLoading(false);
-    } else if (staleData) {
-      setData(staleData);
-      setLoading(false);
-    } else {
-      if (!keepPreviousData) {
-        setData(null);
-        if (enabled) setLoading(true);
-      } else {
-        if (enabled && !data) setLoading(true);
-      }
-    }
     fetchData();
-  }, [fetchData, localeKey, cacheManager, enabled, keepPreviousData, data]);
+  }, [fetchData]);
 
   // Refetch on window focus
   useEffect(() => {

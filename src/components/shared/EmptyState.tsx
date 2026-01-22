@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 interface EmptyStateProps {
     title?: React.ReactNode;
     message?: React.ReactNode;
-    resourceKey?: 'photos' | 'videos' | 'news' | 'announcements' | 'services' | 'departments' | 'info' | 'systems' | 'faculties';
+    resourceKey?: 'photos' | 'videos' | 'news' | 'announcements' | 'services' | 'departments' | 'info' | 'systems' | 'faculties' | 'corruption' | 'events';
     icon?: React.ReactNode;
     className?: string; // Users should provide height classes here if needed (e.g., h-64, h-full, etc.)
 }
