@@ -32,6 +32,8 @@ export const transformUniversitySystemsData = (
 
   const allRawItems = [...rawSystems, ...rawQuickLinks];
 
+  console.log('🔍 University Systems - Total raw items:', allRawItems.length);
+
   // Helper to extract category string from various formats
   const extractCategory = (cat: any): string => {
     if (!cat) return '';
@@ -67,24 +69,27 @@ export const transformUniversitySystemsData = (
     };
   }).filter(item => item.title && item.title.trim().length > 0);
 
+  console.log('📋 University Systems - After processing:', processedItems.length, processedItems.map(i => ({ title: i.title, category: i.category })));
+
   // Separate by category
-  // 1. Deduplicate by string ID, Normalized Title, and Normalized URL
+  // 1. Deduplicate by UUID first (most reliable), then by URL
   const uniqueItemsMap = new Map();
   processedItems.forEach(item => {
-    // Keys to identify duplicates
-    // Normalize title: remove all non-alphanumeric, lowercase, fuzzy c/k
-    const titleKey = item.title.toLowerCase().replace(/[^a-z0-9]/g, '').replace(/c/g, 'k').trim();
+    // Primary key: UUID (most reliable)
+    const uuidKey = `uuid:${item.id}`;
 
-    // Normalize URL: remove protocol, www, and trailing slash
-    const urlKey = item.href.toLowerCase()
+    // Secondary key: Normalize URL only (more reliable than title for Cyrillic text)
+    const urlKey = `url:${item.href.toLowerCase()
       .replace(/^https?:\/\//, '')
       .replace(/^www\./, '')
       .replace(/\/$/, '')
-      .trim();
+      .trim()}`;
 
-    const existing = uniqueItemsMap.get(titleKey) ||
-      uniqueItemsMap.get(urlKey) ||
-      uniqueItemsMap.get(item.id);
+    // Check if this UUID or URL already exists
+    const existingByUuid = uniqueItemsMap.get(uuidKey);
+    const existingByUrl = uniqueItemsMap.get(urlKey);
+
+    const existing = existingByUuid || existingByUrl;
 
     if (existing) {
       // Keep the "richer" item (one that has a description or better category)
@@ -92,19 +97,19 @@ export const transformUniversitySystemsData = (
       const existingValue = (existing.description?.length || 0) + (existing.category ? 20 : 0);
 
       if (currentValue > existingValue) {
-        uniqueItemsMap.set(titleKey, item);
+        uniqueItemsMap.set(uuidKey, item);
         uniqueItemsMap.set(urlKey, item);
-        uniqueItemsMap.set(item.id, item);
       }
     } else {
-      uniqueItemsMap.set(titleKey, item);
+      uniqueItemsMap.set(uuidKey, item);
       uniqueItemsMap.set(urlKey, item);
-      uniqueItemsMap.set(item.id, item);
     }
   });
 
   // Convert map values to unique list (using Set for reference equality check)
   const uniqueItems = Array.from(new Set(uniqueItemsMap.values()));
+
+  console.log('✨ University Systems - After deduplication:', uniqueItems.length, uniqueItems.map(i => ({ title: i.title, category: i.category })));
 
   // 2. STRICT CATEGORIZATION LOGIC
   const quickLinksPool: any[] = [];
@@ -137,6 +142,9 @@ export const transformUniversitySystemsData = (
   const systems = systemsPool.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   const quickLinks = quickLinksPool.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
+  console.log('🎯 University Systems - Final result:', { systems: systems.length, quickLinks: quickLinks.length });
+  console.log('📦 Systems:', systems.map(s => s.title));
+  console.log('🔗 Quick Links:', quickLinks.map(q => q.title));
 
   return {
     title: 'universitySystems',
