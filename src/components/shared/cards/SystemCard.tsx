@@ -90,7 +90,7 @@ export const SystemCard = ({
           <h3 className={`font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-200 mb-2 ${variant === 'section' ? 'text-lg' : 'text-base'}`}>
             {title}
           </h3>
-          <p className={variant === 'section' ? "text-base text-gray-600 mb-3" : "text-sm text-gray-600 mb-3"}>{description}</p>
+          <p className={`line-clamp-2 ${variant === 'section' ? "text-base text-gray-600 mb-3" : "text-sm text-gray-600 mb-3"}`}>{description}</p>
           <div className={`flex items-center text-blue-600 ${variant === 'section' ? 'text-base' : 'text-sm'} font-medium group-hover:text-blue-700`}>
             <span>{t('enter')}</span>
             <ExternalLink className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" />
