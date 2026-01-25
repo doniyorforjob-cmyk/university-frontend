@@ -193,7 +193,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
     };
 
     return navItemsRaw.map(transformRecursive);
-  }, [navItemsRaw, locale, faculties, departments, viceRectors]);
+  }, [navItemsRaw, locale, faculties, departments, viceRectors, adminDepartments]);
 
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [hoveredCategoryTitle, setHoveredCategoryTitle] = useState<string | null>(null);

@@ -7,6 +7,7 @@ import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { ActivityPageData } from '@/types/activities.types';
+import ErrorDisplay from '@/components/shared/ErrorDisplay';
 
 const ActivitiesPage: React.FC = () => {
   const { t } = useTranslation('common');
@@ -31,30 +32,15 @@ const ActivitiesPage: React.FC = () => {
   }, [setBreadcrumbsData, setSidebarType, t]);
 
   if (loading) {
-    return <GenericPageSkeleton showSidebar={true} showHeroImage={false} contentBlocks={12} />;
+    return <GenericPageSkeleton showSidebar={false} showHeroImage={false} contentBlocks={12} />;
   }
 
   if (error || !data) {
     return (
-      <div className="p-8 text-center bg-white rounded-2xl shadow-sm border border-gray-100">
-        <div className="mb-6">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-red-50 rounded-full">
-            <svg className="w-10 h-10 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-          </div>
-        </div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('error_title', 'Xatolik yuz berdi')}</h1>
-        <p className="text-gray-600 mb-8 max-w-md mx-auto">
-          {error?.message || t('error_loading', 'Ma\'lumotlarni yuklashda xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.')}
-        </p>
-        <button
-          onClick={refetch}
-          className="px-6 py-3 bg-main text-white rounded-xl hover:bg-main/90 transition-all font-semibold shadow-md"
-        >
-          {t('retry', 'Qayta yuklash')}
-        </button>
-      </div>
+      <ErrorDisplay
+        message={error?.message}
+        onRetry={refetch}
+      />
     );
   }
 

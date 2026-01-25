@@ -44,7 +44,6 @@ const AppRoutes = () => {
                 <Route path="faculties" element={<FacultiesPage />} />
                 <Route path="departments/:id" element={<DepartmentDetailPage />} />
                 <Route path="departments" element={<FacultiesPage />} />
-                <Route path="sections" element={<HeadsOfDepartmentsPage type="administrative" />} />
                 <Route path="organizational-structure" element={<OrganizationalStructurePage />} />
                 <Route path="administration" element={<AdministrationPage />} />
                 <Route path="leadership" element={<AdministrationPage />} />
@@ -76,6 +75,7 @@ const AppRoutes = () => {
                     <Route path="information-services" element={<InformationServicesPage />} />
                     <Route path="information-service" element={<InformationServicesPage />} />
                     <Route path="activities" element={<ActivitiesPage />} />
+                    <Route path="sections" element={<HeadsOfDepartmentsPage type="administrative" />} />
                     <Route path="centers" element={<CentersPage />} />
                     <Route path="markazlar" element={<CentersPage />} />
                     <Route path="centers-and-departments" element={<CentersPage />} />

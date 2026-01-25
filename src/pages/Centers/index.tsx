@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { Leadership } from '@/types/leadership.types';
 import DetailTemplate from '@/components/templates/DetailTemplate';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
-import { Container } from '@/components/shared';
 import { useLocale } from '@/contexts/LocaleContext';
 
 const CentersPage: React.FC = () => {
@@ -64,19 +63,15 @@ const CentersPage: React.FC = () => {
     ] : [];
 
     return (
-        <div className="bg-gray-50 min-h-screen py-8">
-            <Container>
-                <DetailTemplate
-                    title={t('pages:centers', 'Markazlar')}
-                    contentType="person"
-                    breadcrumbs={[]} // Moved to GlobalLayout
-                    contentBlocks={contentBlocks}
-                    showSidebar={false} // MainLayout handles the sidebar
-                    showMeta={false}
-                    showSocialShare={true}
-                />
-            </Container>
-        </div>
+        <DetailTemplate
+            title={t('pages:centers', 'Markazlar')}
+            contentType="person"
+            breadcrumbs={[]} // Moved to GlobalLayout
+            contentBlocks={contentBlocks}
+            showSidebar={false} // MainLayout handles the sidebar
+            showMeta={false}
+            showSocialShare={true}
+        />
     );
 };
 

@@ -53,12 +53,10 @@ const LeadershipCard: React.FC<LeadershipCardProps> = ({ member, isMain = false,
                     style={{ paddingTop: isMain ? '20px' : '10px' }}
                 >
                     <h1
-                        className="font-black text-[#003B5C] leading-none tracking-tighter p-0 m-0"
+                        className={`font-black text-[#003B5C] leading-tight tracking-tight p-0 m-0 ${variant === 'small' ? 'text-2xl md:text-[1.55rem]' : 'text-3xl md:text-[1.8rem]'}`}
                         style={{
-                            fontSize: '32px',
                             marginTop: '0px',
                             paddingTop: '0px',
-                            lineHeight: '1.1',
                             marginBottom: '8px',
                             fontWeight: '900'
                         }}
@@ -67,11 +65,9 @@ const LeadershipCard: React.FC<LeadershipCardProps> = ({ member, isMain = false,
                     </h1>
 
                     <p
-                        className="mt-0 font-medium"
+                        className="mt-0 font-medium text-gray-500 text-base lg:text-[1.05rem]"
                         style={{
-                            color: '#6b7280',
                             fontStyle: 'normal',
-                            fontSize: '16px',
                             marginBottom: isMain ? '26px' : '18px',
                             lineHeight: '1.4'
                         }}
@@ -90,7 +86,7 @@ const LeadershipCard: React.FC<LeadershipCardProps> = ({ member, isMain = false,
                                 style={{ textDecoration: 'none', boxShadow: 'none' }}
                             >
                                 <Phone size={20} className="text-[#3B82F6]" />
-                                <span style={{ textDecoration: 'none', color: 'inherit', fontSize: '18px' }}>
+                                <span className="text-[1.1rem]" style={{ textDecoration: 'none', color: 'inherit' }}>
                                     +{member.phone.replace(/^\+/, '')}
                                 </span>
                             </a>
@@ -102,7 +98,7 @@ const LeadershipCard: React.FC<LeadershipCardProps> = ({ member, isMain = false,
                                 style={{ textDecoration: 'none', boxShadow: 'none' }}
                             >
                                 <Mail size={20} className="text-[#10B981]" />
-                                <span style={{ textDecoration: 'none', color: 'inherit', fontSize: '18px' }}>
+                                <span className="text-[1.1rem]" style={{ textDecoration: 'none', color: 'inherit' }}>
                                     {member.email}
                                 </span>
                             </a>
@@ -119,7 +115,7 @@ const LeadershipCard: React.FC<LeadershipCardProps> = ({ member, isMain = false,
                                     : 'bg-[#F1F5F9] text-[#1E293B] border-transparent hover:bg-gray-200'
                                     }`}
                             >
-                                <span style={{ color: expandedSection === 'career' ? 'white' : '#1E293B', fontSize: '18px' }}>
+                                <span className="text-[1.1rem]" style={{ color: expandedSection === 'career' ? 'white' : '#1E293B' }}>
                                     {t('leadership.career', 'Mehnat faoliyati')}
                                 </span>
                                 <ChevronDown size={20} style={{ color: expandedSection === 'career' ? 'white' : '#1E293B' }} className={`transition-transform duration-300 ${expandedSection === 'career' ? 'rotate-180' : ''}`} />
@@ -133,7 +129,7 @@ const LeadershipCard: React.FC<LeadershipCardProps> = ({ member, isMain = false,
                                     : 'bg-[#F1F5F9] text-[#1E293B] border-transparent hover:bg-gray-200'
                                     }`}
                             >
-                                <span style={{ color: expandedSection === 'duties' ? 'white' : '#1E293B', fontSize: '18px' }}>
+                                <span className="text-[1.1rem]" style={{ color: expandedSection === 'duties' ? 'white' : '#1E293B' }}>
                                     {t('leadership.duties', 'Vazifalari')}
                                 </span>
                                 <ChevronDown size={20} style={{ color: expandedSection === 'duties' ? 'white' : '#1E293B' }} className={`transition-transform duration-300 ${expandedSection === 'duties' ? 'rotate-180' : ''}`} />

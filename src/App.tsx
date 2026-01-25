@@ -64,45 +64,46 @@ function App() {
 
   return (
     <div className="min-h-screen text-gray-900">
-      {/* Network Error Overlay */}
-      {!isOnline && <NetworkError />}
+      {!isOnline ? (
+        <NetworkError />
+      ) : (
+        <Layout>
+          <ErrorBoundary>
+            <Suspense fallback={isHome ? null : <GenericPageSkeleton showSidebar={false} showBanner={true} />}>
+              <Routes>
+                {/* Russian Locale */}
+                <Route path="ru/*" element={<LocaleWrapper lang="ru" />}>
+                  <Route path="*" element={<AppRoutes />} />
+                </Route>
 
-      <Layout>
-        <ErrorBoundary>
-          <Suspense fallback={isHome ? null : <GenericPageSkeleton showSidebar={true} showBanner={true} />}> {/* This fallback is for the initial load of the entire app */}
-            <Routes>
-              {/* Russian Locale */}
-              <Route path="ru/*" element={<LocaleWrapper lang="ru" />}>
-                <Route path="*" element={<AppRoutes />} />
-              </Route>
+                {/* English Locale */}
+                <Route path="en/*" element={<LocaleWrapper lang="en" />}>
+                  <Route path="*" element={<AppRoutes />} />
+                </Route>
 
-              {/* English Locale */}
-              <Route path="en/*" element={<LocaleWrapper lang="en" />}>
-                <Route path="*" element={<AppRoutes />} />
-              </Route>
+                {/* Uzbek Locale - Explicit for inner pages */}
+                <Route path="uz/*" element={<LocaleWrapper lang="uz" />}>
+                  <Route path="*" element={<AppRoutes />} />
+                </Route>
 
-              {/* Uzbek Locale - Explicit for inner pages */}
-              <Route path="uz/*" element={<LocaleWrapper lang="uz" />}>
-                <Route path="*" element={<AppRoutes />} />
-              </Route>
+                {/* Special Case: Root path is Uzbek Home Page */}
+                <Route path="/" element={<LocaleWrapper lang="uz" />}>
+                  <Route index element={<HomePage />} />
+                </Route>
 
-              {/* Special Case: Root path is Uzbek Home Page */}
-              <Route path="/" element={<LocaleWrapper lang="uz" />}>
-                <Route index element={<HomePage />} />
-              </Route>
-
-              {/* Any other top-level path (e.g. /news) -> Redirect to /uz/news */}
-              <Route path="*" element={<NavigateToUz />} />
-            </Routes>
-          </Suspense>
-        </ErrorBoundary>
-      </Layout>
+                {/* Any other top-level path (e.g. /news) -> Redirect to /uz/news */}
+                <Route path="*" element={<NavigateToUz />} />
+              </Routes>
+            </Suspense>
+          </ErrorBoundary>
+        </Layout>
+      )}
 
       {/* Global Toast Notifications */}
       <Toaster position="top-right" reverseOrder={false} />
 
       {/* Global "Yuqoriga qaytish" tugmasi */}
-      <ScrollToTop />
+      {isOnline && <ScrollToTop />}
     </div>
   );
 }

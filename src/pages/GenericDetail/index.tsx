@@ -171,7 +171,7 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
             setSidebarType(undefined);
             setBreadcrumbsData(undefined);
         };
-    }, [type, setSidebarType, setBreadcrumbsData, t]);
+    }, [type, setSidebarType, setBreadcrumbsData, t, locale]);
 
     // Redirect logic if item not found in current locale
     useEffect(() => {

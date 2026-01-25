@@ -6,7 +6,6 @@ import { Leadership } from '@/types/leadership.types';
 import DetailTemplate from '@/components/templates/DetailTemplate';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 import { getAdministrativeHeadsApi } from '@/api/http/department.http';
-import Container from '@/components/shared/Container';
 import { useLocale } from '@/contexts/LocaleContext';
 
 const HeadsOfDepartmentsPage: React.FC<{ type: 'academic' | 'administrative' }> = ({ type }) => {
@@ -34,7 +33,7 @@ const HeadsOfDepartmentsPage: React.FC<{ type: 'academic' | 'administrative' }> 
     ], [t, title, locale]);
 
     useEffect(() => {
-        setSidebarType('info');
+        setSidebarType('systems');
         setBreadcrumbsData(breadcrumbs);
         return () => {
             setSidebarType(undefined);
@@ -73,19 +72,15 @@ const HeadsOfDepartmentsPage: React.FC<{ type: 'academic' | 'administrative' }> 
     ] : [];
 
     return (
-        <div className="bg-gray-50 min-h-screen py-8">
-            <Container>
-                <DetailTemplate
-                    title={title}
-                    contentType="person"
-                    breadcrumbs={[]}
-                    contentBlocks={contentBlocks}
-                    showSidebar={false}
-                    showMeta={false}
-                    showSocialShare={true}
-                />
-            </Container>
-        </div>
+        <DetailTemplate
+            title={title}
+            contentType="person"
+            breadcrumbs={[]}
+            contentBlocks={contentBlocks}
+            showSidebar={false}
+            showMeta={false}
+            showSocialShare={true}
+        />
     );
 };
 

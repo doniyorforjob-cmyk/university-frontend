@@ -13,7 +13,7 @@ interface GenericPageSkeletonProps {
 }
 
 const GenericPageSkeleton: React.FC<GenericPageSkeletonProps> = ({
-  showSidebar = true,
+  showSidebar = false,
   showBanner = false,
   showHeroImage = true,
   contentBlocks = 5,

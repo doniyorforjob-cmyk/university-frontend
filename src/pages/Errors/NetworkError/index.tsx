@@ -1,29 +1,33 @@
 import React from 'react';
-import { WifiOff, RefreshCw } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 
 const NetworkError: React.FC = () => {
+    const [isImageLoaded, setIsImageLoaded] = React.useState(false);
 
     const handleRetry = () => {
         window.location.reload();
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 text-center bg-white/95 backdrop-blur-sm">
-            <div className="w-full max-w-md space-y-6 animate-in fade-in zoom-in duration-300">
+        <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center p-8 text-center bg-white overflow-hidden">
+            <div className="w-full max-w-xl flex flex-col items-center animate-in fade-in zoom-in duration-500">
 
-                {/* Icon */}
-                <div className="flex justify-center">
-                    <div className="bg-gray-100 p-6 rounded-full">
-                        <WifiOff className="w-16 h-16 text-gray-500" />
-                    </div>
+                {/* Illustration */}
+                <div className={`relative w-80 h-80 mb-6 transition-opacity duration-300 ${isImageLoaded ? 'opacity-100' : 'opacity-0'}`}>
+                    <img
+                        src="/images/no-internet.png"
+                        alt=""
+                        onLoad={() => setIsImageLoaded(true)}
+                        className="w-full h-full object-contain"
+                    />
                 </div>
 
                 {/* Content */}
-                <div className="space-y-2">
-                    <h1 className="text-2xl font-bold text-gray-900">
+                <div className="space-y-4 mb-10">
+                    <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
                         Internet aloqasi yo&apos;q
                     </h1>
-                    <p className="text-gray-600">
+                    <p className="text-gray-600 text-lg max-w-md mx-auto">
                         Iltimos, internetga ulanishni tekshiring va qayta urinib ko&apos;ring.
                     </p>
                 </div>
@@ -31,7 +35,7 @@ const NetworkError: React.FC = () => {
                 {/* Action */}
                 <button
                     onClick={handleRetry}
-                    className="flex items-center gap-2 px-8 py-3 mx-auto text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-500/30"
+                    className="flex items-center gap-3 px-12 py-3.5 text-white bg-[#6366f1] rounded-lg hover:bg-[#4f46e5] transition-all shadow-lg shadow-indigo-200 font-medium text-lg"
                 >
                     <RefreshCw className="w-5 h-5" />
                     <span>Qayta urinish</span>

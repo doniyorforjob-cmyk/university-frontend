@@ -182,7 +182,7 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
             className="bg-white rounded-2xl shadow-[0_4px_16px_0_rgba(0,0,0,0.05)] overflow-hidden p-6 md:p-8 border border-gray-100"
           >
             <div className="mb-6">
-              <h1 className="text-[27px] md:text-[27px] font-[800] leading-[37px] font-sans text-main mb-4 tracking-tight">
+              <h1 className="text-[1.7rem] font-[800] leading-[1.3] font-sans text-main mb-4 tracking-tight">
                 {title}
               </h1>
               <div className="border-b border-dashed border-gray-300 mb-6"></div>

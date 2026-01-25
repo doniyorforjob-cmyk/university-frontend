@@ -83,7 +83,7 @@ export const Sidebar: React.FC = () => {
   const normalizedCurrentPath = normalizePath(currentPath);
 
   // Find the active group based on the tree with longest prefix match strategy
-  const findActiveGroup = (items: NavItem[]): { parentTitle: string; links: NavItem[] } | null => {
+  const findActiveGroup = React.useCallback((items: NavItem[]): { parentTitle: string; links: NavItem[] } | null => {
     let bestMatch: { parentTitle: string; links: NavItem[], pathLength: number } | null = null;
 
     for (const item of items) {
@@ -132,13 +132,13 @@ export const Sidebar: React.FC = () => {
     }
 
     return bestMatch;
-  };
+  }, [locale, normalizedCurrentPath]);
 
   // 1. Find the active group (RAW data)
   const activeGroup = React.useMemo(() => {
     if (!navItemsRaw) return null;
     return findActiveGroup(navItemsRaw);
-  }, [navItemsRaw, normalizedCurrentPath, locale]);
+  }, [navItemsRaw, findActiveGroup]);
 
   // 2. Prepare the links for rendering (DYNAMIC transformation without mutation)
   const sidebarData = React.useMemo(() => {
