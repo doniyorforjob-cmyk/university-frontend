@@ -15,5 +15,6 @@ export { default as ImageCarousel } from './ImageCarousel';
 export { default as ContentBuilder } from './ContentBuilder';
 export { default as SectionTabs } from './SectionTabs';
 export { default as LeadershipCard } from './LeadershipCard';
+export { default as EmptyState } from './EmptyState';
 export * from './Accordion';
 

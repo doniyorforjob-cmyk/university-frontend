@@ -1,31 +1,40 @@
 import React, { useEffect, useMemo } from 'react';
 import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
 import { useStandardPage } from '@/hooks/useStandardPage';
-import { getCentersHeadsApi } from '@/api/http/centers.http';
 import { useTranslation } from 'react-i18next';
 import { Leadership } from '@/types/leadership.types';
 import DetailTemplate from '@/components/templates/DetailTemplate';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
-import { Container } from '@/components/shared';
+import { getAdministrativeHeadsApi } from '@/api/http/department.http';
+import Container from '@/components/shared/Container';
 import { useLocale } from '@/contexts/LocaleContext';
 
-const CentersPage: React.FC = () => {
+const HeadsOfDepartmentsPage: React.FC<{ type: 'academic' | 'administrative' }> = ({ type }) => {
     const { t } = useTranslation(['common', 'pages']);
     const { locale } = useLocale();
     const { setSidebarType, setBreadcrumbsData } = useGlobalLayout();
-    const { data: members, loading, error, refetch } = useStandardPage<Leadership[]>(
-        'centers_heads_data',
-        getCentersHeadsApi
+
+    const { data: allHeads, loading, error, refetch } = useStandardPage<Leadership[]>(
+        `heads_of_${type}_data`,
+        (loc) => getAdministrativeHeadsApi(loc)
     );
+
+    // Filter based on type
+    const filteredMembers = useMemo(() => {
+        if (!allHeads) return [];
+        return allHeads;
+    }, [allHeads]);
+
+    const title = type === 'academic' ? t('pages:academic_departments', 'Kafedralar') : t('pages:sections', 'Bo\'limlar');
 
     const breadcrumbs = useMemo(() => [
         { label: t('common:nav.home', 'Bosh sahifa'), href: `/${locale}` },
         { label: t('common:nav.about', 'Universitet'), href: `/${locale}/university` },
-        { label: t('pages:centers', 'Markazlar') }
-    ], [t, locale]);
+        { label: title }
+    ], [t, title, locale]);
 
     useEffect(() => {
-        setSidebarType('systems');
+        setSidebarType('info');
         setBreadcrumbsData(breadcrumbs);
         return () => {
             setSidebarType(undefined);
@@ -51,12 +60,12 @@ const CentersPage: React.FC = () => {
         );
     }
 
-    const contentBlocks: any[] = members && members.length > 0 ? [
+    const contentBlocks: any[] = filteredMembers && filteredMembers.length > 0 ? [
         {
-            id: 'centers-heads-list',
+            id: 'heads-list',
             type: 'leadership-list',
             data: {
-                members: members,
+                members: filteredMembers,
                 highlightFirst: false,
                 variant: 'small'
             }
@@ -67,11 +76,11 @@ const CentersPage: React.FC = () => {
         <div className="bg-gray-50 min-h-screen py-8">
             <Container>
                 <DetailTemplate
-                    title={t('pages:centers', 'Markazlar')}
+                    title={title}
                     contentType="person"
-                    breadcrumbs={[]} // Moved to GlobalLayout
+                    breadcrumbs={[]}
                     contentBlocks={contentBlocks}
-                    showSidebar={false} // MainLayout handles the sidebar
+                    showSidebar={false}
                     showMeta={false}
                     showSocialShare={true}
                 />
@@ -80,4 +89,4 @@ const CentersPage: React.FC = () => {
     );
 };
 
-export default CentersPage;
+export default HeadsOfDepartmentsPage;

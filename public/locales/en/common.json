@@ -47,6 +47,8 @@
         "print": "Newspaper/Journal"
     },
     "error_title": "An error occurred",
+    "errorLoading": "An error occurred while loading data",
+    "retry": "Retry",
     "noDataWithResource": "There are no {{resource}} yet",
     "universityName": "Namangan State\nTechnical\nUniversity",
     "officialWebsite": "Official Website",

@@ -14,13 +14,15 @@ import { getPostBySlug } from '@/services/postService';
 import { getOpenLessonBySlug } from '@/services/openLessonService';
 import { getEventBySlug } from '@/services/eventService';
 import { getMediaArticleBySlug } from '@/services/mediaService';
+import { getLeadershipBySlug } from '@/api/http/leadership.http';
+import LeadershipProfile from '@/components/features/leadership/LeadershipProfile';
 
 // Types
 import { AnnouncementDetail } from '@/types/announcement.types';
 import { PostDetail } from '@/types/post.types';
 import { OpenLessonDetail } from '@/types/open-lesson.types';
 
-export type PageType = 'announcement' | 'news' | 'service' | 'open-lesson' | 'event' | 'corruption' | 'media';
+export type PageType = 'announcement' | 'news' | 'service' | 'open-lesson' | 'event' | 'corruption' | 'media' | 'person' | 'leadership';
 
 interface GenericDetailPageProps {
     type: PageType;
@@ -51,6 +53,9 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
                 return () => getPostBySlug(slug, locale, 'corruption');
             case 'media':
                 return () => getMediaArticleBySlug(slug, locale);
+            case 'person':
+            case 'leadership':
+                return () => getLeadershipBySlug(slug, locale);
             default:
                 return null;
         }
@@ -58,21 +63,25 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
 
     // Cache key based on type
     const getCacheKey = () => {
+        const keyPrefix = `${locale}-`;
         switch (type) {
             case 'announcement':
-                return `${CACHE_CONFIG.KEYS.ANNOUNCEMENT_DETAIL}-${slug}`;
+                return `${keyPrefix}${CACHE_CONFIG.KEYS.ANNOUNCEMENT_DETAIL}-${slug}`;
             case 'news':
-                return `${CACHE_CONFIG.KEYS.NEWS_DETAIL}-${slug}`;
+                return `${keyPrefix}${CACHE_CONFIG.KEYS.NEWS_DETAIL}-${slug}`;
             case 'open-lesson':
-                return `open-lesson-detail-${slug}`;
+                return `${keyPrefix}open-lesson-detail-${slug}`;
             case 'event':
-                return `event-detail-${slug}`;
+                return `${keyPrefix}event-detail-${slug}`;
             case 'corruption':
-                return `corruption-detail-${slug}`;
+                return `${keyPrefix}corruption-detail-${slug}`;
             case 'media':
-                return `media-detail-${slug}`;
+                return `${keyPrefix}media-detail-${slug}`;
+            case 'person':
+            case 'leadership':
+                return `${keyPrefix}leadership-detail-${slug}`;
             default:
-                return `generic-detail-${slug}`;
+                return `${keyPrefix}generic-detail-${slug}`;
         }
     };
 
@@ -135,10 +144,26 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
                 breadcrumbLabel = t('pages:mediaResources');
                 parentHref = '/media-about-us';
                 break;
+            case 'person':
+            case 'leadership':
+                setSidebarType('info');
+                // Check path for breadcrumb context
+                const prefix = locale === 'uz' ? '' : `/${locale}`;
+                if (window.location.pathname.includes('/centers/')) {
+                    breadcrumbLabel = t('pages:centers');
+                    parentHref = `${prefix}/centers`;
+                } else if (window.location.pathname.includes('/sections/')) {
+                    breadcrumbLabel = t('pages:sections', "Bo'limlar");
+                    parentHref = `${prefix}/sections`;
+                } else {
+                    breadcrumbLabel = t('nav.administration', 'Rahbariyat');
+                    parentHref = `${prefix}/leadership`;
+                }
+                break;
         }
 
         setBreadcrumbsData([
-            { label: t('home'), href: '/' },
+            { label: t('common:nav.home'), href: locale === 'uz' ? '/' : `/${locale}` },
             { label: breadcrumbLabel, href: parentHref }
         ]);
 
@@ -171,6 +196,14 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
                     break;
                 case 'media':
                     listPath = '/media-about-us';
+                    break;
+                case 'person':
+                case 'leadership':
+                    const isCentersRedirect = window.location.pathname.includes('/centers/');
+                    const isSectionsRedirect = window.location.pathname.includes('/sections/');
+                    if (isCentersRedirect) listPath = '/centers';
+                    else if (isSectionsRedirect) listPath = '/sections'; // Or '/' if no sections list page
+                    else listPath = '/leadership';
                     break;
                 default:
                     listPath = '/';
@@ -329,6 +362,10 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
         templateProps.showSocialShare = true;
         templateProps.showPrintButton = true;
         templateProps.showSidebar = false;
+    }
+
+    if (type === 'person' || type === 'leadership') {
+        return <LeadershipProfile member={data} />;
     }
 
     return (

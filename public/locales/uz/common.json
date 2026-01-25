@@ -47,6 +47,8 @@
         "print": "Gazeta/Jurnal"
     },
     "error_title": "Xatolik yuz berdi",
+    "errorLoading": "Ma'lumotlarni yuklashda xatolik yuz berdi",
+    "retry": "Qayta urinish",
     "noDataWithResource": "Hozircha {{resource}} mavjud emas",
     "universityName": "Namangan Davlat\nTexnika\nUniversiteti",
     "officialWebsite": "Rasmiy veb-sayti",

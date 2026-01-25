@@ -32,14 +32,8 @@ const DepartmentDetailPage: React.FC = () => {
         ttlMinutes: 5
     });
 
-    // Redirect to list page when locale changes (to show content in new language)
-    const [initialLocale] = React.useState(locale);
-    useEffect(() => {
-        if (locale !== initialLocale) {
-            const prefix = locale === 'uz' ? '' : `/${locale}`;
-            navigate(`${prefix}/departments`, { replace: true });
-        }
-    }, [locale, initialLocale, navigate]);
+    // Removal of auto-redirect on locale change to allow users to stay on the same page
+    // Content availability will be managed by the fetching logic
 
 
     useEffect(() => {

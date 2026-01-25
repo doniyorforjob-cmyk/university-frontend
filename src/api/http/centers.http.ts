@@ -19,6 +19,36 @@ const resolveImage = (img: any): string => {
     return img.thumbnail_url || img.url || '';
 };
 
+// SLUG MAPPING FOR CENTERS - MULTI-LANGUAGE
+const CENTER_SLUG_MAP: Record<string, string> = {
+    // Uzbek
+    'raqamli': 'raqamli-talim-markazi',
+    'innovatsiya': 'innovatsiyalar-markazi',
+    'axborot resurs': 'axborot-resurs-markazi',
+    'bandlik': 'karyera-markazi',
+    'karyera': 'karyera-markazi',
+
+    // Russian
+    'цифр': 'raqamli-talim-markazi',
+    'инновац': 'innovatsiyalar-markazi',
+    'информ': 'axborot-resurs-markazi',
+    'карьер': 'karyera-markazi',
+
+    // English
+    'digital': 'raqamli-talim-markazi',
+    'innovation': 'innovatsiyalar-markazi',
+    'information': 'axborot-resurs-markazi',
+    'career': 'karyera-markazi',
+};
+
+const getCenterSlug = (centerName: string, id: string): string => {
+    const normalized = centerName.toLowerCase().trim();
+    for (const [key, value] of Object.entries(CENTER_SLUG_MAP)) {
+        if (normalized.includes(key)) return value;
+    }
+    return id;
+};
+
 export const getCentersHeadsApi = async (locale?: string): Promise<Leadership[]> => {
     try {
         const projectId = process.env.REACT_APP_PROJECT_ID;
@@ -43,7 +73,7 @@ export const getCentersHeadsApi = async (locale?: string): Promise<Leadership[]>
         return rawData.map((entry: any) => {
             const fields = entry.fields || {};
 
-            // Determine position name - relation fields might have their own 'fields' or just be objects
+            // Determine position name
             const position = fields.position?.fields?.name ||
                 fields.position?.name ||
                 (Array.isArray(fields.position) ? fields.position[0]?.fields?.name : null) ||
@@ -57,8 +87,12 @@ export const getCentersHeadsApi = async (locale?: string): Promise<Leadership[]>
                 fields.center?.title ||
                 "";
 
+            const id = entry.uuid || entry.id;
+            const slug = getCenterSlug(centerName || position, id);
+
             return {
-                id: entry.uuid || entry.id,
+                id: id,
+                slug: slug,
                 name: (fields.name || entry.name || '').trim(),
                 position: centerName ? `${position} (${centerName})` : position,
                 phone: formatPhone(fields.phone || entry.phone),
@@ -66,7 +100,7 @@ export const getCentersHeadsApi = async (locale?: string): Promise<Leadership[]>
                 image: getImageUrl(resolveImage(fields.image || entry.image)),
                 career: fields['work-experience'] || fields.work_experience || fields.career || fields.mehnat_faoliyati,
                 description: fields.responsibilities || fields.description || fields.vazifalari,
-                isMain: false // Centers don't have a "Main" (Rector-like) layout usually
+                isMain: false
             };
         });
     } catch (error) {

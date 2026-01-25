@@ -5,6 +5,8 @@
     "interactiveServices": "Interaktiv Xizmatlar",
     "faculties": "Fakultetlar",
     "departments": "Kafedralar",
+    "academic_departments": "Kafedralar",
+    "sections": "Bo'limlar",
     "mediaResources": "Media resurslar",
     "photoGallery": "Fotogalareya",
     "videoGallery": "Videogalareya",
@@ -96,5 +98,17 @@
     "centers": "Markazlar",
     "university_council": "Universitet Kengashi",
     "university": "Universitet",
-    "public_council": "Jamoatchilik kengashi"
+    "public_council": "Jamoatchilik kengashi",
+    "leadershipProfile": {
+        "biography": "Biografiya",
+        "degree": "Darajasi",
+        "phone": "Telefon",
+        "email": "Email",
+        "birthDate": "Tavallud kuni",
+        "experience": "Mehnat faoliyati",
+        "duties": "Vazifalari",
+        "noBiography": "Biografiya haqida ma'lumot mavjud emas",
+        "noExperience": "Mehnat faoliyati haqida ma'lumot mavjud emas",
+        "noDuties": "Vazifalari haqida ma'lumot mavjud emas"
+    }
 }

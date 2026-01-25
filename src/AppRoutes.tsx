@@ -28,6 +28,7 @@ const DepartmentDetailPage = React.lazy(() => import('./pages/DepartmentDetail')
 const CorruptionPage = React.lazy(() => import('./pages/Corruption'));
 const FAQPage = React.lazy(() => import('./pages/FAQ'));
 const CentersPage = React.lazy(() => import('./pages/Centers'));
+const HeadsOfDepartmentsPage = React.lazy(() => import('./pages/HeadsOfDepartments'));
 const UniversityCouncilPage = React.lazy(() => import('./pages/UniversityCouncil'));
 const PublicCouncilPage = React.lazy(() => import('./pages/PublicCouncil'));
 const ServerError = React.lazy(() => import('./pages/Error/ServerError'));
@@ -43,9 +44,13 @@ const AppRoutes = () => {
                 <Route path="faculties" element={<FacultiesPage />} />
                 <Route path="departments/:id" element={<DepartmentDetailPage />} />
                 <Route path="departments" element={<FacultiesPage />} />
+                <Route path="sections" element={<HeadsOfDepartmentsPage type="administrative" />} />
                 <Route path="organizational-structure" element={<OrganizationalStructurePage />} />
                 <Route path="administration" element={<AdministrationPage />} />
                 <Route path="leadership" element={<AdministrationPage />} />
+                <Route path="leadership/:slug" element={<GenericDetailPage type="leadership" />} />
+                <Route path="centers/:slug" element={<GenericDetailPage type="leadership" />} />
+                <Route path="sections/:slug" element={<GenericDetailPage type="leadership" />} />
 
                 {/* "Axborot xizmati" uchun doimiy Sidebar bilan ishlaydigan sahifalar */}
                 <Route element={<MainLayout />}>

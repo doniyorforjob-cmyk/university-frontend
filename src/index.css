@@ -230,6 +230,7 @@ code {
     background: transparent;
   }
 
+  /* Webkit support - thumb */
   .scrollbar-auto-hide::-webkit-scrollbar-thumb {
     background-color: transparent;
     border-radius: 20px;
@@ -239,4 +240,54 @@ code {
   .scrollbar-auto-hide:hover::-webkit-scrollbar-thumb {
     background-color: rgba(0, 71, 186, 0.2);
   }
+}
+
+/* 7. Typography Standardization (Kun.uz Style - 1:1) */
+.rich-text-forced,
+.rich-text-forced * {
+  font-family: 'PT Serif', serif !important;
+  font-size: 20px !important;
+  line-height: 30px !important;
+  color: #000000 !important;
+  font-weight: 400 !important;
+}
+
+.rich-text-forced p {
+  margin-bottom: 26px !important;
+}
+
+.rich-text-forced h1,
+.rich-text-forced h2,
+.rich-text-forced h3,
+.rich-text-forced h4,
+.rich-text-forced h5,
+.rich-text-forced h6 {
+  font-family: theme('fontFamily.sans') !important;
+  font-weight: 800 !important;
+  color: #003B5C !important;
+  margin-top: 2rem !important;
+  margin-bottom: 1rem !important;
+  line-height: 1.3 !important;
+}
+
+.rich-text-forced a {
+  color: #1e40af !important;
+  text-decoration: underline !important;
+  font-weight: 500 !important;
+}
+
+.rich-text-forced strong,
+.rich-text-forced b {
+  font-weight: 700 !important;
+  color: #000000 !important;
+}
+
+.rich-text-forced ul,
+.rich-text-forced ol {
+  margin-bottom: 26px !important;
+  padding-left: 1.5rem !important;
+}
+
+.rich-text-forced li {
+  margin-bottom: 0.5rem !important;
 }

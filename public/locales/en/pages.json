@@ -5,6 +5,8 @@
     "interactiveServices": "Interactive Services",
     "faculties": "Faculties",
     "departments": "Departments",
+    "academic_departments": "Academic Departments",
+    "sections": "Administrative Sections",
     "mediaResources": "Media Resources",
     "photoGallery": "Photo Gallery",
     "videoGallery": "Video Gallery",
@@ -96,5 +98,17 @@
     "centers": "Centers",
     "university_council": "University Council",
     "university": "University",
-    "public_council": "Public Council"
+    "public_council": "Public Council",
+    "leadershipProfile": {
+        "biography": "Biography",
+        "degree": "Degree",
+        "phone": "Phone",
+        "email": "Email",
+        "birthDate": "Birth Date",
+        "experience": "Career",
+        "duties": "Duties",
+        "noBiography": "No biography information available",
+        "noExperience": "No career information available",
+        "noDuties": "No duties information available"
+    }
 }

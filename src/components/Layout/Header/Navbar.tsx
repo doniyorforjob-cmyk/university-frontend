@@ -17,8 +17,7 @@ import NavbarSkeleton from './NavbarSkeleton';
 import { AnimatePresence, motion } from 'framer-motion';
 import { getLocalized } from '../../../utils/apiUtils';
 import { slugify } from '../../../utils/transliterate';
-import { getFaculties } from '../../../api/http/faculties.http';
-import { getDepartments } from '../../../api/http/department.http';
+import { getFaculties, getDepartments } from '../../../api/http/faculties.http';
 
 interface NavbarProps {
   isSticky: boolean;
@@ -37,17 +36,25 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
   // State for dynamic content
   const [faculties, setFaculties] = useState<any[]>([]);
   const [departments, setDepartments] = useState<any[]>([]);
+  const [viceRectors, setViceRectors] = useState<any[]>([]);
+  const [adminDepartments, setAdminDepartments] = useState<any[]>([]);
 
   // Fetch dynamic content when locale changes
   useEffect(() => {
     const fetchDynamicContent = async () => {
       try {
-        const [facs, depts] = await Promise.all([
+        const { getLeadershipApi } = await import('../../../api/http/leadership.http');
+        const { getAdministrativeDepartments } = await import('../../../api/http/department.http');
+        const [facs, depts, leadership, adminDepts] = await Promise.all([
           getFaculties(locale),
-          getDepartments(locale)
+          getDepartments(locale),
+          getLeadershipApi(locale),
+          getAdministrativeDepartments(locale)
         ]);
         setFaculties(facs);
         setDepartments(depts);
+        setViceRectors(leadership);
+        setAdminDepartments(adminDepts);
       } catch (err) {
         console.error('Failed to fetch dynamic navbar content:', err);
       }
@@ -70,43 +77,123 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
 
       // Enrich "Tuzilma" -> "Fakultetlar"
       // Check distinct title in stable language (uz) to ensure it works across all locales
-      const isFaculties = (item.title as any)?.uz === 'Fakultetlar' || (item.title as any)?.en === 'Faculties';
+      const isFaculties = (item.title as any)?.uz === 'Fakultetlar' ||
+        (item.title as any)?.en === 'Faculties' ||
+        (item.title as any)?.ru === 'Факультеты';
 
-      if (isFaculties && faculties.length > 0) {
-        transformed.children = faculties.map(f => ({
+      if (isFaculties) {
+        const prefix = locale === 'uz' ? '' : `/${locale}`;
+        transformed.children = faculties.length > 0 ? faculties.map(f => ({
           title: f.name,
-          href: `/faculties/${f.slug}`,
+          href: `${prefix}/faculties/${f.slug}`,
           children: []
-        }));
+        })) : [];
       }
 
       // Enrich "Tuzilma" -> "Kafedralar"
-      // FIX: Only target the specific "Kafedralar" node. 
-      // Do NOT include 'Departments' check because it matches "Bo'limlar" (Functional Departments) which should come from Navigation.
-      const isDepartments = (item.title as any)?.uz === 'Kafedralar' || (item.title as any)?.en === 'Academic Departments';
+      const isDepartments = (item.title as any)?.uz === 'Kafedralar' ||
+        (item.title as any)?.en === 'Academic Departments' ||
+        (item.title as any)?.ru === 'Кафедры';
 
       if (isDepartments) {
-        const hasDepts = departments && departments.length > 0;
+        const prefix = locale === 'uz' ? '' : `/${locale}`;
+        transformed.href = `${prefix}/departments`;
+        transformed.children = departments.length > 0 ? departments.map((d, idx) => {
+          const title = d.title || d.name || 'Nomsiz Kafedra';
+          return {
+            id: d.id || `dept-${idx}`,
+            title: title,
+            href: `${prefix}/departments/${d.slug}`,
+            children: []
+          };
+        }) : [];
+      }
 
-        if (hasDepts) {
-          transformed.children = departments.map((d, idx) => {
-            const title = d.title || d.name || 'Nomsiz Kafedra';
-            const finalSlug = d.slug || slugify(title);
-            return {
-              id: d.id || `dept-${idx}`,
-              title: title,
-              href: `/departments/${finalSlug || d.id}`,
-              children: []
-            };
-          });
-        }
+      // Enrich "Ma'muriyat" / "Rahbariyat" -> use viceRectors data
+      const isAdministration = (item.title as any)?.uz === 'Ma\'muriyat' ||
+        (item.title as any)?.en === 'Administration' ||
+        (item.title as any)?.ru === 'Руководство' ||
+        (item.title as any)?.uz === 'Rahbariyat' ||
+        (item.title as any)?.en === 'Leadership';
+
+      if (isAdministration) {
+        transformed.children = viceRectors.length > 0 ? viceRectors.map(v => ({
+          id: v.id,
+          title: v.position,
+          href: `/leadership/${v.slug || v.id}`,
+          children: []
+        })) : [];
+      }
+
+      // Enrich "Markazlar" -> use centers data
+      const isCenters = (item.title as any)?.uz === 'Markazlar' ||
+        (item.title as any)?.en === 'Centers' ||
+        (item.title as any)?.ru === 'Центры';
+
+      if (isCenters) {
+        transformed.children = (item.children?.map((centerLink: any) => {
+          const rawTitle = centerLink.title;
+          const localizedTitle = getLocalized(rawTitle, locale) || 'Untitled';
+
+          let stableSlug = slugify(localizedTitle);
+          const lowerTitle = localizedTitle.toLowerCase();
+          if (lowerTitle.includes('raqamli') || lowerTitle.includes('цифр') || lowerTitle.includes('digital')) {
+            stableSlug = 'raqamli-talim-markazi';
+          }
+          if (lowerTitle.includes('innovatsiya') || lowerTitle.includes('инновац') || lowerTitle.includes('innovation')) {
+            stableSlug = 'innovatsiyalar-markazi';
+          }
+          if (lowerTitle.includes('axborot') || lowerTitle.includes('информ') || lowerTitle.includes('information') || lowerTitle.includes('arm')) {
+            stableSlug = 'axborot-resurs-markazi';
+          }
+          if (lowerTitle.includes('bandlik') || lowerTitle.includes('karyera') || lowerTitle.includes('карьер') || lowerTitle.includes('career')) {
+            stableSlug = 'karyera-markazi';
+          }
+
+          const prefix = locale === 'uz' ? '' : `/${locale}`;
+          return {
+            ...centerLink,
+            title: localizedTitle, // CRITICAL: Must be a string
+            href: `${prefix}/centers/${stableSlug}`
+          };
+        })) || [];
+      }
+
+      // Enrich "Bo'limlar" -> use adminDepartments data
+      const isSections = (item.title as any)?.uz === 'Bo\'limlar' ||
+        (item.title as any)?.en === 'Sections' ||
+        (item.title as any)?.ru === 'Отделы' ||
+        (item.title as any)?.uz === 'Bo‘limlar';
+
+      if (isSections) {
+        const prefix = locale === 'uz' ? '' : `/${locale}`;
+        transformed.href = `${prefix}/sections`;
+        transformed.children = adminDepartments.length > 0 ? adminDepartments.map(d => {
+          const lowerName = d.name.toLowerCase();
+          let stableSlug = d.slug; // Default from API
+
+          // Robust stable slug mapping in Navbar too for immediate UI consistency
+          if (lowerName.includes('o\'quv') || lowerName.includes('oʻquv') || lowerName.includes('учеб')) stableSlug = 'oquv-uslubiy-boshqarma';
+          if (lowerName.includes('monitoring') || lowerName.includes('мониторинг')) stableSlug = 'monitoring-va-ichki-nazorat';
+          if (lowerName.includes('yoshlar') || lowerName.includes('молодеж') || lowerName.includes('youth')) stableSlug = 'yoshlar-bilan-ishlash-bolimi';
+          if (lowerName.includes('kadr') || lowerName.includes('human resource')) stableSlug = 'kadrlar-bolimi';
+          if (lowerName.includes('moliya') || lowerName.includes('финан') || lowerName.includes('plan')) stableSlug = 'reja-moliya-bolimi';
+          if (lowerName.includes('sirtqi') || lowerName.includes('заочн')) stableSlug = 'sirtqi-bolim';
+          if (lowerName.includes('magistr')) stableSlug = 'magistratura-bolimi';
+
+          return {
+            title: d.name,
+            href: `${prefix}/sections/${stableSlug}`,
+            children: []
+          };
+        }) : [];
       }
 
       return transformed;
     };
 
     return navItemsRaw.map(transformRecursive);
-  }, [navItemsRaw, locale, faculties, departments]);
+  }, [navItemsRaw, locale, faculties, departments, viceRectors]);
 
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [hoveredCategoryTitle, setHoveredCategoryTitle] = useState<string | null>(null);

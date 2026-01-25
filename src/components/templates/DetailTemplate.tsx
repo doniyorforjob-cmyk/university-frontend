@@ -256,7 +256,7 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
               )
             )}
 
-            <div className="prose prose-lg max-w-none font-serif text-[20px] leading-[30px] text-black prose-p:text-black prose-li:text-black prose-li:marker:text-black prose-headings:font-sans prose-headings:text-[#003B5C] prose-a:text-blue-600 prose-img:rounded-xl prose-strong:text-black prose-table:border prose-table:border-collapse prose-th:border prose-td:border prose-th:p-2 prose-td:p-2 leading-relaxed">
+            <div className={`prose prose-lg max-w-none font-serif text-[20px] leading-[1.6] text-black prose-headings:font-sans prose-headings:text-[#003B5C] prose-a:text-blue-600 prose-img:rounded-xl prose-table:border prose-table:border-collapse prose-th:border prose-td:border prose-th:p-2 prose-td:p-2 ${!contentBlocks ? 'rich-text-forced' : ''}`}>
               {contentBlocks ? (
                 <ContentBuilder blocks={contentBlocks} />
               ) : content ? (

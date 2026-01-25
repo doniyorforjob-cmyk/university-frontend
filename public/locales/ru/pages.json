@@ -5,6 +5,8 @@
     "interactiveServices": "Интерактивные услуги",
     "faculties": "Факультеты",
     "departments": "Кафедры",
+    "academic_departments": "Кафедры",
+    "sections": "Отделы",
     "mediaResources": "Медиа ресурсы",
     "photoGallery": "Фотогалерея",
     "videoGallery": "Видеогалерея",
@@ -96,5 +98,17 @@
     "centers": "Центры",
     "university_council": "Совет университета",
     "university": "Университет",
-    "public_council": "Общественный совет"
+    "public_council": "Общественный совет",
+    "leadershipProfile": {
+        "biography": "Биография",
+        "degree": "Степень",
+        "phone": "Телефон",
+        "email": "Электронная почта",
+        "birthDate": "Дата рождения",
+        "experience": "Трудовая деятельность",
+        "duties": "Обязанности",
+        "noBiography": "Информация о биографии отсутствует",
+        "noExperience": "Информация о трудовой деятельности отсутствует",
+        "noDuties": "Информация об обязанностях отсутствует"
+    }
 }
