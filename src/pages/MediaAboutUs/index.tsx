@@ -17,8 +17,8 @@ import {
 } from '@/components/ui/pagination';
 
 // Media About Us ma'lumotlarini olish funksiyasi
-const fetchMediaData = async (): Promise<MediaArticle[]> => {
-  return await getMediaArticles();
+const fetchMediaData = async (locale?: string): Promise<MediaArticle[]> => {
+  return await getMediaArticles(locale);
 };
 
 const MediaAboutUsPage: React.FC = () => {

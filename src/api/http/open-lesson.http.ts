@@ -1,12 +1,15 @@
 import apiClient from '../client';
 import { OpenLesson, OpenLessonDetail } from '../../types/open-lesson.types';
 
-export const getOpenLessons = async (): Promise<OpenLesson[]> => {
+export const getOpenLessons = async (locale?: string): Promise<OpenLesson[]> => {
     try {
         const projectId = process.env.REACT_APP_PROJECT_ID;
+        const currentLocale = locale || localStorage.getItem('locale') || 'uz';
+
         const response = await apiClient.get(`/projects/${projectId}/content/open-lessons`, {
             params: {
-                with: 'image'
+                with: 'image',
+                locale: currentLocale
             }
         });
 

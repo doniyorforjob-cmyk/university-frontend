@@ -77,6 +77,24 @@ export const Sidebar: React.FC = () => {
     // 5. Clean up any double slashes
     p = p.replace(/\/+/g, '/');
 
+    // 6. University Specific Alias Mapping (Static Redirects/Aliases)
+    const aliases: Record<string, string> = {
+      '/appeals': '/applications-suggestions-and-complaints',
+      '/information-service': '/information-services',
+      '/markazlar': '/centers',
+      '/university/council': '/council',
+      '/board-of-trustees': '/council',
+      '/universitet-kengashi': '/council',
+      '/university/public-council': '/public-council',
+      '/jamoatchilik-kengashi': '/public-council'
+    };
+
+    // Check if the base path (first segment) is an alias
+    const firstSegment = '/' + p.split('/')[1];
+    if (aliases[firstSegment]) {
+      p = p.replace(firstSegment, aliases[firstSegment]);
+    }
+
     return p || '/';
   };
 

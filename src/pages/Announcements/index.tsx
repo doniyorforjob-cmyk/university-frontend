@@ -8,8 +8,8 @@ import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 import { useStandardPage } from '@/hooks/useStandardPage';
 
 // E'lonlar ma'lumotlarini olish funksiyasi
-const fetchAnnouncementsData = async (): Promise<SectionItem[]> => {
-  const data = await getAnnouncements();
+const fetchAnnouncementsData = async (locale?: string): Promise<SectionItem[]> => {
+  const data = await getAnnouncements(locale);
 
   const sectionItems: SectionItem[] = data.map((announcement: Announcement) => ({
     id: announcement.id.toString(),

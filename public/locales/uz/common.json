@@ -5,6 +5,7 @@
     "home": "Bosh sahifa",
     "university": "Universitet",
     "lastUpdate": "Oxirgi yangilanish",
+    "documents": "Hujjatlar",
     "languages": {
         "uz": "O'zbek",
         "ru": "Rus",
@@ -25,6 +26,10 @@
     "print": "Chop etish",
     "tags": "Teglar",
     "no_info": "Ma'lumot mavjud emas",
+    "no_description": "Tavsif mavjud emas",
+    "files": "fayl",
+    "files_count": "ta fayl",
+    "no_data": "Ma'lumot topilmadi",
     "related_materials": "O'xshash materiallar",
     "copy_link": "Nusxalash",
     "content_types": {

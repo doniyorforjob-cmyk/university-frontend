@@ -37,7 +37,7 @@ const CorruptionPage: React.FC = () => {
 
     const { data: items, loading, error } = useStandardPage(
         'corruption',
-        () => fetchCorruptionData(locale)
+        fetchCorruptionData
     );
 
     useEffect(() => {

@@ -1,13 +1,16 @@
 import apiClient from '../client';
 import { Announcement, AnnouncementDetail } from '../../types/announcement.types';
 
-export const getAnnouncements = async (): Promise<Announcement[]> => {
+export const getAnnouncements = async (locale?: string): Promise<Announcement[]> => {
   try {
     const projectId = process.env.REACT_APP_PROJECT_ID;
+    const currentLocale = locale || localStorage.getItem('locale') || 'uz';
+
     const response = await apiClient.get(`/projects/${projectId}/content/announcements`, {
       params: {
         with: 'image',
-        sort: '-published_at'
+        sort: '-published_at',
+        locale: currentLocale
       }
     });
 

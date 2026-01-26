@@ -23,7 +23,7 @@ const FacultyDetailPage: React.FC = () => {
     const navigate = useNavigate();
     const { t } = useTranslation('pages');
     const { locale } = useLocale();
-    const { setBreadcrumbsData } = useGlobalLayout();
+    const { setSidebarType, setBreadcrumbsData } = useGlobalLayout();
     const [activeTab, setActiveTab] = useState('history');
 
     const { data: faculty, loading: loadingFaculty } = useCachedApi<Faculty | null>({
@@ -63,6 +63,7 @@ const FacultyDetailPage: React.FC = () => {
 
     useEffect(() => {
         if (faculty) {
+            setSidebarType('info');
             setBreadcrumbsData([
                 { label: t('breadcrumbs.home'), href: `/${locale}` },
                 { label: t('breadcrumbs.faculties'), href: `/${locale}/faculties` },
@@ -75,8 +76,11 @@ const FacultyDetailPage: React.FC = () => {
                 navigate(`${prefix}/faculties/${faculty.slug}`, { replace: true });
             }
         }
-        return () => setBreadcrumbsData([]);
-    }, [faculty, setBreadcrumbsData, locale, t, id, navigate]);
+        return () => {
+            setSidebarType(undefined);
+            setBreadcrumbsData([]);
+        };
+    }, [faculty, setSidebarType, setBreadcrumbsData, locale, t, id, navigate]);
 
     if (loadingFaculty) {
         return <GenericPageSkeleton />;

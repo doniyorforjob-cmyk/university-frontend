@@ -16,6 +16,6 @@ export const quickLinks = [
     { title: 'Faoliyat', href: '/activities' },
     { title: 'Abituriyent', href: '/admission' },
     { title: 'Talabalar', href: '/students' },
-    { title: 'Ilm-fan', href: '/science' },
-    { title: 'Xalqaro aloqalar', href: '/international' }
+    { title: 'Ilm-fan', href: '/scientific-activity' },
+    { title: 'Xalqaro aloqalar', href: '/sections/xalqaro-hamkorlik-bolimi' }
 ];

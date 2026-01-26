@@ -8,8 +8,8 @@ import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 import { useStandardPage } from '@/hooks/useStandardPage';
 
 // Ochiq darslar ma'lumotlarini olish funksiyasi
-const fetchOpenLessonsData = async (): Promise<SectionItem[]> => {
-    const data = await getOpenLessons();
+const fetchOpenLessonsData = async (locale?: string): Promise<SectionItem[]> => {
+    const data = await getOpenLessons(locale);
 
     const sectionItems: SectionItem[] = data.map((lesson: OpenLesson) => ({
         id: lesson.id.toString(),

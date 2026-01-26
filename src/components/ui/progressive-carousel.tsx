@@ -7,7 +7,6 @@ import React, {
   ReactNode,
   FC,
 } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 // Define the type for the context value
@@ -99,17 +98,7 @@ export const ProgressSlider: FC<ProgressSliderProps> = ({
     }
   }, [children]);
 
-  useEffect(() => {
-    if (sliderValues.length > 0) {
-      firstFrameTime.current = performance.now();
-      frame.current = requestAnimationFrame(animate);
-    }
-    return () => {
-      cancelAnimationFrame(frame.current);
-    };
-  }, [sliderValues, active, isFastForward]);
-
-  const animate = (now: number) => {
+  const animate = React.useCallback((now: number) => {
     const currentDuration = isFastForward ? fastDuration : duration;
     const elapsedTime = now - firstFrameTime.current;
     const timeFraction = elapsedTime / currentDuration;
@@ -137,7 +126,17 @@ export const ProgressSlider: FC<ProgressSliderProps> = ({
       setProgress(0);
       firstFrameTime.current = performance.now();
     }
-  };
+  }, [active, duration, fastDuration, isFastForward, progress, sliderValues]);
+
+  useEffect(() => {
+    if (sliderValues.length > 0) {
+      firstFrameTime.current = performance.now();
+      frame.current = requestAnimationFrame(animate);
+    }
+    return () => {
+      cancelAnimationFrame(frame.current);
+    };
+  }, [sliderValues, active, isFastForward, animate]);
 
   const handleButtonClick = (value: string) => {
     if (value !== active) {

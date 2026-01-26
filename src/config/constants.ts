@@ -57,18 +57,33 @@ export const UZ_MONTHS = [
   'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'
 ];
 
+export const RU_MONTHS = [
+  'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+  'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+];
+
+export const EN_MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
 /**
  * Loyiha bo'ylab standart sana formatini qaytaradi (SectionTemplate dagi kabi)
  * Format: "2 Yanvar 2026 | 12:30"
  */
-export const formatStandardDate = (dateString?: string) => {
+export const formatStandardDate = (dateString?: string, locale: string = 'uz') => {
   if (!dateString) return '';
   const date = new Date(dateString);
   const day = date.getDate();
-  const month = UZ_MONTHS[date.getMonth()];
+
+  let month = UZ_MONTHS[date.getMonth()];
+  if (locale === 'ru') month = RU_MONTHS[date.getMonth()];
+  if (locale === 'en') month = EN_MONTHS[date.getMonth()];
+
   const year = date.getFullYear();
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
+
   return `${day} ${month} ${year} | ${hours}:${minutes}`;
 };
 

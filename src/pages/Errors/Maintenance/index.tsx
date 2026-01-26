@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Hammer, ArrowRight } from 'lucide-react';
+import { Hammer } from 'lucide-react';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 
 const Maintenance: React.FC = () => {

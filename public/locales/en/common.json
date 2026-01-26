@@ -5,6 +5,10 @@
     "home": "Home",
     "university": "University",
     "lastUpdate": "Last update",
+    "documents": "Documents",
+    "files_count": "files",
+    "no_description": "No description available",
+    "no_data": "No data found",
     "languages": {
         "uz": "Uzbek",
         "ru": "Russian",

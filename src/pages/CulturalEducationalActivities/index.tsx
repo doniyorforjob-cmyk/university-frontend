@@ -1,0 +1,93 @@
+import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLocale } from '@/contexts/LocaleContext';
+import { useGlobalLayout } from '@/components/templates/GlobalLayout';
+import { useStandardPage } from '@/hooks/useStandardPage';
+import { fetchCulturalEducationalActivities } from '@/services/culturalEducationalActivitiesService';
+import { CulturalEducationalEntry } from '@/api/http/culturalEducationalActivities.http';
+import DetailTemplate from '@/components/templates/DetailTemplate';
+import DocumentList from '@/components/shared/DocumentList';
+import PageSkeleton from '@/components/shared/PageSkeleton';
+import EmptyState from '@/components/shared/EmptyState';
+
+const CulturalEducationalActivitiesPage: React.FC = () => {
+    const { locale } = useLocale();
+    const { t } = useTranslation(['common', 'pages']);
+    const { setSidebarType, setBreadcrumbsData } = useGlobalLayout();
+
+    const { data: items, loading, error } = useStandardPage<CulturalEducationalEntry[]>(
+        'cultural-educational-activities-list',
+        fetchCulturalEducationalActivities
+    );
+
+    useEffect(() => {
+        setSidebarType('info');
+        setBreadcrumbsData([
+            { label: t('home', 'Bosh sahifa'), href: `/${locale}` },
+            { label: t('pages:culturalEducationalActivities', 'Madaniy-ma’rifiy faoliyat') }
+        ]);
+
+        return () => {
+            setSidebarType(undefined);
+            setBreadcrumbsData(undefined);
+        };
+    }, [locale, t, setSidebarType, setBreadcrumbsData]);
+
+    if (loading) {
+        return <PageSkeleton />;
+    }
+
+    if (error || !items || items.length === 0) {
+        return (
+            <DetailTemplate
+                title={t('pages:culturalEducationalActivities', 'Madaniy-ma’rifiy faoliyat')}
+                contentType="info"
+                showSidebar={false}
+            >
+                <EmptyState resourceKey="info" className="mt-8" />
+            </DetailTemplate>
+        );
+    }
+
+    return (
+        <DetailTemplate
+            title={t('pages:culturalEducationalActivities', 'Madaniy-ma’rifiy faoliyat')}
+            contentType="info"
+            showSidebar={false}
+        >
+            <div className="mt-8 space-y-12">
+                {items.map((entry: CulturalEducationalEntry, index: number) => (
+                    <div key={entry.id} className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        {entry.title && (
+                            <div className="not-prose flex items-center gap-4 mb-6">
+                                <div className="flex-shrink-0 w-1.5 h-8 bg-blue-600 rounded-full shadow-[0_0_10px_rgba(37,99,235,0.2)]"></div>
+                                <h2 className="text-2xl font-bold text-gray-800 m-0 p-0 leading-tight">
+                                    {entry.title}
+                                </h2>
+                            </div>
+                        )}
+
+                        {entry.content && (
+                            <div
+                                className="prose prose-lg max-w-none text-gray-700 leading-relaxed font-serif"
+                                dangerouslySetInnerHTML={{ __html: entry.content }}
+                            />
+                        )}
+
+                        {entry.files && entry.files.length > 0 && (
+                            <div className="bg-white rounded-2xl border border-gray-100 p-1 shadow-sm">
+                                <DocumentList files={entry.files} />
+                            </div>
+                        )}
+
+                        {index < items.length - 1 && (
+                            <div className="border-b border-dashed border-gray-200 pt-6"></div>
+                        )}
+                    </div>
+                ))}
+            </div>
+        </DetailTemplate>
+    );
+};
+
+export default CulturalEducationalActivitiesPage;

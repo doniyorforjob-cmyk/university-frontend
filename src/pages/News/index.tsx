@@ -38,7 +38,7 @@ const NewsPage: React.FC = () => {
   const { cacheManager } = useGlobalCache();
   const { data: items, loading, error } = useStandardPage(
     'news',
-    () => fetchNewsData(locale)
+    fetchNewsData
   );
 
   // Background prefetching for other locales
@@ -48,7 +48,7 @@ const NewsPage: React.FC = () => {
     const otherLocales = ['uz', 'ru', 'en'].filter(l => l !== locale);
 
     otherLocales.forEach(async (targetLocale) => {
-      const cacheKey = `news-data-${targetLocale}`;
+      const cacheKey = `news_${targetLocale}`; // Correct key format for useCachedApi
       if (!cacheManager.has(cacheKey)) {
         try {
           console.log(`Prefetching news for ${targetLocale}...`);

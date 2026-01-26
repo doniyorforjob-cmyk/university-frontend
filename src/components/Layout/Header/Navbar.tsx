@@ -292,7 +292,9 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
               </AnimatePresence>
 
               {displayNavItems.map((item: any) => {
-                const hasCategories = item.children && item.children.some((child: any) => child.children && child.children.length > 0);
+                const parentCategories = item.children?.filter((child: any) => child.children && child.children.length > 0) || [];
+                const standaloneLinks = item.children?.filter((child: any) => !child.children || child.children.length === 0) || [];
+                const hasCategories = parentCategories.length > 0;
 
                 return (
                   <div key={String(item.title)} className="group h-full">
@@ -305,8 +307,8 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
 
                         if (item.children) {
                           setActiveDropdown(String(item.title));
-                          if (item.children.length > 0) {
-                            setHoveredCategoryTitle(item.children[0].title);
+                          if (parentCategories.length > 0) {
+                            setHoveredCategoryTitle(parentCategories[0].title);
                           }
                         }
                       }}
@@ -359,7 +361,8 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                   <div className="p-6">
                                     <h4 className="text-xs font-black text-gray-300 uppercase tracking-widest mb-4">{t('navbar.sections')}</h4>
                                     <div className="flex flex-col space-y-1">
-                                      {item.children!.map((parent: any, idx: number) => (
+                                      {/* Grouped Categories (Original Style) */}
+                                      {parentCategories.map((parent: any, idx: number) => (
                                         <div
                                           key={parent.id || parent.title || idx}
                                           onMouseEnter={() => setHoveredCategoryTitle(parent.title)}
@@ -387,6 +390,39 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                           </PrefetchLink>
                                         </div>
                                       ))}
+
+                                      {/* Standalone Quick Links (New Styled Column "Inside") */}
+                                      {standaloneLinks.length > 0 && (
+                                        <>
+                                          <div className="pt-6 pb-2 px-4 shadow-sm">
+                                            <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                                              {t('navbar.quick_links', 'Tezkor havolalar')}
+                                            </h4>
+                                          </div>
+                                          {standaloneLinks.map((link: any, idx: number) => (
+                                            <div
+                                              key={link.id || link.title || idx}
+                                              onMouseEnter={() => setHoveredCategoryTitle(null)}
+                                              className="cursor-pointer transition-all duration-150 border-l-4 border-transparent hover:border-l-secondary hover:bg-gray-200 text-gray-700 mx-1"
+                                            >
+                                              <PrefetchLink
+                                                to={link.href || '#'}
+                                                onClick={closeDropdown}
+                                                className="block w-full"
+                                              >
+                                                <motion.div
+                                                  whileHover={{ x: 8 }}
+                                                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                                                  className="flex items-center gap-2 px-4 py-3"
+                                                >
+                                                  <ChevronRightIcon className="h-4 w-4 text-gray-600 flex-shrink-0" />
+                                                  <span className="font-bold">{link.title}</span>
+                                                </motion.div>
+                                              </PrefetchLink>
+                                            </div>
+                                          ))}
+                                        </>
+                                      )}
                                     </div>
                                   </div>
 
@@ -395,7 +431,9 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                     {currentHoveredCategory ? (
                                       <div className="animate-fade-in">
                                         <div className="flex items-center justify-between mb-4">
-                                          <h4 className="text-xs font-black text-gray-300 uppercase tracking-widest">{t('navbar.links')}</h4>
+                                          <h4 className="text-xs font-black text-gray-300 uppercase tracking-widest">
+                                            {currentHoveredCategory.title}
+                                          </h4>
                                           {currentHoveredCategory.children && currentHoveredCategory.children.length > 7 && (
                                             <PrefetchLink
                                               to={currentHoveredCategory.href || '#'}
@@ -416,13 +454,14 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                                   block text-gray-800 hover:text-black hover:bg-gray-300/40 hover:shadow-sm
                                                   transition-all duration-150 border-b border-transparent rounded-md group/link
                                                 "
+                                                onClick={closeDropdown}
                                               >
                                                 <motion.div
                                                   whileHover={{ x: 8 }}
                                                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                                                   className="flex items-center gap-3 py-2 px-3"
                                                 >
-                                                  <div className="h-1.5 w-1.5 bg-gray-500 group-hover/link:bg-black rounded-full flex-shrink-0" />
+                                                  <div className="h-1.5 w-1.5 bg-gray-400 group-hover/link:bg-black rounded-full flex-shrink-0" />
                                                   <span className="text-base font-semibold text-gray-900 relative z-10 flex-1">
                                                     {child.title || 'Untitled'}
                                                   </span>
@@ -437,9 +476,13 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                         </div>
                                       </div>
                                     ) : (
-                                      <div className="h-full flex flex-col items-center justify-center text-center p-8">
-                                        <BuildingLibraryIcon className="h-12 w-12 text-gray-200 mb-2" />
-                                        <p className="text-gray-400 text-sm">{t('navbar.select_section')}</p>
+                                      <div className="h-full flex flex-col items-center justify-center text-center p-8 transition-opacity duration-300">
+                                        <img
+                                          src="/images/logo.png"
+                                          alt="NamDTU Logo"
+                                          className="h-16 w-auto mb-4 opacity-20 grayscale brightness-110"
+                                        />
+                                        <p className="text-gray-400 text-sm font-medium tracking-wide">{t('navbar.select_section')}</p>
                                       </div>
                                     )}
                                   </div>
@@ -454,7 +497,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                       onClick={closeDropdown}
                                       className="
                                           flex h-full items-center text-gray-800 hover:text-black hover:bg-gray-200
-                                          transition-all duration-150 border-b border-black/10
+                                          transition-all duration-150 border-l-4 border-transparent hover:border-l-secondary
                                         "
                                     >
                                       <motion.div
@@ -462,7 +505,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                                         className="flex items-center gap-3 py-3 px-4 w-full"
                                       >
-                                        <ChevronRightIcon className="h-4 w-4 text-black" />
+                                        <ChevronRightIcon className="h-4 w-4 text-gray-600 flex-shrink-0 transition-transform" />
                                         <span className="text-base font-bold">{link.title}</span>
                                       </motion.div>
                                     </PrefetchLink>

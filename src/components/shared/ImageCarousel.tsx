@@ -62,7 +62,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({
                             key={index}
                             className="relative flex-[0_0_100%] min-w-0" // Slide
                         >
-                            <div className="relative w-full h-80 md:h-[50vh] lg:h-[65vh] min-h-[20rem] overflow-hidden">
+                            <div className="relative w-full h-72 md:h-[40vh] lg:h-[50vh] min-h-[18rem] overflow-hidden">
                                 <OptimizedImage
                                     src={image.src}
                                     alt={image.alt}
@@ -84,6 +84,30 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({
                     ))}
                 </div>
             </div>
+
+            {/* Navigation Arrows */}
+            {images.length > 1 && (
+                <>
+                    <button
+                        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        onClick={() => emblaApi?.scrollPrev()}
+                        aria-label="Previous image"
+                    >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+                    <button
+                        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        onClick={() => emblaApi?.scrollNext()}
+                        aria-label="Next image"
+                    >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </>
+            )}
 
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 z-20">
                 {scrollSnaps.map((_, index) => (

@@ -12,17 +12,23 @@ import { CACHE_CONFIG } from '@/config/constants';
 import { getAnnouncementBySlug } from '@/services/announcementService';
 import { getPostBySlug } from '@/services/postService';
 import { getOpenLessonBySlug } from '@/services/openLessonService';
+import { getStepForwardBySlug } from '@/services/stepForwardService';
 import { getEventBySlug } from '@/services/eventService';
 import { getMediaArticleBySlug } from '@/services/mediaService';
 import { getLeadershipBySlug } from '@/api/http/leadership.http';
+import { getSpiritualActivityBySlug } from '@/services/spiritualEducationalService';
+import { getCulturalEventBySlug } from '@/services/culturalEventsService';
+import { getSportsClubEntryBySlug } from '@/services/sportsClubLifeService';
+import { getCulturalEducationalEntryBySlug } from '@/services/culturalEducationalActivitiesService';
 import LeadershipProfile from '@/components/features/leadership/LeadershipProfile';
 
 // Types
 import { AnnouncementDetail } from '@/types/announcement.types';
 import { PostDetail } from '@/types/post.types';
 import { OpenLessonDetail } from '@/types/open-lesson.types';
+import { StepForwardDetail } from '@/types/step-forward.types';
 
-export type PageType = 'announcement' | 'news' | 'service' | 'open-lesson' | 'event' | 'corruption' | 'media' | 'person' | 'leadership';
+export type PageType = 'announcement' | 'news' | 'service' | 'open-lesson' | 'step-forward' | 'event' | 'corruption' | 'media' | 'person' | 'leadership' | 'spiritual-educational' | 'cultural-event' | 'sports-club-life' | 'cultural-educational-activity';
 
 interface GenericDetailPageProps {
     type: PageType;
@@ -47,6 +53,8 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
                 return () => getPostBySlug(slug, locale);
             case 'open-lesson':
                 return () => getOpenLessonBySlug(slug, locale);
+            case 'step-forward':
+                return () => getStepForwardBySlug(slug, locale);
             case 'event':
                 return () => getEventBySlug(slug, locale);
             case 'corruption':
@@ -56,6 +64,14 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
             case 'person':
             case 'leadership':
                 return () => getLeadershipBySlug(slug, locale);
+            case 'spiritual-educational':
+                return () => getSpiritualActivityBySlug(slug, locale);
+            case 'cultural-event':
+                return () => getCulturalEventBySlug(slug, locale);
+            case 'sports-club-life':
+                return () => getSportsClubEntryBySlug(slug, locale);
+            case 'cultural-educational-activity':
+                return () => getCulturalEducationalEntryBySlug(slug, locale);
             default:
                 return null;
         }
@@ -71,6 +87,8 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
                 return `${keyPrefix}${CACHE_CONFIG.KEYS.NEWS_DETAIL}-${slug}`;
             case 'open-lesson':
                 return `${keyPrefix}open-lesson-detail-${slug}`;
+            case 'step-forward':
+                return `${keyPrefix}step-forward-detail-${slug}`;
             case 'event':
                 return `${keyPrefix}event-detail-${slug}`;
             case 'corruption':
@@ -80,6 +98,14 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
             case 'person':
             case 'leadership':
                 return `${keyPrefix}leadership-detail-${slug}`;
+            case 'spiritual-educational':
+                return `${keyPrefix}spiritual-educational-detail-${slug}`;
+            case 'cultural-event':
+                return `${keyPrefix}cultural-event-detail-${slug}`;
+            case 'sports-club-life':
+                return `${keyPrefix}sports-club-life-detail-${slug}`;
+            case 'cultural-educational-activity':
+                return `${keyPrefix}cultural-educational-activity-detail-${slug}`;
             default:
                 return `${keyPrefix}generic-detail-${slug}`;
         }
@@ -129,6 +155,11 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
                 breadcrumbLabel = t('pages:openLessons');
                 parentHref = '/open-lessons';
                 break;
+            case 'step-forward':
+                setSidebarType('info');
+                breadcrumbLabel = t('pages:stepForward');
+                parentHref = '/step-forward';
+                break;
             case 'event':
                 setSidebarType('info');
                 breadcrumbLabel = t('pages:home.tabs.events');
@@ -159,6 +190,26 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
                     breadcrumbLabel = t('nav.administration', 'Rahbariyat');
                     parentHref = `${prefix}/leadership`;
                 }
+                break;
+            case 'spiritual-educational':
+                setSidebarType('info');
+                breadcrumbLabel = t('pages:spiritualEducational', "Ma'naviy-ma'rifiy rukn");
+                parentHref = '/spiritual-educational-section';
+                break;
+            case 'cultural-event':
+                setSidebarType('info');
+                breadcrumbLabel = t('pages:culturalEvents', 'Madaniy va ko‘ngilochar tadbirlar');
+                parentHref = '/cultural-events';
+                break;
+            case 'sports-club-life':
+                setSidebarType('info');
+                breadcrumbLabel = t('pages:sportsClubLife', 'Sport klubi hayoti');
+                parentHref = '/sports-club-life';
+                break;
+            case 'cultural-educational-activity':
+                setSidebarType('info');
+                breadcrumbLabel = t('pages:culturalEducationalActivities', 'Madaniy-ma’rifiy faoliyat');
+                parentHref = '/cultural-educational-activities';
                 break;
         }
 
@@ -204,6 +255,18 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
                     if (isCentersRedirect) listPath = '/centers';
                     else if (isSectionsRedirect) listPath = '/sections'; // Or '/' if no sections list page
                     else listPath = '/leadership';
+                    break;
+                case 'spiritual-educational':
+                    listPath = '/spiritual-educational-section';
+                    break;
+                case 'cultural-event':
+                    listPath = '/cultural-events';
+                    break;
+                case 'sports-club-life':
+                    listPath = '/sports-club-life';
+                    break;
+                case 'cultural-educational-activity':
+                    listPath = '/cultural-educational-activities';
                     break;
                 default:
                     listPath = '/';
@@ -303,6 +366,38 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
         templateProps.showSocialShare = true;
         templateProps.showPrintButton = true;
         templateProps.showSidebar = false;
+    } else if (type === 'step-forward') {
+        const stepForward = data as StepForwardDetail;
+        templateProps.heroImage = stepForward.image_url;
+        templateProps.heroImageAlt = stepForward.title;
+        templateProps.meta = {
+            publishDate: stepForward.date,
+            views: stepForward.views
+        } as DetailMeta;
+
+        // Map gallery - add main image first, then gallery images
+        const galleryImages = [];
+        if (stepForward.image_url) {
+            galleryImages.push({
+                src: stepForward.image_url,
+                alt: stepForward.title
+            });
+        }
+        if (stepForward.gallery && Array.isArray(stepForward.gallery)) {
+            stepForward.gallery.forEach(imgUrl => {
+                galleryImages.push({
+                    src: imgUrl,
+                    alt: stepForward.title
+                });
+            });
+        }
+        if (galleryImages.length > 0) {
+            templateProps.gallery = galleryImages;
+        }
+
+        templateProps.showSocialShare = true;
+        templateProps.showPrintButton = true;
+        templateProps.showSidebar = false; // Global sidebar via context
     } else if (type === 'event') {
         templateProps.heroImage = data.image_url;
         templateProps.heroImageAlt = data.title;
@@ -366,6 +461,22 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
 
     if (type === 'person' || type === 'leadership') {
         return <LeadershipProfile member={data} />;
+    }
+
+    if (type === 'spiritual-educational' && data.files && data.files.length > 0) {
+        templateProps.files = data.files;
+    }
+
+    if (type === 'cultural-event' && data.files && data.files.length > 0) {
+        templateProps.files = data.files;
+    }
+
+    if (type === 'sports-club-life' && data.files && data.files.length > 0) {
+        templateProps.files = data.files;
+    }
+
+    if (type === 'cultural-educational-activity' && data.files && data.files.length > 0) {
+        templateProps.files = data.files;
     }
 
     return (

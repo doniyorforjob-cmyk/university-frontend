@@ -71,7 +71,7 @@ interface DetailTemplateProps {
     alt: string;
     caption?: string;
   }>;
-  breadcrumbs: BreadcrumbItem[];
+  breadcrumbs?: BreadcrumbItem[];
   relatedItems?: RelatedItem[];
   showRelated?: boolean;
   showMeta?: boolean;
@@ -86,6 +86,7 @@ interface DetailTemplateProps {
   onPrint?: () => void;
   onRelatedClick?: (item: RelatedItem) => void;
   className?: string;
+  children?: React.ReactNode;
 }
 
 const DetailTemplate: React.FC<DetailTemplateProps> = ({
@@ -108,7 +109,8 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
   socialShare = { facebook: true, telegram: true, instagram: true },
   onPrint,
   onRelatedClick,
-  className = ''
+  className = '',
+  children
 }) => {
   const { t } = useTranslation('common');
 
@@ -261,10 +263,12 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
                 <ContentBuilder blocks={contentBlocks} />
               ) : content ? (
                 <div dangerouslySetInnerHTML={{ __html: content }} />
-              ) : (gallery && gallery.length > 0) || heroImage ? null : (
+              ) : (gallery && gallery.length > 0) || heroImage || children ? null : (
                 <p className="text-black italic">{t('no_info', "Ma'lumot mavjud emas")}</p>
               )}
             </div>
+
+            {children}
 
             {meta?.department && (
               <div className="mt-6 flex justify-end items-center gap-2 text-main-dark font-semibold">

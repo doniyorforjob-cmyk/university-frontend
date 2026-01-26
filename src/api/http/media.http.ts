@@ -1,12 +1,15 @@
 import apiClient from '../client';
 import { MediaArticle } from '../../types/media.types';
 
-export const getMediaArticles = async (): Promise<MediaArticle[]> => {
+export const getMediaArticles = async (locale?: string): Promise<MediaArticle[]> => {
   try {
     const projectId = process.env.REACT_APP_PROJECT_ID;
+    const currentLocale = locale || localStorage.getItem('locale') || 'uz';
+
     const response = await apiClient.get(`/projects/${projectId}/content/media-about-us`, {
       params: {
-        with: 'image'
+        with: 'image',
+        locale: currentLocale
       }
     });
 

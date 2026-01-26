@@ -21,6 +21,7 @@ const UniversityPage = React.lazy(() => import('./pages/University'));
 const InformationServicesPage = React.lazy(() => import('./pages/InformationServices'));
 const PhotoDetailPage = React.lazy(() => import('./pages/PhotoDetail'));
 const OpenLessonsPage = React.lazy(() => import('./pages/OpenLessons'));
+const StepForwardPage = React.lazy(() => import('./pages/StepForward'));
 const GenericDetailPage = React.lazy(() => import('./pages/GenericDetail'));
 const FacultiesPage = React.lazy(() => import('./pages/Faculties'));
 const FacultyDetailPage = React.lazy(() => import('./pages/FacultyDetail'));
@@ -31,6 +32,13 @@ const CentersPage = React.lazy(() => import('./pages/Centers'));
 const HeadsOfDepartmentsPage = React.lazy(() => import('./pages/HeadsOfDepartments'));
 const UniversityCouncilPage = React.lazy(() => import('./pages/UniversityCouncil'));
 const PublicCouncilPage = React.lazy(() => import('./pages/PublicCouncil'));
+const DocumentsPage = React.lazy(() => import('./pages/Documents'));
+const FinancialActivityPage = React.lazy(() => import('./pages/FinancialActivity'));
+const ScientificActivityPage = React.lazy(() => import('./pages/ScientificActivity'));
+const SpiritualEducationalPage = React.lazy(() => import('./pages/SpiritualEducational'));
+const CulturalEventsPage = React.lazy(() => import('./pages/CulturalEvents'));
+const SportsClubLifePage = React.lazy(() => import('./pages/SportsClubLife'));
+const CulturalEducationalActivitiesPage = React.lazy(() => import('./pages/CulturalEducationalActivities'));
 const ServerError = React.lazy(() => import('./pages/Error/ServerError'));
 const NotFound = React.lazy(() => import('./pages/Errors/NotFound'));
 
@@ -53,6 +61,10 @@ const AppRoutes = () => {
 
                 {/* "Axborot xizmati" uchun doimiy Sidebar bilan ishlaydigan sahifalar */}
                 <Route element={<MainLayout />}>
+                    <Route path="step-forward" element={<StepForwardPage />} />
+                    <Route path="step-forward/:slug" element={<GenericDetailPage type="step-forward" />} />
+                    <Route path="step-into-the-future" element={<StepForwardPage />} />
+                    <Route path="step-into-the-future/:slug" element={<GenericDetailPage type="step-forward" />} />
                     <Route path="news" element={<NewsPage />} />
                     <Route path="news/:slug" element={<GenericDetailPage type="news" />} />
                     <Route path="announcements" element={<AnnouncementsPage />} />
@@ -67,6 +79,14 @@ const AppRoutes = () => {
                     <Route path="corruption/:slug" element={<GenericDetailPage type="corruption" />} />
                     <Route path="faq" element={<FAQPage />} />
                     <Route path="events/:slug" element={<GenericDetailPage type="event" />} />
+                    <Route path="spiritual-educational-section" element={<SpiritualEducationalPage />} />
+                    <Route path="spiritual-educational-section/:slug" element={<GenericDetailPage type="spiritual-educational" />} />
+                    <Route path="cultural-events" element={<CulturalEventsPage />} />
+                    <Route path="cultural-events/:slug" element={<GenericDetailPage type="cultural-event" />} />
+                    <Route path="sports-club-life" element={<SportsClubLifePage />} />
+                    <Route path="sports-club-life/:slug" element={<GenericDetailPage type="sports-club-life" />} />
+                    <Route path="cultural-educational-activities" element={<CulturalEducationalActivitiesPage />} />
+                    <Route path="cultural-educational-activities/:slug" element={<GenericDetailPage type="cultural-educational-activity" />} />
                 </Route>
 
                 {/* "UniversitySystems" Sidebar bilan ishlaydigan sahifalar */}
@@ -75,6 +95,9 @@ const AppRoutes = () => {
                     <Route path="information-services" element={<InformationServicesPage />} />
                     <Route path="information-service" element={<InformationServicesPage />} />
                     <Route path="activities" element={<ActivitiesPage />} />
+                    <Route path="financial-activity" element={<FinancialActivityPage />} />
+                    <Route path="scientific-activity" element={<ScientificActivityPage />} />
+                    <Route path="science" element={<ScientificActivityPage />} />
                     <Route path="sections" element={<HeadsOfDepartmentsPage type="administrative" />} />
                     <Route path="centers" element={<CentersPage />} />
                     <Route path="markazlar" element={<CentersPage />} />
@@ -87,6 +110,7 @@ const AppRoutes = () => {
                     <Route path="public-council" element={<PublicCouncilPage />} />
                     <Route path="university/public-council" element={<PublicCouncilPage />} />
                     <Route path="jamoatchilik-kengashi" element={<PublicCouncilPage />} />
+                    <Route path="documents/:slug?" element={<DocumentsPage />} />
                     {/* <Route path="departments" element={<GenericDetailPage type="department" />} /> */}
                     {/* <Route path="departments" element={<GenericDetailPage type="department" />} /> */}
                     <Route path="admission" element={<AdmissionPage />} />

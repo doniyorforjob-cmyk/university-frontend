@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useGlobalCache } from '@/components/providers/CachedApiProvider';
 import { useLocale } from '@/contexts/LocaleContext';
 
@@ -72,6 +72,9 @@ export const useCachedApi = <T = any>({
 
   const ttl = ttlMinutes || config.defaultTtl;
 
+  const fetcherRef = useRef(fetcher);
+  fetcherRef.current = fetcher;
+
   const fetchData = useCallback(async (force = false) => {
     try {
       // Check cache validity
@@ -88,9 +91,8 @@ export const useCachedApi = <T = any>({
       }
 
       // We only show loading if we really have no data to show (respecting keepPreviousData)
-      // data corresponds to the state of the component, which might be stale from previous locale
-      // if keepPreviousData is true. If it's false, data was set to null in the render block above.
-      if (!item && !data) {
+      // We check the ref or current state to see if we have data
+      if (!item && !cacheManager.getStale(localeKey)) {
         setLoading(true);
       }
 
@@ -100,7 +102,7 @@ export const useCachedApi = <T = any>({
       let requestPromise = inflightRequests.get(localeKey);
 
       if (!requestPromise) {
-        requestPromise = fetcher(locale);
+        requestPromise = fetcherRef.current(locale);
         inflightRequests.set(localeKey, requestPromise);
 
         try {
@@ -124,7 +126,7 @@ export const useCachedApi = <T = any>({
     } finally {
       setLoading(false);
     }
-  }, [localeKey, fetcher, ttl, revalidateThresholdMinutes, onSuccess, onError, cacheManager, locale, data]);
+  }, [localeKey, ttl, revalidateThresholdMinutes, onSuccess, onError, cacheManager, locale]);
 
   // Initial load and key change handling
   useEffect(() => {
@@ -159,8 +161,9 @@ export const useCachedApi = <T = any>({
   }, [fetchData]);
 
   const clearCache = useCallback(() => {
-    cacheManager.delete(key);
-  }, [cacheManager, key]);
+    cacheManager.delete(localeKey); // Clear current localized entry
+    cacheManager.delete(key);       // Clear base entry if exists
+  }, [cacheManager, key, localeKey]);
 
   return {
     data,
@@ -168,6 +171,6 @@ export const useCachedApi = <T = any>({
     error,
     refetch,
     clearCache,
-    isCached: cacheManager.has(key)
+    isCached: cacheManager.has(localeKey)
   };
 };

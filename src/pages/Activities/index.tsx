@@ -1,93 +1,78 @@
-import React from 'react';
-import PageTemplate from '@/components/shared/PageTemplate';
-import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
-import { useStandardPage } from '@/hooks/useStandardPage';
-import { fetchActivitiesData } from '@/services/activitiesService';
-import { useGlobalLayout } from '@/components/templates/GlobalLayout';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
-import { ActivityPageData } from '@/types/activities.types';
-import ErrorDisplay from '@/components/shared/ErrorDisplay';
+import { useLocale } from '@/contexts/LocaleContext';
+import { useGlobalLayout } from '@/components/templates/GlobalLayout';
+import { useStandardPage } from '@/hooks/useStandardPage';
+import { fetchActivities } from '@/services/activityService';
+import { ActivityEntry } from '@/api/http/activity.http';
+import PageTemplate from '@/components/shared/PageTemplate';
+import DocumentList from '@/components/shared/DocumentList';
+import PageSkeleton from '@/components/shared/PageSkeleton';
 
 const ActivitiesPage: React.FC = () => {
-  const { t } = useTranslation('common');
-  const { setBreadcrumbsData, setSidebarType } = useGlobalLayout();
-  const { data, loading, error, refetch } = useStandardPage<ActivityPageData | null>(
-    'activities',
-    fetchActivitiesData
+  const { locale } = useLocale();
+  const { t } = useTranslation(['common', 'pages']);
+  const { setSidebarType, setBreadcrumbsData } = useGlobalLayout();
+
+  const { data: items, loading, error } = useStandardPage<ActivityEntry[]>(
+    'activities-list',
+    fetchActivities
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
+    setSidebarType('systems');
     setBreadcrumbsData([
-      { label: t('nav.home', 'Bosh sahifa'), href: '/' },
-      { label: t('nav.activities', 'Faoliyat') }
+      { label: t('home', 'Bosh sahifa'), href: `/${locale}` },
+      { label: t('pages:activities', 'Faoliyat') }
     ]);
 
-    setSidebarType('systems');
-
     return () => {
-      setBreadcrumbsData(undefined);
       setSidebarType(undefined);
+      setBreadcrumbsData(undefined);
     };
-  }, [setBreadcrumbsData, setSidebarType, t]);
+  }, [locale, t, setSidebarType, setBreadcrumbsData]);
 
   if (loading) {
-    return <GenericPageSkeleton showSidebar={false} showHeroImage={false} contentBlocks={12} />;
-  }
-
-  if (error || !data) {
-    return (
-      <ErrorDisplay
-        message={error?.message}
-        onRetry={refetch}
-      />
-    );
+    return <PageSkeleton />;
   }
 
   return (
-    <PageTemplate title={data.title}>
-      {/* Introduction Content */}
-      {data.content && (
-        <div className="mb-12 text-lg text-gray-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: data.content }} />
-      )}
-
-      {/* Categories Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-12">
-        {data.categories.map((catKey: string, index: number) => {
-          const catInfo = data.icons_json[catKey];
-          if (!catInfo) return null;
-
-          return (
-            <motion.div
-              key={catKey}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              viewport={{ once: true }}
-              className="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_4px_20px_0_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_0_rgba(0,0,0,0.08)] transition-all group flex gap-5 items-start"
-            >
-              {/* Icon Container */}
-              <div className="flex-shrink-0 w-20 h-20 rounded-2xl bg-gray-50 flex items-center justify-center p-4 transition-colors group-hover:bg-main/5">
-                <div
-                  className="w-full h-full text-main"
-                  dangerouslySetInnerHTML={{ __html: catInfo.svg }}
-                />
+    <PageTemplate
+      title={t('pages:activities', 'Faoliyat')}
+      isEmpty={!items || items.length === 0 || !!error}
+      emptyResourceKey="info"
+    >
+      <div className="space-y-12">
+        {items?.map((entry: ActivityEntry, index: number) => (
+          <div key={entry.id} className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {entry.title && (
+              <div className="not-prose flex items-center gap-4 mb-6">
+                <div className="flex-shrink-0 w-1.5 h-8 bg-blue-600 rounded-full shadow-[0_0_10px_rgba(37,99,235,0.2)]"></div>
+                <h2 className="text-2xl font-bold text-gray-800 m-0 p-0 leading-tight">
+                  {entry.title}
+                </h2>
               </div>
+            )}
 
-              {/* Text Info */}
-              <div className="flex-1">
-                <h3 className="text-xl font-bold text-main mb-2 group-hover:text-blue-600 transition-colors">
-                  {catInfo.label || catKey}
-                </h3>
-                {catInfo.description && (
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    {catInfo.description}
-                  </p>
-                )}
+            {entry.content && (
+              <div
+                className="prose prose-lg max-w-none text-gray-700 leading-relaxed font-serif"
+                dangerouslySetInnerHTML={{ __html: entry.content }}
+              />
+            )}
+
+            {entry.files && entry.files.length > 0 && (
+              <div className="bg-white rounded-2xl border border-gray-100 p-1 shadow-sm">
+                <DocumentList files={entry.files} />
               </div>
-            </motion.div>
-          );
-        })}
+            )}
+
+            {/* Divider between activities - only if not last */}
+            {index < (items?.length || 0) - 1 && (
+              <div className="border-b border-dashed border-gray-200 pt-6"></div>
+            )}
+          </div>
+        ))}
       </div>
     </PageTemplate>
   );
