@@ -39,6 +39,7 @@ const SpiritualEducationalPage = React.lazy(() => import('./pages/SpiritualEduca
 const CulturalEventsPage = React.lazy(() => import('./pages/CulturalEvents'));
 const SportsClubLifePage = React.lazy(() => import('./pages/SportsClubLife'));
 const CulturalEducationalActivitiesPage = React.lazy(() => import('./pages/CulturalEducationalActivities'));
+const StudentsPage = React.lazy(() => import('./pages/Students'));
 const ServerError = React.lazy(() => import('./pages/Error/ServerError'));
 const NotFound = React.lazy(() => import('./pages/Errors/NotFound'));
 
@@ -87,6 +88,8 @@ const AppRoutes = () => {
                     <Route path="sports-club-life/:slug" element={<GenericDetailPage type="sports-club-life" />} />
                     <Route path="cultural-educational-activities" element={<CulturalEducationalActivitiesPage />} />
                     <Route path="cultural-educational-activities/:slug" element={<GenericDetailPage type="cultural-educational-activity" />} />
+                    <Route path="students" element={<StudentsPage />} />
+                    <Route path="students/:slug" element={<GenericDetailPage type="student" />} />
                 </Route>
 
                 {/* "UniversitySystems" Sidebar bilan ishlaydigan sahifalar */}

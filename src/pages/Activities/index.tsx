@@ -62,9 +62,7 @@ const ActivitiesPage: React.FC = () => {
             )}
 
             {entry.files && entry.files.length > 0 && (
-              <div className="bg-white rounded-2xl border border-gray-100 p-1 shadow-sm">
-                <DocumentList files={entry.files} />
-              </div>
+              <DocumentList files={entry.files} />
             )}
 
             {/* Divider between activities - only if not last */}

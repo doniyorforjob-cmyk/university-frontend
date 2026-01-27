@@ -13,13 +13,14 @@ import { getAnnouncementBySlug } from '@/services/announcementService';
 import { getPostBySlug } from '@/services/postService';
 import { getOpenLessonBySlug } from '@/services/openLessonService';
 import { getStepForwardBySlug } from '@/services/stepForwardService';
-import { getEventBySlug } from '@/services/eventService';
+import { getEventBySlug, getAllEvents } from '@/services/eventService';
 import { getMediaArticleBySlug } from '@/services/mediaService';
 import { getLeadershipBySlug } from '@/api/http/leadership.http';
 import { getSpiritualActivityBySlug } from '@/services/spiritualEducationalService';
 import { getCulturalEventBySlug } from '@/services/culturalEventsService';
 import { getSportsClubEntryBySlug } from '@/services/sportsClubLifeService';
 import { getCulturalEducationalEntryBySlug } from '@/services/culturalEducationalActivitiesService';
+import { getStudentBySlug } from '@/services/studentService';
 import LeadershipProfile from '@/components/features/leadership/LeadershipProfile';
 
 // Types
@@ -28,7 +29,7 @@ import { PostDetail } from '@/types/post.types';
 import { OpenLessonDetail } from '@/types/open-lesson.types';
 import { StepForwardDetail } from '@/types/step-forward.types';
 
-export type PageType = 'announcement' | 'news' | 'service' | 'open-lesson' | 'step-forward' | 'event' | 'corruption' | 'media' | 'person' | 'leadership' | 'spiritual-educational' | 'cultural-event' | 'sports-club-life' | 'cultural-educational-activity';
+export type PageType = 'announcement' | 'news' | 'service' | 'open-lesson' | 'step-forward' | 'event' | 'corruption' | 'media' | 'person' | 'leadership' | 'spiritual-educational' | 'cultural-event' | 'sports-club-life' | 'cultural-educational-activity' | 'student';
 
 interface GenericDetailPageProps {
     type: PageType;
@@ -72,6 +73,8 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
                 return () => getSportsClubEntryBySlug(slug, locale);
             case 'cultural-educational-activity':
                 return () => getCulturalEducationalEntryBySlug(slug, locale);
+            case 'student':
+                return () => getStudentBySlug(slug, locale);
             default:
                 return null;
         }
@@ -106,6 +109,8 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
                 return `${keyPrefix}sports-club-life-detail-${slug}`;
             case 'cultural-educational-activity':
                 return `${keyPrefix}cultural-educational-activity-detail-${slug}`;
+            case 'student':
+                return `${keyPrefix}student-detail-${slug}`;
             default:
                 return `${keyPrefix}generic-detail-${slug}`;
         }
@@ -132,6 +137,14 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
         enabled: !!slug && !!fetcher,
         ttlMinutes: getTTL(),
         keepPreviousData: true
+    });
+
+    // Fetch related events if type is 'event'
+    const { data: relatedEvents } = useCachedApi<any[]>({
+        key: `${locale}-related-events`,
+        fetcher: () => getAllEvents(locale),
+        enabled: type === 'event',
+        ttlMinutes: 60
     });
 
     // UI Config (Sidebar & Breadcrumbs)
@@ -211,6 +224,11 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
                 breadcrumbLabel = t('pages:culturalEducationalActivities', 'Madaniy-ma’rifiy faoliyat');
                 parentHref = '/cultural-educational-activities';
                 break;
+            case 'student':
+                setSidebarType('info');
+                breadcrumbLabel = t('pages:students', 'Talabalar');
+                parentHref = '/students';
+                break;
         }
 
         setBreadcrumbsData([
@@ -267,6 +285,9 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
                     break;
                 case 'cultural-educational-activity':
                     listPath = '/cultural-educational-activities';
+                    break;
+                case 'student':
+                    listPath = '/students';
                     break;
                 default:
                     listPath = '/';
@@ -418,6 +439,21 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
         templateProps.showSocialShare = true;
         templateProps.showPrintButton = true;
         templateProps.showSidebar = false;
+
+        if (relatedEvents && Array.isArray(relatedEvents)) {
+            templateProps.relatedItems = relatedEvents
+                .filter((item: any) => item.slug !== slug && item.id !== slug)
+                .slice(0, 4)
+                .map((item: any) => ({
+                    id: item.id,
+                    title: item.title,
+                    description: '',
+                    image: item.image_url,
+                    href: `/events/${item.slug}`,
+                    date: item.date || item.published_at
+                }));
+            templateProps.showRelated = true;
+        }
     } else if (type === 'corruption') {
         const corruption = data as PostDetail;
         templateProps.heroImage = corruption.image_url;
@@ -477,6 +513,13 @@ const GenericDetailPage: React.FC<GenericDetailPageProps> = ({ type }) => {
 
     if (type === 'cultural-educational-activity' && data.files && data.files.length > 0) {
         templateProps.files = data.files;
+    }
+
+    if (type === 'student' && data.gallery && data.gallery.length > 0) {
+        templateProps.gallery = data.gallery.map((imgUrl: string) => ({
+            src: imgUrl,
+            alt: data.title
+        }));
     }
 
     return (

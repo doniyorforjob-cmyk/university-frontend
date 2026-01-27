@@ -1,110 +1,8 @@
-import { ContentBlock } from '@/components/shared/ContentBuilder';
+import { YashilUniversitetEntry } from '../http/yashilUniversitet.http';
 
-const transformYashilUniversitetToBlocks = (data?: any): ContentBlock[] => {
-  return [
-    {
-      id: 'yashil-stats',
-      type: 'stats',
-      data: {
-        title: 'Ekologik Ko\'rsatkichlar',
-        stats: [
-          { value: '85%', label: 'Qayta ishlanadigan chiqindilar', icon: '♻️' },
-          { value: '50%', label: 'Energiya tejamkorligi', icon: '⚡' },
-          { value: '100+', label: 'Daraxt ekilgan', icon: '🌳' },
-          { value: '0%', label: 'Plastik ishlatish', icon: '🚫' }
-        ]
-      },
-      className: 'bg-green-50 border-green-200 p-6 rounded-xl'
-    },
-    {
-      id: 'yashil-projects',
-      type: 'cards',
-      data: {
-        title: 'Ekologik Loyihalar',
-        cards: [
-          {
-            title: 'Energiya Tejash',
-            description: 'LED chiroqlar va smart boshqaruv tizimlari joriy etish',
-            icon: '⚡',
-            color: 'green'
-          },
-          {
-            title: 'Qayta Ishlash',
-            description: 'Chiqindilarni qayta ishlanadigan qilib ajratish tizimi',
-            icon: '♻️',
-            color: 'green'
-          },
-          {
-            title: 'Yashil Hudud',
-            description: 'Kampusda daraxtlar ekish va yashil maydonlar yaratish',
-            icon: '🌳',
-            color: 'green'
-          },
-          {
-            title: 'Suv Tejash',
-            description: 'Suv tejovchi vositalar va ongni oshirish kampaniyalari',
-            icon: '💧',
-            color: 'green'
-          }
-        ]
-      }
-    },
-    {
-      id: 'yashil-gallery',
-      type: 'gallery',
-      data: {
-        title: 'Yashil Universitet Galereyasi',
-        images: [
-          { src: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iIzIyYzU1ZSIvPjx0ZXh0IHg9IjIwMCIgeT0iMTUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9ImJvbGQiPkRhcmF4dCBlZ2lzaCBtYXJvc2ltaTwvdGV4dD48L3N2Zz4=', alt: 'Daraxt ekish marosimi' },
-          { src: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iIzE2YTM0YSIvPjx0ZXh0IHg9IjIwMCIgeT0iMTUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9ImJvbGQiPkxFRCBjaGlyb3FsYXIgb8Kcm5hdGlzaDwvdGV4dD48L3N2Zz4=', alt: 'LED chiroqlar o\'rnatish' },
-          { src: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iIzE1ODAzZCIvPjx0ZXh0IHg9IjIwMCIgeT0iMTUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9ImJvbGQiPlFheXRhIGlzaGxhc2ggcHVua3RsYXJpPC90ZXh0Pjwvc3ZnPg==', alt: 'Qayta ishlash punktlari' },
-          { src: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iIzE2NjUzNCIvPjx0ZXh0IHg9IjIwMCIgeT0iMTUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9ImJvbGQiPllBU2lsIG1heWRvbmxhcg==', alt: 'Yashil maydonlar' }
-        ]
-      },
-      className: 'border-green-300'
-    },
-    {
-      id: 'yashil-timeline',
-      type: 'timeline-vertical',
-      data: {
-        title: 'Ekologik Yutuqlar Tarixi',
-        events: [
-          {
-            date: '2023',
-            title: 'LED Chiroqlar O\'rnatildi',
-            description: 'Barcha auditoriyalarda energiya tejovchi LED chiroqlar o\'rnatildi. Energiya sarfi 40% ga kamaydi.'
-          },
-          {
-            date: '2024',
-            title: 'Qayta Ishlash Tizimi',
-            description: 'Chiqindi ajratish punktlari tashkil etildi. Qayta ishlanadigan chiqindilar ulushi 85% ga yetdi.'
-          },
-          {
-            date: '2024',
-            title: 'Yashil Hudud Loyihasi',
-            description: 'Kampusda 100 dan ortiq daraxt ekildi va yashil maydonlar yaratildi.'
-          }
-        ]
-      }
-    },
-    {
-      id: 'yashil-contact',
-      type: 'list',
-      data: {
-        title: 'Aloqa va Ma\'lumot',
-        items: [
-          '📞 Ekologiya bo\'limi: +99871 239-28-80',
-          '📧 Email: green@university.uz',
-          '📍 Manzil: Universitet, Yashil hudud',
-          '🌐 Veb-sayt: university.uz/green',
-          '📱 Telegram: @GreenUniversity'
-        ]
-      },
-      className: 'bg-green-50 border-green-200 p-6 rounded-xl'
-    }
-  ];
-};
-
+/**
+ * Mock API - Yashil Universitet ma'lumotlarini olish
+ */
 const simulateApiCall = <T>(data: T, delay = 500): Promise<T> => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -113,9 +11,44 @@ const simulateApiCall = <T>(data: T, delay = 500): Promise<T> => {
   });
 };
 
-export const fetchYashilUniversitetData = async (): Promise<ContentBlock[]> => {
+export const fetchYashilUniversitetData = async (): Promise<YashilUniversitetEntry | null> => {
   console.warn('Yashil Universitet ma\'lumotlari uchun mock API dan foydalanilmoqda');
-  
-  const blocks = transformYashilUniversitetToBlocks();
-  return simulateApiCall(blocks, 300);
+
+  const mockData: YashilUniversitetEntry = {
+    id: 'mock-green-1',
+    slug: 'yashil-universitet',
+    title: 'Yashil Universitet',
+    content: `
+      <h2 class="text-3xl font-bold text-emerald-900 mb-6">NamDTU Ekologik Tashabbusi</h2>
+      <p class="text-gray-700 text-lg leading-relaxed mb-6">
+        Universitetimiz "Yashil Universitet" maqomini olish yo'lida faol harakat qilmoqda. Biz nafaqat ta'lim sifatini oshirish, balki atrof-muhitga bo'lgan ta'sirimizni kamaytirishni ham maqsad qilganmiz.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-12">
+        <div class="bg-emerald-50 p-6 rounded-2xl border border-emerald-100">
+          <h3 class="text-xl font-bold text-emerald-800 mb-2">🌳 1200+ Daraxt</h3>
+          <p class="text-emerald-700">Kampusimiz hududida so'nggi yillarda mingdan ortiq manzarali va mevali daraxtlar ekildi.</p>
+        </div>
+        <div class="bg-emerald-50 p-6 rounded-2xl border border-emerald-100">
+          <h3 class="text-xl font-bold text-emerald-800 mb-2">♻️ 80% Qayta ishlash</h3>
+          <p class="text-emerald-700">Chiqindilarni saralash va qayta ishlash tizimi to'liq yo'lga qo'yilgan.</p>
+        </div>
+      </div>
+    `,
+    files: [
+      {
+        name: 'Ekologik strategiya 2026',
+        url: '#',
+        ext: 'pdf',
+        size: 1024 * 750
+      },
+      {
+        name: 'Yashil hudud xaritasi',
+        url: '#',
+        ext: 'jpg',
+        size: 1024 * 1200
+      }
+    ]
+  };
+
+  return simulateApiCall(mockData, 300);
 };

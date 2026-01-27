@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FileText, Download } from 'lucide-react';
 import PageTemplate from '@/components/shared/PageTemplate';
 import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
+import DocumentList from '@/components/shared/DocumentList';
 import { useStandardPage } from '@/hooks/useStandardPage';
 import { fetchInformationServicesData, InformationServiceData } from '@/services/informationServicesService';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
@@ -67,30 +67,23 @@ const InformationServicesPage: React.FC = () => {
 
         {/* Documents Section */}
         {data?.documents && data.documents.length > 0 && (
-          <div className="mt-12 bg-gray-50 rounded-2xl p-6 md:p-8 border border-gray-200">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-              <FileText className="text-blue-600" />
+          <div className="mt-12">
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">
               {t('common:documents', 'Hujjatlar')}
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {data.documents.map((doc: { name: any; file: string }, idx: number) => (
-                <a
-                  key={idx}
-                  href={getImageUrl(doc.file)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-200 hover:border-blue-500 hover:shadow-md transition-all group"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-blue-50 text-blue-600 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                      <FileText size={20} />
-                    </div>
-                    <span className="font-medium text-gray-700">{getLocalized(doc.name, i18n.language)}</span>
-                  </div>
-                  <Download size={20} className="text-gray-400 group-hover:text-blue-600" />
-                </a>
-              ))}
-            </div>
+            <DocumentList
+              files={data.documents.map((doc: { name: any; file: string }) => {
+                const fileName = getLocalized(doc.name, i18n.language);
+                const fileUrl = getImageUrl(doc.file);
+                const ext = fileUrl.split('.').pop()?.toLowerCase() || 'file';
+                return {
+                  name: fileName,
+                  url: fileUrl,
+                  ext: ext,
+                  size: undefined
+                };
+              })}
+            />
           </div>
         )}
       </div>

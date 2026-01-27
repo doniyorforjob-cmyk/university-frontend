@@ -58,6 +58,12 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
         'Faculties': '/faculties',
         'Academic Departments': '/departments',
         'Departments': '/departments',
+        'Students': '/students',
+        'Talabalar': '/students',
+        'Cтуденты': '/students',
+        'Foreign Students': '/students/foreign',
+        'Horijiy talabalar': '/students/foreign',
+        'Иностранные студенты': '/students/foreign',
         'Corruption': '/corruption',
         'Fight against corruption': '/corruption',
         'Documents': '/documents',
@@ -66,7 +72,13 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
         'Kelajakka qadam': '/step-forward',
         'Activities': '/activities',
         'Faoliyat': '/activities',
-        'Деятельность': '/activities'
+        'Деятельность': '/activities',
+        'Admission': '/admission',
+        'Qabul': '/admission',
+        'Приём': '/admission',
+        'Green University': '/yashil-universitet',
+        'Yashil Universitet': '/yashil-universitet',
+        'Зеленый университет': '/yashil-universitet'
       };
 
       let allTitles = '';
@@ -76,7 +88,9 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
         allTitles = Object.values(titles).join(' ').toLowerCase();
       }
 
-      const key = Object.keys(map).find(k => allTitles.includes(k.toLowerCase()));
+      const key = Object.keys(map)
+        .sort((a, b) => b.length - a.length) // Prioritize longer, more specific matches
+        .find(k => allTitles.includes(k.toLowerCase()));
       return key ? map[key] : '#';
     };
 

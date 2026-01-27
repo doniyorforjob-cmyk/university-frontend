@@ -86,7 +86,8 @@ export const Sidebar: React.FC = () => {
       '/board-of-trustees': '/council',
       '/universitet-kengashi': '/council',
       '/university/public-council': '/public-council',
-      '/jamoatchilik-kengashi': '/public-council'
+      '/jamoatchilik-kengashi': '/public-council',
+      '/events': '/announcements'
     };
 
     // Check if the base path (first segment) is an alias
@@ -242,8 +243,27 @@ export const Sidebar: React.FC = () => {
       }));
     }
 
+    // Explicitly handle Students section if path starts with /students
+    // This fixes the issue where it might incorrectly match "Sections" or fail to find "Students"
+    if (normalizedCurrentPath.startsWith('/students')) {
+      // Find "Students" nav item from raw items
+      // Find "Students" nav item from raw items
+      const studentsItem = navItemsRaw?.find(item => {
+        const title = typeof item.title === 'string' ? item.title : (item.title?.uz || item.title?.en || item.title?.ru || '');
+        return normalizePath(item.href || '') === '/students' ||
+          ['Talabalar', 'Students', 'Студенты'].includes(title);
+      });
+
+      if (studentsItem && studentsItem.children && studentsItem.children.length > 0) {
+        return {
+          parentTitle: getLocalized(studentsItem.title, locale),
+          links: studentsItem.children
+        };
+      }
+    }
+
     return { parentTitle, links };
-  }, [activeGroup, viceRectors, adminDepartments, academicDepartments, locale]);
+  }, [activeGroup, viceRectors, adminDepartments, academicDepartments, locale, normalizedCurrentPath, navItemsRaw]);
 
   const sidebarLinks = sidebarData?.links || [];
   if (sidebarLinks.length === 0) return null;

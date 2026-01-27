@@ -4,7 +4,8 @@ import { getMediaArticles } from '../../services/mediaService';
 import { MediaArticle } from '../../types/media.types';
 import { useGlobalLayout } from '@/components/templates/GlobalLayout';
 import { useStandardPage } from '@/hooks/useStandardPage';
-import MediaMentionCard from './components/MediaMentionCard';
+import ContentCard from '@/components/shared/ContentCard';
+import { useLocale } from '@/contexts/LocaleContext';
 import Container from '@/components/shared/Container';
 import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
 import {
@@ -23,6 +24,7 @@ const fetchMediaData = async (locale?: string): Promise<MediaArticle[]> => {
 
 const MediaAboutUsPage: React.FC = () => {
   const { t } = useTranslation(['common', 'pages']);
+  const { locale } = useLocale();
   const { setBreadcrumbsData, setSidebarType } = useGlobalLayout();
   const [currentPage, setCurrentPage] = React.useState(1);
   const [activeCategory, setActiveCategory] = React.useState<string>('all');
@@ -133,7 +135,29 @@ const MediaAboutUsPage: React.FC = () => {
       {/* Featured Mention */}
       {featuredArticle && (
         <section className="mb-16">
-          <MediaMentionCard article={featuredArticle} isFeatured={true} />
+          <ContentCard
+            title={featuredArticle.title}
+            slug={featuredArticle.slug}
+            image={featuredArticle.image}
+            content={featuredArticle.content}
+            publishedAt={featuredArticle.published_at}
+            linkPrefix={locale === 'uz' ? '/media-about-us' : `/${locale}/media-about-us`}
+            source={featuredArticle.source}
+            isFeatured={true}
+            // Logic to get category label
+            category={(() => {
+              const typeLabels: Record<string, string> = {
+                online: t('media_types.online', "OAV"),
+                oav: t('media_types.online', "OAV"),
+                tv: t('media_types.tv', "TV"),
+                gazeta: t('media_types.print', "Gazeta"),
+                print: t('media_types.print', "Gazeta")
+              };
+              if (!featuredArticle.categories || featuredArticle.categories.length === 0) return typeLabels[featuredArticle.type || 'online'];
+              const firstCat = featuredArticle.categories[0].toLowerCase();
+              return typeLabels[firstCat] || firstCat.toUpperCase();
+            })()}
+          />
         </section>
       )}
 
@@ -147,7 +171,28 @@ const MediaAboutUsPage: React.FC = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6 md:gap-8">
           {remainingArticles.map((article) => (
-            <MediaMentionCard key={article.id} article={article} />
+            <ContentCard
+              key={article.id}
+              title={article.title}
+              slug={article.slug}
+              image={article.image}
+              content={article.content}
+              publishedAt={article.published_at}
+              linkPrefix={locale === 'uz' ? '/media-about-us' : `/${locale}/media-about-us`}
+              source={article.source}
+              category={(() => {
+                const typeLabels: Record<string, string> = {
+                  online: t('media_types.online', "OAV"),
+                  oav: t('media_types.online', "OAV"),
+                  tv: t('media_types.tv', "TV"),
+                  gazeta: t('media_types.print', "Gazeta"),
+                  print: t('media_types.print', "Gazeta")
+                };
+                if (!article.categories || article.categories.length === 0) return typeLabels[article.type || 'online'];
+                const firstCat = article.categories[0].toLowerCase();
+                return typeLabels[firstCat] || firstCat.toUpperCase();
+              })()}
+            />
           ))}
         </div>
       </section>

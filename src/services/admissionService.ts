@@ -1,5 +1,6 @@
 import { fetchAdmissionData as mockFetchAdmissionData } from '../api/mock/admission.mock';
-import { fetchAdmissionData as httpFetchAdmissionData } from '../api/http/admission.http';
+import { fetchAdmissionData as httpFetchAdmissionData, AdmissionEntry } from '../api/http/admission.http';
+export type { AdmissionEntry };
 
 const useMock = process.env.REACT_APP_USE_MOCK_API === 'true';
 
