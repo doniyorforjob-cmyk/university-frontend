@@ -1,0 +1,107 @@
+import { HomeHeroData } from '../../../services/homeService';
+import { getImageUrl } from '../../../utils/apiUtils';
+
+export const transformHeroData = (apiData: any): HomeHeroData => {
+  // Handle both new structure { hero: [], links: [] } and old structure (just array or object)
+  const heroDataRaw = apiData?.hero || apiData;
+  const linksDataRaw = apiData?.links || [];
+
+  // Elmapi can return data directly as an array or wrapped in a data property
+  const rawItems = Array.isArray(heroDataRaw)
+    ? heroDataRaw
+    : (Array.isArray(heroDataRaw?.data) ? heroDataRaw.data : (heroDataRaw?.data ? [heroDataRaw.data] : []));
+
+  const rawLinks = Array.isArray(linksDataRaw)
+    ? linksDataRaw
+    : (Array.isArray(linksDataRaw?.data) ? linksDataRaw.data : []);
+
+  const items = rawItems.map((item: any) => {
+    const fields = item.fields || {};
+
+    const title = fields.title || item.title || 'NamDTU';
+    const desc = fields.description || fields.content || item.description || '';
+
+    // Handle Image
+    let rawImg = fields.image || item.image || fields.img || item.img || fields.photo || item.photo;
+    let imgPath = '';
+    if (rawImg) {
+      // If array, take first
+      if (Array.isArray(rawImg)) rawImg = rawImg[0];
+      const path = typeof rawImg === 'string' ? rawImg : (rawImg.url || rawImg.path);
+      imgPath = getImageUrl(path);
+    }
+
+    // Handle Video
+    let rawVideo = fields.media || item.media || fields.video || item.video || fields.file || item.file;
+    let videoPath = '';
+
+    // If video is array (relation), take first
+    if (Array.isArray(rawVideo) && rawVideo.length > 0) {
+      rawVideo = rawVideo[0];
+    }
+
+    if (rawVideo) {
+      // Try multiple path patterns typical in CMS
+      let path = typeof rawVideo === 'string' ? rawVideo : (
+        rawVideo.url ||
+        rawVideo.path ||
+        rawVideo.thumbnail_url ||
+        rawVideo.attributes?.url ||
+        rawVideo.fields?.file?.url ||
+        rawVideo.file?.url
+      );
+
+      // Fallback: If URL is missing but filename exists (common convention)
+      if (!path && typeof rawVideo === 'object' && rawVideo.filename) {
+        // TEMPORARY FIX: backend returns null URL, but file exists at specific hashed path
+        if (rawVideo.filename === 'hero.mp4') {
+          const projectId = process.env.REACT_APP_PROJECT_ID || '4bbd172e-a839-43fc-a94a-f05dba59e2c5';
+          path = `https://new.namdtu.uz/storage/projects/${projectId}/assets/hero_Ng0TRAbP.mp4`;
+        } else {
+          path = `/storage/${rawVideo.filename}`;
+        }
+      }
+
+      if (path) {
+        videoPath = getImageUrl(path);
+      }
+    }
+
+    return {
+      id: item.uuid || item.id || Math.random().toString(),
+      img: imgPath,
+      video: videoPath,
+      title: title,
+      desc: desc,
+      enabled: fields.enabled !== false
+    };
+  });
+
+  const actionLinks = rawLinks.map((item: any) => {
+    const fields = item.fields || {};
+    return {
+      id: item.uuid || item.id || Math.random().toString(),
+      title: fields.title || item.title || '',
+      url: fields.url || fields.link || '#',
+      isExternal: fields.is_external || fields.isExternal || false,
+      order: fields.order !== undefined ? Number(fields.order) : Infinity,
+      // Icon can be raw SVG string or image URL, assuming SVG string for now as per previous hardcoded data, 
+      // but from API it will likely be a string or an object. 
+      // If API returns an image object, we might need to fetch/render it.
+      // For now, let's assume 'icon' field contains the SVG string OR we use a default if missing.
+      icon: fields.icon || fields.svg || ''
+    };
+  }).sort((a: any, b: any) => {
+    // Sort by order first
+    if (a.order !== b.order) {
+      return a.order - b.order;
+    }
+    // Fallback to ID descending
+    return (Number(b.id) - Number(a.id));
+  }).slice(0, 4); // Latest 4 after sorting
+
+  return {
+    items,
+    actionLinks
+  };
+};

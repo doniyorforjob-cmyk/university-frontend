@@ -1,0 +1,7 @@
+import { getInteractiveServices as mockGetInteractiveServices } from '../api/mock/interactiveServices.mock';
+import { fetchInteractiveServicesData as httpFetchInteractiveServicesData } from '../api/http/interactiveServices.http';
+
+const useMock = process.env.REACT_APP_USE_MOCK_API === 'true';
+
+// Aqlli switcher: env'ga qarab mock yoki http API'ni tanlash
+export const getInteractiveServices = useMock ? mockGetInteractiveServices : httpFetchInteractiveServicesData;

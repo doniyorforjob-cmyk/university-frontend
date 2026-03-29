@@ -1,0 +1,244 @@
+/**
+ * Formatting Utilities
+ * Sana, raqam, matn formatlash funksiyalari
+ */
+import { MONTHS, DEFAULT_LOCALE, MONTHS_FULL } from '../constants/dateConstants';
+
+
+/**
+ * Sanani formatlash
+ * @param date - Sana (string yoki Date)
+ * @param locale - Til (default: 'uz-UZ')
+ * @returns Formatlangan sana
+ */
+export const formatDate = (
+  date: string | Date,
+  locale: string = 'uz-UZ',
+  options?: Intl.DateTimeFormatOptions
+): string => {
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  if (isNaN(dateObj.getTime())) return '-';
+
+  const defaultOptions: Intl.DateTimeFormatOptions = {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    ...options,
+  };
+
+  // Extract base language (e.g., 'uz' from 'uz-UZ')
+  const lang = locale.split('-')[0].toLowerCase();
+
+  // If using default "long month" format and we have predefined months for this lang
+  if (
+    (!options || options.month === 'long') &&
+    MONTHS_FULL[lang] &&
+    defaultOptions.day === 'numeric' &&
+    defaultOptions.year === 'numeric'
+  ) {
+    const day = dateObj.getDate();
+    const month = MONTHS_FULL[lang][dateObj.getMonth()];
+    const year = dateObj.getFullYear();
+    return `${day} ${month} ${year}`;
+  }
+
+  return dateObj.toLocaleDateString(locale, defaultOptions);
+};
+
+/**
+ * Sana va vaqtni formatlash
+ */
+export const formatDateTime = (
+  date: string | Date,
+  locale: string = 'uz-UZ'
+): string => {
+  return formatDate(date, locale, {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+};
+
+/**
+ * Nisbiy vaqtni formatlash (masalan: "2 soat oldin")
+ */
+export const formatRelativeTime = (date: string | Date): string => {
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - dateObj.getTime()) / 1000);
+
+  if (diffInSeconds < 60) return 'Hozirgina';
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} daqiqa oldin`;
+  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} soat oldin`;
+  if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} kun oldin`;
+
+  return formatDate(dateObj);
+};
+
+/**
+ * Raqamni formatlash (masalan: 1000 -> 1,000)
+ */
+export const formatNumber = (
+  num: number,
+  locale: string = 'uz-UZ'
+): string => {
+  return num.toLocaleString(locale);
+};
+
+/**
+ * Pul miqdorini formatlash
+ */
+export const formatCurrency = (
+  amount: number,
+  currency: string = 'UZS',
+  locale: string = 'uz-UZ'
+): string => {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency,
+  }).format(amount);
+};
+
+/**
+ * Foizni formatlash
+ */
+export const formatPercent = (
+  value: number,
+  decimals: number = 0
+): string => {
+  return `${value.toFixed(decimals)}%`;
+};
+
+/**
+ * Telefon raqamini formatlash
+ * @example formatPhone('+998692341485') => '(69)-234-14-85'
+ * @example formatPhone('692341485') => '(69)-234-14-85'
+ */
+export const formatPhone = (phone: string): string => {
+  if (!phone) return '';
+  const cleaned = phone.replace(/\D/g, '');
+
+  let area, first, second, third;
+
+  if (cleaned.startsWith('998') && cleaned.length === 12) {
+    area = cleaned.slice(3, 5);
+    first = cleaned.slice(5, 8);
+    second = cleaned.slice(8, 10);
+    third = cleaned.slice(10, 12);
+  } else if (cleaned.length === 9) {
+    area = cleaned.slice(0, 2);
+    first = cleaned.slice(2, 5);
+    second = cleaned.slice(5, 7);
+    third = cleaned.slice(7, 9);
+  } else {
+    return phone;
+  }
+
+  return `(${area})-${first}-${second}-${third}`;
+};
+
+/**
+ * Matnni qisqartirish
+ * @param text - Matn
+ * @param maxLength - Maksimal uzunlik
+ * @param suffix - Qo'shimcha (default: '...')
+ */
+export const truncateText = (
+  text: string,
+  maxLength: number,
+  suffix: string = '...'
+): string => {
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength - suffix.length) + suffix;
+};
+
+/**
+ * Slug yaratish (URL uchun)
+ * @example createSlug('Namangan davlat texnika universiteti') => 'namangan-davlat-texnika-universiteti'
+ */
+export const createSlug = (text: string): string => {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+};
+
+/**
+ * Birinchi harfni katta qilish
+ */
+export const capitalize = (text: string): string => {
+  return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+};
+
+/**
+ * Har bir so'zning birinchi harfini katta qilish
+ */
+export const capitalizeWords = (text: string): string => {
+  return text
+    .split(' ')
+    .map(word => capitalize(word))
+    .join(' ');
+};
+
+/**
+ * File size ni formatlash
+ * @example formatFileSize(1024) => '1 KB'
+ */
+export const formatFileSize = (bytes: number): string => {
+  if (bytes === 0) return '0 Bytes';
+
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
+};
+
+/**
+ * Qisqa sana formati (kun-oy, masalan: 5-Yan)
+ * @param date - Sana
+ * @param locale - Til
+ */
+export const formatShortDate = (
+  date: string | Date | undefined | null,
+  locale: string = DEFAULT_LOCALE
+): string => {
+  if (!date) return '';
+
+  try {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+
+    if (!dateObj || isNaN(dateObj.getTime())) {
+      return '';
+    }
+
+    const day = dateObj.getDate();
+    const currentLang = (['uz', 'en', 'ru'].includes(locale) ? locale : DEFAULT_LOCALE) as 'uz' | 'en' | 'ru';
+    const monthName = MONTHS[currentLang][dateObj.getMonth()];
+
+    return `${day}-${monthName}`;
+  } catch (error) {
+    console.error('Error formatting short date:', error, date);
+    return '';
+  }
+};
+
+
+/**
+ * HTML teglarini olib tashlash
+ */
+export const stripHtml = (html: string): string => {
+  if (!html) return '';
+  return html
+    .replace(/<[^>]*>?/gm, '') // Teglarni o'chirish
+    .replace(/&nbsp;/g, ' ')   // Bo'shliqlarni to'g'rilash
+    .replace(/&quot;/g, '"')   // Qo'shtirnoqlarni to'g'rilash
+    .replace(/&lsquo;|&rsquo;/g, "'") // Bir tirnoqlarni to'g'rilash
+    .replace(/&ldquo;|&rdquo;/g, '"') // Qo'sh tirnoqlarni to'g'rilash
+    .replace(/&ndash;|&mdash;/g, '-') // Chiziqlarni to'g'rilash
+    .replace(/&hellip;/g, '...');      // Uch nuqtani to'g'rilash
+};

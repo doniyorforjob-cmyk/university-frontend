@@ -1,0 +1,118 @@
+import React, { Suspense } from 'react';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import Layout from '@/components/Layout';
+// MainLayout import removed (moved to AppRoutes)
+import { ScrollToTop } from '@/components/shared';
+import { useLocale } from '@/contexts/LocaleContext';
+// Error Pages & Components
+// NetworkError imported
+// NotFound moved to AppRoutes
+import NetworkError from '@/pages/Errors/NetworkError';
+import ErrorBoundary from '@/components/shared/error-boundary';
+import GenericPageSkeleton from '@/components/shared/GenericPageSkeleton';
+import { useSettingsStore } from '@/store/settingsStore';
+
+import LocaleWrapper from '@/components/shared/LocaleWrapper';
+import AppRoutes from './AppRoutes';
+import { Toaster } from 'react-hot-toast';
+
+import { safeLazy, handleChunkError } from '@/utils/helpers';
+
+// Lazy load HomePage for root path
+const HomePage = safeLazy(() => import('./pages/Home'));
+
+// Redirect component
+const NavigateToUz = () => {
+  const location = useLocation();
+  const path = location.pathname;
+
+  // Prevent double prefixing if the path already starts with a locale
+  const hasLocalePrefix = /^\/(uz|ru|en)(\/|$)/.test(path);
+
+  if (hasLocalePrefix) {
+    return null; // Should not happen with current routing but safe guard
+  }
+
+  return <Navigate to={`/uz${path.startsWith('/') ? '' : '/'}${path}${location.search}`} replace />;
+};
+
+function App() {
+  const location = useLocation();
+  const { locale } = useLocale();
+  const { fetchSettings } = useSettingsStore();
+
+  // Network Status Hook
+  const [isOnline, setIsOnline] = React.useState(navigator.onLine);
+
+  React.useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  React.useEffect(() => {
+    handleChunkError();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  React.useEffect(() => {
+    fetchSettings(locale);
+  }, [fetchSettings, locale]);
+
+  // Home sahifa uchun fallbackni boshqacha qiling
+  const isHome = location.pathname === '/';
+
+  return (
+    <div className="min-h-screen text-gray-900">
+      {!isOnline ? (
+        <NetworkError />
+      ) : (
+        <Layout>
+          <ErrorBoundary>
+            <Suspense fallback={isHome ? null : <GenericPageSkeleton showSidebar={false} showBanner={true} />}>
+              <Routes>
+                {/* Russian Locale */}
+                <Route path="ru/*" element={<LocaleWrapper lang="ru" />}>
+                  <Route path="*" element={<AppRoutes />} />
+                </Route>
+
+                {/* English Locale */}
+                <Route path="en/*" element={<LocaleWrapper lang="en" />}>
+                  <Route path="*" element={<AppRoutes />} />
+                </Route>
+
+                {/* Uzbek Locale - Explicit for inner pages */}
+                <Route path="uz/*" element={<LocaleWrapper lang="uz" />}>
+                  <Route path="*" element={<AppRoutes />} />
+                </Route>
+
+                {/* Special Case: Root path is Uzbek Home Page */}
+                <Route path="/" element={<LocaleWrapper lang="uz" />}>
+                  <Route index element={<HomePage />} />
+                </Route>
+
+                {/* Any other top-level path (e.g. /news) -> Redirect to /uz/news */}
+                <Route path="*" element={<NavigateToUz />} />
+              </Routes>
+            </Suspense>
+          </ErrorBoundary>
+        </Layout>
+      )}
+
+      {/* Global Toast Notifications */}
+      <Toaster position="top-right" reverseOrder={false} />
+
+      {/* Global "Yuqoriga qaytish" tugmasi */}
+      {isOnline && <ScrollToTop />}
+    </div>
+  );
+}
+
+export default App;
