@@ -105,7 +105,7 @@ const AdministrationPage: React.FC = () => {
             title={t('common:nav.administration', 'Rahbariyat')}
             contentType="person"
             contentBlocks={contentBlocks}
-            showSidebar={false}
+            showSidebar={true}
             showMeta={false}
             showSocialShare={true}
         />

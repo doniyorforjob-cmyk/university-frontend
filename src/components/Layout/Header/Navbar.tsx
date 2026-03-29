@@ -244,9 +244,23 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
     }
   }, [isSearchOpen]);
 
-  const isMfeRoute = (href: string) => {
-    const cleanHref = href.replace(/^\/[a-z]{2}\//, '/');
-    return cleanHref.startsWith('/news') || cleanHref.startsWith('/announcements') || cleanHref.startsWith('/faculties');
+  const isShellRoute = (href: string) => {
+    if (!href || href === '#' || href.startsWith('http')) return false;
+    const cleanHref = href.replace(/^\/[a-z]{2}\//, '/').replace(/^\/[a-z]{2}$/, '/');
+    if (cleanHref === '/' || cleanHref === '') return true;
+
+    const shellRoutes = [
+      '/search',
+      '/contact',
+      '/organizational-structure',
+      '/administration'
+    ];
+    
+    if (shellRoutes.some(route => cleanHref === route || cleanHref.startsWith(`${route}/`) || cleanHref.startsWith(`${route}?`))) {
+      return true;
+    }
+    
+    return false;
   };
 
   return (
@@ -276,7 +290,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
 
                 return (
                   <div key={String(item.title)} className="group h-full">
-                    {isMfeRoute(item.href || '') ? (
+                    {!isShellRoute(item.href || '') ? (
                       <a href={item.href || '#'} className="group flex items-center h-full px-4 text-base font-bold transition-colors duration-300 cursor-pointer relative text-white">
                         {item.title}
                         {item.children && item.key !== 'Sustainability' && String(item.title) !== 'Sustainability' && <ChevronDownIcon className="w-5 h-5 ml-1" />}
@@ -330,7 +344,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                     <div className="flex flex-col space-y-1">
                                       {parentCategories.map((parent: any, idx: number) => (
                                         <div key={parent.id || parent.title || idx} onMouseEnter={() => setHoveredCategoryTitle(parent.title)} className={`cursor-pointer transition-all duration-150 border-r-2 ${currentHoveredCategory?.title === parent.title ? 'bg-gray-200 text-primary border-primary' : 'text-gray-700 hover:bg-gray-200 border-transparent'}`}>
-                                          {isMfeRoute(parent.href || '') ? (
+                                          {!isShellRoute(parent.href || '') ? (
                                             <a href={parent.href || '#'} className="block w-full">
                                               <motion.div whileHover={{ x: 8 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }} className="flex items-center justify-between px-4 py-3">
                                                 <span className="font-bold">{parent.title}</span>
@@ -354,7 +368,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                           </div>
                                           {standaloneLinks.map((link: any, idx: number) => (
                                             <div key={link.id || link.title || idx} onMouseEnter={() => setHoveredCategoryTitle(null)} className="cursor-pointer transition-all duration-150 border-l-4 border-transparent hover:border-l-secondary hover:bg-gray-200 text-gray-700 mx-1">
-                                              {isMfeRoute(link.href || '') ? (
+                                              {!isShellRoute(link.href || '') ? (
                                                 <a href={link.href || '#'} className="block w-full">
                                                   <motion.div whileHover={{ x: 8 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }} className="flex items-center gap-2 px-4 py-3">
                                                     <ChevronRightIcon className="h-4 w-4 text-gray-600 flex-shrink-0" />
@@ -387,7 +401,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                         <div className="grid grid-cols-1 gap-1">
                                           {currentHoveredCategory.children && currentHoveredCategory.children.length > 0 ? (
                                             currentHoveredCategory.children.slice(0, 7).map((child: any, idx: number) => 
-                                              isMfeRoute(child.href || '') ? (
+                                              !isShellRoute(child.href || '') ? (
                                                 <a key={child.id || child.title || idx} href={child.href || '#'} className="block text-gray-800 hover:text-black hover:bg-gray-300/40 hover:shadow-sm transition-all duration-150 border-b border-transparent rounded-md group/link">
                                                   <motion.div whileHover={{ x: 8 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }} className="flex items-center gap-3 py-2 px-3">
                                                     <div className="h-1.5 w-1.5 bg-gray-400 group-hover/link:bg-black rounded-full flex-shrink-0" />
@@ -421,7 +435,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                               ) : (
                                 <div className="col-span-2 p-8 grid grid-cols-2 gap-x-8 gap-y-2 content-start">
                                   {item.children!.map((link: any, idx: number) => 
-                                    isMfeRoute(link.href || '') ? (
+                                    !isShellRoute(link.href || '') ? (
                                       <a key={link.id || link.title || idx} href={link.href || '#'} className="flex h-full items-center text-gray-800 hover:text-black hover:bg-gray-200 transition-all duration-150 border-l-4 border-transparent hover:border-l-secondary">
                                         <motion.div whileHover={{ x: 8 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }} className="flex items-center gap-3 py-3 px-4 w-full">
                                           <ChevronRightIcon className="h-4 w-4 text-gray-600 flex-shrink-0 transition-transform" />
@@ -509,7 +523,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                     {openMobileSubmenu === item.title && (
                       <div className="pl-6 mt-1 space-y-1">
                         {item.children.map((child: any) => 
-                          isMfeRoute(child.href || '') ? (
+                          !isShellRoute(child.href || '') ? (
                             <a key={String(child.title)} href={child.href || '#'} className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-[#0E104B] hover:bg-gray-50">{String(child.title)}</a>
                           ) : (
                             <PrefetchLink key={String(child.title)} to={child.href || '#'} className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-[#0E104B] hover:bg-gray-50" onClick={() => setIsMobileMenuOpen(false)}>{String(child.title)}</PrefetchLink>
@@ -519,7 +533,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                     )}
                   </>
                 ) : (
-                  isMfeRoute(item.href || '') ? (
+                  !isShellRoute(item.href || '') ? (
                     <a href={item.href || '#'} className="block px-3 py-2 rounded-md text-lg font-medium text-gray-700 hover:bg-gray-100">{String(item.title)}</a>
                   ) : (
                     <PrefetchLink to={item.href || '#'} className="block px-3 py-2 rounded-md text-lg font-medium text-gray-700 hover:bg-gray-100" onClick={() => setIsMobileMenuOpen(false)}>{String(item.title)}</PrefetchLink>
