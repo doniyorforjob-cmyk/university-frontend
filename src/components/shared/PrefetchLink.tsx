@@ -105,8 +105,16 @@ const PrefetchLink: React.FC<PrefetchLinkProps> = ({
       '/leadership'
     ];
     
-    // If it is NOT a shell route, it must be an MFE route.
-    if (!shellRoutes.some(route => cleanHref === route || cleanHref.startsWith(`${route}/`) || cleanHref.startsWith(`${route}?`))) {
+    // Check if it's a shell route. 
+    // IMPORTANT: Profile details like /leadership/123 are in the MFE, so only the main list root is in the Shell.
+    const isShell = shellRoutes.some(route => {
+      if (route === '/leadership' || route === '/administration') {
+        return cleanHref === route;
+      }
+      return cleanHref === route || cleanHref.startsWith(`${route}/`) || cleanHref.startsWith(`${route}?`);
+    });
+    
+    if (!isShell) {
       return true;
     }
 

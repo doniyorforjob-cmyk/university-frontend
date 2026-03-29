@@ -1,11 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import Breadcrumbs from '@/components/shared/Breadcrumbs';
 import ContentBuilder, { ContentBlock } from '@/components/shared/ContentBuilder';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
 import { useGlobalLayout } from './GlobalLayout';
-import { OptimizedImage, ImageCarousel, ImageViewer, SocialShare } from '../shared';
+import { Container, Breadcrumbs, OptimizedImage, ImageCarousel, ImageViewer, SocialShare } from '../shared';
 import { formatStandardDate } from '@/config/constants';
 import {
   Printer,
@@ -178,7 +177,8 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
   } = useGlobalLayout();
 
   return (
-    <div className={`flex flex-col gap-6 ${className}`}>
+    <Container className={`py-6 sm:py-8 lg:py-10 ${className}`}>
+      <div className="flex flex-col gap-6">
       {breadcrumbs && breadcrumbs.length > 0 && (
         <div className="no-print">
           <Breadcrumbs items={breadcrumbs} />
@@ -479,7 +479,8 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
           </div>
         </motion.div>
       )}
-    </div >
+    </div>
+  </Container>
   );
 };
 
