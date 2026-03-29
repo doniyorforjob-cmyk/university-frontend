@@ -244,25 +244,6 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
     }
   }, [isSearchOpen]);
 
-  const isShellRoute = (href: string) => {
-    if (!href || href === '#' || href.startsWith('http')) return false;
-    const cleanHref = href.replace(/^\/[a-z]{2}\//, '/').replace(/^\/[a-z]{2}$/, '/');
-    if (cleanHref === '/' || cleanHref === '') return true;
-
-    const shellRoutes = [
-      '/search',
-      '/contact',
-      '/organizational-structure',
-      '/administration'
-    ];
-    
-    if (shellRoutes.some(route => cleanHref === route || cleanHref.startsWith(`${route}/`) || cleanHref.startsWith(`${route}?`))) {
-      return true;
-    }
-    
-    return false;
-  };
-
   return (
     <div className="font-sans bg-primary" ref={navRef} onMouseLeave={() => { setActiveDropdown(null); setHoveredCategoryTitle(null); }}>
       <Container>
@@ -290,36 +271,28 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
 
                 return (
                   <div key={String(item.title)} className="group h-full">
-                    {!isShellRoute(item.href || '') ? (
-                      <a href={item.href || '#'} className="group flex items-center h-full px-4 text-base font-bold transition-colors duration-300 cursor-pointer relative text-white">
-                        {item.title}
-                        {item.children && item.key !== 'Sustainability' && String(item.title) !== 'Sustainability' && <ChevronDownIcon className="w-5 h-5 ml-1" />}
-                        <span className="absolute bottom-0 left-0 w-0 h-1.5 bg-secondary transition-all duration-300 group-hover:w-full"></span>
-                      </a>
-                    ) : (
-                      <PrefetchLink
-                        to={item.href || '#'}
-                        onMouseEnter={async () => {
-                          const { prefetchService } = await safeImport(import('../../../services/prefetchService'));
-                          if (item.href === '/news') prefetchService.prefetchNewsPage();
-                          if (item.href === '/') prefetchService.prefetchHomeNews();
-                          const isSustainability = item.key === 'Sustainability' || String(item.title) === 'Sustainability';
-                          if (item.children && !isSustainability) {
-                            setActiveDropdown(String(item.title));
-                            if (parentCategories.length > 0) setHoveredCategoryTitle(parentCategories[0].title);
-                          } else {
-                            setActiveDropdown(null);
-                            setHoveredCategoryTitle(null);
-                          }
-                        }}
-                        onClick={() => { closeDropdown(); if (item.children) (document.activeElement as HTMLElement)?.blur(); }}
-                        className="group flex items-center h-full px-4 text-base font-bold transition-colors duration-300 cursor-pointer relative text-white"
-                      >
-                        {item.title}
-                        {item.children && item.key !== 'Sustainability' && String(item.title) !== 'Sustainability' && <ChevronDownIcon className="w-5 h-5 ml-1" />}
-                        <span className="absolute bottom-0 left-0 w-0 h-1.5 bg-secondary transition-all duration-300 group-hover:w-full"></span>
-                      </PrefetchLink>
-                    )}
+                    <PrefetchLink
+                      to={item.href || '#'}
+                      onMouseEnter={async () => {
+                        const { prefetchService } = await safeImport(import('../../../services/prefetchService'));
+                        if (item.href === '/news') prefetchService.prefetchNewsPage();
+                        if (item.href === '/') prefetchService.prefetchHomeNews();
+                        const isSustainability = item.key === 'Sustainability' || String(item.title) === 'Sustainability';
+                        if (item.children && !isSustainability) {
+                          setActiveDropdown(String(item.title));
+                          if (parentCategories.length > 0) setHoveredCategoryTitle(parentCategories[0].title);
+                        } else {
+                          setActiveDropdown(null);
+                          setHoveredCategoryTitle(null);
+                        }
+                      }}
+                      onClick={() => { closeDropdown(); if (item.children) (document.activeElement as HTMLElement)?.blur(); }}
+                      className="group flex items-center h-full px-4 text-base font-bold transition-colors duration-300 cursor-pointer relative text-white"
+                    >
+                      {item.title}
+                      {item.children && item.key !== 'Sustainability' && String(item.title) !== 'Sustainability' && <ChevronDownIcon className="w-5 h-5 ml-1" />}
+                      <span className="absolute bottom-0 left-0 w-0 h-1.5 bg-secondary transition-all duration-300 group-hover:w-full"></span>
+                    </PrefetchLink>
 
                     {item.children && activeDropdown === item.title && (
                       <div className="absolute top-full left-0 right-0 z-50 pointer-events-none bg-white" onMouseEnter={() => setActiveDropdown(String(item.title))} onMouseLeave={() => { setActiveDropdown(null); setHoveredCategoryTitle(null); }}>
@@ -344,21 +317,12 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                     <div className="flex flex-col space-y-1">
                                       {parentCategories.map((parent: any, idx: number) => (
                                         <div key={parent.id || parent.title || idx} onMouseEnter={() => setHoveredCategoryTitle(parent.title)} className={`cursor-pointer transition-all duration-150 border-r-2 ${currentHoveredCategory?.title === parent.title ? 'bg-gray-200 text-primary border-primary' : 'text-gray-700 hover:bg-gray-200 border-transparent'}`}>
-                                          {!isShellRoute(parent.href || '') ? (
-                                            <a href={parent.href || '#'} className="block w-full">
-                                              <motion.div whileHover={{ x: 8 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }} className="flex items-center justify-between px-4 py-3">
-                                                <span className="font-bold">{parent.title}</span>
-                                                <ChevronRightIcon className={`h-4 w-4 transition-transform ${currentHoveredCategory?.title === parent.title ? 'translate-x-1' : 'opacity-0'}`} />
-                                              </motion.div>
-                                            </a>
-                                          ) : (
-                                            <PrefetchLink to={parent.href || '#'} onClick={closeDropdown} className="block w-full">
-                                              <motion.div whileHover={{ x: 8 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }} className="flex items-center justify-between px-4 py-3">
-                                                <span className="font-bold">{parent.title}</span>
-                                                <ChevronRightIcon className={`h-4 w-4 transition-transform ${currentHoveredCategory?.title === parent.title ? 'translate-x-1' : 'opacity-0'}`} />
-                                              </motion.div>
-                                            </PrefetchLink>
-                                          )}
+                                          <PrefetchLink to={parent.href || '#'} onClick={closeDropdown} className="block w-full">
+                                            <motion.div whileHover={{ x: 8 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }} className="flex items-center justify-between px-4 py-3">
+                                              <span className="font-bold">{parent.title}</span>
+                                              <ChevronRightIcon className={`h-4 w-4 transition-transform ${currentHoveredCategory?.title === parent.title ? 'translate-x-1' : 'opacity-0'}`} />
+                                            </motion.div>
+                                          </PrefetchLink>
                                         </div>
                                       ))}
                                       {standaloneLinks.length > 0 && (
@@ -368,21 +332,12 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                           </div>
                                           {standaloneLinks.map((link: any, idx: number) => (
                                             <div key={link.id || link.title || idx} onMouseEnter={() => setHoveredCategoryTitle(null)} className="cursor-pointer transition-all duration-150 border-l-4 border-transparent hover:border-l-secondary hover:bg-gray-200 text-gray-700 mx-1">
-                                              {!isShellRoute(link.href || '') ? (
-                                                <a href={link.href || '#'} className="block w-full">
-                                                  <motion.div whileHover={{ x: 8 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }} className="flex items-center gap-2 px-4 py-3">
-                                                    <ChevronRightIcon className="h-4 w-4 text-gray-600 flex-shrink-0" />
-                                                    <span className="font-bold">{link.title}</span>
-                                                  </motion.div>
-                                                </a>
-                                              ) : (
-                                                <PrefetchLink to={link.href || '#'} onClick={closeDropdown} className="block w-full">
-                                                  <motion.div whileHover={{ x: 8 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }} className="flex items-center gap-2 px-4 py-3">
-                                                    <ChevronRightIcon className="h-4 w-4 text-gray-600 flex-shrink-0" />
-                                                    <span className="font-bold">{link.title}</span>
-                                                  </motion.div>
-                                                </PrefetchLink>
-                                              )}
+                                              <PrefetchLink to={link.href || '#'} onClick={closeDropdown} className="block w-full">
+                                                <motion.div whileHover={{ x: 8 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }} className="flex items-center gap-2 px-4 py-3">
+                                                  <ChevronRightIcon className="h-4 w-4 text-gray-600 flex-shrink-0" />
+                                                  <span className="font-bold">{link.title}</span>
+                                                </motion.div>
+                                              </PrefetchLink>
                                             </div>
                                           ))}
                                         </>
@@ -401,21 +356,12 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                                         <div className="grid grid-cols-1 gap-1">
                                           {currentHoveredCategory.children && currentHoveredCategory.children.length > 0 ? (
                                             currentHoveredCategory.children.slice(0, 7).map((child: any, idx: number) => 
-                                              !isShellRoute(child.href || '') ? (
-                                                <a key={child.id || child.title || idx} href={child.href || '#'} className="block text-gray-800 hover:text-black hover:bg-gray-300/40 hover:shadow-sm transition-all duration-150 border-b border-transparent rounded-md group/link">
-                                                  <motion.div whileHover={{ x: 8 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }} className="flex items-center gap-3 py-2 px-3">
-                                                    <div className="h-1.5 w-1.5 bg-gray-400 group-hover/link:bg-black rounded-full flex-shrink-0" />
-                                                    <span className="text-base font-semibold text-gray-900 relative z-10 flex-1">{child.title || 'Untitled'}</span>
-                                                  </motion.div>
-                                                </a>
-                                              ) : (
-                                                <PrefetchLink key={child.id || child.title || idx} to={child.href || '#'} className="block text-gray-800 hover:text-black hover:bg-gray-300/40 hover:shadow-sm transition-all duration-150 border-b border-transparent rounded-md group/link" onClick={closeDropdown}>
-                                                  <motion.div whileHover={{ x: 8 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }} className="flex items-center gap-3 py-2 px-3">
-                                                    <div className="h-1.5 w-1.5 bg-gray-400 group-hover/link:bg-black rounded-full flex-shrink-0" />
-                                                    <span className="text-base font-semibold text-gray-900 relative z-10 flex-1">{child.title || 'Untitled'}</span>
-                                                  </motion.div>
-                                                </PrefetchLink>
-                                              )
+                                              <PrefetchLink key={child.id || child.title || idx} to={child.href || '#'} className="block text-gray-800 hover:text-black hover:bg-gray-300/40 hover:shadow-sm transition-all duration-150 border-b border-transparent rounded-md group/link" onClick={closeDropdown}>
+                                                <motion.div whileHover={{ x: 8 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }} className="flex items-center gap-3 py-2 px-3">
+                                                  <div className="h-1.5 w-1.5 bg-gray-400 group-hover/link:bg-black rounded-full flex-shrink-0" />
+                                                  <span className="text-base font-semibold text-gray-900 relative z-10 flex-1">{child.title || 'Untitled'}</span>
+                                                </motion.div>
+                                              </PrefetchLink>
                                             )
                                           ) : (
                                             <div className="p-6 text-center border-2 border-dashed border-gray-100 rounded-lg">
@@ -435,21 +381,12 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                               ) : (
                                 <div className="col-span-2 p-8 grid grid-cols-2 gap-x-8 gap-y-2 content-start">
                                   {item.children!.map((link: any, idx: number) => 
-                                    !isShellRoute(link.href || '') ? (
-                                      <a key={link.id || link.title || idx} href={link.href || '#'} className="flex h-full items-center text-gray-800 hover:text-black hover:bg-gray-200 transition-all duration-150 border-l-4 border-transparent hover:border-l-secondary">
-                                        <motion.div whileHover={{ x: 8 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }} className="flex items-center gap-3 py-3 px-4 w-full">
-                                          <ChevronRightIcon className="h-4 w-4 text-gray-600 flex-shrink-0 transition-transform" />
-                                          <span className="text-base font-bold">{link.title}</span>
-                                        </motion.div>
-                                      </a>
-                                    ) : (
                                       <PrefetchLink key={link.id || link.title || idx} to={link.href || '#'} onClick={closeDropdown} className="flex h-full items-center text-gray-800 hover:text-black hover:bg-gray-200 transition-all duration-150 border-l-4 border-transparent hover:border-l-secondary">
                                         <motion.div whileHover={{ x: 8 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }} className="flex items-center gap-3 py-3 px-4 w-full">
                                           <ChevronRightIcon className="h-4 w-4 text-gray-600 flex-shrink-0 transition-transform" />
                                           <span className="text-base font-bold">{link.title}</span>
                                         </motion.div>
                                       </PrefetchLink>
-                                    )
                                   )}
                                 </div>
                               )}
@@ -523,21 +460,13 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
                     {openMobileSubmenu === item.title && (
                       <div className="pl-6 mt-1 space-y-1">
                         {item.children.map((child: any) => 
-                          !isShellRoute(child.href || '') ? (
-                            <a key={String(child.title)} href={child.href || '#'} className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-[#0E104B] hover:bg-gray-50">{String(child.title)}</a>
-                          ) : (
-                            <PrefetchLink key={String(child.title)} to={child.href || '#'} className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-[#0E104B] hover:bg-gray-50" onClick={() => setIsMobileMenuOpen(false)}>{String(child.title)}</PrefetchLink>
-                          )
+                          <PrefetchLink key={String(child.title)} to={child.href || '#'} className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-[#0E104B] hover:bg-gray-50" onClick={() => setIsMobileMenuOpen(false)}>{String(child.title)}</PrefetchLink>
                         )}
                       </div>
                     )}
                   </>
                 ) : (
-                  !isShellRoute(item.href || '') ? (
-                    <a href={item.href || '#'} className="block px-3 py-2 rounded-md text-lg font-medium text-gray-700 hover:bg-gray-100">{String(item.title)}</a>
-                  ) : (
-                    <PrefetchLink to={item.href || '#'} className="block px-3 py-2 rounded-md text-lg font-medium text-gray-700 hover:bg-gray-100" onClick={() => setIsMobileMenuOpen(false)}>{String(item.title)}</PrefetchLink>
-                  )
+                  <PrefetchLink to={item.href || '#'} className="block px-3 py-2 rounded-md text-lg font-medium text-gray-700 hover:bg-gray-100" onClick={() => setIsMobileMenuOpen(false)}>{String(item.title)}</PrefetchLink>
                 )}
               </div>
             ))}

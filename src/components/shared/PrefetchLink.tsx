@@ -85,14 +85,40 @@ const PrefetchLink: React.FC<PrefetchLinkProps> = ({
     onFocus?.(e);
   }, [handlePrefetch, onFocus]);
 
-  const isExternal = typeof localizedTo === 'string' && /^https?:\/\//i.test(localizedTo);
+  const isExternalOrMfe = React.useMemo(() => {
+    if (typeof localizedTo !== 'string') return false;
+    
+    if (/^https?:\/\//i.test(localizedTo) || localizedTo.startsWith('#') || localizedTo.startsWith('mailto:')) {
+      return true;
+    }
 
-  if (isExternal) {
+    let cleanHref = localizedTo.replace(/^\/[a-z]{2}\//, '/');
+    if (cleanHref === 'uz' || cleanHref === 'ru' || cleanHref === 'en') cleanHref = '/';
+    if (!cleanHref.startsWith('/')) cleanHref = '/' + cleanHref;
+
+    const shellRoutes = [
+      '/',
+      '/search',
+      '/contact',
+      '/organizational-structure',
+      '/administration'
+    ];
+    
+    // If it is NOT a shell route, it must be an MFE route.
+    if (!shellRoutes.some(route => cleanHref === route || cleanHref.startsWith(`${route}/`) || cleanHref.startsWith(`${route}?`))) {
+      return true;
+    }
+
+    return false;
+  }, [localizedTo]);
+
+  if (isExternalOrMfe) {
+    const isAbsoluteExt = typeof localizedTo === 'string' && /^https?:\/\//i.test(localizedTo);
     return (
       <a
         href={localizedTo}
-        target="_blank"
-        rel="noopener noreferrer"
+        target={isAbsoluteExt ? "_blank" : undefined}
+        rel={isAbsoluteExt ? "noopener noreferrer" : undefined}
         onClick={onClick as any}
         onMouseEnter={handleMouseEnter as any}
         onMouseLeave={handleMouseLeave as any}
