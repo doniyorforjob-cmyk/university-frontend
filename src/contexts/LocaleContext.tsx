@@ -24,10 +24,25 @@ interface LocaleProviderProps {
 }
 
 export const LocaleProvider: React.FC<LocaleProviderProps> = ({ children }) => {
-    // Get initial locale from localStorage or default to 'uz'
+    // Get initial locale from localStorage, URL, or default to 'uz'
     const [locale, setLocaleState] = useState<Locale>(() => {
-        const saved = localStorage.getItem('locale');
-        return (saved as Locale) || 'uz';
+        const path = window.location.pathname;
+        const firstSegment = path.split('/')[1] as Locale;
+
+        // If URL explicitly sets a valid locale segment, use it
+        if (['uz', 'ru', 'en'].includes(firstSegment)) {
+            return firstSegment;
+        }
+
+        // AppRoutes explicitly ties the root path "/" to the "uz" locale.
+        // If we start on the root path, we must initialize as "uz" to avoid a double render.
+        if (path === '/') {
+            return 'uz';
+        }
+        
+        // Otherwise, fallback to localStorage if no explicit URL override
+        const saved = localStorage.getItem('locale') as Locale;
+        return (['uz', 'ru', 'en'].includes(saved) ? saved : 'uz');
     });
 
     const location = useLocation();
