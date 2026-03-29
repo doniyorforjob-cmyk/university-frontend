@@ -4,7 +4,7 @@ import { Phone, Mail, ChevronDown } from 'lucide-react';
 import { Leadership } from '@/types/leadership.types';
 import OptimizedImage from './OptimizedImage';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import PrefetchLink from './PrefetchLink';
 import { settingsApi } from '@/api/http/settings.http';
 import { getImageUrl } from '@/utils/apiUtils';
 import { useLocale } from '@/contexts/LocaleContext';
@@ -71,7 +71,7 @@ const LeadershipCard: React.FC<LeadershipCardProps> = ({ member, isMain = false,
                     className={`flex-1 px-4 lg:px-4 z-10 flex flex-col justify-start pt-0 h-full ${!isMain ? 'lg:pl-4' : ''}`}
                     style={{ paddingTop: isMain ? '20px' : '10px' }}
                 >
-                    <Link
+                    <PrefetchLink
                         to={getMemberPath(member, locale)}
                         className="no-underline hover:text-blue-600 transition-colors group"
                     >
@@ -86,7 +86,7 @@ const LeadershipCard: React.FC<LeadershipCardProps> = ({ member, isMain = false,
                         >
                             {member.name}
                         </h1>
-                    </Link>
+                    </PrefetchLink>
 
                     <p
                         className="mt-0 font-medium text-gray-500 text-base lg:text-[1.05rem]"
@@ -195,7 +195,7 @@ const LeadershipCard: React.FC<LeadershipCardProps> = ({ member, isMain = false,
                         </>
                     )}
 
-                    <Link
+                    <PrefetchLink
                         to={getMemberPath(member, locale)}
                         className="w-full h-full block relative z-20 overflow-hidden hover:opacity-90 transition-opacity"
                     >
@@ -217,7 +217,7 @@ const LeadershipCard: React.FC<LeadershipCardProps> = ({ member, isMain = false,
                                 />
                             </div>
                         )}
-                    </Link>
+                    </PrefetchLink>
 
                     {/* Gradient Overlay for Rector */}
                     {isMain && (

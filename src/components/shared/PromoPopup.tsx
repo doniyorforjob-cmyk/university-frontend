@@ -111,7 +111,26 @@ const PromoPopup: React.FC = () => {
     const handleItemClick = () => {
         const item = items[currentIndex];
         if (item) {
-            navigate(getNavigationPath(item));
+            const path = getNavigationPath(item);
+            
+            // Check if it's a shell route or MFE route
+            const shellRoutes = ['/', '/search', '/contact', '/organizational-structure', '/administration', '/leadership'];
+            
+            // Remove locale prefix for checking (e.g., /uz/news -> /news)
+            let cleanPath = path.replace(/^\/[a-z]{2}\//, '/');
+            if (cleanPath === 'uz' || cleanPath === 'ru' || cleanPath === 'en') cleanPath = '/';
+            if (!cleanPath.startsWith('/')) cleanPath = '/' + cleanPath;
+
+            const isShell = shellRoutes.some(route => 
+                cleanPath === route || cleanPath.startsWith(`${route}/`) || cleanPath.startsWith(`${route}?`)
+            );
+
+            if (isShell) {
+                navigate(path);
+            } else {
+                window.location.href = path;
+            }
+            
             setIsOpen(false);
         }
     };

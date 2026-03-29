@@ -101,7 +101,8 @@ const PrefetchLink: React.FC<PrefetchLinkProps> = ({
       '/search',
       '/contact',
       '/organizational-structure',
-      '/administration'
+      '/administration',
+      '/leadership'
     ];
     
     // If it is NOT a shell route, it must be an MFE route.

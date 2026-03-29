@@ -66,13 +66,45 @@ const LatestContentSidebar: React.FC<LatestContentSidebarProps> = ({
                         tabIndex={0}
                         onClick={() => {
                             if (item.href) {
-                                navigate(item.href);
+                                // Check if it's a shell route or MFE route
+                                const shellRoutes = ['/', '/search', '/contact', '/organizational-structure', '/administration', '/leadership'];
+                                
+                                // Remove locale prefix for checking (e.g., /uz/news -> /news)
+                                let cleanPath = item.href.replace(/^\/[a-z]{2}\//, '/');
+                                if (cleanPath === 'uz' || cleanPath === 'ru' || cleanPath === 'en') cleanPath = '/';
+                                if (!cleanPath.startsWith('/')) cleanPath = '/' + cleanPath;
+
+                                const isShell = shellRoutes.some(route => 
+                                    cleanPath === route || cleanPath.startsWith(`${route}/`) || cleanPath.startsWith(`${route}?`)
+                                );
+
+                                if (isShell) {
+                                    navigate(item.href);
+                                } else {
+                                    window.location.href = item.href;
+                                }
                             }
                         }}
                         onKeyDown={(e) => {
                             if ((e.key === 'Enter' || e.key === ' ') && item.href) {
                                 e.preventDefault();
-                                navigate(item.href);
+                                // Check if it's a shell route or MFE route
+                                const shellRoutes = ['/', '/search', '/contact', '/organizational-structure', '/administration', '/leadership'];
+                                
+                                // Remove locale prefix for checking
+                                let cleanPath = item.href.replace(/^\/[a-z]{2}\//, '/');
+                                if (cleanPath === 'uz' || cleanPath === 'ru' || cleanPath === 'en') cleanPath = '/';
+                                if (!cleanPath.startsWith('/')) cleanPath = '/' + cleanPath;
+
+                                const isShell = shellRoutes.some(route => 
+                                    cleanPath === route || cleanPath.startsWith(`${route}/`) || cleanPath.startsWith(`${route}?`)
+                                );
+
+                                if (isShell) {
+                                    navigate(item.href);
+                                } else {
+                                    window.location.href = item.href;
+                                }
                             }
                         }}
                         className="flex gap-4 group cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 p-1 -m-1"

@@ -4,7 +4,8 @@ import Breadcrumbs from '@/components/shared/Breadcrumbs';
 import ContentBuilder, { ContentBlock } from '@/components/shared/ContentBuilder';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
-import { OptimizedImage, ImageCarousel, ImageViewer } from '../shared';
+import { useGlobalLayout } from './GlobalLayout';
+import { OptimizedImage, ImageCarousel, ImageViewer, SocialShare } from '../shared';
 import { formatStandardDate } from '@/config/constants';
 import {
   Printer,
@@ -15,7 +16,6 @@ import {
   Maximize2
 } from 'lucide-react';
 import { useLocale } from '@/contexts/LocaleContext';
-import SocialShare from '../shared/SocialShare';
 
 // BreadcrumbItem interfeysi
 interface BreadcrumbItem {
@@ -172,6 +172,11 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
     return formatStandardDate(dateString, currentLocale || locale);
   };
 
+  const {
+    sidebarContent: globalSidebarContent,
+    sidebarExtraContent
+  } = useGlobalLayout();
+
   return (
     <div className={`flex flex-col gap-6 ${className}`}>
       {breadcrumbs && breadcrumbs.length > 0 && (
@@ -180,13 +185,13 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
         </div>
       )}
 
-      <div className="w-full">
-        <div className="w-full">
+      <div className="flex flex-col lg:flex-row gap-8">
+        <div className={showSidebar ? "w-full lg:w-[78%]" : "w-full"}>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="printable-content bg-white rounded-2xl shadow-[0_4px_16px_0_rgba(0,0,0,0.05)] overflow-hidden px-6 py-4 md:px-8 md:py-4 border border-gray-100"
+            className="printable-content bg-white rounded-2xl shadow-[0_4px_16px_0_rgba(0,0,0,0.05)] overflow-hidden px-6 py-4 md:px-8 md:py-4 border border-gray-100 h-full"
           >
             <div className="mb-2">
               <h1 className="text-[1.35rem] md:text-[1.55rem] font-[900] leading-[1.2] font-sans text-black tracking-tighter max-w-3xl mb-3">
@@ -411,6 +416,16 @@ const DetailTemplate: React.FC<DetailTemplateProps> = ({
           </motion.div>
         </div>
 
+        {showSidebar && (
+          <aside className="w-full lg:w-[22%] space-y-6 no-print">
+            {sidebarContent || (
+              <>
+                {globalSidebarContent}
+                {sidebarExtraContent}
+              </>
+            )}
+          </aside>
+        )}
       </div>
 
       {showRelated && relatedItems.length > 0 && (
