@@ -4,6 +4,17 @@ import { useTranslation } from 'react-i18next';
 import Container from '../../../components/shared/Container';
 import PrefetchLink from '../../../components/shared/PrefetchLink';
 
+/**
+ * MFE tomonidan boshqariladigan yo'nalishlarni aniqlash
+ */
+const isMfeRoute = (path: string): boolean => {
+  if (!path) return false;
+  // Til prefiksini olib tashlash (masalan, /uz/news -> /news)
+  const cleanPath = path.replace(/^\/(uz|ru|en)(\/|$)/, '/');
+  const mfePrefixes = ['/news', '/announcements', '/faculties', '/departments', '/centers', '/sections', '/students', '/admission'];
+  return mfePrefixes.some(prefix => cleanPath.startsWith(prefix));
+};
+
 interface SectionHeaderProps {
   title: string;
   seeAllLink?: string;
@@ -56,25 +67,39 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
             </div>
           </button>
         ) : (
-          <PrefetchLink
-            to={seeAllLink!}
-            prefetch={true}
-            prefetchDelay={150}
-            onMouseEnter={async () => {
-              const { prefetchService } = await import('../../../services/prefetchService');
-              if (seeAllLink === '/news') {
-                prefetchService.prefetchNewsPage();
-              }
-            }}
-            className="bg-secondary text-white px-4 py-2 inline-flex items-center text-lg font-semibold hover:bg-secondary-dark transition-colors group"
-          >
-            <span className="mr-2">{seeAllText}</span>
-            <div
-              className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center transition-colors duration-300 group-hover:bg-primary"
+          isMfeRoute(seeAllLink!) ? (
+            <a
+              href={seeAllLink!}
+              className="bg-secondary text-white px-4 py-2 inline-flex items-center text-lg font-semibold hover:bg-secondary-dark transition-colors group"
             >
-              <ChevronRightIcon className="w-6 h-6" />
-            </div>
-          </PrefetchLink>
+              <span className="mr-2">{seeAllText}</span>
+              <div
+                className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center transition-colors duration-300 group-hover:bg-primary"
+              >
+                <ChevronRightIcon className="w-6 h-6" />
+              </div>
+            </a>
+          ) : (
+            <PrefetchLink
+              to={seeAllLink!}
+              prefetch={true}
+              prefetchDelay={150}
+              onMouseEnter={async () => {
+                const { prefetchService } = await import('../../../services/prefetchService');
+                if (seeAllLink === '/news') {
+                  prefetchService.prefetchNewsPage();
+                }
+              }}
+              className="bg-secondary text-white px-4 py-2 inline-flex items-center text-lg font-semibold hover:bg-secondary-dark transition-colors group"
+            >
+              <span className="mr-2">{seeAllText}</span>
+              <div
+                className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center transition-colors duration-300 group-hover:bg-primary"
+              >
+                <ChevronRightIcon className="w-6 h-6" />
+              </div>
+            </PrefetchLink>
+          )
         )
       )}
     </div>
@@ -210,24 +235,43 @@ export const MediaGalleryHeader: React.FC<MediaGalleryHeaderProps> = ({
           </div>
         </button>
       ) : (
-        <PrefetchLink
-          to={seeAllLink || "/gallery"}
-          prefetch={true}
-          prefetchDelay={150}
-          className="bg-secondary text-white px-4 py-2 inline-flex items-center text-lg font-semibold hover:bg-secondary-dark transition-colors group"
-        >
-          <span className="mr-2">{finalSeeAllText}</span>
-          <div
-            className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center transition-colors duration-300 group-hover:bg-primary"
-            style={{
-              backfaceVisibility: 'hidden',
-              transform: 'translateZ(0)',
-              willChange: 'background-color, transform',
-            }}
+        isMfeRoute(seeAllLink || "/gallery") ? (
+          <a
+            href={seeAllLink || "/gallery"}
+            className="bg-secondary text-white px-4 py-2 inline-flex items-center text-lg font-semibold hover:bg-secondary-dark transition-colors group"
           >
-            <ChevronRightIcon className="w-6 h-6" />
-          </div>
-        </PrefetchLink>
+            <span className="mr-2">{finalSeeAllText}</span>
+            <div
+              className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center transition-colors duration-300 group-hover:bg-primary"
+              style={{
+                backfaceVisibility: 'hidden',
+                transform: 'translateZ(0)',
+                willChange: 'background-color, transform',
+              }}
+            >
+              <ChevronRightIcon className="w-6 h-6" />
+            </div>
+          </a>
+        ) : (
+          <PrefetchLink
+            to={seeAllLink || "/gallery"}
+            prefetch={true}
+            prefetchDelay={150}
+            className="bg-secondary text-white px-4 py-2 inline-flex items-center text-lg font-semibold hover:bg-secondary-dark transition-colors group"
+          >
+            <span className="mr-2">{finalSeeAllText}</span>
+            <div
+              className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center transition-colors duration-300 group-hover:bg-primary"
+              style={{
+                backfaceVisibility: 'hidden',
+                transform: 'translateZ(0)',
+                willChange: 'background-color, transform',
+              }}
+            >
+              <ChevronRightIcon className="w-6 h-6" />
+            </div>
+          </PrefetchLink>
+        )
       )}
     </div>
   );

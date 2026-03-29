@@ -9,7 +9,6 @@ import { OptimizedImage } from '../../components/shared';
 import { useTranslation } from 'react-i18next';
 import { NEWS_TABS } from '../../config/constants';
 import { MONTHS, DEFAULT_LOCALE } from '../../constants/dateConstants';
-import PrefetchLink from '../../components/shared/PrefetchLink';
 import EmptyState from '../../components/shared/EmptyState';
 import { ChevronRightIcon, NewspaperIcon } from '@heroicons/react/24/outline';
 import { stripHtml } from '../../utils/format';
@@ -36,9 +35,8 @@ const AnnouncementsPreview = ({ announcements }: { announcements?: HomeNewsData[
 
               return (
                 <li key={item.id}>
-                  <PrefetchLink
-                    to={`/announcements/${item.slug}`}
-                    prefetch={true}
+                  <a
+                    href={`/announcements/${item.slug}`}
                     className="group flex items-center p-3 bg-white hover:bg-gray-50 transition-all duration-300 border border-gray-200"
                   >
                     <div className="flex flex-col items-center justify-center w-16 text-center flex-shrink-0">
@@ -49,7 +47,7 @@ const AnnouncementsPreview = ({ announcements }: { announcements?: HomeNewsData[
                     <div className="flex-1 overflow-hidden">
                       <p className="font-bold text-[#0E104B] transition-colors duration-300 leading-tight line-clamp-2">{cleanText}</p>
                     </div>
-                  </PrefetchLink>
+                  </a>
                 </li>
               );
             })
@@ -62,17 +60,13 @@ const AnnouncementsPreview = ({ announcements }: { announcements?: HomeNewsData[
         </ul>
       </div>
       <div className="mt-auto pt-8 text-center lg:text-right">
-        <PrefetchLink
-          to="/announcements"
-          prefetch={true}
-          onMouseEnter={async () => {
-            // prefetch logic removed
-          }}
+        <a
+          href="/announcements"
           className="inline-flex items-center text-[#0E104B] font-semibold hover:underline"
         >
           {t('common:seeAllAnnouncements')}
           <ChevronRightIcon className="w-5 h-5 ml-1" />
-        </PrefetchLink>
+        </a>
       </div>
     </div>
   );
@@ -137,10 +131,9 @@ const NewsSection = () => {
               : `/news/${item.slug}`;
 
           return (
-            <PrefetchLink
+            <a
               key={item.id}
-              to={detailHref}
-              prefetch={true}
+              href={detailHref}
               className="group flex flex-col bg-white overflow-hidden transition-all duration-300 relative shadow-sm h-full"
             >
               {/* Bottom bar animation */}
@@ -185,7 +178,7 @@ const NewsSection = () => {
                   {item.title}
                 </h3>
               </div>
-            </PrefetchLink>
+            </a>
           );
         })}
       </div>

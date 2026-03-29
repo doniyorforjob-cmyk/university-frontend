@@ -68,6 +68,11 @@ const Footer: React.FC = () => {
 
   const brandingLines = getBrandingLines(siteNameRaw);
 
+  const isMfeRoute = (href: string) => {
+    const cleanHref = href.replace(/^\/[a-z]{2}\//, '/');
+    return cleanHref.startsWith('/news') || cleanHref.startsWith('/announcements') || cleanHref.startsWith('/faculties');
+  };
+
   return (
     <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-t border-gray-700">
       <Container className="py-16">
@@ -185,14 +190,24 @@ const Footer: React.FC = () => {
                   </div>
                   <nav className="flex flex-col space-y-2 text-sm text-gray-300">
                     {group.links.map((link) => (
-                      <PrefetchLink
-                        key={link.id}
-                        to={link.url}
-                        prefetch={true}
-                        className="hover:text-white hover:bg-gray-700/50 hover:translate-x-1 px-2 py-1 transition-all duration-300 focus:outline-none focus:text-white focus:bg-gray-700/50 focus:translate-x-1 inline-block -ml-2"
-                      >
-                        {getLocalized(link.text, locale)}
-                      </PrefetchLink>
+                      isMfeRoute(link.url) ? (
+                        <a
+                          key={link.id}
+                          href={link.url}
+                          className="hover:text-white hover:bg-gray-700/50 hover:translate-x-1 px-2 py-1 transition-all duration-300 focus:outline-none focus:text-white focus:bg-gray-700/50 focus:translate-x-1 inline-block -ml-2"
+                        >
+                          {getLocalized(link.text, locale)}
+                        </a>
+                      ) : (
+                        <PrefetchLink
+                          key={link.id}
+                          to={link.url}
+                          prefetch={true}
+                          className="hover:text-white hover:bg-gray-700/50 hover:translate-x-1 px-2 py-1 transition-all duration-300 focus:outline-none focus:text-white focus:bg-gray-700/50 focus:translate-x-1 inline-block -ml-2"
+                        >
+                          {getLocalized(link.text, locale)}
+                        </PrefetchLink>
+                      )
                     ))}
                   </nav>
                 </div>

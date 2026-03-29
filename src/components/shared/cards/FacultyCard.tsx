@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
 
 interface FacultyCardProps {
     id: string | number;
@@ -62,9 +61,9 @@ export const FacultyCard: React.FC<FacultyCardProps> = ({
 
     if (href) {
         return (
-            <Link to={href} className={containerClasses}>
+            <a href={href} className={containerClasses}>
                 {CardContent}
-            </Link>
+            </a>
         );
     }
 

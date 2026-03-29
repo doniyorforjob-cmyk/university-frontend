@@ -6,7 +6,6 @@ import { useStandardSection } from './hooks/useStandardSection';
 import SectionHeader from './components/SectionHeader';
 import { OptimizedImage } from '../../components/shared';
 import EmptyState from '../../components/shared/EmptyState';
-import { Link } from 'react-router-dom';
 import { transformFacultiesData } from './transformers/facultiesTransformer';
 import { FacultyCard } from '../../components/shared/cards/FacultyCard';
 
@@ -109,9 +108,9 @@ const FacultiesSection: React.FC = () => {
                         // Ensure we have a valid slug or fallback to ID, matching our global strategy
                         const linkSlug = dept.slug || dept.id;
                         return (
-                          <Link
+                          <a
                             key={dept.id}
-                            to={`/${i18n.language || 'uz'}/departments/${linkSlug}`}
+                            href={`/${i18n.language || 'uz'}/departments/${linkSlug}`}
                             className="bg-white rounded-2xl md:rounded-[24px] overflow-hidden shadow-[0_4px_20px_-10px_rgba(0,0,0,0.1)] hover:shadow-md transition-all duration-300 group block"
                           >
                             <div className="h-40 md:h-44 overflow-hidden bg-gray-100">
@@ -128,7 +127,7 @@ const FacultiesSection: React.FC = () => {
                                 {dept.title}
                               </h4>
                             </div>
-                          </Link>
+                          </a>
                         );
                       })}
                     </div>
