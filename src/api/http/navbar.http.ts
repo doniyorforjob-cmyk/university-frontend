@@ -1,8 +1,9 @@
 import apiClient from '../client';
 import { NavItem } from '../../types/navbar.types';
 
-
 export type { NavItem };
+
+const normalize = (s: string) => (s || '').toLowerCase().replace(/[‘’ʻʼ]/g, "'").trim();
 
 export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]> => {
   try {
@@ -18,9 +19,7 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
     const items = response.data.data?.items || [];
 
     // Route mapping based on known titles (fallback if backend URL is missing)
-    const getRouteByTitle = (titles: any): string => {
-      const normalize = (s: string) => (s || '').toLowerCase().replace(/[‘’ʻʼ]/g, "'").trim();
-
+    const getRouteByTitle = (titles: string | Record<string, string>): string => {
       const map: Record<string, string> = {
         'Cultural and educational activities': '/cultural-educational-activities',
         'Madaniy-ma’rifiy faoliyat': '/cultural-educational-activities',
@@ -83,7 +82,7 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
         'Departments': '/departments',
         'Students': '/students',
         'Talabalar': '/students',
-        'Cтуденты': '/students',
+        'Cтуdenы': '/students',
         'Foreign Students': '/students/foreign',
         'Horijiy talabalar': '/students/foreign',
         'Иностранные студенты': '/students/foreign',
@@ -139,7 +138,6 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
         'ISR Measures': '/research-areas/isr/measures-for-isr',
       };
 
-
       let allTitles = '';
       if (typeof titles === 'string') {
         allTitles = titles;
@@ -150,10 +148,9 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
       const normalizedAll = normalize(allTitles);
 
       const key = Object.keys(map)
-        .sort((a, b) => b.length - a.length) // Prioritize longer, more specific matches
+        .sort((a, b) => b.length - a.length)
         .find(k => {
           const normalizedK = normalize(k);
-          // Precise matching for segments
           if (normalizedK === 'faoliyat' || normalizedK === 'activities') {
             return normalizedAll === normalizedK;
           }
@@ -162,83 +159,66 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
       return key ? map[key] : '#';
     };
 
-    // Transform API response to NavItem format (preserving all locales for instant switching)
+    // Transform API response
     const transformItem = (item: any): NavItem => {
-      // Robust URL extraction: check multiple possible fields from different API versions
       const backendUrl = item.url_uz || item.url_en || item.url_ru || item.url || item.path || item.href || item.link;
 
-      // Ensure item.title is consistently an object for our overrides
-      if (typeof item.title === 'string') {
-        const t = item.title;
-        item.title = { uz: t, ru: t, en: t };
+      let titleObj = item.title;
+      if (typeof titleObj === 'string') {
+        titleObj = { uz: titleObj, ru: titleObj, en: titleObj };
       }
 
-      // Rename "Hujjatlar" to "Me'yoriy hujjatlar" - check common variants using normalized comparison
-      const normalize = (s: string) => (s || '').toLowerCase().replace(/[‘’ʻʼ]/g, "'").trim();
-      const uzTitle = normalize(item.title?.uz);
-      const enTitle = normalize(item.title?.en);
+      const uzTitle = normalize(titleObj?.uz);
+      const enTitle = normalize(titleObj?.en);
 
       if (uzTitle === 'hujjatlar' || enTitle === 'documents' || uzTitle === normalize("Me'yoriy hujjatlar")) {
-        item.title = {
-          uz: 'Me\'yoriy hujjatlar',
+        titleObj = {
+          uz: "Me'yoriy hujjatlar",
           ru: 'Нормативные документы',
           en: 'Regulatory documents'
         };
       }
 
-      const mappedRoute = getRouteByTitle(item.title);
+      const mappedRoute = getRouteByTitle(titleObj);
       
-      // FORCE: For ISR related research areas, always show English title in the navbar
-      // regardless of the CRM input for other languages as requested by user.
       if (mappedRoute.includes('/research-areas/isr')) {
-        const enTitle = item.title?.en || (typeof item.title === 'string' ? item.title : 'ISR Research');
-        item.title = {
-          uz: enTitle,
-          ru: enTitle,
-          en: enTitle
-        };
+        const isrTitle = titleObj?.en || 'ISR Research';
+        titleObj = { uz: isrTitle, ru: isrTitle, en: isrTitle };
       }
 
-      // FIX: Rename "Departments" (Kafedralar) to "Academic Departments" in English to avoid conflict with "Departments" (Bo'limlar)
-      if (normalize(item.title?.uz) === 'kafedralar' || normalize(item.title?.en) === 'departments') {
-        // Only rename if it's actually the academic departments node (usually identified by 'Kafedralar' in UZ)
-        if (normalize(item.title?.uz) === 'kafedralar') {
-          if (!item.title) item.title = {};
-          item.title.en = 'Academic Departments';
+      if (normalize(titleObj?.uz) === 'kafedralar' || normalize(titleObj?.en) === 'departments') {
+        if (normalize(titleObj?.uz) === 'kafedralar') {
+          titleObj = { ...titleObj, en: 'Academic Departments' };
         }
       }
 
-      // URL normalization: fix known backend URL shortcuts
       const normalizeHref = (url: string): string => {
         if (!url || url === '#') return url;
         const u = url.toLowerCase().replace(/\/$/, '');
-        // /council → /university/council (but not /public-council)
         if ((u === '/council' || u === 'council') && !u.includes('public')) return '/university/council';
-        // /public-council → /public-council (already correct, keep as is)
         return url;
       };
 
       const rawHref = mappedRoute !== '#' ? mappedRoute : (backendUrl || '#');
 
       return {
-        key: `${item.title?.en || 'nav-item'}-${item.id || Math.random()}`,
-        title: item.title, // Keep as object {uz, ru, en}
-        description: item.description, // Keep as object {uz, ru, en}
+        key: `${titleObj?.en || 'nav-item'}-${item.id || Math.random()}`,
+        title: titleObj,
+        description: item.description,
         href: normalizeHref(rawHref),
         children: item.children?.map(transformItem) || []
       };
     };
 
-    // NEW: Recursive filtering based on locale
+    // Recursive filtering
     const currentLocale = localeOverride || (typeof window !== 'undefined' ? localStorage.getItem('locale') || 'uz' : 'uz');
     
-    const filterByLocale = (items: NavItem[], locale: string): NavItem[] => {
+    const filterByLocale = (navItems: NavItem[], locale: string): NavItem[] => {
       const isEn = locale === 'en';
       
-      return items.filter(item => {
+      return navItems.filter(item => {
         const href = item.href?.toLowerCase() || '';
         
-        // Safer title extraction
         let titleEn = '';
         let titleUz = '';
         
@@ -250,7 +230,6 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
           titleUz = item.title.toLowerCase();
         }
         
-        // Comprehensive check: if it's ISR related and not English locale, HIDE IT
         const isIsrRelated = 
           href.includes('research-areas/isr') || 
           href.includes('measures-for-isr') ||
@@ -262,7 +241,6 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
           return false;
         }
         
-        // Recursively filter children
         if (item.children && item.children.length > 0) {
           item.children = filterByLocale(item.children, locale);
         }
@@ -270,8 +248,8 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
       });
     };
 
-    const navItems = items.map(transformItem);
-    return filterByLocale(navItems, currentLocale);
+    const transformedItems = items.map(transformItem);
+    return filterByLocale(transformedItems, currentLocale);
 
   } catch (error) {
     console.error('Error fetching navbar items from API:', error);

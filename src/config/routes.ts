@@ -38,6 +38,9 @@ export const ROUTES = {
   // Media
   PHOTOS: '/photos',
   PHOTO_DETAIL: '/photos/:id',
+
+  // Research Areas (MFE)
+  RESEARCH_AREAS_ISR_MEASURES: '/research-areas/isr/measures-for-isr',
 } as const;
 
 /**

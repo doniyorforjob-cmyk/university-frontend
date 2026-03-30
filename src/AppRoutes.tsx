@@ -23,6 +23,10 @@ const AppRoutes = () => {
                 <Route path="administration" element={<AdministrationPage />} />
                 <Route path="leadership" element={<AdministrationPage />} />
                 
+                {/* MFE Proxy Routes - registering them in Shell to prevent client-side 404 */}
+                <Route path="scientific-activity" element={<GenericPageSkeleton showSidebar={true} showBanner={true} />} />
+                <Route path="research-areas/*" element={<GenericPageSkeleton showSidebar={true} showBanner={true} />} />
+                
                 <Route path="server-error" element={<ServerError />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
