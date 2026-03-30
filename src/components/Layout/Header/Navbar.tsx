@@ -28,8 +28,8 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
   const { t } = useTranslation('common');
   const { locale } = useLocale();
   const { data: navItemsRaw, loading } = useCachedApi<NavItem[]>({
-    key: `navbar-items`,
-    fetcher: () => fetchNavItems(),
+    key: `navbar-items_${locale}`, // Match prefetchService key with underscore
+    fetcher: () => fetchNavItems(locale),
     ttlMinutes: 0.5,
     keepPreviousData: true
   });
@@ -183,7 +183,29 @@ const Navbar: React.FC<NavbarProps> = ({ isSticky }) => {
       return transformed;
     };
 
-    return navItemsRaw.map(transformRecursive);
+    const filterRecursive = (item: any): boolean => {
+      if (locale === 'en') return true;
+      
+      const href = (item.href || '').toLowerCase();
+      const title = (typeof item.title === 'string' ? item.title : (item.title?.en || item.title?.uz || '')).toLowerCase();
+      
+      const isIsrRelated = 
+        href.includes('research-areas/isr') || 
+        href.includes('measures-for-isr') ||
+        title.includes('measures of success') ||
+        title.includes('isr research');
+
+      if (isIsrRelated) return false;
+      return true;
+    };
+
+    return navItemsRaw
+      .map(transformRecursive)
+      .filter(filterRecursive)
+      .map(item => ({
+        ...item,
+        children: item.children?.filter(filterRecursive) || []
+      }));
   }, [navItemsRaw, locale, faculties, departments, viceRectors, adminDepartments]);
 
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);

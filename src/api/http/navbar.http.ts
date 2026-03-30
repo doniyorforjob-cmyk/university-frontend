@@ -18,7 +18,6 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
     const items = response.data.data?.items || [];
 
     // Route mapping based on known titles (fallback if backend URL is missing)
-    // Route mapping based on known titles (fallback if backend URL is missing)
     const getRouteByTitle = (titles: any): string => {
       const normalize = (s: string) => (s || '').toLowerCase().replace(/[‘’ʻʼ]/g, "'").trim();
 
@@ -136,6 +135,8 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
         'Bakalavriat': '/students/bachelor',
         'Bachelor': '/students/bachelor',
         'Бакалавриат': '/students/bachelor',
+        'Measures of success': '/research-areas/isr/measures-for-isr',
+        'ISR Measures': '/research-areas/isr/measures-for-isr',
       };
 
 
@@ -186,6 +187,17 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
       }
 
       const mappedRoute = getRouteByTitle(item.title);
+      
+      // FORCE: For ISR related research areas, always show English title in the navbar
+      // regardless of the CRM input for other languages as requested by user.
+      if (mappedRoute.includes('/research-areas/isr')) {
+        const enTitle = item.title?.en || (typeof item.title === 'string' ? item.title : 'ISR Research');
+        item.title = {
+          uz: enTitle,
+          ru: enTitle,
+          en: enTitle
+        };
+      }
 
       // FIX: Rename "Departments" (Kafedralar) to "Academic Departments" in English to avoid conflict with "Departments" (Bo'limlar)
       if (normalize(item.title?.uz) === 'kafedralar' || normalize(item.title?.en) === 'departments') {
@@ -217,8 +229,49 @@ export const fetchNavItems = async (localeOverride?: string): Promise<NavItem[]>
       };
     };
 
+    // NEW: Recursive filtering based on locale
+    const currentLocale = localeOverride || (typeof window !== 'undefined' ? localStorage.getItem('locale') || 'uz' : 'uz');
+    
+    const filterByLocale = (items: NavItem[], locale: string): NavItem[] => {
+      const isEn = locale === 'en';
+      
+      return items.filter(item => {
+        const href = item.href?.toLowerCase() || '';
+        
+        // Safer title extraction
+        let titleEn = '';
+        let titleUz = '';
+        
+        if (typeof item.title === 'object' && item.title !== null) {
+          titleEn = String(item.title.en || '').toLowerCase();
+          titleUz = String(item.title.uz || '').toLowerCase();
+        } else if (typeof item.title === 'string') {
+          titleEn = item.title.toLowerCase();
+          titleUz = item.title.toLowerCase();
+        }
+        
+        // Comprehensive check: if it's ISR related and not English locale, HIDE IT
+        const isIsrRelated = 
+          href.includes('research-areas/isr') || 
+          href.includes('measures-for-isr') ||
+          titleEn.includes('measures of success') ||
+          titleEn.includes('isr research') ||
+          titleUz.includes('measures of success'); 
+
+        if (isIsrRelated && !isEn) {
+          return false;
+        }
+        
+        // Recursively filter children
+        if (item.children && item.children.length > 0) {
+          item.children = filterByLocale(item.children, locale);
+        }
+        return true;
+      });
+    };
+
     const navItems = items.map(transformItem);
-    return navItems;
+    return filterByLocale(navItems, currentLocale);
 
   } catch (error) {
     console.error('Error fetching navbar items from API:', error);
