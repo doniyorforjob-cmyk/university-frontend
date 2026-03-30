@@ -41,6 +41,9 @@ export const ROUTES = {
 
   // Research Areas (MFE)
   RESEARCH_AREAS_ISR_MEASURES: '/research-areas/isr/measures-for-isr',
+  RESEARCH_AREAS_ISR_FACILITIES: '/research-areas/isr/physical-facilities-for-isr',
+  RESEARCH_AREAS_ISR_SUPPORT: '/research-areas/isr/support-for-isr',
+  RESEARCH_AREAS_ISR_CAREER: '/research-areas/isr/career-promotion-isr',
 } as const;
 
 /**
